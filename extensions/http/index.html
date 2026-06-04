@@ -1,0 +1,249 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+	<title>HTTP</title>
+
+	<link rel="icon" href="../../estructura.icon.png">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="Motor low-level para la gestión de transacciones HTTP asíncronas basada en el objeto nativo XMLHttpRequest. Está diseñado como el componente base de transferencia de la arquitectura, ofreciendo control sobre el ciclo de vida de las peticiones, gestión de tiempos de espera (timeouts), cabeceras personalizadas, credenciales de origen cruzado y monitorización de flujos de subida y descarga de datos.">
+	<meta name="author" content="OKZGN">
+	<meta name="theme-color" content="#ffffff">
+
+	<link href="../../estructura.styles.css" rel="stylesheet" />
+	<script src="https://cdn.jsdelivr.net/npm/estructura-js"></script>
+	<script src="../../main.js"></script>
+	<script src="estructura.http.js"></script>
+	<script>
+		document.addEventListener('DOMContentLoaded', function(){
+			console.log('Estructura HTTP Ready.');
+			var req = _http.request({
+				url: './test/req',
+				onSuccess: function(r){
+					console.info('Request test response:', r);
+					document.getElementById('test').textContent = r.slice(0, 24);
+				}
+			});
+			console.log('Test:', req);
+		});
+	</script>
+</head>
+
+<body>
+	<header class="center-y padding">
+		<h1 class="extension center-y">
+			<img id="logo" src="../../estructura.logo.png" alt="Estructura, JavaScript Framework">
+			<span id="test">Loading...</span>
+		</h1>
+	</header>
+
+	<nav class="margin-y">
+		<section class="silver">
+			<h2 id="index" class="center-x">Menú</h2>
+			<div class="padding">
+				<ul class="lines center-y">
+					<li class="back"><a href="../../index.html#extensions">Atrás</a></li>
+					<li><a href="#description">Descripción</a></li>
+					<li><a href="#docs">Documentación</a></li>
+				</ul>
+			</div>
+		</section>
+	</nav>
+	
+<main>
+	<h2 class="title">HTTP</h2>
+	<section class="margin-y">
+		<h2 id="description">Descripción</h2>
+		<div class="padding">
+			Motor low-level para la gestión de transacciones HTTP asíncronas basada en el objeto nativo <code>XMLHttpRequest</code>. Está diseñado como el componente base de transferencia de la arquitectura, ofreciendo control sobre el ciclo de vida de las peticiones, gestión de tiempos de espera (timeouts), cabeceras personalizadas, credenciales de origen cruzado y monitorización de flujos de subida y descarga de datos.<br><br>
+			<b>Librería:</b> <a target="_blank" href="estructura.http.js">estructura.http.js</a>
+		</div>
+	</section>
+
+	<section class="margin-y">
+		<h2 id="docs">Documentación</h2>
+		<div class="padding">
+			<h3>1. Interfaz del Motor de Peticiones</h3>
+			<p>La librería expone un único namespace global denominado <code>_http</code> que contiene la función principal de ejecución.</p>
+			<br>
+			<p><b><code>_http.request(options)</code>:</b></p>
+			<p>Inicia una transacción de red configurada según el objeto de propiedades provisto.</p>
+			<br>
+			<p><b>Sintaxis:</b></p>
+			<pre><code>var req = _http.request({ url: './config.json' });
+// req.abort();
+// req.getXHR();</code></pre>
+			<br>
+			<p>Devuelve de forma síncrona un objeto de control con los siguientes métodos de instancia:</p>
+			<br>
+			<ul>
+				<li><code>abort()</code>: Cancela la petición en progreso de manera inmediata y dispara el callback de interrupción si está definido.</li>
+				<li><code>getXHR()</code>: Proporciona acceso directo al objeto <code>XMLHttpRequest</code> nativo subyacente para inspecciones detalladas o manipulaciones low-level.</li>
+			</ul>
+			<br>
+
+			<h3>2. Opciones de Configuración (<code>options</code>)</h3>
+			<p>El argumento de configuración estructurado para el método <code>_http.request()</code> admite las siguientes propiedades:</p>
+			<br>
+			<p><b>Sintaxis:</b></p>
+			<pre><code>_http.request({
+	url: 'https://backend.com/api/v1/setData',
+	method: 'POST',
+	data: { 'a': '1', 'N': '...' }
+});</code></pre>
+			<br>
+			<ul>
+				<li><code>url</code> (<code>String</code>): La dirección de destino del recurso. Requerido.<br><br><em><b>Nota:</b> El motor no realiza una validación previa de la presencia de este parámetro; su omisión provocará una excepción nativa en el método <code>open()</code> del navegador.</em></li>
+				<li><br><code>method</code> (<code>String</code>): El método HTTP de la transacción (ej. <code>"GET"</code>, <code>"POST"</code>, <code>"PUT"</code>, <code>"DELETE"</code>). Por defecto es <code>"GET"</code>.</li>
+				<li><br><code>headers</code> (<code>Object</code>): Pares clave-valor que representan las cabeceras HTTP que serán inyectadas en la petición mediante <code>setRequestHeader</code>.</li>
+				<li><br><code>data</code> (<code>Any</code>): Datos que se incluirán en el cuerpo de la solicitud. Admite por defecto <code>null</code> (si es omitido o <code>undefined</code>). Soporta cadenas de texto, representaciones JSON, instancias de <code>FormData</code>, objetos <code>Blob</code> o búferes binarios.<br><br><em><b>Nota:</b> Dado que la librería transmite este valor directamente al método de envío nativo sin transformaciones de tipo internas, el envío de objetos de JavaScript que deban procesarse como JSON requiere de la serialización explícita previa por parte del usuario mediante <code>JSON.stringify()</code>, así como la definición manual de la cabecera <code>Content-Type: application/json</code>. Por el contrario, si se transmiten instancias de <code>FormData</code>, se recomienda omitir la cabecera <code>Content-Type</code> en el objeto <code>headers</code> para que el navegador configure automáticamente el tipo multipart y el límite (boundary) adecuado.</em></li>
+				<li><br><code>timeout</code> (<code>Number</code>): Límite de tiempo en milisegundos para la transacción. Si es <code>0</code> (valor por defecto), no se aplicará ningún límite de tiempo.</li>
+				<li><br><code>withCredentials</code> (<code>Boolean</code>): Permite activar el uso de credenciales de sesión (cookies, cabeceras de autorización) en llamadas de origen cruzado (CORS) cuando se establece en <code>true</code>.</li>
+			</ul>
+			<br>
+
+			<h3>3. Métodos y Comportamiento de los Callbacks de Configuración (<code>options</code>)</h3>
+			<p>El motor implementa un conjunto específico de devoluciones de llamada para interceptar las distintas etapas de la transacción:</p>
+			<br>
+			<p><b>Callbacks de Estado y Finalización:</b></p>
+			<ul>
+				<li><code>onSuccess(responseText, xhr)</code>: Se invoca cuando la petición finaliza con éxito (<code>readyState === 4</code> y código de estado HTTP estrictamente en el rango de <code>200</code> a <code>299</code>). Recibe el texto de la respuesta y la instancia XHR activa.</li>
+				<li><br><code>onError(error, xhr)</code>: Se ejecuta ante fallos de red críticos, bloqueos de seguridad del navegador, respuestas con códigos de estado HTTP fuera del rango de éxito (incluyendo respuestas con código <code>3xx</code> que no hayan sido redirigidas automáticamente por el agente de usuario, además de códigos <code>4xx</code> y <code>5xx</code> con estado superior a 0), o tiempos de espera agotados si no existe un controlador dedicado. Recibe una instancia de <code>Error</code> y el objeto XHR.</li>
+				<li><br><code>onHeadersReceived(headersString, xhr)</code>: Se activa de manera asíncrona en el momento en que las cabeceras de la respuesta han sido leídas por el cliente (<code>readyState === 2</code>). Recibe la cadena cruda de cabeceras obtenida por <code>getAllResponseHeaders()</code>.</li>
+				<li><br><code>onReadyStateChange(readyState, status, xhr)</code>: Escucha directa y low-level acoplada al ciclo nativo de cambio de estado de la petición.</li>
+			</ul>
+			<br>
+			<p><b>Callbacks de Progreso e Interrupción:</b></p>
+			<ul>
+				<li><code>onProgress(loaded, total, percent)</code>: Se ejecuta de manera continua durante la transferencia del recurso de respuesta, siempre y cuando el servidor retorne el tamaño de la carga útil (propiedad de evento <code>lengthComputable</code>). Recibe los bytes descargados, los bytes totales y el porcentaje calculado.<br><br><em><b>Nota:</b> La disponibilidad de la propiedad <code>lengthComputable</code> depende de la presencia de la cabecera <code>Content-Length</code> en la respuesta del servidor. En su ausencia, el cálculo de progreso y porcentaje no podrá realizarse con precisión.</em></li>
+				<li><br><code>onUploadProgress(loaded, total, percent)</code>: Proporciona información sobre el estado de la subida de datos del cliente hacia el servidor. Se enlaza al objeto <code>xhr.upload</code> de manera automática si existe información de envío y progreso disponible.</li>
+				<li><br><code>onTimeout(xhr)</code>: Se invoca de manera específica al superarse el límite establecido en <code>timeout</code>. Si se omite, el motor canaliza el error a través de <code>onError</code> con una excepción detallada.</li>
+				<li><br><code>onAbort(xhr)</code>: Se ejecuta si la transacción es interrumpida de forma controlada mediante la llamada al método <code>abort()</code> de la instancia devuelta.</li>
+			</ul>
+			<br>
+
+			<h3>4. Mecanismos Internos y Flujos de Control</h3>
+			
+			<p><b>Detección de Conflictos de Observabilidad:</b></p>
+			<p>Para asegurar una trazabilidad limpia del flujo de red, el motor emite una advertencia en la consola si el desarrollador define de manera simultánea un callback genérico <code>onReadyStateChange</code> junto con los controladores granulares de ciclo de vida (<code>onSuccess</code>, <code>onError</code> o <code>onHeadersReceived</code>). Esta advertencia es de carácter informativo y no restringe la ejecución física de ninguno de los controladores; ambos flujos operarán de manera independiente y en paralelo, lo que podría generar ejecuciones redundantes de lógica si el desarrollador gestiona los mismos estados de manera duplicada.</p>
+			<br>
+			<p><b>Tratamiento de Errores Críticos y Código de Estado Cero (Status 0):</b></p>
+			<p>Las conexiones fallidas que no llegan a establecer comunicación con el servidor (como fallos de resolución DNS, pérdida física de conexión, restricciones estrictas de origen cruzado o bloqueos por CORS) no producen un código de estado HTTP estándar, reflejándose en un valor de <code>status</code> igual a <code>0</code>. El motor captura estas anomalías a través del controlador nativo <code>onerror</code> y las redirige de manera unificada al callback <code>onError</code> bajo una excepción de fallo de red crítico. Debido a que el analizador de estados nativos (<code>onreadystatechange</code>) filtra y descarta de manera explícita códigos inferiores o iguales a cero (<code>xhr.status > 0</code>), se evita la duplicación del callback ante este tipo de incidencias de red.</p>
+			<br>
+			<p><b>Flujo de Ejecución en Cancelaciones (Abort):</b></p>
+			<p>La interrupción programada de la petición mediante la invocación del método de control <code>abort()</code> detiene la operación de red en curso de manera inmediata. Aunque esta acción puede modificar las propiedades nativas del objeto `XMLHttpRequest` (reduciendo temporalmente el código de estado a <code>0</code> y alterando el estado de transición), el motor intercepta el proceso a través de su controlador <code>onabort</code>. El flujo de validación evita que esta cancelación sea procesada como un error general de conexión, garantizando que solo se invoque el callback específico <code>onAbort</code> configurado en las opciones.</p>
+			<br>
+
+			<h3>5. Ejemplos Prácticos de Implementación</h3>
+			
+			<p><b>Petición GET Estándar con Manejo de Datos:</b></p>
+<pre><code>_http.request({
+	url: 'https://api.ejemplo.com/v1/usuarios',
+	method: 'GET',
+	onSuccess: function(respuesta, xhr) {
+		try {
+			var usuarios = JSON.parse(respuesta);
+			console.log('Lista de usuarios procesada:', usuarios);
+		} catch (e) {
+			console.error('La respuesta no posee un formato JSON válido:', e);
+		}
+	},
+	onError: function(err, xhr) {
+		console.error('Ocurrió un error en la transferencia:', err.message);
+	}
+});
+</code></pre>
+			<br>
+
+			<p><b>Petición POST asíncrona con Seguimiento de Carga y Límite de Tiempo:</b></p>
+<pre><code>var controlDescarga = _http.request({
+	url: 'https://api.ejemplo.com/v1/archivos',
+	method: 'POST',
+	headers: {
+		'Content-Type': 'application/json',
+		'X-Client-Identifier': 'Estructura-App'
+	},
+	data: JSON.stringify({ archivoId: 'doc_09182' }),
+	timeout: 10000,
+	onUploadProgress: function(cargado, total, porcentaje) {
+		console.log('Progreso del envío de datos: ' + porcentaje.toFixed(2) + '%');
+	},
+	onSuccess: function(respuesta, xhr) {
+		console.log('Procesamiento completado con éxito:', respuesta);
+	},
+	onTimeout: function(xhr) {
+		console.error('El servidor superó el límite de respuesta de 10 segundos.');
+	},
+	onError: function(err, xhr) {
+		console.error('No se pudo completar el envío:', err.message);
+	}
+});
+</code></pre>
+			<br>
+
+			<p><b>Interrupción Programada de una Petición:</b></p>
+<pre><code>var peticion = _http.request({
+	url: 'https://api.ejemplo.com/v1/stream-datos',
+	onSuccess: function(respuesta, xhr) {
+		console.log('Datos recibidos:', respuesta);
+	},
+	onAbort: function(xhr) {
+		console.log('La transacción fue cancelada antes de su finalización.');
+	}
+});
+
+// Cancelación de la llamada de red ante una acción específica del usuario
+document.querySelector('#cancelar-accion').addEventListener('click', function() {
+	peticion.abort();
+});
+</code></pre>
+			<br>
+
+			<p><b>Adaptación a Entornos Modernos mediante Promesas (ES6+):</b></p>
+			<p>Aunque el diseño original de la librería utiliza un modelo de callbacks para maximizar la compatibilidad y el control granular low-level, puede integrarse fácilmente con el flujo de Promesas estándar de JavaScript para habilitar el uso de <code>async/await</code>:</p>
+<pre><code>function solicitarRecurso(configuracion) {
+	return new Promise(function(resolve, reject) {
+		_http.request(Object.assign({}, configuracion, {
+			onSuccess: function(respuesta, xhr) {
+				resolve({ datos: respuesta, xhr: xhr });
+			},
+			onError: function(error, xhr) {
+				reject(error);
+			}
+		}));
+	});
+}
+
+// Ejemplo de consumo asíncrono moderno
+async function obtenerDatosDeUsuario() {
+	try {
+		var resultado = await solicitarRecurso({
+			url: 'https://api.ejemplo.com/v1/perfil',
+			method: 'GET'
+		});
+		console.log('Datos obtenidos:', JSON.parse(resultado.datos));
+	} catch (error) {
+		console.error('Error capturado con async/await:', error.message);
+	}
+}
+</code></pre>
+			<br>
+
+			<h3>6. Características Técnicas de la Implementación</h3>
+			<div class="features">
+				<p><strong>Configuración Segura de Cabeceras:</strong> La aplicación de cabeceras HTTP personalizadas realiza una validación selectiva basada en <code>hasOwnProperty</code> sobre el mapa de propiedades proporcionado. Esto previene la inyección accidental de propiedades provenientes de la herencia del prototipo de los objetos de Javascript.</p>
+				<br><p><strong>Gestión Ordenada de Excepciones de Tiempo de Espera:</strong> Al detectarse un evento de timeout nativo, el motor intenta delegar en primera instancia al controlador específico <code>onTimeout</code>. Si este no está presente, se genera automáticamente una instancia de <code>Error</code> detallada y se canaliza de forma segura al controlador general <code>onError</code>.</p>
+				<br><p><strong>Transparencia de Datos en Envío:</strong> La propiedad de datos (<code>data</code>) es asignada de manera directa al método <code>send()</code> de <code>XMLHttpRequest</code> sin alteración de tipo previa, facilitando la integración con flujos de carga especializados y permitiendo la flexibilidad del navegador al determinar de forma automática cabeceras asociadas como el límite de frontera en estructuras <code>multipart/form-data</code>.</p>
+			</div>
+		</div>
+	</section>
+</main>
+
+	<footer class="center-y padding">
+		<p>2026 &copy; Desarrollado por <a href="https://okzgn.com">OKZGN</a></p>
+	</footer>
+</body>
+</html>
+

@@ -1,0 +1,225 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+	<title>Components</title>
+
+	<link rel="icon" href="../../estructura.icon.png">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="Proporciona un ecosistema modular orientado al desacoplamiento de interfaces mediante la inyección asíncrona y coordinada de recursos HTML, CSS y JS. El sistema gestiona automáticamente el ciclo de vida de los componentes, la resolución de dependencias declarativas en el DOM, la mitigación de colisiones de IDs y flujos de degradación fluida ante fallos de carga o de red.">
+	<meta name="author" content="OKZGN">
+	<meta name="theme-color" content="#ffffff">
+
+	<link href="../../estructura.styles.css" rel="stylesheet" />
+	<script src="https://cdn.jsdelivr.net/npm/estructura-js"></script>
+	<script src="../../main.js"></script>
+	<script src="../http/estructura.http.js"></script>
+	<script src="estructura.components.js"></script>
+	<script>
+		document.addEventListener('DOMContentLoaded', function(){
+			console.log('Estructura Components Ready.');
+			_components({
+				origin: './components-origin/'
+			});
+
+			_components(document.getElementById('test'));
+		});
+	</script>
+</head>
+
+<body>
+	<header class="center-y padding">
+		<h1 class="extension center-y">
+			<img id="logo" src="../../estructura.logo.png" alt="Estructura, JavaScript Framework">
+			<span id="test" data-e-component="test">Loading...</span>
+		</h1>
+	</header>
+
+	<nav class="margin-y">
+		<section class="silver">
+			<h2 id="index" class="center-x">Menú</h2>
+			<div class="padding">
+				<ul class="lines center-y">
+					<li class="back"><a href="../../index.html#extensions">Atrás</a></li>
+					<li><a href="#description">Descripción</a></li>
+					<li><a href="#docs">Documentación</a></li>
+				</ul>
+			</div>
+		</section>
+	</nav>
+	
+<main>
+	<h2 class="title">Components</h2>
+	<section class="margin-y">
+		<h2 id="description">Descripción</h2>
+		<div class="padding">
+			Proporciona un ecosistema modular orientado al desacoplamiento de interfaces mediante la inyección asíncrona y coordinada de recursos HTML, CSS y JS. El sistema gestiona automáticamente el ciclo de vida de los componentes, la resolución de dependencias declarativas en el DOM, la mitigación de colisiones de IDs y flujos de degradación fluida ante fallos de carga o de red.<br><br>
+			<b>Librería:</b> 
+			<a target="_blank" href="estructura.components.js">estructura.components.js</a>
+			<br><br>
+			<b>Dependencia obligatoria:</b> 
+			<a target="_blank" href="../http/estructura.http.js">estructura.http.js</a> (<a href="../http/index.html">HTTP, documentación</a>). El objeto global <code>_http</code> debe estar disponible en el entorno antes de inicializar cualquier componente; de lo contrario, el proceso se interrumpirá emitiendo una excepción en consola.
+		</div>
+	</section>
+
+	<section class="margin-y">
+		<h2 id="docs">Documentación</h2>
+		<div class="padding">
+			<h3>1. Inicialización y Configuración de Componentes</h3>
+			<p>El controlador global <code>_components</code> inicializa y orquesta componentes autónomos y coordinadores jerárquicos definidos en el documento.</p>
+			<br>
+			<p><b>Configuración global del entorno:</b></p>
+<pre><code>_components({
+	origin: './src/components/',	// Ruta raíz predeterminada para recursos estáticos
+	timeout: 10000,		// Límite de tiempo global de peticiones (10s)
+	autoScan: true		// Iniciar el escaneo y montaje del DOM automáticamente
+});
+</code></pre>
+			<br>
+			<p><b>Inicialización manual sobre el DOM:</b></p>
+			<p>La invocación directa de la función constructora <code>_components(element, config)</code> devuelve la instancia del componente creado o, si solo se ha declarado un contenedor organizativo, el coordinador correspondiente. Esto facilita la captura y asignación de la referencia en una sola instrucción.</p>
+<pre><code>var nodo = document.querySelector('#contenedor-dinamico');
+
+var instancia = _components(nodo, {
+	component: 'ficha-usuario',
+	id: 'tarjeta_activa',
+	componentOrder: 'css,html,js',
+	timeout: 15000
+});
+</code></pre>
+			<br>
+			<h3>2. Declaración de Atributos en HTML</h3>
+			<p>La declaración de componentes y coordinadores se realiza principalmente de forma semántica en el marcado HTML a través de atributos específicos.</p>
+			<br>
+			<p><b>Atributos para Componentes Individuales (data-e-component-*)</b></p>
+			<ul>
+				<li><code>data-e-component</code> (<code>String</code>): El nombre lógico de la carpeta o subdirectorio del componente.</li>
+				<li><br><code>data-e-component-id</code> (<code>String</code>): Identificador único de instancia dentro del registro. Si colisiona con un ID existente, el motor lo resolverá agregando sufijos incrementales (ej: <code>mi-id_1</code>). <em>Nota: Se generará una advertencia en la consola y los mensajes o eventos enviados explícitamente al ID original no serán redirigidos a las nuevas instancias renombradas secuencialmente.</em></li>
+				<li><br><code>data-e-component-src</code> (<code>String</code>): Ruta o URL directa que anula el origen (<code>origin</code>) global.</li>
+				<li><br><code>data-e-component-order</code> (<code>String</code>): Orden de descarga y aplicación de los recursos estáticos (por defecto: <code>"css,html,js"</code>).</li>
+				<li><br><code>data-e-component-required</code> (<code>String</code>): Relación de identificadores de componentes cuya carga exitosa es requisito previo para iniciar la inicialización de este componente. Admite múltiples valores delimitados por comas, espacios o saltos de línea (se procesa mediante la expresión regular <code>/[\s,]+/</code>).</li>
+				<li><br><code>data-e-component-fallback</code> (<code>String</code>): Nombre lógico del componente de contingencia alternativo que se cargará si falla el flujo principal.</li>
+				<li><br><code>data-e-component-fallback-src</code> (<code>String</code>): Ruta de origen opcional para el componente de contingencia.</li>
+				<li><br><code>data-e-component-fallback-order</code> (<code>String</code>): Estructura del orden de carga de recursos del componente de contingencia.</li>
+				<li><br><code>data-e-component-timeout</code> (<code>Number</code>): Límite de tiempo de carga específico para este componente.</li>
+			</ul>
+			<br>
+			<p><b>Atributos para Coordinadores (data-e-components-*)</b></p>
+			<ul>
+				<li><code>data-e-components</code> (<code>Boolean/String</code>): Convierte el elemento en un contenedor organizativo que sincroniza y asocia a los hijos con atributos <code>data-e-component</code>.</li>
+				<li><br><code>data-e-components-origin</code> (<code>String</code>): Base de direccionamiento unificada aplicable a todos los componentes descendientes directos.</li>
+				<li><br><code>data-e-components-order</code> (<code>String</code>): Cadena que describe el ordenamiento de carga secuencial y paralelo de los subcomponentes.</li>
+				<li><br><code>data-e-components-fallback-origin</code> (<code>String</code>): Base de direccionamiento de contingencia unificada aplicable a todos los componentes alternativos descendientes directos que requieran fallback.</li>
+				<li><br><code>data-e-components-fallback-order</code> (<code>String</code>): Orden de carga de recursos alternativos aplicable de manera predeterminada a todos los subcomponentes en estado de degradación.</li>
+			</ul>
+			<br>
+			<p><b>Nota sobre la nomenclatura de rutas de contingencia (Fallback):</b> El motor implementa una búsqueda ascendente en el árbol DOM. Si un componente individual no define de forma explícita su origen o secuencia de contingencia con los atributos de componente individual (<code>data-e-component-fallback-src</code> o <code>data-e-component-fallback-order</code>), el sistema buscará recursivamente hacia arriba en los nodos padres los atributos correspondientes del coordinador (<code>data-e-components-fallback-origin</code> o <code>data-e-components-fallback-order</code>).</p>
+			<br>
+			<p><b>Comportamiento de Declaraciones Híbridas:</b> Si un único elemento DOM se declara simultáneamente como componente (<code>data-e-component</code>) y como coordinador (<code>data-e-components</code>), el motor ejecutará una inicialización en cascada: primero se montará el componente individual y, tras alcanzar el estado listo (<code>"ready"</code>), se iniciará de forma automática el coordinador asociado para procesar a sus descendientes.</p>
+			<br>
+			<h3>3. Orquestación e hilos de carga</h3>
+			<p>Los coordinadores permiten definir secuencias híbridas complejas para optimizar el rendimiento y la experiencia del usuario:</p>
+			<ul>
+				<li>El operador coma (<code>,</code>) indica una secuencia obligatoria de pasos en cascada (esperar la preparación del bloque anterior para continuar).</li>
+				<li>El operador suma (<code>+</code>) indica la paralelización de llamadas de red e inyección en el DOM dentro del mismo bloque temporal.</li>
+			</ul>
+			<br>
+			<p><b>Ejemplo de orquestación mixta:</b></p>
+<pre><code>&lt;!-- Descarga 'estilos-base' y 'lateral' simultáneamente. Una vez listos ambos, se descarga y monta 'panel-principal' --&gt;
+&lt;section data-e-components="mi_coordinador" data-e-components-order="estilos-base+lateral, panel-principal"&gt;
+	&lt;div data-e-component="estilos-base"&gt;&lt;/div&gt;
+	&lt;aside data-e-component="lateral" data-e-component-id="lateral"&gt;&lt;/aside&gt;
+	&lt;div data-e-component="panel-principal" data-e-component-required="lateral"&gt;&lt;/div&gt;
+&lt;/section>
+</code></pre>
+			<br>
+			<h3>4. APIs de Instancia y Eventos de Ciclo de Vida</h3>
+			<p>Las instancias generadas por el motor proveen propiedades de consulta y métodos de suscripción a eventos internos.</p>
+			<br>
+			<p><b>Interfaz de Instancia:</b></p>
+			<ul>
+				<li><code>id</code> (<code>String</code>): El identificador único final asignado a la instancia.</li>
+				<li><br><code>element</code> (<code>HTMLElement</code>): Referencia al nodo físico en el DOM.</li>
+				<li><br><code>options</code> (<code>Object</code>): Configuración activa resuelta para la instancia.</li>
+				<li><br><code>status()</code>: Retorna el estado actual de la instancia. Los estados posibles son:
+					<ul class="padding">
+						<li><code>"pending"</code>: Creada, esperando asignación del ciclo o resolución de dependencias requeridas.</li>
+						<li><br><code>"loading"</code>: Realizando peticiones de red y aplicando recursos principales.</li>
+						<li><br><code>"loading-fallback"</code>: Error detectado en la vía principal, montando recurso alternativo.</li>
+						<li><br><code>"ready"</code>: Proceso de carga y adición de recursos completados.</li>
+						<li><br><code>"failed"</code>: Error irrecuperable en el ciclo de inicialización o en sus dependencias.</li>
+					</ul>
+				</li>
+				<li><br><code>_destroy(isReset)</code>: Invoca la desconexión de observadores, la remoción de oyentes de eventos y la baja del registro de la instancia. El parámetro booleano opcional <code>isReset</code> indica si la llamada procede de un restablecimiento de caché global, evitando la advertencia de descarte de nodos activos aún presentes en el árbol de renderizado.</li>
+			</ul>
+			<br>
+			<h3>Suscripción a Eventos</h3>
+			<p>El objeto de instancia incorpora un emisor de eventos interno que permite añadir oyentes mediante los métodos <code>on()</code>, <code>once()</code> y <code>off()</code>:</p>
+<pre><code>var inst = _components.get('panel-principal');
+
+if (inst) {
+	// Suscripción de ciclo completado
+	inst.on('ready', function() {
+		console.log('El componente ya tiene aplicados sus estilos, html y scripts.');
+	});
+
+	// Suscripción de errores de carga del componente
+	// Captura fallos de red, timeouts de descarga y excepciones producidas en el JS inyectado
+	inst.on('error', function(err) {
+		console.error('Incapacidad para procesar el componente:', err.message);
+	});
+}
+</code></pre>
+			<br>
+			<p><b>Mecanismo de Cola de Eventos:</b></p>
+			<p>Para evitar la pérdida de mensajes durante la fase de carga asíncrona, el motor incluye una cola de retención con un tamaño máximo de <code>50</code> mensajes. Los eventos enviados con <code>_components.emit('id_destino', 'evento', data)</code> se almacenarán temporalmente si el componente destino no está listo (estado diferente de <code>"ready"</code>), liberándose de forma secuencial una vez inicializado.</p>
+			<p><em>Nota sobre estados fallidos:</em> Si el componente de destino se encuentra en estado <code>"failed"</code>, cualquier envío de eventos mediante <code>_components.emit()</code> será descartado inmediatamente y se emitirá una advertencia en la consola, impidiendo que el mensaje se agregue a la cola de retención.</p>
+			<br>
+			<h3>5. Métodos de Control Global</h3>
+			<p>La biblioteca expone una serie de utilidades y hooks a nivel global en el objeto <code>_components</code>:</p>
+			<br><ul>
+				<li><code>_components.get(id)</code>: Recupera la instancia activa de un componente a través de su ID unívoco.</li>
+				<li><br><code>_components.emit(targetId, event, data)</code>: Distribuye eventos globales hacia componentes específicos de forma segura.</li>
+				<li><br><code>_components.order(name, value?)</code>: Permite registrar o consultar alias reutilizables para flujos de carga preestablecidos.</li>
+				<li><br><code>_components.scan(root?)</code>: Ejecuta una inspección sobre el subárbol DOM especificado (o sobre todo el cuerpo del documento) inicializando elementos con atributos de componente.</li>
+				<li><br><code>_components.autoScan()</code>: Asegura la inicialización automática del árbol del documento una vez se complete la carga del DOM.</li>
+				<li><br><code>_components.resetCache()</code>: Libera memoria. Destruye instancias activas de forma ordenada, desconecta observadores globales y purga la caché de recursos y órdenes cargados.</li>
+			</ul>
+			<br>
+			<p><b>Mecanismo Observador de Estados Globales:</b></p>
+			<p>Es posible adjuntar funciones observadoras globales para trazar el flujo interno de los componentes del sistema (ideal para tareas de depuración o construcción de indicadores de carga externos):</p>
+<pre><code>// Registrar monitorización de estados
+function miObservador(id, estado) {
+	console.log('[Monitor de Ciclo de Vida] Componente "' + id + '" cambió a estado: ' + estado);
+}
+
+_components._registerStateObserver(miObservador);
+
+// Si se desea remover posteriormente:
+// _components._unregisterStateObserver(miObservador);
+</code></pre>
+			<br>
+			<h3>6. Arquitectura y Características Técnicas</h3>
+			<div class="features">
+				<p><strong>Caché unificada y deduplicación de red:</strong> Consolida peticiones en cola. Si múltiples elementos solicitan el mismo archivo estático (CSS, JS) en el mismo periodo, se realiza un único viaje de red, optimizando el ancho de banda. <em>Tanto los recursos cargados como las estructuras de ordenamiento parseadas se almacenan en una caché de memoria limitada a 100 registros máximos por tipo, aplicando un mecanismo de desalojo estructurado FIFO (First-In, First-Out) al exceder dicho límite.</em></p>
+				<p><br><strong>Recuperación y Degradación Fluida (Fallback):</strong> El motor transfiere de forma transparente las colas de eventos pendientes y los oyentes personalizados asignados a la nueva instancia de contingencia (fallback) en caso de fallos críticos del componente original. <em>Los oyentes para eventos nativos de ciclo de vida (<code>ready</code> y <code>error</code>) están excluidos de esta transferencia automática para evitar activaciones duplicadas redundantes, siendo gestionados directamente por el framework.</em></p>
+				<p><br><strong>Ejecución Segura y Mitigación de CSP:</strong> Los archivos javascript inyectados dinámicamente son aislados dentro de bloques de control de excepciones (try/catch) mediante un wrapper de ejecución. Las excepciones de ejecución producidas dentro del código inyectado se interceptan de forma controlada y se notifican al flujo de la instancia correspondiente mediante su evento de error. Si se imponen restricciones de Content Security Policy (CSP) en el uso de Blob URLs, el motor ejecuta un mecanismo de contingencia directa evaluando el texto en línea de forma segura.</p>
+				<p><br><strong>Recolección de basura automatizada (Garbage Collection):</strong> Integra un sistema centralizado basado en <code>MutationObserver</code>. Monitorea cambios estructurales en el cuerpo del documento y detecta desconexiones del DOM (usando validaciones de conexión nativas <code>isConnected</code>) para invocar de forma automática la destrucción interna de instancias, liberando escuchas y memoria sin requerir intervención manual.</p>
+			</div>
+			<br>
+			<h3>7. Consideraciones Técnicas y Optimización</h3>
+			<div class="features">
+				<p><strong>Ámbito de aplicación de estilos (Shadow DOM):</strong> El motor añade los elementos de estilo (<code>&lt;style&gt;</code>) directamente en <code>document.head</code>. En caso de integrar estos recursos dentro de arquitecturas basadas en Shadow DOM, es recomendable tomar en cuenta que las reglas CSS globales inyectadas no penetran la barrera de encapsulación por defecto, requiriendo estrategias de herencia o importación alternativas.</p>
+				<p><br><strong>Entornos de Renderizado del Lado del Servidor (SSR):</strong> Las referencias globales a variables de entorno del navegador (tales como <code>window</code> o <code>document</code>) se encuentran aisladas mediante verificaciones condicionales básicas en los puntos críticos de inicialización de la biblioteca. Sin embargo, para flujos de ejecución híbridos o arquitecturas de pre-renderizado (SSR), se sugiere programar la ejecución del escaneo o inicialización manual exclusivamente en ganchos del ciclo de vida del lado del cliente (client-side) para evitar excepciones debidas a la ausencia de APIs del DOM.</p>
+			</div>
+		</div>
+	</section>
+</main>
+
+	<footer class="center-y padding">
+		<p>2025 &copy; Desarrollado por <a href="https://okzgn.com">OKZGN</a></p>
+	</footer>
+</body>
+</html>
