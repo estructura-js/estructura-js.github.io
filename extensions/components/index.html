@@ -20,6 +20,7 @@
 	<script>
 		document.addEventListener('DOMContentLoaded', function(){
 			console.log('Estructura Components Ready.');
+
 			_components({
 				origin: './components-origin/'
 			});
@@ -49,17 +50,17 @@
 			</div>
 		</section>
 	</nav>
-	
+
 <main>
 	<h2 class="title">Components</h2>
 	<section class="margin-y">
 		<h2 id="description">Descripción</h2>
 		<div class="padding">
 			Proporciona un ecosistema modular orientado al desacoplamiento de interfaces mediante la inyección asíncrona y coordinada de recursos HTML, CSS y JS. El sistema gestiona automáticamente el ciclo de vida de los componentes, la resolución de dependencias declarativas en el DOM, la mitigación de colisiones de IDs y flujos de degradación fluida ante fallos de carga o de red.<br><br>
-			<b>Librería:</b> 
+			<b>Librería:</b>
 			<a target="_blank" href="estructura.components.js">estructura.components.js</a>
 			<br><br>
-			<b>Dependencia obligatoria:</b> 
+			<b>Dependencia obligatoria:</b>
 			<a target="_blank" href="../http/estructura.http.js">estructura.http.js</a> (<a href="../http/index.html">HTTP, documentación</a>). El objeto global <code>_http</code> debe estar disponible en el entorno antes de inicializar cualquier componente; de lo contrario, el proceso se interrumpirá emitiendo una excepción en consola.
 		</div>
 	</section>

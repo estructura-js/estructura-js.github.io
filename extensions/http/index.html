@@ -19,13 +19,15 @@
 	<script>
 		document.addEventListener('DOMContentLoaded', function(){
 			console.log('Estructura HTTP Ready.');
-			var req = _http.request({
+
+			var req = _http({
 				url: './test/req',
 				onSuccess: function(r){
 					console.info('Request test response:', r);
 					document.getElementById('test').textContent = r.slice(0, 24);
 				}
 			});
+
 			console.log('Test:', req);
 		});
 	</script>
@@ -51,7 +53,7 @@
 			</div>
 		</section>
 	</nav>
-	
+
 <main>
 	<h2 class="title">HTTP</h2>
 	<section class="margin-y">
@@ -68,11 +70,11 @@
 			<h3>1. Interfaz del Motor de Peticiones</h3>
 			<p>La librería expone un único namespace global denominado <code>_http</code> que contiene la función principal de ejecución.</p>
 			<br>
-			<p><b><code>_http.request(options)</code>:</b></p>
+			<p><b><code>_http(options)</code>:</b></p>
 			<p>Inicia una transacción de red configurada según el objeto de propiedades provisto.</p>
 			<br>
 			<p><b>Sintaxis:</b></p>
-			<pre><code>var req = _http.request({ url: './config.json' });
+			<pre><code>var req = _http({ url: './config.json' });
 // req.abort();
 // req.getXHR();</code></pre>
 			<br>
@@ -85,10 +87,10 @@
 			<br>
 
 			<h3>2. Opciones de Configuración (<code>options</code>)</h3>
-			<p>El argumento de configuración estructurado para el método <code>_http.request()</code> admite las siguientes propiedades:</p>
+			<p>El argumento de configuración estructurado para la función <code>_http()</code> admite las siguientes propiedades:</p>
 			<br>
 			<p><b>Sintaxis:</b></p>
-			<pre><code>_http.request({
+			<pre><code>_http({
 	url: 'https://backend.com/api/v1/setData',
 	method: 'POST',
 	data: { 'a': '1', 'N': '...' }
@@ -125,7 +127,7 @@
 			<br>
 
 			<h3>4. Mecanismos Internos y Flujos de Control</h3>
-			
+
 			<p><b>Detección de Conflictos de Observabilidad:</b></p>
 			<p>Para asegurar una trazabilidad limpia del flujo de red, el motor emite una advertencia en la consola si el desarrollador define de manera simultánea un callback genérico <code>onReadyStateChange</code> junto con los controladores granulares de ciclo de vida (<code>onSuccess</code>, <code>onError</code> o <code>onHeadersReceived</code>). Esta advertencia es de carácter informativo y no restringe la ejecución física de ninguno de los controladores; ambos flujos operarán de manera independiente y en paralelo, lo que podría generar ejecuciones redundantes de lógica si el desarrollador gestiona los mismos estados de manera duplicada.</p>
 			<br>
@@ -137,9 +139,9 @@
 			<br>
 
 			<h3>5. Ejemplos Prácticos de Implementación</h3>
-			
+
 			<p><b>Petición GET Estándar con Manejo de Datos:</b></p>
-<pre><code>_http.request({
+<pre><code>_http({
 	url: 'https://api.ejemplo.com/v1/usuarios',
 	method: 'GET',
 	onSuccess: function(respuesta, xhr) {
@@ -158,7 +160,7 @@
 			<br>
 
 			<p><b>Petición POST asíncrona con Seguimiento de Carga y Límite de Tiempo:</b></p>
-<pre><code>var controlDescarga = _http.request({
+<pre><code>var controlDescarga = _http({
 	url: 'https://api.ejemplo.com/v1/archivos',
 	method: 'POST',
 	headers: {
@@ -184,7 +186,7 @@
 			<br>
 
 			<p><b>Interrupción Programada de una Petición:</b></p>
-<pre><code>var peticion = _http.request({
+<pre><code>var peticion = _http({
 	url: 'https://api.ejemplo.com/v1/stream-datos',
 	onSuccess: function(respuesta, xhr) {
 		console.log('Datos recibidos:', respuesta);
@@ -205,7 +207,7 @@ document.querySelector('#cancelar-accion').addEventListener('click', function() 
 			<p>Aunque el diseño original de la librería utiliza un modelo de callbacks para maximizar la compatibilidad y el control granular low-level, puede integrarse fácilmente con el flujo de Promesas estándar de JavaScript para habilitar el uso de <code>async/await</code>:</p>
 <pre><code>function solicitarRecurso(configuracion) {
 	return new Promise(function(resolve, reject) {
-		_http.request(Object.assign({}, configuracion, {
+		_http(Object.assign({}, configuracion, {
 			onSuccess: function(respuesta, xhr) {
 				resolve({ datos: respuesta, xhr: xhr });
 			},
@@ -246,4 +248,3 @@ async function obtenerDatosDeUsuario() {
 	</footer>
 </body>
 </html>
-
