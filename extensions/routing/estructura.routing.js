@@ -14,12 +14,13 @@
 
   var hasWindow = typeof window !== 'undefined';
   var hasHistory = hasWindow && !!window.history;
+  var hasOwnProp = Object.prototype.hasOwnProperty;
 
   // Direct property copy. Note: Prototype properties of 'source'
   // are deliberately ignored for security due to the hasOwnProperty guard.
   function extend(target, source) {
     for (var key in source) {
-      if (Object.prototype.hasOwnProperty.call(source, key)) {
+      if (hasOwnProp.call(source, key)) {
         target[key] = source[key];
       }
     }
@@ -90,7 +91,7 @@
     cache.set(obj, clone);
 
     for (var key in obj) {
-      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      if (hasOwnProp.call(obj, key)) {
         clone[key] = deepClone(obj[key], cache);
       }
     }
@@ -281,17 +282,21 @@
     if (typeof path === 'function') {
       callbacks = Array.prototype.slice.call(arguments);
       register('*', callbacks);
-    } else if (arguments.length > 1) {
+    }
+    else if (arguments.length > 1) {
       if (typeof path !== 'string') {
         throw new TypeError('Route path must be a string');
       }
       callbacks = Array.prototype.slice.call(arguments, 1);
       register(path, callbacks);
-    } else if (typeof path === 'string') {
+    }
+    else if (typeof path === 'string') {
       router.show(path);
-    } else if (path === undefined || (path && typeof path === 'object' && !Array.isArray(path))) {
+    }
+    else if (path === undefined || (path && typeof path === 'object' && !Array.isArray(path))) {
       router.start(path);
-    } else {
+    }
+    else {
       console.warn('_routing: Invalid argument passed to router():', path);
     }
 
@@ -562,7 +567,6 @@
       }
     }
   };
-
 
   // Main routing function
   var _routing = _e.instance('routing');
