@@ -28,7 +28,7 @@
 
 
 			console.log(window.location.pathname, window.location, typeof window.location.pathname, typeof window.location);
-			router.base(window.location + '');
+			router.base(window.location.pathname + '');
 
 			router(function(ctx, next){
 				console.info('Routing test:', ctx.path);
