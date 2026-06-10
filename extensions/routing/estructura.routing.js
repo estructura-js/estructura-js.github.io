@@ -12,6 +12,8 @@
 }(this, function () {
   "use strict";
 
+  var _routing = _e.instance('routing');
+
   var hasWindow = typeof window !== 'undefined';
   var hasHistory = hasWindow && !!window.history;
   var hasOwnProp = Object.prototype.hasOwnProperty;
@@ -269,39 +271,14 @@
     }
   };
 
-
-
+  // IMPORTANT: Functions that depends each other STARTS HERE
   var routes = new Map();
   var basepath = '';
   var running = false;
   var errorListeners = [];
 
   // Strict ES5-compatible router signature
-  function router(path) {
-    var callbacks;
-    if (typeof path === 'function') {
-      callbacks = Array.prototype.slice.call(arguments);
-      register('*', callbacks);
-    }
-    else if (arguments.length > 1) {
-      if (typeof path !== 'string') {
-        throw new TypeError('Route path must be a string');
-      }
-      callbacks = Array.prototype.slice.call(arguments, 1);
-      register(path, callbacks);
-    }
-    else if (typeof path === 'string') {
-      router.show(path);
-    }
-    else if (path === undefined || (path && typeof path === 'object' && !Array.isArray(path))) {
-      router.start(path);
-    }
-    else {
-      console.warn('_routing: Invalid argument passed to router():', path);
-    }
-
-    return router;
-  }
+  var router = {};
 
   // Returns a shallow copy to prevent direct modifications of the internal reference
   router.onError = function (callback) {
@@ -311,7 +288,6 @@
     if (typeof callback === 'function') {
       errorListeners.push(callback);
     }
-    return router;
   };
 
   router.offError = function (callback) {
@@ -322,7 +298,6 @@
         return cb !== callback;
       });
     }
-    return router;
   };
 
   function register(path, callbacks) {
@@ -459,7 +434,7 @@
 
   router.base = function (path) {
     if (typeof path !== 'string') {
-      console.error('_routing: "base" path is "' + typeof path + '" not a String:', path);
+      console.error('_routing: "base" path is "' + _e.type(path).join(', ') + '" not a String:', path);
       return basepath;
     }
 
@@ -470,11 +445,10 @@
     if (basepath && basepath !== '/' && basepath.charAt(basepath.length - 1) === '/') {
       basepath = basepath.slice(0, -1);
     }
-    return router;
   };
 
   router.start = function (options) {
-    if (running) return router;
+    if (running) return true;
     running = true;
 
     var opts = options || {};
@@ -490,17 +464,19 @@
       var initialPath = window.location.pathname + window.location.search + window.location.hash;
       router.replace(initialPath, null, true, false);
     }
-    return router;
+
+    return false;
   };
 
   router.stop = function () {
-    if (!running) return router;
+    if (!running) return false;
     running = false;
     if (hasWindow) {
       window.removeEventListener('click', clickHandler, false);
       window.removeEventListener('popstate', onPopState, false);
     }
-    return router;
+
+    return true;
   };
 
   router.show = function (path, state, dispatchRoute, push) {
@@ -527,7 +503,7 @@
 
   router.redirect = function (from, to) {
     if (typeof from === 'string' && typeof to === 'string') {
-      router(from, function () {
+      _routing(from, function () {
         defer(function () {
           router.replace(to);
         });
@@ -537,7 +513,6 @@
         router.replace(from);
       });
     }
-    return router;
   };
 
   // Removes associated callbacks. Returns a boolean corresponding to the success of the unbinding operation
@@ -568,10 +543,42 @@
     }
   };
 
-  // Main routing function
-  var _routing = _e.instance('routing');
+  // Main routing exposed functions
+  _routing.fn(function (path) {
+    var callbacks;
+    if(typeof path === 'function') {
+      callbacks = Array.prototype.slice.call(arguments);
+      register('*', callbacks);
+    }
+    else if (arguments.length > 1) {
+      if (typeof path !== 'string') {
+        var e = new Error('Route path must be a string');
+        e.name = '';
+        throw e;
+      }
+      callbacks = Array.prototype.slice.call(arguments, 1);
+      register(path, callbacks);
+    }
+    else if (typeof path === 'string') {
+      router.show(path);
+    }
+    else if (path === undefined || (path && typeof path === 'object' && !Array.isArray(path))) {
+      router.start(path);
+    }
+    else {
+      console.warn('_routing: Invalid argument passed:', path);
+    }
+  });
 
-  _routing.fn(router);
+  _routing.base = router.base;
+  _routing.start = router.start;
+  _routing.stop = router.stop;
+  _routing.show = router.show;
+  _routing.replace = router.replace;
+  _routing.redirect = router.redirect;
+  _routing.off = router.off;
+  _routing.onError = router.onError;
+  _routing.offError = router.offError;
 
   return _routing;
 }));
