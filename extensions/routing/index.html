@@ -126,10 +126,10 @@ router(function(ctx, next) {
 						<pre><code>router('/usuario/:id', function(ctx) { console.log(ctx.params.id); });</code></pre>
 					</li>
 					<li><br><b>Parámetros Opcionales (<code>:param?</code>)</b>: Permite que el segmento final sea omitido en la ruta de navegación.
-						<pre><code>router('/blog/:categoria?', function(ctx) { ... });</code></pre>
+						<pre><code>router('/blog/:categoria?', function(ctx) { /* ... */ });</code></pre>
 					</li>
 					<li><br><b>Comodín Global (<code>*</code>)</b>: Captura cualquier subruta posterior y lo asigna en el parámetro <code>ctx.params.wildcard</code>.
-						<pre><code>router('/archivos/*', function(ctx) { ... });</code></pre>
+						<pre><code>router('/archivos/*', function(ctx) { /* ... */ });</code></pre>
 					</li>
 				</ul>
 				<br>

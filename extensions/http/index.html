@@ -148,7 +148,8 @@
 		try {
 			var usuarios = JSON.parse(respuesta);
 			console.log('Lista de usuarios procesada:', usuarios);
-		} catch (e) {
+		}
+		catch (e) {
 			console.error('La respuesta no posee un formato JSON válido:', e);
 		}
 	},
@@ -226,7 +227,8 @@ async function obtenerDatosDeUsuario() {
 			method: 'GET'
 		});
 		console.log('Datos obtenidos:', JSON.parse(resultado.datos));
-	} catch (error) {
+	}
+	catch (error) {
 		console.error('Error capturado con async/await:', error.message);
 	}
 }
