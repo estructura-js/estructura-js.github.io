@@ -433,7 +433,7 @@
   }
 
   router.base = function (path) {
-    if (typeof path !== 'string') {
+    if (path && typeof path !== 'string') {
       console.error('_routing: "base" path is "' + _e.type(path).join(', ') + '" not a String:', path);
       return basepath;
     }
