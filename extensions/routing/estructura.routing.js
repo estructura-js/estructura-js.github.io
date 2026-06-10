@@ -40,7 +40,7 @@
       } else if (path === undefined || (path && typeof path === 'object' && !Array.isArray(path))) {
         router.start(path);
       } else {
-        console.warn('Invalid argument passed to router():', path);
+        console.warn('_routing: Invalid argument passed to router():', path);
       }
       return router;
     }
@@ -198,10 +198,10 @@
       var rawState = deepClone(state) || {};
 
       if (rawState.path && rawState.path !== this.canonicalPath) {
-        console.warn('Router is overwriting state.path from "' + rawState.path + '" to "' + this.canonicalPath + '"');
+        console.warn('_routing: Router is overwriting state.path from "' + rawState.path + '" to "' + this.canonicalPath + '"');
       }
       if (rawState.cleanPath && rawState.cleanPath !== this.path) {
-        console.warn('Router is overwriting state.cleanPath from "' + rawState.cleanPath + '" to "' + this.path + '"');
+        console.warn('_routing: Router is overwriting state.cleanPath from "' + rawState.cleanPath + '" to "' + this.path + '"');
       }
 
       this.state = extend(rawState, {
@@ -437,7 +437,7 @@
 
     router.base = function (path) {
       if (typeof path !== 'string') {
-        console.error('"base" path is "' + typeof path + '" not a String:', path);
+        console.error('_routing: "base" path is "' + typeof path + '" not a String:', path);
         return basepath;
       }
 
@@ -546,7 +546,7 @@
         if (route) {
           var index = route.callbacks.indexOf(callback);
           if (index === -1) {
-            console.warn('Callback not found for path: ' + path);
+            console.warn('_routing: Callback not found for path: ' + path);
             return false;
           } else {
             route.callbacks.splice(index, 1);
@@ -556,7 +556,7 @@
             return true;
           }
         } else {
-          console.warn('Path not registered: ' + path);
+          console.warn('_routing: Path not registered: ' + path);
           return false;
         }
       }
