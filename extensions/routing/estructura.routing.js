@@ -438,7 +438,9 @@
     router.base = function (path) {
       if (typeof path !== 'string') {
         console.error('Path:', path);
-        throw new Error('Path is not a String.');
+        var e = new Error('Path is not a String.');
+        e.name = '';
+        throw e;
       }
 
       if (arguments.length === 0) return basepath;
