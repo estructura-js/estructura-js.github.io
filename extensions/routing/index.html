@@ -16,23 +16,28 @@
 	<script src="https://cdn.jsdelivr.net/npm/estructura-js"></script>
 	<script src="../../main.js"></script>
 	<script src="estructura.routing.js"></script>
-	<style>
-
-	</style>
 	<script>
 		document.addEventListener('DOMContentLoaded', function(){
 			console.log('Estructura Routing ready.');
 
-			var router = _routing();
 			var test_node = document.getElementById('test_node');
+			var routing_methods = _routing();
 
-
-			console.log(window.location.pathname, window.location, typeof window.location.pathname, typeof window.location);
-			router.base(window.location.pathname + '');
-
-			router(function(ctx, next){
+			_routing(function(ctx, next){
 				console.info('Routing test:', ctx.path);
 				test_node.textContent = ctx.path;
+			});
+
+			_routing('/test/:id', function(ctx, next){
+				console.info('Routing test param:', ctx.params.id);
+				test_node.textContent = '/test/id: ' + ctx.params.id;
+			});
+
+			routing_methods.base(window.location.pathname);
+			routing_methods.start({
+				click: true,
+				popstate: true,
+				dispatch: true
 			});
 
 			var test_link = document.getElementById('test_link');
@@ -40,16 +45,8 @@
 			  test_link.href = './test/' + Math.round(Math.random() * 9999);
 			});
 
-			router('/test/:id', function(ctx, next){
-				console.info('Routing test param:', ctx.params.id);
-				test_node.textContent = '/test/id: ' + ctx.params.id;
-			});
 
-			router.start({
-				click: true,
-				popstate: true,
-				dispatch: true
-			});
+
 		});
 	</script>
 </head>
