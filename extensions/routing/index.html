@@ -26,7 +26,7 @@
 			var router = _routing();
 			var test_node = document.getElementById('test_node');
 
-			router.base(window.location.pathname);
+			router.base(window.location.pathname + '');
 
 			router(function(ctx, next){
 				console.info('Routing test:', ctx.path);
