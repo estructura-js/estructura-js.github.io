@@ -436,7 +436,12 @@
     }
 
     router.base = function (path) {
+      if (typeof path !== 'string') {
+        throw new Error('Path is not a String.');
+      }
+
       if (arguments.length === 0) return basepath;
+
       basepath = path;
       // The following IF was added in order to avoid double slash
       if (basepath && basepath !== '/' && basepath.charAt(basepath.length - 1) === '/') {
