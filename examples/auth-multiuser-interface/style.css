@@ -1,0 +1,175 @@
+:root {
+	--color1: #004e9b;
+	--color2: #555;
+	--color3: #f0f0f0;
+	--color4: #000;
+	--color5: #fff;
+	--color6: #eee;
+	--color7: #ccc;
+	--color8: #093;
+	--color9: #ffc;
+	--color10: #f00;
+	--color11: #fec;
+	--radius: 0.25rem;
+	--border: 2px;
+	--border-input: 1px;
+	--space: 1rem;
+	--font: 1rem;
+}
+@font-face {
+	font-family: 'A';
+	src: url(inter_variable.woff2) format('woff');
+	font-weight: normal;
+}
+
+*, *::after, *::before {
+	outline: 0;
+	border: 0;
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	scrollbar-color: var(--color2) var(--color3);
+	scrollbar-width: thin;
+	transition: all 0.125s;
+	font-family: 'A', helvetica;
+	font-size: var(--font);
+	word-spacing: 0.25rem;
+	line-height: 1.25;
+}
+:active, :focus {
+	outline: 0;
+	-webkit-tap-highlight-color: transparent;
+}
+:focus-visible {
+   	outline: 2px solid var(--color1);
+	outline-offset: 2px;
+}
+::selection {
+	opacity: 1;
+	background: var(--color1) !important;
+	color: var(--color3);
+}
+::-webkit-scrollbar {
+	width: 0.25rem;
+	height: 0.25rem;
+}
+::-webkit-scrollbar-thumb { background: var(--color2); }
+::-webkit-scrollbar-track { background: var(--color3); }
+html, body {
+	width: 100%;
+	height: 100%;
+	height: 100vh;
+	height: 100dvh;
+}
+input, button, textarea, select {
+    accent-color: var(--color2);
+    border-radius: var(--radius);
+}
+a {
+	text-decoration: none;
+	color: var(--color1);
+}
+a:hover, a:active, a:focus { color: var(--color4); }
+body {
+	overscroll-behavior: none;
+	background-color: var(--color3);
+	text-align: left;
+	color: var(--color4);
+	justify-content: space-between;
+}
+input[type="text"], input[type="password"], button {
+	padding: 0.5rem;
+	border: var(--border) solid transparent;
+}
+input[type="radio"], input[type="checkbox"] { margin-right: var(--space); }
+input[type="text"], input[type="password"] {
+	border: var(--border-input) solid var(--color2);
+	width: 15rem;
+}
+input[type="text"], input[type="password"], input[type="radio"], input[type="checkbox"], select, textarea {
+    background-color: transparent;
+}
+input[type="text"]:hover, input[type="text"]:active, input[type="text"]:focus,
+input[type="password"]:hover, input[type="password"]:active, input[type="password"]:focus { border-color: var(--color4); }
+input[type="radio"], input[type="checkbox"] {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+button {
+	color: var(--color5);
+	font-weight: bold;
+	background: var(--color1);
+	cursor: pointer;
+}
+button.G { background: var(--color8); }
+button.X { background: var(--color2); }
+button:hover, button:focus, button:active {
+	color: var(--color2);
+	background: var(--color4);
+}
+
+[data-hidden] { display: none !important; }
+[data-hidden="no"] { display: initial !important; }
+
+[data-load] { animation: l 0.5s infinite alternate; }
+@keyframes l { from { background: var(--color1); } to { background: var(--color2); } }
+header {
+	background: var(--color1);
+	color: var(--color5);
+}
+h1 span { font-size: 1.25rem; }
+h1 img {
+	height: 3rem;
+	line-height: 0;
+	margin-right: var(--space);
+	filter: invert();
+}
+header, footer, h1, main, fieldset label, [data-row] {
+    display: flex;
+    flex-flow: row;
+}
+body, fieldset, fieldset > div, [data-column] {
+    display: flex;
+	flex-flow: column;
+}
+header > *, footer > *, h1 > *, main > * { align-self: center; }
+main, footer { justify-content: center; }
+footer {
+	background: var(--color7);
+	color: var(--color2);
+	padding: 0.5rem var(--space);
+	text-align: center;
+	font-weight: bold;
+}
+main {
+    flex-grow: 1;
+    background: var(--color3);
+}
+section { padding: 0.5rem; }
+fieldset legend {
+    width: 100%;
+    font-size: 1.5rem;
+    margin-bottom: var(--space);
+}
+[data-box] {
+    background-color: var(--color5);
+    border: var(--border) solid var(--color7);
+    border-radius: var(--radius);
+    padding: var(--space);
+}
+[data-box] > * {
+    margin-bottom: var(--space);
+}
+[data-box] > *:last-child {
+    margin-bottom: 0;
+}
+fieldset h4, fieldset div label {
+    margin-bottom: 0.5rem;
+}
+fieldset div label:last-child { margin-bottom: 0; }
+@media screen and (max-width: 640px), (max-width: 960px) {
+    *, *::after, *::before { font-size: 0.9rem; }
+}
+@media screen and (max-width: 640px) {
+    *, *::after, *::before { font-size: 0.85rem; }
+}

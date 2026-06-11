@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Gestor de Tickets Horarios</title>
+	<meta charset="UTF-8">
+	<link rel="icon" href="icon.png">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="Gestor de Tickets Horarios.">
+	<meta name="author" content="OKZGN">
+	<meta name="theme-color" content="#004e9b">
+	<link rel="stylesheet" href="style.css">
+	<script src="https://cdn.jsdelivr.net/npm/estructura-js"></script>
+	<script src="../../extensions/events/estructura.events.js"></script>
+	<script src="../../extensions/dom/estructura.dom.js"></script>
+	<script src="main.js"></script>
+</head>
+
+<body>
+	<header>
+		<h1><img src="icon.png" alt="Icon"><span>Gestor de Tickets Horarios</span></h1>
+	</header>
+	<main>
+
+	    <section>
+			<form data-e-handler="forms" data-e-handler-event="submit.forms" data-e-handler-data="/signup">
+    			<fieldset>
+    			    <legend data-e-handler="accordion" data-e-handler-event="click.accordion" data-e-handler-data="#signup">Registro</legend>
+
+    				<div id="signup" data-box data-hidden="no">
+        				<div>
+        				    <h4>Tipo</h4>
+            				<label>
+            				    <input type="radio" name="type" value="admin">
+            				    <b>Administrador</b>
+            				</label>
+            				<label>
+            				    <input type="radio" name="type" value="operator" checked>
+            				    <b>Operador</b>
+            				</label>
+        				</div>
+
+        				<label data-column>
+        				    <h4>Usuario</h4>
+     			        <input type="text" name="user">
+        				</label>
+
+        				<label data-column>
+        				    <h4>Contraseña</h4>
+     			        <input type="text" name="password">
+        				</label>
+
+        				<label data-column>
+        				    <h4>Espacio de trabajo</h4>
+     			        <input type="text" name="workspace">
+        				</label>
+
+        				<button type="submit">Registrar</button>
+    				</div>
+    			</fieldset>
+			</form>
+		</section>
+
+	    <section>
+			<form data-e-handler="forms" data-e-handler-event="submit.forms" data-e-handler-data="/signin">
+     			<fieldset>
+     			    <legend data-e-handler="accordion" data-e-handler-event="click.accordion" data-e-handler-data="#signin">Ingreso</legend>
+
+    				<div id="signin" data-box data-hidden="no">
+        				<label data-column>
+        				    <h4>Usuario</h4>
+     			        <input type="text" name="user">
+        				</label>
+
+        				<label data-column>
+        				    <h4>Contraseña</h4>
+     			        <input type="text" name="password">
+        				</label>
+
+        				<label data-column>
+        				    <h4>Espacio de trabajo</h4>
+     			            <input type="text" name="workspace">
+        				</label>
+
+        				<button type="submit">Ingresar</button>
+    				</div>
+     			</fieldset>
+			</form>
+		</section>
+	</main>
+	<footer>
+	    <span>2026 &copy; Desarrollado y servido por <a href="https://okzgn.com">OKZGN</a>. Contacto: <a href="https://wa.me/593980670720">(+ 593) 098 067 0720</a></span>
+	</footer>
+</body>
+</html>
