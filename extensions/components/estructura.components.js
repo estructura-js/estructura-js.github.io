@@ -48,26 +48,21 @@
   // Centralized MutationObserver system
   var globalObserver = null;
   var observedInstances = [];
+  var randomErrorsId = '_e_components_' + (new Date()).getTime();
 
   // Register global execution error handler for injected components
   if (typeof window !== 'undefined') {
-      window.__components_exec_error = function(id, error) {
-          executionErrors[id] = error;
-      };
+    window.addEventListener('error', function (event) {
+      if (!event || typeof event !== 'object') { return; }
+      var _err = event.error;
+      if (!_err || typeof _err !== 'object') { return; }
+      if (typeof _err[randomErrorsId] !== 'undefined' && _err[randomErrorsId] == _err.name) {
+        executionErrors[_err.name] = _err.message;
+      }
+    });
   }
 
-  /**
-    * Main entry point for module initialization or configuration.
-    * @param {Element|Object} elementOrConfig - DOM element to initialize or global configuration.
-    * @param {Object} [config] - Instance-specific configuration.
-    * @returns {Object|undefined} Global configuration or created instance.
-    */
-  function main(elementOrConfig, config) {
-      if (isPlainObject(elementOrConfig)) {
-          return configure(elementOrConfig);
-      }
-      return initialize(elementOrConfig, config);
-  }
+  var main = {}
 
   // --- PUBLIC INTERFACE METHODS (Early Definition) ---
 
@@ -420,7 +415,7 @@
       var validTypes = ['css', 'html', 'js'];
 
       if (validTypes.indexOf(type) === -1) {
-          callback(new Error('Unknown resource type: "' + type + '" for URL: ' + url));
+          callback(new Error('_components: Unknown resource type: "' + type + '" for URL: ' + url));
           return;
       }
 
@@ -584,12 +579,11 @@
                       .replace(/'/g, "\\'")
                       .replace(/\r/g, '\\r')
                       .replace(/\n/g, '\\n');
-                  wrappedData = "try {\n" +
-                                data + "\n" +
-                                "} catch(e) {\n" +
-                                "  if (window.__components_exec_error) {\n" +
-                                "    window.__components_exec_error('" + safeComponentId + "', e);\n" +
-                                "  }\n" +
+                      wrappedData = "try {\n" + data + "\n}\n" +
+                                "catch(e) {\n" +
+                                "  e." + randomErrorsId + " = '" + safeComponentId + "';\n" +
+                                "  e.name = '" + safeComponentId + "';\n" +
+                                "  throw e;\n" +
                                 "}";
               }
 
@@ -634,7 +628,7 @@
                               callback(null);
                           }
                       } catch (fallbackErr) {
-                          callback(new Error('Failed to interpret JS resource asynchronously (even with fallback). Details: ' + fallbackErr.message));
+                          callback(new Error('_components: Failed to interpret JS resource asynchronously (even with fallback). Details: ' + fallbackErr.message));
                       }
                   };
 
@@ -654,7 +648,7 @@
                   }
               }
           } else {
-              callback(new Error('Unknown resource type in applyResourceToDOM: "' + type + '"'));
+              callback(new Error('_components: Unknown resource type in applyResourceToDOM: "' + type + '"'));
           }
       } catch (e) {
           callback(e);
@@ -700,7 +694,7 @@
               }
 
               if (!existsGlobally && !existsInCoordinator) {
-                  onFailure(new Error('Invalid configuration: Dependency "' + cleanId + '" has not been registered or declared in the orchestration.'));
+                  onFailure(new Error('_components: Invalid configuration: Dependency "' + cleanId + '" has not been registered or declared in the orchestration.'));
                   return null;
               }
 
@@ -720,7 +714,7 @@
               if (pendingSet.hasOwnProperty(id)) {
                   var state = componentStates[id] || 'pending';
                   if (state === 'failed') {
-                      onFailure(new Error('Critical failure propagated from required dependency: ' + id));
+                      onFailure(new Error('_components: Critical failure propagated from required dependency: ' + id));
                       cleanup();
                       return;
                   }
@@ -1000,7 +994,7 @@
           }
           if (state === 'failed') {
               if (onFailure) {
-                  onFailure(new Error('The component with ID "' + finalId + '" is in a failed state.'));
+                  onFailure(new Error('_components: The component with ID "' + finalId + '" is in a failed state.'));
               }
               return;
           }
@@ -1341,7 +1335,7 @@
 
                       if (finished === count) {
                           if (criticalFailed) {
-                              finishCoordinator(new Error('Orchestration halted due to a failure in a required component.'));
+                              finishCoordinator(new Error('_components: Orchestration halted due to a failure in a required component.'));
                           } else {
                               currentStep++;
                               runCoordinatorStep();
@@ -1419,7 +1413,30 @@
       }
   }
 
-  _components.fn(main);
+  /**
+    * Main entry point for module initialization or configuration.
+    * @param {Element|Object} elementOrConfig - DOM element to initialize or global configuration.
+    * @param {Object} [config] - Instance-specific configuration.
+    * @returns {Object|undefined} Global configuration or created instance.
+    */
+  _components.fn(function (elementOrConfig, config) {
+    if (isPlainObject(elementOrConfig)) {
+      var _config = configure(elementOrConfig);
+      return { config: function () { return _config; } };
+    }
+
+    var _ref = initialize(elementOrConfig, config);
+    return { ref: function () { return _ref; } };
+  });
+
+  _components.get = main.get;
+  _components.emit = main.emit;
+  _components.order = main.order;
+  _components.scan = main.scan;
+  _components.autoScan = main.autoScan;
+  _components.resetCache = main.resetCache;
+  _components._registerStateObserver = main._registerStateObserver;
+  _components._unregisterStateObserver = main._unregisterStateObserver;
 
   return _components;
 }));
