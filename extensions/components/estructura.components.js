@@ -1,7 +1,3 @@
-/**
- * @file structure.components.js
- * @description Orchestration framework, asynchronous loading, and lifecycle management for decoupled components.
- */
 (function (global, factory) {
   'use strict';
   if (typeof exports === 'object' && typeof module !== 'undefined') {
