@@ -24,7 +24,7 @@
     }
 
     if (options.url.length < 1) {
-      throw new Error('Options.url is a empty String.');
+      throw new Error('Options.url is an empty String.');
     }
 
     var xhr = new XMLHttpRequest();

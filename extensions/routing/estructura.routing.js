@@ -552,7 +552,7 @@
     }
     else if (arguments.length > 1) {
       if (typeof path !== 'string') {
-        var e = new Error('Route path must be a string');
+        var e = new Error('Route path must be a String.');
         e.name = '';
         throw e;
       }
