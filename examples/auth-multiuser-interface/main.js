@@ -4,14 +4,19 @@ _events(document).ready(function () {
   var eHandlers = {
     accordion: function (event, data) {
       var
-        target = _dom('>' + data),
-        targetAttr = 'data-hidden',
-        targetAttrVal = target.data(targetAttr);
+      element = _dom(this),
+      target = _dom('>' + data),
+      elementAttr = 'data-selected',
+      targetAttr = 'data-hidden',
+      targetAttrVal = target.data(targetAttr);
 
       if (!targetAttrVal[0]) {
-        return target.data(targetAttr, 'no');
+        element.data(elementAttr, '');
+        target.data(targetAttr, 'no');
+        return;
       }
 
+      element.data(elementAttr, 'no');
       target.data(targetAttr, '');
     },
 

@@ -145,11 +145,25 @@ main {
     flex-grow: 1;
     background: var(--color3);
 }
-section { padding: 0.5rem; }
-fieldset legend {
+main section {
+    margin: 0.5rem;
+}
+fieldset legend, fieldset legend[data-selected] {
     width: 100%;
     font-size: 1.5rem;
-    margin-bottom: var(--space);
+    cursor: pointer;
+    border: var(--border) solid var(--color7);
+    border-radius: var(--radius);
+    padding: 0.5rem var(--space);
+    border-bottom: 0;
+}
+fieldset legend[data-selected="no"] {
+    border-bottom: var(--border) solid var(--color7);
+}
+fieldset legend[data-selected="no"]:hover,
+fieldset legend[data-selected="no"]:active,
+fieldset legend[data-selected="no"]:focus {
+    background: var(--color5);
 }
 [data-box] {
     background-color: var(--color5);
@@ -169,6 +183,7 @@ fieldset h4, fieldset div label {
 fieldset div label:last-child { margin-bottom: 0; }
 @media screen and (max-width: 640px), (max-width: 960px) {
     *, *::after, *::before { font-size: 0.9rem; }
+    main { flex-flow: column; }
 }
 @media screen and (max-width: 640px) {
     *, *::after, *::before { font-size: 0.85rem; }
