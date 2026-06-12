@@ -8,7 +8,7 @@
 	--color7: #ccc;
 	--color8: #093;
 	--color9: #ffc;
-	--color10: #f00;
+	--color10: #930;
 	--color11: #fec;
 	--radius: 0.25rem;
 	--border: 2px;
@@ -16,6 +16,7 @@
 	--space: 1rem;
 	--half-space: 0.5rem;
 	--font: 1rem;
+	--input: 15rem;
 }
 @font-face {
 	font-family: 'A';
@@ -85,7 +86,7 @@ input[type="text"], input[type="password"], button {
 input[type="radio"], input[type="checkbox"] { margin-right: var(--space); }
 input[type="text"], input[type="password"] {
 	border: var(--border-input) solid var(--color2);
-	width: 15rem;
+	width: var(--input);
 }
 input[type="text"], input[type="password"], input[type="radio"], input[type="checkbox"], select, textarea {
     background-color: transparent;
@@ -102,15 +103,27 @@ button {
 	background: var(--color1);
 	cursor: pointer;
 }
-button.G { background: var(--color8); }
-button.X { background: var(--color2); }
+button.green, [data-success] {
+    background: var(--color8);
+    color: var(--color5);
+}
+button.gray, [data-error] {
+    background: var(--color10);
+    color: var(--color5);
+}
 button:hover, button:focus, button:active {
 	color: var(--color7);
 	background: var(--color4);
 }
-
-[data-hidden] { display: none !important; }
-[data-hidden="no"] { display: initial !important; }
+[data-success], [data-error] {
+    padding: var(--space);
+    border-radius: var(--border);
+    display: inline-block;
+    width: var(--input);
+    word-break: keep-all;
+}
+[data-hidden] { display: none; }
+[data-hidden="no"] { display: flex; }
 
 [data-load] { animation: l 0.5s infinite alternate; }
 @keyframes l { from { background: var(--color1); } to { background: var(--color2); } }

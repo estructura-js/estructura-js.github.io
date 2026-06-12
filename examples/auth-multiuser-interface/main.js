@@ -4,7 +4,7 @@ _events(document).ready(function () {
   try {
     var _e_handlers_str = '[data-e-handler]';
     var _e_handlers = {
-      hideOtherAccordions: function (event) {
+      hideAccordions: function (event) {
         var id = this.dataset.eHandlerId;
         for (var _id in _e_handlers.accordion) {
           if (_e_handlers.accordion.hasOwnProperty(_id)) {
@@ -39,26 +39,56 @@ _events(document).ready(function () {
 
         var
           form = new FormData(this),
+          formId = this.dataset.eHandlerId,
           formTarget = this.dataset.eHandlerData;
 
-        console.log(this.dataset.eHandlerData, Object.fromEntries(form.entries()));
+        function formNotification(r) {
+            _e_handlers.notification.call(_e_handlers.notification[formId], {}, r.message, r.status);
+        };
+
+        console.info(this.dataset.eHandlerData, Object.fromEntries(form.entries()));
 
         _http({
-          url: formTarget,
+          url: window.location.pathname + formTarget,
           onSuccess: function (r) {
-            alert(r)
+            try {
+              r = JSON.parse(r);
+              if (typeof r[formId] === 'undefined') {
+                throw new Error('Unrecognized response.');
+              }
+
+              formNotification({ message: r[formId], status: true });
+            }
+            catch (e) {
+              if (typeof r.error !== 'undefined') {
+                e.message = r.error;
+              }
+
+              return formNotification({ message: e.message });
+            }
           },
-          onError: function (r) {
-            alert(r)
-          },
+          onError: formNotification,
         });
+      },
+
+      notification: function (event, message, status) {
+        var element = _dom(this);
+        if (typeof message === 'string') {
+          element.set('textContent', message);
+          element.data('data-' + (status ? 'success' : 'error'), '');
+          element.data('data-hidden', 'no');
+          return;
+        }
+
+        element.data('data-hidden', '');
+        element.set('textContent', '');
       }
     };
 
     function _e_handlers_loop(handler, callback) {
       for (var i = 0; i < handler.length; i++) {
         if (typeof _e_handlers[handler[i]] !== 'function') {
-          throw new Error('Unknown eHandler: ' + handler[i]);
+          throw new Error('Unknown e-handler: ' + handler[i]);
         }
         if (callback) { callback(handler[i]); }
       }
@@ -66,9 +96,14 @@ _events(document).ready(function () {
 
     _dom('>' + _e_handlers_str).each(function (element) {
       var handlers = element.dataset.eHandler.split(/[\s\,]+/);
+
       _e_handlers_loop(handlers, function (_handler) {
-        _e_handlers[_handler][element.dataset.eHandlerId] = element;
+        var id = element.dataset.eHandlerId;
+        if (typeof id !== 'string') { return; }
+        _e_handlers[_handler][id] = element;
       });
+
+      if (!element.dataset.eHandlerEvent || typeof element.dataset.eHandlerEvent !== 'string') { return; }
 
       _events(element).on(element.dataset.eHandlerEvent, function (event) {
         _e_handlers_loop(handlers, function (_handler) {
