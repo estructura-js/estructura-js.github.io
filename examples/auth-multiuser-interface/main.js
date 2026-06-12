@@ -102,8 +102,13 @@ _events(document).ready(function () {
               }
 
               var _route = _e_handlers.formRouting;
-              if (_route && _route[formId] && _route[formId].ready) {
-                _route[formId].success = r[formId];
+              if (_route && _route[formId]) {
+                if (_route[formId].ready) {
+                  _route[formId].success = r[formId];
+                }
+                else {
+                  throw new Error('Success, loading routing, try again...');
+                }
               }
 
               formNotification({ message: r[formId], status: true });
@@ -118,8 +123,13 @@ _events(document).ready(function () {
           },
           onError: function (r) {
             var _route = _e_handlers.formRouting;
-            if (_route && _route[formId] && _route[formId].ready) {
-              _route[formId].error = r;
+            if (_route && _route[formId]) {
+              if (_route[formId].ready) {
+                _route[formId].error = r;
+              }
+              else {
+                throw new Error('Error, loading routing, try again...');
+              }
             }
 
             formNotification(r);
