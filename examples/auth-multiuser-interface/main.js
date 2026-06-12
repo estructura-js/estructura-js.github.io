@@ -145,16 +145,14 @@ _events(document).ready(function () {
             this.error = false;
           }
 
-          define(this, 'ready', true, function (value) {
-            console.info('Ready:', value);
+          define(this, 'ready', true);
+
+          define(this, 'success', false, function (data) {
+            console.info('Success:', data);
           });
 
-          define(this, 'success', false, function (value) {
-            console.info('Success:', value);
-          });
-
-          define(this, 'error', false, function (value) {
-            console.info('Error:', value);
+          define(this, 'error', false, function (data) {
+            console.info('Error:', data);
           });
         }
         catch (e) {
