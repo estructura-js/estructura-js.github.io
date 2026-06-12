@@ -5,7 +5,7 @@ _events(document).ready(function () {
     var _e_handlers_str = '[data-e-handler]';
     var _e_handlers = {
       hideAccordions: function (event) {
-        var id = this.dataset.eHandlerId;
+        var id = this.elementClone.dataset.eHandlerId;
         for (var _id in _e_handlers.accordion) {
           if (_e_handlers.accordion.hasOwnProperty(_id)) {
             _e_handlers.accordion.call(_e_handlers.accordion[_id], {}, false);
@@ -17,8 +17,8 @@ _events(document).ready(function () {
 
       accordion: function (event, action) {
         var
-          element = _dom(this),
-          target = _dom('>' + this.dataset.eHandlerData),
+          element = _dom(this.element),
+          target = _dom('>' + this.elementClone.dataset.eHandlerData),
           elementAttr = 'data-selected',
           targetAttr = 'data-hidden',
           targetAttrVal = target.data(targetAttr),
@@ -38,15 +38,15 @@ _events(document).ready(function () {
         event.preventDefault();
 
         var
-          form = new FormData(this),
-          formId = this.dataset.eHandlerId,
-          formTarget = this.dataset.eHandlerData;
+          form = new FormData(this.element),
+          formId = this.elementClone.dataset.eHandlerId,
+          formTarget = this.elementClone.dataset.eHandlerData;
 
         function formNotification(r) {
             _e_handlers.notification.call(_e_handlers.notification[formId], {}, r.message, r.status);
         };
 
-        console.info(this.dataset.eHandlerData, Object.fromEntries(form.entries()));
+        console.info(this.elementClone.dataset.eHandlerData, Object.fromEntries(form.entries()));
 
         _http({
           url: window.location.pathname + formTarget,
@@ -58,6 +58,8 @@ _events(document).ready(function () {
               }
 
               formNotification({ message: r[formId], status: true });
+
+
             }
             catch (e) {
               if (typeof r.error !== 'undefined') {
@@ -72,7 +74,7 @@ _events(document).ready(function () {
       },
 
       notification: function (event, message, status) {
-        var element = _dom(this);
+        var element = _dom(this.element);
         if (typeof message === 'string') {
           element.set('textContent', message);
           element.data('data-' + (status ? 'success' : 'error'), '');
@@ -95,19 +97,21 @@ _events(document).ready(function () {
     };
 
     _dom('>' + _e_handlers_str).each(function (element) {
+      var _element = element.cloneNode();
       var handlers = element.dataset.eHandler.split(/[\s\,]+/);
+      var id = element.dataset.eHandlerId;
 
-      _e_handlers_loop(handlers, function (_handler) {
-        var id = element.dataset.eHandlerId;
-        if (typeof id !== 'string') { return; }
-        _e_handlers[_handler][id] = element;
-      });
+      if (id) {
+        _e_handlers_loop(handlers, function (_handler) {
+          _e_handlers[_handler][id] = { element: element, elementClone: _element };
+        });
+      }
 
       if (!element.dataset.eHandlerEvent || typeof element.dataset.eHandlerEvent !== 'string') { return; }
 
       _events(element).on(element.dataset.eHandlerEvent, function (event) {
         _e_handlers_loop(handlers, function (_handler) {
-          _e_handlers[_handler].call(element, event);
+          _e_handlers[_handler].call(_e_handlers[_handler][id], event);
         });
       });
     });
