@@ -222,7 +222,7 @@
                     current_fns[fn].call(this, event_data);
                 }
                 catch(e) {
-                    have_errors.push('Error from: ' + event_from + ': ' + id + ': ' + fn + ': ' + e.message);
+                    have_errors.push('Error from: ' + event_from + ': ' + event.name + '.' + id + ': ' + fn + ': ' + e.message);
                 }
             }
 
