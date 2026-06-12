@@ -37,8 +37,21 @@ _events(document).ready(function () {
       forms: function (event) {
         event.preventDefault();
 
-        var form = new FormData(this);
+        var
+          form = new FormData(this),
+          formTarget = this.dataset.eHandlerData;
+
         console.log(this.dataset.eHandlerData, Object.fromEntries(form.entries()));
+
+        _http({
+          url: formTarget,
+          onSuccess: function (r) {
+            alert(r)
+          },
+          onError: function (r) {
+            alert(r)
+          },
+        });
       }
     };
 
