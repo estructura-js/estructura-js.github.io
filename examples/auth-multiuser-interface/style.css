@@ -62,7 +62,7 @@ html, body {
 	height: 100dvh;
 }
 input, button, textarea, select {
-    accent-color: var(--color2);
+    accent-color: var(--color1);
     border-radius: var(--radius);
 }
 a {
@@ -104,7 +104,7 @@ button {
 button.G { background: var(--color8); }
 button.X { background: var(--color2); }
 button:hover, button:focus, button:active {
-	color: var(--color2);
+	color: var(--color7);
 	background: var(--color4);
 }
 

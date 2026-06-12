@@ -14,7 +14,7 @@
 
     function _error(message){
         var e = new Error(message);
-        e.name = '';
+        e.name = '_events';
         throw e;
     }
 
@@ -108,7 +108,7 @@
 
             for(iterator = 0; iterator < events_list.length; iterator++){
                 events_list[iterator] = events_list[iterator].replace(/^\.+/g, '.').replace(/\.+$/g, '').split(/\.+/);
-                
+
                 events_list[iterator] = {
                     name: events_list[iterator][0] ? events_list[iterator][0].replace(/^on/i, '').toLowerCase() : '',
                     id: events_list[iterator][1] ? events_list[iterator].slice(1).join('.') : ''
@@ -291,7 +291,7 @@
                 for(var mode in event_name_library[name]){
                     var wrapper_fn = event_name_library[name][mode];
                     var has_ids_left = false;
-                    
+
                     for(var key in wrapper_fn){
                         if(verify_own_property_fn.call(wrapper_fn, key) && _is_array(wrapper_fn[key]) && wrapper_fn[key].length > 0){
                             has_ids_left = true;
