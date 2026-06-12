@@ -139,6 +139,8 @@ _events(document).ready(function () {
 
       formRouting: function (event) {
         try {
+          var formId = this.initialElement.dataset.eHandlerId;
+
           if (typeof this.ready !== 'undefined' && !this.ready) {
             this.ready = true;
             this.success = false;
@@ -148,11 +150,11 @@ _events(document).ready(function () {
           define(this, 'ready', true);
 
           define(this, 'success', false, function (data) {
-            console.info('Success:', data);
+            console.info('Success:', formId);
           });
 
           define(this, 'error', false, function (data) {
-            console.info('Error:', data);
+            console.info('Error:', formId);
           });
         }
         catch (e) {
@@ -175,15 +177,26 @@ _events(document).ready(function () {
 
         element.data('data-hidden', '');
         element.set('textContent', _element.get('textContent')[0]);
+      },
+
+      middleware: function (event, data, next) {
+        console.log('Middleware context:', this);
+        console.log('Middleware data:', data);
+        data[(new Date).getTime()] = true;
+        return next(data);
       }
     };
 
     var _e_handlers_shortcuts = {
+      'middlewares-test': ['middleware', 'middleware', 'middleware'],
       'selectiveAccordion': ['hideAccordions', 'accordion']
     };
 
-    function _e_handlers_collect(handler, callback) {
+    function _e_handlers_collect(id, handler, event, middleware) {
       handler = Array.prototype.slice.call(handler, 0);
+
+      var _middleware = function (data) { return data; };
+      var _event_fn_mode = typeof event === 'function';
 
       for (var i = 0; i < handler.length; i++) {
         handler[i] = handler[i].trim();
@@ -193,9 +206,35 @@ _events(document).ready(function () {
           if (typeof _e_handlers[handler[i][j]] !== 'function') {
             throw new Error('Unknown e-handler: ' + handler[i][j]);
           }
-          if (callback) { callback(handler[i][j]); }
+
+          var _handler = handler[i][j];
+
+          if (_event_fn_mode) {
+            event.call(_e_handlers[_handler], _handler);
+          }
+          else if (!middleware) { // Sequential mode
+            _e_handlers[_handler].call(_e_handlers[_handler][id], event);
+          }
         }
       }
+
+      if (!_event_fn_mode && middleware) {
+        for (var i = handler.length - 1; i >= 0; i--) {
+          for (var j = handler[i].length - 1; j >= 0; j--) {
+            var _handler = handler[i][j];
+
+            // Middleware mode
+            _middleware = (function (_handler, _id, _event, _middleware) {
+              return function (data) {
+                return _e_handlers[_handler].call((_e_handlers[_handler][_id] || null), _event, data, _middleware);
+              };
+            })(_handler, id, event, _middleware);
+          }
+        }
+
+        _middleware(Object.create(null));
+      }
+
       return handler;
     };
 
@@ -203,21 +242,20 @@ _events(document).ready(function () {
       var _element = element.cloneNode();
       var handlers = element.dataset.eHandler.split(/[\s\,]+/);
       var id = element.dataset.eHandlerId;
+      var _handler_middleware = typeof element.dataset.eHandlerMiddleware !== 'undefined';
 
       if (id) {
-        _e_handlers_collect(handlers, function (_handler) {
-          _e_handlers[_handler][id] = Object.create(null);
-          _e_handlers[_handler][id].liveElement = element;
-          _e_handlers[_handler][id].initialElement = _element;
-        });
+        _e_handlers_collect(id, handlers, function (_handler) {
+          this[id] = Object.create(null);
+          this[id].liveElement = element;
+          this[id].initialElement = _element;
+        }, _handler_middleware);
       }
 
       if (!element.dataset.eHandlerEvent || typeof element.dataset.eHandlerEvent !== 'string') { return; }
 
       _events(element).on(element.dataset.eHandlerEvent, function (event) {
-        _e_handlers_collect(handlers, function (_handler) {
-          _e_handlers[_handler].call(_e_handlers[_handler][id], event);
-        });
+        _e_handlers_collect(id, handlers, event, _handler_middleware, true);
       });
     });
   }
