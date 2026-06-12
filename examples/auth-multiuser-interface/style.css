@@ -163,7 +163,7 @@ fieldset legend[data-selected="no"] {
 fieldset legend[data-selected="no"]:hover,
 fieldset legend[data-selected="no"]:active,
 fieldset legend[data-selected="no"]:focus {
-    background: var(--color5);
+    background: var(--color7);
 }
 [data-box] {
     background-color: var(--color5);
@@ -185,6 +185,6 @@ fieldset div label:last-child { margin-bottom: 0; }
     *, *::after, *::before { font-size: 0.9rem; }
     main { flex-flow: column; }
 }
-@media screen and (max-width: 640px) {
+@media screen and (max-width: 320px) {
     *, *::after, *::before { font-size: 0.85rem; }
 }
