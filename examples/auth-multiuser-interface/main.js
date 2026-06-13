@@ -210,7 +210,7 @@ _events(document).ready(function () {
           _error(_e_handler_id_required);
         }
 
-        if (!this.initialElement.isConnected) {
+        if (!this.liveElement.isConnected) {
           _error('"' + this.initialElement.nodeName + '" Node is disconnected from DOM.');
         }
 
