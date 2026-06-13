@@ -1,6 +1,12 @@
 _events(document).ready(function () {
   console.log('Gestor de Tickets Horarios.');
 
+  function _error(message) {
+    var e = new Error(message);
+    e.name = '';
+    throw e;
+  }
+
   function define(target, _var, _value, set_callback, get_callback) {
     if (typeof target[_var] === 'undefined') {
       Object.defineProperty(target, _var, {
@@ -10,9 +16,7 @@ _events(document).ready(function () {
             return _value;
           }
           catch (e) {
-            var error = new Error('define: "' + _var + '" get error: ' + e.message);
-            error.name = '';
-            throw error;
+            _error('define: "' + _var + '" get error: ' + e.message);
           }
         },
         set: function (value) {
@@ -21,9 +25,7 @@ _events(document).ready(function () {
             _value = value;
           }
           catch (e) {
-            var error = new Error('define: "' + _var + '" set error: ' + e.message);
-            error.name = '';
-            throw error;
+            _error('define: "' + _var + '" set error: ' + e.message);
           }
         },
         enumerable: true,
@@ -33,10 +35,16 @@ _events(document).ready(function () {
   }
 
   try {
+    var _e_handlers_re = /[\s\,]+/;
     var _e_handlers_str = '[data-e-handler]';
+    var _e_handler_id_required = '"data-e-handler-id" required.';
 
     var _e_handlers = {
       hideAccordions: function (event) {
+        if (!this.initialElement || !this.liveElement) {
+          _error(_e_handler_id_required);
+        }
+
         var id = this.initialElement.dataset.eHandlerId;
         for (var _id in _e_handlers.accordion) {
           if (_e_handlers.accordion.hasOwnProperty(_id)) {
@@ -46,6 +54,10 @@ _events(document).ready(function () {
       },
 
       accordion: function (event, action) {
+        if (!this.initialElement || !this.liveElement) {
+          _error(_e_handler_id_required);
+        }
+
         var
           element = _dom(this.liveElement),
           target = _dom('>' + this.initialElement.dataset.eHandlerData),
@@ -67,12 +79,16 @@ _events(document).ready(function () {
       forms: function (event) {
         event.preventDefault();
 
+        if (!this.initialElement || !this.liveElement) {
+          _error(_e_handler_id_required);
+        }
+
         var
           form = new FormData(this.liveElement),
           formId = this.initialElement.dataset.eHandlerId,
           formDataTarget = this.initialElement.dataset.eHandlerData;
 
-        if (!/\s*(http\:\/\/|https\:\/\/)/.test(formDataTarget)) { formDataTarget = window.location.pathname + formDataTarget;  }
+        if (!/\s*(http\:\/\/|https\:\/\/)/.test(formDataTarget)) { formDataTarget = window.location.pathname + formDataTarget; }
 
         function formNotification(r) {
           if (_e_handlers.notification[formId]) {
@@ -98,7 +114,7 @@ _events(document).ready(function () {
             try {
               r = JSON.parse(r);
               if (typeof r[formId] === 'undefined') {
-                throw new Error('Unrecognized response.');
+                _error('Unrecognized response.');
               }
 
               var _route = _e_handlers.formRouting;
@@ -107,7 +123,7 @@ _events(document).ready(function () {
                   _route[formId].success = r[formId];
                 }
                 else {
-                  throw new Error('Success, loading routing, try again...');
+                  _error('Success, loading routing, try again...');
                 }
               }
 
@@ -128,7 +144,7 @@ _events(document).ready(function () {
                 _route[formId].error = r;
               }
               else {
-                throw new Error('Error, loading routing, try again...');
+                _error('Error, loading routing, try again...');
               }
             }
 
@@ -138,33 +154,43 @@ _events(document).ready(function () {
       },
 
       formRouting: function (event) {
-        try {
-          var formId = this.initialElement.dataset.eHandlerId;
+        event.preventDefault();
 
-          if (typeof this.ready !== 'undefined' && !this.ready) {
-            this.ready = true;
-            this.success = false;
-            this.error = false;
+        if (!this.initialElement || !this.liveElement) {
+          _error(_e_handler_id_required);
+        }
+
+        var formId = this.initialElement.dataset.eHandlerId;
+        var formRoutingSuccess = this.initialElement.dataset.eFormRoutingSuccess;
+        var _formRoutingSuccess = (formRoutingSuccess ? this.initialElement.dataset.eFormRoutingSuccess.split(_e_handlers_re) : []);
+        var formRoutingMiddleware = typeof this.initialElement.dataset.eFormRoutingMiddleware !== 'undefined';
+
+        if (typeof this.ready !== 'undefined' && !this.ready) {
+          this.ready = true;
+          this.success = false;
+          this.error = false;
+        }
+
+        define(this, 'ready', true);
+
+        define(this, 'success', false, function (data) {
+          console.info('Success:', formId);
+          if (formRoutingSuccess) {
+            _e_handlers_execute(formId, _formRoutingSuccess, _e_handlers_register(formId, this.liveElement, this.initialElement), formRoutingMiddleware);
+            _e_handlers_execute(formId, _formRoutingSuccess, event, formRoutingMiddleware);
           }
+        });
 
-          define(this, 'ready', true);
-
-          define(this, 'success', false, function (data) {
-            console.info('Success:', formId);
-          });
-
-          define(this, 'error', false, function (data) {
-            console.info('Error:', formId);
-          });
-        }
-        catch (e) {
-          var error = new Error('formRouting error: ' + e.message);
-          error.name = '';
-          throw error;
-        }
+        define(this, 'error', false, function (data) {
+          console.info('Error:', formId);
+        });
       },
 
       notification: function (event, message, status) {
+        if (!this.initialElement || !this.liveElement) {
+          _error(_e_handler_id_required);
+        }
+
         var _element = _dom(this.initialElement);
         var element = _dom(this.liveElement);
 
@@ -179,12 +205,24 @@ _events(document).ready(function () {
         element.set('textContent', _element.get('textContent')[0]);
       },
 
+      remove: function (event) {
+        if (!this.initialElement || !this.liveElement) {
+          _error(_e_handler_id_required);
+        }
+
+        if (!this.initialElement.isConnected) {
+          _error('"' + this.initialElement.nodeName + '" Node is disconnected from DOM.');
+        }
+
+        this.liveElement.parentNode.removeChild(this.liveElement);
+      },
+
       middleware: function (event, data, next) {
         console.log('Middleware context:', this);
         console.log('Middleware data:', data);
         data[(new Date).getTime()] = true;
         return next(data);
-      }
+      },
     };
 
     var _e_handlers_shortcuts = {
@@ -192,7 +230,7 @@ _events(document).ready(function () {
       'selectiveAccordion': ['hideAccordions', 'accordion']
     };
 
-    function _e_handlers_collect(id, handler, event, middleware) {
+    function _e_handlers_execute(id, handler, event, middleware) {
       handler = Array.prototype.slice.call(handler, 0);
 
       var _middleware = function (data) { return data; };
@@ -204,16 +242,26 @@ _events(document).ready(function () {
 
         for (var j = 0; j < handler[i].length; j++) {
           if (typeof _e_handlers[handler[i][j]] !== 'function') {
-            throw new Error('Unknown e-handler: ' + handler[i][j]);
+            _error('Unknown e-handler: ' + handler[i][j]);
           }
 
           var _handler = handler[i][j];
 
-          if (_event_fn_mode) {
-            event.call(_e_handlers[_handler], _handler);
+          if (_event_fn_mode) { // Direct mode
+            try {
+              event.call(_e_handlers[_handler], _handler);
+            }
+            catch (e) {
+              _error('"' + _handler + '" direct: ' + e.message);
+            }
           }
           else if (!middleware) { // Sequential mode
-            _e_handlers[_handler].call(_e_handlers[_handler][id], event);
+            try {
+              _e_handlers[_handler].call((_e_handlers[_handler][id] || null), event);
+            }
+            catch (e) {
+              _error('"' + _handler + '" sequential: ' + e.message);
+            }
           }
         }
       }
@@ -226,7 +274,12 @@ _events(document).ready(function () {
             // Middleware mode
             _middleware = (function (_handler, _id, _event, _middleware) {
               return function (data) {
-                return _e_handlers[_handler].call((_e_handlers[_handler][_id] || null), _event, data, _middleware);
+                try {
+                  return _e_handlers[_handler].call((_e_handlers[_handler][_id] || null), _event, data, _middleware);
+                }
+                catch (e) {
+                  _error('"' + _handler + '" middleware: ' + e.message);
+                }
               };
             })(_handler, id, event, _middleware);
           }
@@ -238,24 +291,27 @@ _events(document).ready(function () {
       return handler;
     };
 
+    function _e_handlers_register(id, element, _element) {
+      return function (_handler) {
+        this[id] = Object.create(null);
+        this[id].liveElement = element;
+        this[id].initialElement = _element;
+      }
+    }
+
     _dom('>' + _e_handlers_str).each(function (element) {
-      var _element = element.cloneNode();
-      var handlers = element.dataset.eHandler.split(/[\s\,]+/);
+      var handlers = element.dataset.eHandler.split(_e_handlers_re);
       var id = element.dataset.eHandlerId;
       var _handler_middleware = typeof element.dataset.eHandlerMiddleware !== 'undefined';
 
       if (id) {
-        _e_handlers_collect(id, handlers, function (_handler) {
-          this[id] = Object.create(null);
-          this[id].liveElement = element;
-          this[id].initialElement = _element;
-        }, _handler_middleware);
+        _e_handlers_execute(id, handlers, _e_handlers_register(id, element, element.cloneNode()), _handler_middleware);
       }
 
       if (!element.dataset.eHandlerEvent || typeof element.dataset.eHandlerEvent !== 'string') { return; }
 
       _events(element).on(element.dataset.eHandlerEvent, function (event) {
-        _e_handlers_collect(id, handlers, event, _handler_middleware, true);
+        _e_handlers_execute(id, handlers, event, _handler_middleware, true);
       });
     });
   }
