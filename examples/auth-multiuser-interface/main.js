@@ -222,7 +222,7 @@ _events(document).ready(function () {
         console.log('Middleware data:', data);
         data[(new Date).getTime()] = true;
         return next(data);
-      },
+      }
     };
 
     var _e_handlers_shortcuts = {
