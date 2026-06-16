@@ -286,7 +286,7 @@ _events(document).ready(function () {
     function _e_handlers_register(id, element, _element, middleware) {
       return function (_handler) {
         if (this[id]) {
-          return console.warn(_handler, '"' + id + '" already existent id.');
+          return console.info('Handler "' + _handler + '.' + id + '" already used.');
         }
 
         this[id] = Object.create(null);
