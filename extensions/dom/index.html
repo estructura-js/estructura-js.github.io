@@ -17,9 +17,6 @@
 	<script src="../../main.js"></script>
 	<script src="../events/estructura.events.js"></script>
 	<script src="estructura.dom.js"></script>
-	<style>
-		
-	</style>
 	<script>
 		document.addEventListener('DOMContentLoaded', function(){
 			console.log('Estructura DOM ready.');
@@ -31,7 +28,7 @@
 
 			var domElements = _dom('>a');
 			console.log('Getting & setting some style properties:');
-	
+
 			domElements.set('style.textDecoration', 'underline');
 			domElements.style('text-decoration', 'none');
 			domElements.data('data-cookie', 'something');
@@ -82,7 +79,7 @@
 			</div>
 		</section>
 	</nav>
-	
+
 	<main>
 		<h2 class="title">DOM</h2>
 		<section class="margin-y">
@@ -154,4 +151,3 @@ var id = _dom('> div').data('user-id'); // Retorna el valor</code></pre>
 	</footer>
 </body>
 </html>
-

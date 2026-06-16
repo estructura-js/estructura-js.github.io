@@ -133,7 +133,7 @@
                 error.name = 'unknown "' + name + '" property';
                 throw error;
             }
-            
+
             var original_property = property_parts[1];
             property_parts[1] = _clean_dataset(property_parts[1]);
             if(!property_parts[1]){
@@ -192,7 +192,7 @@
             if(typeof keys[i] !== 'string' || !current[keys[i]]){ return; }
             current = current[keys[i]];
         }
-        
+
         var last_key = keys[keys.length - 1];
         var args = [last_key, value, current[last_key], current];
         if(!is_set){ return !get_fn ? current[last_key] : get_fn.apply(object, args); }
@@ -209,7 +209,7 @@
         }
         catch(e){
             var error = new Error(e.message);
-            error.name = 'iteration';
+            error.name = 'each';
             error.message = error.message.replace(/querySelectorAll/g, 'DOMQuery');
             throw error;
         }

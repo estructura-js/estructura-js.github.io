@@ -1,0 +1,88 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+	<title>Handlers</title>
+
+	<link rel="icon" href="../../estructura.icon.png">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="">
+	<meta name="author" content="OKZGN">
+	<meta name="theme-color" content="#ffffff">
+
+	<link href="../../estructura.styles.css" rel="stylesheet" />
+	<script src="https://cdn.jsdelivr.net/npm/estructura-js"></script>
+	<script src="../../main.js"></script>
+	<script src="../events/estructura.events.js"></script>
+	<script src="../dom/estructura.dom.js"></script>
+	<script src="estructura.handlers.js"></script>
+	<script>
+		document.addEventListener('DOMContentLoaded', function(){
+			console.log('Estructura Handlers ready.');
+
+			_handlers({
+              middleware: function (event, data, next) {
+                console.log('Middleware context:', this);
+                console.log('Middleware data:', data);
+
+                if(!data.counter || data.counter < 0){
+                  data.counter = 0;
+                  data.text = this.liveElement.textContent;
+                }
+
+                var counter = data.counter++;
+                data[counter] = (new Date).getTime();
+                this.liveElement.textContent = data.text + ', added: ' + data[counter];
+
+                return next(data);
+              }
+			},
+			{
+              'middlewares-test': ['middleware', 'middleware', 'middleware']
+            }).start();
+		});
+	</script>
+</head>
+
+<body>
+	<header class="center-y padding">
+		<h1 class="extension center-y">
+			<img id="logo" src="../../estructura.logo.png" alt="Estructura, JavaScript Framework">
+			<span id="test" data-e-handler="middlewares-test" data-e-handler-middleware data-e-handler-id="test" data-e-handler-event="dblclick.test">Handlers dblclick test</span>
+		</h1>
+	</header>
+
+	<nav class="margin-y">
+		<section class="silver">
+			<h2 id="index" class="center-x">Menú</h2>
+			<div class="padding">
+				<ul class="lines center-y">
+					<li class="back"><a href="../../index.html#extensions">Atrás</a></li>
+					<li><a href="#description">Descripción</a></li>
+					<li><a href="#docs">Documentación</a></li>
+				</ul>
+			</div>
+		</section>
+	</nav>
+
+	<main>
+		<h2 class="title">Handlers</h2>
+		<section class="margin-y">
+			<h2 id="description">Descripción</h2>
+			<div class="padding"></div>
+		</section>
+
+		<section class="margin-y">
+			<h2 id="docs">Documentación</h2>
+			<div class="padding">
+			</div>
+		</section>
+	</main>
+
+	<footer class="center-y padding">
+		<p>2026 &copy; Desarrollado por <a href="https://okzgn.com">OKZGN</a></p>
+	</footer>
+</body>
+</html>

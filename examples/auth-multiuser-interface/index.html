@@ -15,7 +15,150 @@
 	<script src="../../extensions/dom/estructura.dom.js"></script>
 	<script src="../../extensions/http/estructura.http.js"></script>
 	<script src="../../extensions/routing/estructura.routing.js"></script>
-	<script src="main.js"></script>
+	<script src="../../extensions/handlers/estructura.handlers.js"></script>
+	<script>
+	 _events(document).ready(function(){
+			console.log('Estructura Handlers ready.');
+
+			var _e_handlers = {
+              hideAccordions: function (event) {
+                var id = this.initialElement.dataset.eHandlerId;
+                for (var _id in _e_handlers.accordion) {
+                  if (_e_handlers.accordion.hasOwnProperty(_id)) {
+                    _e_handlers.accordion.call(_e_handlers.accordion[_id], {}, false);
+                  }
+                }
+              },
+
+              accordion: function (event, customAction) {
+                var
+                  element = _dom(this.liveElement),
+                  target = _dom('>' + this.initialElement.dataset.eHandlerData),
+                  elementAttr = 'data-selected',
+                  targetAttr = 'data-hidden',
+                  targetAttrVal = target.data(targetAttr),
+                  targetAction = typeof customAction === 'undefined' ? !targetAttrVal[0] : customAction;
+
+                if (targetAction) {
+                  element.data(elementAttr, '');
+                  target.data(targetAttr, 'no');
+                  return;
+                }
+
+                element.data(elementAttr, 'no');
+                target.data(targetAttr, '');
+              },
+
+              forms: function (event) {
+                event.preventDefault();
+
+                var
+                  form = new FormData(this.liveElement),
+                  formId = this.initialElement.dataset.eHandlerId,
+                  formDataTarget = this.initialElement.dataset.eHandlerData,
+                  formConnect = this.connect;
+
+                if (!/\s*(http\:\/\/|https\:\/\/)/.test(formDataTarget)) { formDataTarget = window.location.pathname + formDataTarget; }
+
+                try {
+                  var _form = Object.fromEntries(form.entries());
+                  _form.password = '*******';
+
+                  console.info(this.initialElement.dataset.eHandlerData, _form);
+                }
+                catch (e) {
+                  console.warn('_e_handlers:', e.message);
+                }
+
+                _http({
+                  url: formDataTarget,
+                  onSuccess: function (r) {
+                    try {
+                      r = JSON.parse(r);
+                      if (typeof r[formId] === 'undefined' || typeof r.error !== 'undefined') {
+                        _error('Unrecognized response.');
+                      }
+
+                      formConnect('success', r[formId]);
+                    }
+                    catch (e) {
+                      if (typeof r.error !== 'undefined') {
+                        e.message = r.error;
+                      }
+
+                      formConnect('error', e);
+                    }
+                  },
+                  onError: function (r) {
+                    formConnect('error', r);
+                  }
+                });
+              },
+
+              formRouting: function (event) {
+                event.preventDefault();
+
+                var formRoutingId = this.initialElement.dataset.eHandlerId;
+                console.log('formRouting:', formRoutingId);
+              },
+
+              notification: function (event) {
+                if (!this.initialElement || !this.liveElement) {
+                  _error(_e_handler_id_required);
+                }
+
+                var _element = _dom(this.initialElement);
+                var element = _dom(this.liveElement);
+
+                var _type = _e.type(event);
+                if (_type['Error']) {
+                  element.data('data-error', '');
+                  element.set('textContent', event.error || event.message || 'Error.');
+                }
+                else if (_type['String']) {
+                  element.data('data-error', '');
+                  element.set('textContent', event);
+                }
+                else if (_type['Object']) {
+                  if (event.loading) {
+                    element.data('data-loading', '');
+                    element.set('textContent', event.loading || event.message || 'Loading.');
+                  }
+                  else {
+                    element.data('data-success', '');
+                    element.set('textContent', event.success || event.message || 'Success.');
+                  }
+                }
+
+                var _success = typeof this.liveElement.dataset.success !== 'undefined';
+                var _error = typeof this.liveElement.dataset.error !== 'undefined';
+                var _loading = typeof this.liveElement.dataset.loading !== 'undefined';
+
+                if (_success || _error || _loading) {
+                  element.data('data-hidden', 'no');
+                  return;
+                }
+
+                element.data('data-hidden', '');
+                element.set('textContent', _element.get('textContent')[0]);
+              },
+
+              remove: function (event) {
+                if (!this.liveElement.isConnected) {
+                  _error('"' + this.initialElement.nodeName + '" Node is disconnected from DOM.');
+                }
+
+                this.liveElement.parentNode.removeChild(this.liveElement);
+              }
+            };
+
+            var _e_handlers_shortcuts = {
+              'selectiveAccordion': ['hideAccordions', 'accordion']
+            };
+
+			_handlers(_e_handlers, _e_handlers_shortcuts).start();
+	});
+	</script>
 </head>
 
 <body>

@@ -3,7 +3,7 @@ _events(document).ready(function () {
 
   function _error(message) {
     var e = new Error(message);
-    e.name = '';
+    e.name = '_handlers';
     throw e;
   }
 
