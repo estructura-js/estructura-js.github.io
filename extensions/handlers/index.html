@@ -144,14 +144,14 @@
 					<ul>
 						<li><b>Manejadores de Evento DOM:</b> Reciben el evento nativo o el desencadenante inicial.
 							<pre><code>function miHandler(event) {
-							// event: Objeto Event del DOM o trigger de activación
-							console.log("Evento:", event);
+    // event: Objeto Event del DOM o trigger de activación
+    console.log("Evento:", event);
 }</code></pre>
 						</li>
 						<li><b>Manejadores de Éxito / Error:</b> Reciben de manera directa el dato asignado al setter reactivo.
 							<pre><code>function miHandlerExito(data) {
-							// data: El valor asignado a this.success o this.error
-							console.log("Datos recibidos:", data);
+    // data: El valor asignado a this.success o this.error
+    console.log("Datos recibidos:", data);
 }</code></pre>
 						</li>
 					</ul>
@@ -162,16 +162,16 @@
 					<ul>
 						<li><b>Middlewares de Evento DOM:</b> Reciben el evento, el acumulador de datos y la función de continuación.
 							<pre><code>function miMiddleware(event, data, next) {
-							data.timestamp = Date.now();
-							return next(data); // Continuación explícita del flujo
+    data.timestamp = Date.now();
+    return next(data); // Continuación explícita del flujo
 }</code></pre>
 						</li>
 						<li><b>Middlewares de Éxito o Error:</b> Reciben el valor asignado de origen (payload), el acumulador de datos interno y la función de continuación.
 							<pre><code>function miMiddlewareDeCiclo(payload, data, next) {
-							// payload: El valor asignado a la propiedad reactiva
-							// data: El objeto acumulador del flujo
-							data.resultado = payload;
-							return next(data);
+    // payload: El valor asignado a la propiedad reactiva
+    // data: El objeto acumulador del flujo
+    data.resultado = payload;
+    return next(data);
 }</code></pre>
 						</li>
 					</ul>
@@ -182,69 +182,69 @@
 
 					<p><b>Estructuración Declarativa en HTML con Conexión Cruzada:</b></p>
 					<pre><code>&lt;button id="accion"
-					data-e-handler="logger, validador, peticion"
-					data-e-handler-id="btn-registro"
-					data-e-handler-event="click"
-					data-e-handler-middleware
-					data-e-peticion-connect="formulario"
-					data-e-peticion-success="limpiarFormulario"
-					data-e-peticion-error="mostrarAlerta"&gt;
-					Enviar Registro
+	data-e-handler="logger, validador, peticion"
+	data-e-handler-id="btn-registro"
+	data-e-handler-event="click"
+	data-e-handler-middleware
+	data-e-peticion-connect="formulario"
+	data-e-peticion-success="limpiarFormulario"
+	data-e-peticion-error="mostrarAlerta"&gt;
+	Enviar Registro
 &lt;/button&gt;
 
 &lt;form id="registro" data-e-handler="formulario" data-e-handler-id="form-usuario"&gt;
-					&lt;!-- Campos del formulario --&gt;
+	&lt;!-- Campos del formulario --&gt;
 &lt;/form&gt;</code></pre>
 					<br>
 
 					<p><b>Definición y Enlace de Flujos en JavaScript:</b></p>
 					<pre><code>// Definición de manejadores de lógica
 _handlers({
-					logger: function(event, data, next) {
-						console.log("Evento click registrado en ID:", this.liveElement.id);
-						return next(data);
-					},
+	logger: function(event, data, next) {
+		console.log("Evento click registrado en ID:", this.liveElement.id);
+		return next(data);
+	},
 
-					validador: function(event, data, next) {
-						var esValido = true; // Flujo de validación interna
-						if (esValido) {
-							data.formularioOk = true;
-							return next(data);
-						}
-						// Al no llamar a next(), detenemos la cadena de ejecución
-						console.warn("Validación fallida. Flujo cancelado.");
-					},
+	validador: function(event, data, next) {
+		var esValido = true; // Flujo de validación interna
+		if (esValido) {
+			data.formularioOk = true;
+			return next(data);
+		}
+		// Al no llamar a next(), detenemos la cadena de ejecución
+		console.warn("Validación fallida. Flujo cancelado.");
+	},
 
-					peticion: function(event, data, next) {
-						var self = this;
-						// Simulación de proceso asíncrono
-						setTimeout(function() {
-							var exito = true;
-							if (exito) {
-								// Modifica reactivamente el estado de otra instancia conectada
-								self.connect('success', { limpiado: true }, 'form-usuario');
-								self.success = { codigo: 200 };
-							} else {
-								self.error = { mensaje: "Error de conexión" };
-							}
-						}, 1000);
-						return next(data);
-					},
+	peticion: function(event, data, next) {
+		var self = this;
+		// Simulación de proceso asíncrono
+		setTimeout(function() {
+			var exito = true;
+			if (exito) {
+				// Modifica reactivamente el estado de otra instancia conectada
+				self.connect('success', { limpiado: true }, 'form-usuario');
+				self.success = { codigo: 200 };
+			} else {
+				self.error = { mensaje: "Error de conexión" };
+			}
+		}, 1000);
+		return next(data);
+	},
 
-					formulario: function(event) {
-						console.log("Formulario inicializado o activado de forma externa");
-					},
+	formulario: function(event) {
+		console.log("Formulario inicializado o activado de forma externa");
+	},
 
-					limpiarFormulario: function(data) {
-						console.log("Completado con éxito. Limpiando interfaz...", data);
-					},
+	limpiarFormulario: function(data) {
+		console.log("Completado con éxito. Limpiando interfaz...", data);
+	},
 
-					mostrarAlerta: function(data) {
-						console.error("Hubo un error en la secuencia:", data.mensaje);
-					}
+	mostrarAlerta: function(data) {
+		console.error("Hubo un error en la secuencia:", data.mensaje);
+	}
 }, {
-					// Definición de atajos opcionales
-					"flujo-completo": ["logger", "validador", "peticion"]
+	// Definición de atajos opcionales
+	"flujo-completo": ["logger", "validador", "peticion"]
 }).start();</code></pre>
 					<br>
 
