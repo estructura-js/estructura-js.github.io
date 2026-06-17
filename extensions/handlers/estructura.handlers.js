@@ -13,14 +13,15 @@
   'use strict';
 
   var
-  _e_handlers = {},
-  _e_handlers_shortcuts = {},
-  _e_ids_re = /\s+/g,
-  _e_handlers_re = /[\s\,]+/,
-  _e_handlers_ids_re = /[\|\.]+/,
-  _e_handlers_str = '[data-e-handler]',
-  _e_handler_id_required = '"data-e-handler-id" required.',
-  _handlers = _e.instance('handlers');
+    _e_handlers = {},
+    _e_handlers_shortcuts = {},
+    _e_ids_re = /\s+/g,
+    _e_handlers_re = /[\s\,]+/,
+    _e_handlers_ids_re = /[\|\.]+/,
+    _e_handlers_str = '[data-e-handler]',
+    _e_handler_id_required = '"data-e-handler-id" required.',
+    _e_reserved = { 'liveElement': 1, 'initialElement': 1, 'connect': 1, 'ready': 1 },
+    _handlers = _e.instance('handlers');
 
   function _error(message) {
     var e = new Error(message);
@@ -261,6 +262,7 @@
         _e_handlers_execute(id, _data_connect, _e_handlers_register(id, element, _element, middleware), middleware);
 
         this[id].connect = function (state, data, ids) {
+          if (typeof state !== 'string' || _e_reserved[state]) { return console.warn(_handler, id, 'Incorrect target:', state); }
           _e_handlers_execute(null, _data_connect, _e_handlers_ids(ids, function (handler, _id) { handler[_id][state] = data; }), _middleware);
         }
       }
