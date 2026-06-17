@@ -71,15 +71,167 @@
 		<h2 class="title">Handlers</h2>
 		<section class="margin-y">
 			<h2 id="description">Descripción</h2>
-			<div class="padding"></div>
+			<div class="padding">
+				Motor declarativo de alta abstracción orientado a la gestión, orquestación e interconexión de flujos de lógica (handlers) desacoplados a nivel de interfaz. Permite mapear elementos del DOM directamente con lógica de JavaScript a través de atributos descriptivos de datos (<code>dataset</code>), proporcionando flujos de ejecución secuenciales, encadenamiento mediante middlewares y control dinámico de estados de éxito y error.<br><br>
+				<b>Librería:</b> <a target="_blank" href="estructura.handlers.js">estructura.handlers.js</a><br><br>
+				<b>Dependencias obligatorias:</b> <a href="../dom/estructura.dom.js">estructura.dom.js</a> (<a href="../dom/index.html">DOM, documentación</a>), <a href="../events/estructura.events.js">estructura.events.js</a> (<a href="../events/index.html">Events, documentación</a>). Extensiones requeridas junto con sus objetos globales accesibles (<code>_dom</code>, <code>_events</code>) para consultar elementos e inyectar escuchadores de eventos del DOM. Deben estar disponibles en el entorno antes de inicializar <code>_handlers</code>; de lo contrario, el proceso se interrumpirá emitiendo una excepción en consola.
+			</div>
 		</section>
 
 		<section class="margin-y">
 			<h2 id="docs">Documentación</h2>
 			<div class="padding">
+				<h3>1. Inicialización y Dependencias Directas</h3>
+				<p>El motor expone globalmente la interfaz <code>_handlers</code>. Al ser una extensión coordinada, se apoya de forma directa en <code>_dom</code> para la selección e iteración de los nodos declarados en el HTML, y en <code>_events</code> para vincular los disparadores físicos del ciclo de vida del DOM.</p>
+				<br>
+				<p><b>Sintaxis de Registro:</b></p>
+				<pre><code>_handlers(handlersMap, shortcutsMap).start(startNode?);</code></pre>
+				<br>
+				<p><b>Argumentos del Constructor:</b></p>
+				<ul>
+					<li><code>handlersMap</code> (<code>Object</code>): Colección de funciones donde cada clave representa el identificador lógico del handler.</li>
+					<li><br><code>shortcutsMap</code> (<code>Object</code>): Opcional. Diccionario de atajos para agrupar múltiples identificadores de handlers bajo un alias común, permitiendo ejecuciones secuenciales parametrizadas de forma ágil.</li>
+				</ul>
+				<br>
+				<p><b>Método de Arranque (<code>.start()</code>):</b></p>
+				<ul>
+					<li><code>startNode</code> (<code>Object/Node</code>): Opcional. Limita la búsqueda de selectores declarativos al subárbol de este nodo específico. Si se omite, realiza una búsqueda global en el DOM utilizando el selector de primer nivel <code>&gt; [data-e-handler]</code>.</li>
+				</ul>
+				<br>
+
+				<h3>2. Sintaxis Declarativa en HTML (Atributos Dataset)</h3>
+				<p>La declaración de comportamiento se define directamente sobre los elementos HTML mediante atributos de datos (<code>data-*</code>):</p>
+				<br>
+				<ul>
+					<li><b><code>data-e-handler</code></b> (<code>String</code>): Lista de handlers (o atajos) separados por espacios o comas que procesarán el elemento. Admite segmentación por sub-identificadores mediante puntos (<code>.</code>) o barras verticales (<code>|</code>) (ej. <code>peticion.filtrada</code>).</li>
+					<li><br><b><code>data-e-handler-id</code></b> (<code>String</code>): <b>Requerido</b>. Identificador único de instancia para el elemento. Permite mantener un estado aislado en memoria para ese nodo específico sin interferir con otros elementos que utilicen el mismo handler.</li>
+					<li><br><b><code>data-e-handler-event</code></b> (<code>String</code>): Opcional. Evento del DOM que disparará la ejecución del flujo (ej. <code>"click"</code>, <code>"submit"</code>, <code>"dblclick.test"</code>).</li>
+					<li><br><b><code>data-e-handler-middleware</code></b> (Boolean): Opcional. Si está presente, el flujo de ejecución operará en modo Middleware, inyectando un callback de continuación (<code>next</code>) entre cada función del flujo.</li>
+				</ul>
+				<br>
+				<p><b>Enlaces de Ciclo de Vida Dinámicos (Atributos Específicos por Handler):</b></p>
+				<p>Para cada handler declarado en el atributo <code>data-e-handler</code>, el motor habilita propiedades adicionales basadas en su nombre formateado en PascalCase (ej. para un handler denominado <code>peticion</code>, el motor buscará las variables con prefijo <code>ePeticion</code>):</p>
+				<ul>
+					<li><code>data-e-[nombre-handler]-connect</code>: Lista de handlers adicionales que se inicializarán y conectarán en fase de carga.</li>
+					<li><br><code>data-e-[nombre-handler]-success</code>: Lista de handlers que se ejecutarán automáticamente cuando el handler actual invoque su método interno de éxito.</li>
+					<li><br><code>data-e-[nombre-handler]-error</code>: Lista de handlers que se ejecutarán automáticamente ante fallos o llamadas al método interno de error.</li>
+				</ul>
+				<br>
+
+				<h3>3. El Contexto de Ejecución (<code>this</code>)</h3>
+				<p>Cuando un handler es invocado, su contexto de ejecución (<code>this</code>) es enlazado a un objeto de estado exclusivo mapeado mediante su identificador único (<code>id</code>). Este contexto proporciona los siguientes accesos y métodos de control de flujo:</p>
+				<br>
+				<ul>
+					<li><b><code>this.liveElement</code></b> (<code>Node</code>): Referencia directa al elemento activo en el DOM.</li>
+					<li><br><b><code>this.initialElement</code></b> (<code>Node</code>): Clon inmutable del elemento en su estado original de registro. Útil para consultar configuraciones o atributos sin mutaciones añadidas por flujos intermedios.</li>
+					<li><br><b><code>this.ready</code></b> (<code>Boolean</code>): Rastreador interno que indica si el handler está listo para recibir operaciones de conexión.</li>
+					<li><br><b><code>this.success(data?)</code></b> (<code>Function</code>): Dispara la secuencia de handlers declarada en el atributo de éxito respectivo (<code>-success</code>), propagando los datos transmitidos.</li>
+					<li><br><b><code>this.error(data?)</code></b> (<code>Function</code>): Dispara la secuencia de handlers de error asociada (<code>-error</code>).</li>
+					<li><br><b><code>this.connect(state, data, ids?)</code></b> (<code>Function</code>): Permite propagar estados y datos estructurados hacia los handlers conectados de manera cruzada.</li>
+				</ul>
+				<br>
+
+				<h3>4. Modos de Ejecución</h3>
+
+				<h4>A. Modo Secuencial (Estándar)</h4>
+				<p>Los controladores se ejecutan de manera directa e independiente uno tras otro. Cada función recibe como parámetro el evento original (o datos de activación manual) y opera sobre su contexto de instancia aislado.</p>
+				<pre><code>function miHandler(event) {
+			console.log("Ejecutando en elemento:", this.liveElement);
+
+			// Operación lógica de ejemplo
+			if (operacionExitosa) {
+				this.success({ status: "ok" });
+			} else {
+				this.error(new Error("Fallo en proceso"));
+			}
+}</code></pre>
+				<br>
+
+				<h4>B. Modo Middleware</h4>
+				<p>Activado mediante la presencia del atributo <code>data-e-handler-middleware</code>. Modifica el flujo de llamadas para crear una cadena secuencial donde cada handler puede interceptar, modificar o detener la ejecución del siguiente eslabón. Los handlers reciben tres argumentos:</p>
+				<br>
+				<p><b>Sintaxis del Handler en Modo Middleware:</b></p>
+				<pre><code>function miMiddleware(event, data, next) {
+			// Intercepción o mutación de datos
+			data.timestamp = Date.now();
+
+			// Continuación explícita del flujo
+			return next(data);
+}</code></pre>
+				<br>
+				<p>Si un paso en la cadena de middlewares omite llamar a la función <code>next()</code>, la ejecución posterior se detiene por completo, actuando como un mecanismo de validación de seguridad o control de flujo asíncrono.</p>
+				<br>
+
+				<h3>5. Ejemplos Prácticos de Implementación</h3>
+
+				<p><b>Estructuración Declarativa en HTML:</b></p>
+				<pre><code>&lt;button id="accion"
+			data-e-handler="logger, validador, peticion"
+			data-e-handler-id="btn-registro"
+			data-e-handler-event="click"
+			data-e-handler-middleware
+			data-e-peticion-success="limpiarFormulario"
+			data-e-peticion-error="mostrarAlerta"&gt;
+			Enviar Registro
+&lt;/button&gt;</code></pre>
+				<br>
+
+				<p><b>Definición y Enlace de Flujos en JavaScript:</b></p>
+				<pre><code>// Definición de manejadores de lógica
+_handlers({
+			logger: function(event, data, next) {
+				console.log("Evento click registrado en ID:", this.liveElement.id);
+				return next(data);
+			},
+
+			validador: function(event, data, next) {
+				var esValido = true; // Flujo de validación interna
+				if (esValido) {
+					data.formularioOk = true;
+					return next(data);
+				}
+				// Al no llamar a next(), detenemos la cadena de ejecución
+				console.warn("Validación fallida. Flujo cancelado.");
+			},
+
+			peticion: function(event, data, next) {
+				var self = this;
+				// Simulación de proceso asíncrono
+				setTimeout(function() {
+					var exito = true;
+					if (exito) {
+						self.success({ codigo: 200 });
+					} else {
+						self.error({ mensaje: "Error de conexión" });
+					}
+				}, 1000);
+				return next(data);
+			},
+
+			limpiarFormulario: function(data) {
+				console.log("Completado con éxito. Limpiando interfaz...", data);
+			},
+
+			mostrarAlerta: function(data) {
+				console.error("Hubo un error en la secuencia:", data.mensaje);
+			}
+}, {
+			// Definición de atajos opcionales
+			"flujo-completo": ["logger", "validador", "peticion"]
+}).start();</code></pre>
+				<br>
+
+				<h3>6. Características Técnicas de la Implementación</h3>
+				<div class="features">
+					<p><strong>Aislamiento de Instancia Seguro:</strong> Cada handler opera sobre un contexto (<code>this[id]</code>) creado con herencia limpia mediante <code>Object.create(null)</code>, previniendo colisiones de datos con las propiedades del prototipo global de JavaScript.</p>
+					<br><p><strong>Soporte para Sub-identificadores:</strong> El sistema analiza y segmenta las declaraciones de handlers utilizando la expresión regular <code>/[\|\.]+/</code>. Al invocar flujos directos mediante callbacks, estos sub-identificadores adicionales se propagan de manera estructurada en un arreglo.</p>
+					<br><p><strong>Control Dinámico de Estados:</strong> El motor utiliza descriptores de acceso dinámicos (<code>Object.defineProperty</code>) para gestionar los estados internos de ciclo de vida (<code>ready</code>, <code>success</code>, <code>error</code>). Al asignar valores a estas propiedades, se invocan de manera interna desencadenadores de eventos automatizados.</p>
+					<br><p><strong>Persistencia del Nodo de Configuración:</strong> Mediante la integración de copias inmutables del nodo original (<code>cloneNode</code>) en la propiedad <code>initialElement</code>, los programadores mantienen la capacidad de auditar la parametrización de inicio del marcado HTML, independientemente de las manipulaciones directas sobre el nodo activo del DOM (<code>liveElement</code>).</p>
+					<br><p><strong>Análisis de Exclusiones de Espacios en Identificadores:</strong> El sistema sanea los atributos de identificación única del control declarativo, removiendo caracteres de espaciado mediante expresiones regulares para garantizar correspondencias y prevenir accesos indexados anómalos en memoria.</p>
+				</div>
 			</div>
 		</section>
-	</main>
+</main>
 
 	<footer class="center-y padding">
 		<p>2026 &copy; Desarrollado por <a href="https://okzgn.com">OKZGN</a></p>

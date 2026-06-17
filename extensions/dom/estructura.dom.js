@@ -209,7 +209,7 @@
         }
         catch(e){
             var error = new Error(e.message);
-            error.name = 'each';
+            error.name = 'iteration';
             error.message = error.message.replace(/querySelectorAll/g, 'DOMQuery');
             throw error;
         }

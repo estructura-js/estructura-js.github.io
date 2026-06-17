@@ -41,9 +41,12 @@
     }
   }
 
-  function _capitalize(str) {
+  function _capitalizeAndCamelCase(str) {
     if (!str) return '';
-    return str.charAt(0).toUpperCase() + str.slice(1);
+    str = str.charAt(0).toUpperCase() + str.slice(1);
+    return str.replace(/-([a-z])/g, function(match, letter) {
+        return letter.toUpperCase();
+    });
   }
 
   function define(target, _var, _value, set_callback, get_callback) {
@@ -76,45 +79,77 @@
   function _e_handlers_execute(id, handler, event, middleware) {
     handler = Array.prototype.slice.call(handler, 0);
 
-    var _event_fn_mode = typeof event === 'function';
+    var _event_type = typeof event;
+    var _middleware_type = typeof middleware;
+
+    var _direct_mode = _event_type === 'function';
 
     for (var i = 0; i < handler.length; i++) {
       handler[i] = handler[i].trim();
-      handler[i] = Array.isArray(_e_handlers_shortcuts[handler[i]]) ? _e_handlers_shortcuts[handler[i]] : [handler[i]];
+      handler[i] = _e.type(_e_handlers_shortcuts[handler[i]])['Array'] ? _e_handlers_shortcuts[handler[i]] : [handler[i]];
 
       for (var j = 0; j < handler[i].length; j++) {
-        var _handlers_ids = handler[i][j].split(_e_handlers_ids_re)
+        if (typeof handler[i][j] !== 'string') { continue; }
+
+        var _handlers_ids = handler[i][j].split(_e_handlers_ids_re);
         var _handler = _handlers_ids[0];
 
         if (typeof _e_handlers[_handler] !== 'function') {
           _error('Unknown e-handler: ' + _handler);
         }
 
-        if (_event_fn_mode) { // Direct mode
+        if (_direct_mode) { // Direct mode
+          _handlers_ids = (_handlers_ids.length ? _handlers_ids.slice(1) : []);
           try {
-            event.call(_e_handlers[_handler], _handler, (_handlers_ids.length ? _handlers_ids.slice(1) : []));
+            event.call(_e_handlers[_handler], _handler, _handlers_ids);
           }
           catch (e) {
-            _error('"' + _handler + '" direct: ' + e.message);
+            _error('"' + _handler + '" sequential direct: ' + e.message);
           }
+          continue;
         }
-        else if (!middleware) { // Sequential mode
-          try {
-            _e_handlers[_handler].call((id ? _e_handlers[_handler][id] : _e_handlers[_handler]), event);
-          }
-          catch (e) {
-            _error('"' + _handler + '" sequential: ' + e.message);
-          }
+
+        if (middleware) { continue; }
+
+        // Sequential mode
+        try {
+          _e_handlers[_handler].call((id ? _e_handlers[_handler][id] : _e_handlers[_handler]), event);
+        }
+        catch (e) {
+          _error('"' + _handler + '" sequential: ' + e.message);
         }
       }
     }
 
-    var _middleware = function (data) { return data; };
+    if (middleware) {
+      _direct_mode = _middleware_type === 'function';
 
-    if (!_event_fn_mode && middleware) {
+      var _middleware = function (data) {
+        //console.info('Middleware for:', handler);
+        return data;
+      };
+
       for (var i = handler.length - 1; i >= 0; i--) {
         for (var j = handler[i].length - 1; j >= 0; j--) {
-          var _handler = handler[i][j];
+          if (typeof handler[i][j] !== 'string') { continue; }
+
+          var _handlers_ids = handler[i][j].split(_e_handlers_ids_re);
+          var _handler = _handlers_ids[0];
+
+          if (_direct_mode) { // Direct mode
+            _handlers_ids = (_handlers_ids.length ? _handlers_ids.slice(1) : []);
+            try {
+              var _middleware_intent = middleware.call(_e_handlers[_handler], _handler, _handlers_ids, _middleware);
+              if (typeof _middleware_intent !== 'function') { continue; }
+              _middleware = _middleware_intent;
+            }
+            catch (e) {
+              _error('"' + _handler + '" middleware direct: ' + e.message);
+            }
+            continue;
+          }
+
+          if (_event_type === 'function') { continue; }
 
           // Middleware mode
           _middleware = (function (_handler, _id, _event, _middleware) {
@@ -136,24 +171,55 @@
     return handler;
   };
 
-  function execute_fn(state, handlers, id, middleware) {
-    return function (data) {
-      console.info(state, id);
-      if (handlers && typeof handlers === 'object' && handlers.length) {
-        //_e_handlers_execute(id, handlers, data, middleware);
-        _e_handlers_execute(null, handlers, _e_handlers_ids(null, function (handler, _id) {
-          handler.call(handler[_id], data);
-        }), middleware);
+  function _execute_fn(state, handlers, id, middleware) {
+    if (handlers && typeof handlers === 'object' && handlers.length) {
+      if (!middleware) {
+        return function (data) {
+          console.info(state, id);
+          return _e_handlers_execute(null, handlers, _e_handlers_ids(null, function (handler, _id) {
+            try {
+              handler.call(handler[_id], data);
+            }
+            catch (e) {
+              _error('"' + handler + '" direct sequential execution: ' + e.message);
+            }
+          }));
+        };
+      }
+
+      return function (data) {
+        console.info(state, id);
+        _e_handlers_execute(null, handlers, null, function (_handler, _handler_ids, _middleware) {
+          var _middlewares = _handler_ids.length ? _handler_ids : Object.keys(_e_handlers[_handler]);
+          for (var i = _middlewares.length - 1; i >= 0; i--) {
+            var _id = _middlewares[i];
+            if (!_e_handlers[_handler][_id] || typeof _e_handlers[_handler][_id] !== 'object') { continue; }
+
+            _middleware = (function (__id, __data, __middleware) {
+              return function (data) {
+                try {
+                  return _e_handlers[_handler].call(_e_handlers[_handler][__id], __data, data, __middleware);
+                }
+                catch (e) {
+                  _error('"' + _handler + '.' + _id + '" direct middleware execution: ' + e.message);
+                }
+              };
+            })(_id, data, _middleware);
+          }
+
+          return _middleware;
+        });
       }
     }
   }
 
   function _e_handlers_ids(ids, callback) {
+    ids = (typeof ids === 'string' ? [ids] : _e.type(ids)['Array'] ? ids : []);
     return function (_handler, _handler_ids) {
       var handler = _e_handlers[_handler];
       for (var __id in handler) {
         if (handler.hasOwnProperty(__id)) {
-          if ((_handler_ids.length && _handler_ids.indexOf(__id) === -1) || (ids && ids !== __id)) { continue; }
+          if ((_handler_ids.length && _handler_ids.indexOf(__id) === -1) || (ids.length && ids.indexOf(__id) === -1)) { continue; }
 
           try {
             callback(handler, __id);
@@ -184,7 +250,7 @@
 
       define(this[id], 'ready', true);
 
-      _handler = 'e' + _capitalize(_handler);
+      _handler = 'e' + _capitalizeAndCamelCase(_handler);
 
       var _middleware = this[id].initialElement.dataset[_handler + 'Middleware'];
 
@@ -199,20 +265,22 @@
         }
       }
       else {
-        this[id].connect = function () {};
+        this[id].connect = function () {
+          console.info('Nothing to be connected, add "' + _data_connect + '".');
+        };
       }
 
       var data_success = this[id].initialElement.dataset[_handler + 'Success'];
       var _data_success = (data_success ? data_success.split(_e_handlers_re) : []);
 
       _e_handlers_execute(id, _data_success, _e_handlers_register(id, element, _element, middleware), middleware);
-      define(this[id], 'success', false, execute_fn(_handler + ' success', _data_success, id, middleware));
+      define(this[id], 'success', false, _execute_fn(_handler + ' success', _data_success, id, middleware));
 
       var data_error = this[id].initialElement.dataset[_handler + 'Error'];
       var _data_error = (data_error ? data_error.split(_e_handlers_re) : []);
 
       _e_handlers_execute(id, _data_error, _e_handlers_register(id, element, _element, middleware), middleware);
-      define(this[id], 'error', false, execute_fn(_handler + ' error', _data_error, id, middleware));
+      define(this[id], 'error', false, _execute_fn(_handler + ' error', _data_error, id, middleware));
     }
   }
 
@@ -224,10 +292,13 @@
 
   _handlers.fn(function (handlers, handlers_shortcuts) {
     _check_object(handlers);
-    _check_object(handlers_shortcuts);
+
+    if (handlers_shortcuts) {
+      _check_object(handlers_shortcuts);
+      _extend(_e_handlers_shortcuts, handlers_shortcuts);
+    }
 
     _extend(_e_handlers, handlers);
-    _extend(_e_handlers_shortcuts, handlers_shortcuts);
 
     return {
       start: function (args, start_node) {
