@@ -149,6 +149,21 @@
                 }
 
                 this.liveElement.parentNode.removeChild(this.liveElement);
+              },
+
+              mw: function(e, d, n){
+                console.log('MW:', e, d);
+                console.log('MW:', this);
+                this.connect('success', { hello: 'world' })
+                return n(d);
+              },
+              mw3: function(e, d, n){
+                console.log('MW3:', e, d);
+                return n(d);
+              },
+              mw2: function(d, z, n){
+                console.log('MW2:', d, z, n);
+
               }
             };
 
@@ -167,8 +182,21 @@
 	</header>
 
 	<main>
-	    <!--<div data-e-handler="middlewares-test" data-e-handler-middleware data-e-handler-id="test" data-e-handler-event="click.test">Middleware mode (click console test)</div>-->
-	    <section>
+	    <div
+			data-e-handler="mw, mw"
+			data-e-handler-id="test"
+			data-e-handler-middleware
+
+			data-e-mw-connect="mw3"
+			data-e-mw3-success="mw2"
+
+			data-e-handler-event="click.test"
+		>Click & console test</div>
+
+		<div data-e-handler="mw" data-e-handler-id="test2">Test2 box</div>
+
+
+		<section>
 			<form
 			data-e-handler="forms"
 			data-e-handler-id="signup-form"

@@ -112,6 +112,7 @@
 					<br>
 					<p><b>Enlaces de Ciclo de Vida Dinámicos (Atributos Específicos por Handler):</b></p>
 					<p>Para cada handler declarado en el atributo <code>data-e-handler</code>, el motor habilita propiedades adicionales basadas en su nombre formateado. El sistema procesa de forma automática los nombres kebab-case mediante camelCase (ej. un handler denominado <code>mi-peticion</code> habilitará atributos del tipo <code>data-e-mi-peticion-*</code> correspondientes a propiedades <code>dataset</code> de JavaScript):</p>
+					<br>
 					<ul>
 						<li><code>data-e-[nombre-handler]-middleware</code>: Opcional. Si está presente, indica que el flujo específico de las secuencias conectadas o de éxito/error de este handler operará bajo el modo de middleware.</li>
 						<li><br><code>data-e-[nombre-handler]-connect</code>: Lista de handlers adicionales que se inicializarán y conectarán en fase de carga.</li>
@@ -138,17 +139,17 @@
 
 					<h3>4. Modos de Ejecución y Firmas de Argumentos</h3>
 					<p>El motor proporciona firmas de argumentos consistentes que varían según el modo de ejecución (estándar o middleware) y el origen del desencadenante:</p>
-
+					<br>
 					<h4>A. Modo Secuencial (Estándar)</h4>
 					<p>Los controladores se ejecutan de manera directa e independiente uno tras otro. Cada función opera sobre su contexto de instancia aislado. Las asignaciones directas a las propiedades reactivas propagan los flujos en un esquema unidireccional.</p>
 					<ul>
-						<li><b>Manejadores de Evento DOM:</b> Reciben el evento nativo o el desencadenante inicial.
+						<li><br><b>Manejadores de Evento DOM:</b> Reciben el evento nativo o el desencadenante inicial.
 							<pre><code>function miHandler(event) {
     // event: Objeto Event del DOM o trigger de activación
     console.log("Evento:", event);
 }</code></pre>
 						</li>
-						<li><b>Manejadores de Éxito / Error:</b> Reciben de manera directa el dato asignado al setter reactivo.
+						<li><br><b>Manejadores de Éxito / Error:</b> Reciben de manera directa el dato asignado al setter reactivo.
 							<pre><code>function miHandlerExito(data) {
     // data: El valor asignado a this.success o this.error
     console.log("Datos recibidos:", data);
@@ -160,13 +161,13 @@
 					<h4>B. Modo Middleware</h4>
 					<p>Activado mediante la presencia de <code>data-e-handler-middleware</code> o por la configuración específica del handler. Modifica el flujo para crear una cadena secuencial asíncrona donde cada handler puede interceptar, alterar o detener la continuación del proceso. El acumulador de datos que se propaga por la cadena (<code>data</code>) se inicializa como un objeto limpio sin prototipo (<code>Object.create(null)</code>).</p>
 					<ul>
-						<li><b>Middlewares de Evento DOM:</b> Reciben el evento, el acumulador de datos y la función de continuación.
+						<li><br><b>Middlewares de Evento DOM:</b> Reciben el evento, el acumulador de datos y la función de continuación.
 							<pre><code>function miMiddleware(event, data, next) {
     data.timestamp = Date.now();
     return next(data); // Continuación explícita del flujo
 }</code></pre>
 						</li>
-						<li><b>Middlewares de Éxito o Error:</b> Reciben el valor asignado de origen (payload), el acumulador de datos interno y la función de continuación.
+						<li><br><b>Middlewares de Éxito o Error:</b> Reciben el valor asignado de origen (payload), el acumulador de datos interno y la función de continuación.
 							<pre><code>function miMiddlewareDeCiclo(payload, data, next) {
     // payload: El valor asignado a la propiedad reactiva
     // data: El objeto acumulador del flujo
