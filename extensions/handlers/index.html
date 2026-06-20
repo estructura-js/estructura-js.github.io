@@ -95,7 +95,7 @@
 					<br>
 					<p><b>Método de Arranque (<code>.start()</code>):</b></p>
 					<ul>
-						<li><code>startNode</code> (<code>Object/Node</code>): Opcional. Limita la búsqueda de selectores declarativos al subárbol de este nodo específico. Si se omite, realiza una búsqueda global en el DOM utilizando el selector de primer nivel <code>&gt; [data-e-handler]</code>.</li>
+						<li><code>startNode</code> (<code>Node/String</code>): Opcional. Limita la búsqueda de selectores declarativos al subárbol del nodo o resultado del selector CSS especificado. Si se omite, realiza una búsqueda global en el DOM utilizando el selector de primer nivel <code>&gt; [data-e-handler]</code>.</li>
 						<li><br><i>Nota de integración:</i> Debido al patrón de envoltura de métodos del framework Estructura (<code>adjust_method</code>), los argumentos pasados al despachador inicial se inyectan como primer parámetro de los métodos resueltos. Por ello, la firma interna de ejecución del método es <code>start(args, start_node)</code>, aunque su llamada externa se efectúa pasando directamente el nodo de inicio opcional.</li>
 					</ul>
 					<br>

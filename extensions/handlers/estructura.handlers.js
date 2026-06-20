@@ -272,12 +272,6 @@
       this[id].liveElement = element;
       this[id].initialElement = _element;
 
-      if (typeof this[id].ready !== 'undefined' && !this[id].ready) {
-        this[id].ready = true;
-        this[id].success = false;
-        this[id].error = false;
-      }
-
       _define(this[id], 'ready', true);
 
       _handler = 'e' + _capitalizeAndCamelCase(_handler);
@@ -336,10 +330,13 @@
       start: function (args, start_node) {
         try {
           if (start_node) {
-            _check_object(start_node);
+            var _start_node_type = typeof start_node === 'string';
+            if (!_start_node_type) {
+              _check_object(start_node);
+            }
 
             try {
-              start_node = start_node.querySelectorAll(_e_handlers_str);
+              start_node = (!_start_node_type ? start_node : document.querySelector(start_node)).querySelectorAll(_e_handlers_str);
             }
             catch (e) {
               throw new Error('Start Node must not be: ' + _e.type(start_node).join(', '));
