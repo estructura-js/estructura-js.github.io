@@ -50,6 +50,44 @@
     });
   }
 
+  function _resolve_shortcut(name, visited) {
+    visited = visited || {};
+    name = (name || '').trim();
+
+    // Circular control
+    if (visited[name]) {
+      _error('Circular shortcut reference detected: ' + name);
+    }
+
+    var target = _e_handlers_shortcuts[name];
+
+    // Final if not alias
+    if (typeof target === 'undefined') {
+      return [name];
+    }
+
+    visited[name] = true;
+
+    // Normalization
+    var target_array = _e.type(target)['Array'] ? target : [target];
+    var resolved = [];
+
+    // Recursive
+    for (var i = 0; i < target_array.length; i++) {
+      var item = target_array[i];
+      if (typeof item === 'string') {
+        var nested = _resolve_shortcut(item, visited);
+        for (var j = 0; j < nested.length; j++) {
+          resolved.push(nested[j]);
+        }
+      }
+    }
+
+    // Backtracking
+    delete visited[name];
+    return resolved;
+  }
+
   function _define(target, _var, _value, set_callback, get_callback) {
     if (typeof target[_var] === 'undefined') {
       Object.defineProperty(target, _var, {
@@ -88,7 +126,7 @@
 
     for (var i = 0; i < handler.length; i++) {
       handler[i] = handler[i].trim();
-      handler[i] = _e.type(_e_handlers_shortcuts[handler[i]])['Array'] ? _e_handlers_shortcuts[handler[i]] : [handler[i]];
+      handler[i] = _resolve_shortcut(handler[i]);
 
       for (var j = 0; j < handler[i].length; j++) {
         if (typeof handler[i][j] !== 'string') { continue; }
