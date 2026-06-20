@@ -77,7 +77,7 @@
     }
   }
 
-  function _e_handlers_execute(id, handler, event, middleware) {
+  function _e_handlers_execute(id, handler, event, middleware, _return) {
     handler = Array.prototype.slice.call(handler, 0);
 
     var
@@ -198,7 +198,7 @@
       _middleware(Object.create(null));
     }
 
-    return handler;
+    return _return || handler;
   };
 
   function _e_execute_fn(state, handlers, id, middleware) {
@@ -213,13 +213,13 @@
             catch (e) {
               _error('"' + handler + '" direct sequential execution: ' + e.message);
             }
-          }));
+          }), data);
         };
       }
 
       return function (data) {
         console.info(state, id);
-        _e_handlers_execute(null, handlers, null, function (_handler, _handler_ids, _middleware) {
+        return _e_handlers_execute(null, handlers, null, function (_handler, _handler_ids, _middleware) {
           var _middlewares = _handler_ids.length ? _handler_ids : Object.keys(_e_handlers[_handler]);
           for (var i = _middlewares.length - 1; i >= 0; i--) {
             var _id = _middlewares[i];
@@ -238,7 +238,7 @@
           }
 
           return _middleware;
-        });
+        }, data);
       }
     }
   }
@@ -282,7 +282,7 @@
 
       _handler = 'e' + _capitalizeAndCamelCase(_handler);
 
-      var _middleware = this[id].initialElement.dataset[_handler + 'Middleware'];
+      var _middleware = typeof this[id].initialElement.dataset[_handler + 'Middleware'] !== 'undefined';
 
       var _data_connect = _handler + 'Connect';
       var data_connect = this[id].initialElement.dataset[_data_connect];
