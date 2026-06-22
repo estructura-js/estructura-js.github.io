@@ -216,3 +216,18 @@ fieldset div label:last-child { margin-bottom: 0; }
 @media screen and (max-width: 320px) {
     *, *::after, *::before { font-size: 0.85rem; }
 }
+
+/* Particular styles */
+
+[data-e-handler-id="signedIn"] h1 {
+    font-size: 1.5rem;
+    padding: 1.5rem 0;
+    text-align: center;
+}
+
+@media screen and (max-width: 640px), (max-width: 960px) {
+
+}
+@media screen and (max-width: 320px) {
+
+}

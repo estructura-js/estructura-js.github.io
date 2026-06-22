@@ -416,8 +416,15 @@
                 }
               },
 
-              temporalShow: function(){
-                console.log('Welcome user:', this);
+              temporalShow: function _e_temporal_show(data){
+                console.log('Temporal show:', data);
+
+                var _ref = _dom(this.liveElement), _textOriginal = this.initialElement.textContent;
+                clearTimeout(_e_temporal_show.__$timeout);
+                _e_temporal_show.__$timeout = setTimeout(function(){
+                  _ref.data('data-hidden', '');
+                  _ref.set('textContent', _textOriginal);
+                }, 4567);
               }
             };
 
