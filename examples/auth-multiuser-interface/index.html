@@ -193,6 +193,9 @@
                   typeof event.token === 'string' &&
                   typeof event.route === 'string'
                 ){
+                  var _token = event.token;
+                  event.token = '********';
+
                   console.log('Received:', event);
                   _routing.show(event.route);
                   return;
@@ -254,20 +257,31 @@
                 var _base = _routing.base();
                 var _routesStartId = this.initialElement.dataset.eHandlerId;
                 var _routesStart = _e_handlers.routesStart[_routesStartId];
+                var _currentRoute;
 
-                for(var route in _e_routes_container){
+                for (var route in _e_routes_container) {
                   if (_e_routes_container.hasOwnProperty(route)) {
                     var _route = _e_routes_container[route].initialElement.dataset.eHandlerRoute;
                     if(_route){
                       console.log('Route:', concatUri(_base, _route));
-                      _routing(_route, function(){
-                        console.log('Selected route:', _route);
-                        _routesStart.config.hideRoutes();
-                        _routesStart.config.showRoute( _e_routes_container[route]);
-                      });
+
+                      _routing(_route, (function(_route, route){
+                          return function(){
+                          console.log('Selected route:', _route);
+                          _routesStart.config.hideRoutes();
+                          _routesStart.config.showRoute(_e_routes_container[route]);
+                        }
+                      })(_route, route));
+
+                      var _current = _e_routes_container[route].initialElement.dataset.eCurrentRoute;
+                      if(typeof _current !== 'undefined' && !_currentRoute){
+                        _currentRoute = _route;
+                      }
                     }
                   }
                 }
+
+                _routing.show(_currentRoute);
               }
             };
 
