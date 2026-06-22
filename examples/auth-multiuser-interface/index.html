@@ -257,6 +257,11 @@
                 var _base = _routing.base();
                 var _routesStartId = this.initialElement.dataset.eHandlerId;
                 var _routesStart = _e_handlers.routesStart[_routesStartId];
+
+                if(!_routesStart){
+                  throw new Error('Required "routesStart" handler for route views container.');
+                }
+
                 var _routesStartMode = typeof _routesStart.initialElement.dataset.eHandlerStart !== 'undefined';
                 var _routesEndStart = typeof _routesStart.initialElement.dataset.eHandlerEndStart !== 'undefined';
 
