@@ -393,7 +393,7 @@
           }
 
           var start_nodes = (start_node ? start_node : '>' + _e_handlers_str);
-          var end_inits = [];
+          var end_starts = Object.create(null);
 
           _dom(start_nodes).each(function (element) {
             var id = _clear_handler_id(element.dataset.eHandlerId);
@@ -416,16 +416,25 @@
               });
             }
 
-            var _handler_init = typeof element.dataset.eHandlerInit !== 'undefined';
-            var _handler_init_fn = function (data) { _e_handlers_execute(id, handlers, data || Object.create(null), _handler_middleware); };
-            if (_handler_init) { _handler_init_fn(_handlers); }
+            var _handler_start = typeof element.dataset.eHandlerStart !== 'undefined';
+            var _handler_start_fn = function (data) { _e_handlers_execute(id, handlers, data || Object.create(null), _handler_middleware); };
+            if (_handler_start) { _handler_start_fn(_handlers); }
 
-            var _handler_end_init = typeof element.dataset.eHandlerEndInit !== 'undefined';
-            if (_handler_end_init) { end_inits.push({ handler: _handlers, fn: _handler_init_fn }); }
+            var _handler_end = typeof element.dataset.eHandlerEndStart !== 'undefined';
+            if (_handler_end) {
+              var _id = _handlers.toString();
+              if (!end_starts[_id]) { end_starts[_id] = []; }
+              end_starts[_id].push({ handler: _handlers, fn: _handler_start_fn });
+            }
           });
 
-          var _i = end_inits.length;
-          while (_i--) { end_inits[_i].fn(end_inits[_i].handler); }
+          for (var key in end_starts) {
+            var i = 0;
+            while (i < end_starts[key].length) {
+              end_starts[key][i].fn(end_starts[key][i].handler);
+              i++;
+            }
+          }
         }
         catch (e) {
           _error(e.message);
