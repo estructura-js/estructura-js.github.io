@@ -20,6 +20,21 @@
 	 _events(document).ready(function(){
 			console.log('Estructura Handlers ready.');
 
+			function concatUri(str, str2){
+                var _lastSlash = str2.charAt(0) === '/';
+                var _firstSlash = str.charAt(str.length - 1) === '/';
+
+                if(!_lastSlash && !_firstSlash){
+                  str2 = '/' + str2;
+                }
+
+                if(_lastSlash && _firstSlash){
+                  str2 = str2.slice(1);
+                }
+
+                return str + str2;
+			}
+
 			var _e_handlers = {
               hideAccordions: function (event) {
                 var id = this.initialElement.dataset.eHandlerId;
@@ -60,18 +75,7 @@
 
                 if (!/\s*(http\:\/\/|https\:\/\/)/.test(formDataTarget)) {
                   var _pathname = window.location.pathname;
-                  var _lastSlash = formDataTarget.charAt(0) === '/';
-                  var _firstSlash = _pathname.charAt(_pathname.length - 1) === '/';
-
-                  if(!_lastSlash && !_firstSlash){
-                    formDataTarget = '/' + formDataTarget;
-                  }
-
-                  if(_lastSlash && _firstSlash){
-                    formDataTarget = formDataTarget.slice(1);
-                  }
-
-                  formDataTarget = _pathname + formDataTarget;
+                  formDataTarget = concatUri(_pathname, formDataTarget);
                 }
 
                 try {
@@ -189,8 +193,6 @@
                   typeof event.token === 'string'
                 ){
                   console.log('Received:', _routing.base(), event);
-
-                  _routing.redirect('/account');
                   return;
                 }
 
@@ -211,7 +213,8 @@
                   if (_routes_box.hasOwnProperty(route)) {
                     var _route = _routes_box[route].initialElement.dataset.eHandlerRoute;
                     if(_route){
-                      console.log('Need to register:', (_base + _route));
+                      console.log('Route:', concatUri(_base, _route));
+                      //_routing(_route)
                     }
                   }
                 }
@@ -324,6 +327,10 @@
     			</form>
     		</section>
     	</div>
+
+        <div data-e-handler="route" data-e-handler-id="signedIn" data-e-handler-route="/account">
+            Signed in component.
+        </div>
 	</main>
 
 	<footer>
