@@ -257,8 +257,18 @@
                 var _base = _routing.base();
                 var _routesStartId = this.initialElement.dataset.eHandlerId;
                 var _routesStart = _e_handlers.routesStart[_routesStartId];
-                var _currentRoute;
+                var _routesStartMode = typeof _routesStart.initialElement.dataset.eHandlerStart !== 'undefined';
+                var _routesEndStart = typeof _routesStart.initialElement.dataset.eHandlerEndStart !== 'undefined';
 
+                if(!_routesStartMode){
+                  throw new Error('"data-e-handler-start" required for "' + _routesStartId + '" with "routesStart" handler.');
+                }
+
+                if(!_routesEndStart){
+                  throw new Error('"data-e-handler-end-start" required for "' + _routesStartId + '".');
+                }
+
+                var _currentRoute;
                 for (var route in _e_routes_container) {
                   if (_e_routes_container.hasOwnProperty(route)) {
                     var _route = _e_routes_container[route].initialElement.dataset.eHandlerRoute;
