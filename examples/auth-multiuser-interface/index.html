@@ -190,36 +190,80 @@
                 if(
                   event && typeof event === 'object' &&
                   typeof event.success === 'string' &&
-                  typeof event.token === 'string'
+                  typeof event.token === 'string' &&
+                  typeof event.route === 'string'
                 ){
-                  console.log('Received:', _routing.base(), event);
+                  console.log('Received:', event);
+                  _routing.show(event.route);
                   return;
                 }
 
                 throw new Error('Entry event/data required as Object.');
               },
 
-              routesStart: function(){
-                _routing.start({
-       			  click: false,
-       			  dispatch: false
-       			});
+              routesStart: function (){
+                var _id = this.initialElement.dataset.eHandlerId;
+                if(!this.liveElement.isConnected){
+                    throw new Error('Routes start: "' + _id + '" Node is disconnected from DOM.');
+                }
 
-                var _base = window.location.pathname;
-                console.log('Routes base:', _base);
-       			_routing.base(_base);
+                if(!this.config){
+                  this.config = {
+                    ref: _routing.start({
+         			  click: false,
+         			  dispatch: false
+         			}),
+                    base: window.location.pathname
+                  }
+
+                  console.log('Routes base:', this.config.base);
+                  _routing.base(this.config.base);
+
+                  var _currentRouteStr = 'data-e-current-route';
+                  var _currentRoute = this.liveElement.querySelector('[' + _currentRouteStr + ']');
+                  if(!_currentRoute || !_currentRoute.dataset.eHandlerRoute){
+                    throw new Error('Routes start: "' + _currentRouteStr + '" not found.');
+                  }
+
+                  console.log('Current route:', _currentRoute.dataset.eHandlerRoute);
+
+                  this.config.scope = _currentRoute.parentNode;
+                  var _scopeChildren = this.config.scope.children;
+
+                  this.config.hideRoutes = function(){
+                    _dom(_scopeChildren).each(function(scopeChild){
+                      _dom(scopeChild).data('data-e-hidden-route', '');
+                    });
+                  };
+
+                  this.config.showRoute = function(route){
+                    _dom(route.liveElement).data('data-e-hidden-route', 'no');
+                  };
+
+                  this.config.hideRoutes();
+                  this.config.showRoute({ liveElement: _currentRoute });
+                  return;
+                }
+
+                if(!this.config.scope.isConnected){
+                    throw new Error('Routes start: "' + _currentRouteStr + '" Node is disconnected from DOM.');
+                }
               },
 
-              routes: function _routes_box(){
+              routes: function _e_routes_container(){
                 var _base = _routing.base();
+                var _routesStartId = this.initialElement.dataset.eHandlerId;
+                var _routesStart = _e_handlers.routesStart[_routesStartId];
 
-                for(var route in _routes_box){
-                  if (_routes_box.hasOwnProperty(route)) {
-                    var _route = _routes_box[route].initialElement.dataset.eHandlerRoute;
+                for(var route in _e_routes_container){
+                  if (_e_routes_container.hasOwnProperty(route)) {
+                    var _route = _e_routes_container[route].initialElement.dataset.eHandlerRoute;
                     if(_route){
                       console.log('Route:', concatUri(_base, _route));
                       _routing(_route, function(){
-                        console.log('Current route:', _route);
+                        console.log('Selected route:', _route);
+                        _routesStart.config.hideRoutes();
+                        _routesStart.config.showRoute( _e_routes_container[route]);
                       });
                     }
                   }
@@ -242,7 +286,7 @@
 		<h1><img src="icon.png" alt="Icon"><span>Gestor de Tiques Tarifarios Horarios</span></h1>
 	</header>
 
-	<main data-e-handler="routes" data-e-handler-id="routesBox" data-e-handler-start="routesStart" data-e-handler-end-start>
+	<main data-e-handler="routes" data-e-handler-id="routesContainer" data-e-handler-start="routesStart" data-e-handler-end-start>
     	<div data-e-handler="route" data-e-handler-id="notSignedIn" data-e-handler-route="/" data-e-current-route>
     		<section>
     			<form

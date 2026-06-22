@@ -122,8 +122,12 @@ button:hover, button:focus, button:active {
     width: var(--input);
     word-break: keep-all;
 }
+
 [data-hidden] { display: none; }
 [data-hidden="no"] { display: flex; }
+
+[data-e-hidden-route] { display: none; }
+[data-e-hidden-route="no"] { display: block; }
 
 [data-load] { animation: l 0.5s infinite alternate; }
 @keyframes l { from { background: var(--color1); } to { background: var(--color2); } }

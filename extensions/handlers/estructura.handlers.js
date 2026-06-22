@@ -252,7 +252,7 @@
               handler.call(handler[_id], data);
             }
             catch (e) {
-              _error('"' + handler + '" direct sequential execution: ' + e.message);
+              _error('"' + _id + '" direct sequential execution: ' + e.message);
             }
           }), data);
         };
@@ -423,7 +423,7 @@
                 _e_handlers_execute(id, _handlers, event || Object.create(null), _handler_middleware);
               }
               catch (e) {
-                _error('"' + id + '"."' + data.toString() + '" error: ' + e.message);
+                _error('"' + id + '"."' + _handlers.toString() + '" error: ' + e.message);
               }
             };
 
