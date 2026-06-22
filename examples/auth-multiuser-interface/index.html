@@ -277,9 +277,13 @@
 
                       _routing(_route, (function(_route, route){
                           return function(){
-                          console.log('Selected route:', _route);
-                          _routesStart.config.hideRoutes();
-                          _routesStart.config.showRoute(_e_routes_container[route]);
+                            if(_e_routes_container[route].liveElement.parentNode !== _routesStart.config.scope){
+                              throw new Error('"' + _route + '" route of "' + route + '" cannot be found on "' + _routesStartId + '" scope.');
+                            }
+
+                            console.log('Selected route:', _route);
+                            _routesStart.config.hideRoutes();
+                            _routesStart.config.showRoute(_e_routes_container[route]);
                         }
                       })(_route, route));
 
