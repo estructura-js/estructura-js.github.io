@@ -17,8 +17,10 @@
 	<script src="../../extensions/routing/estructura.routing.js"></script>
 	<script src="../../extensions/handlers/estructura.handlers.js"></script>
 	<script>
-	 _events(document).ready(function(){
+	 _events(document).ready(function () {
 			console.log('Estructura Handlers ready.');
+
+			var _generic_token = '********';
 
 			function concatUri(str, str2){
                 var _lastSlash = str2.charAt(0) === '/';
@@ -33,6 +35,84 @@
                 }
 
                 return str + str2;
+			}
+
+			function hashCode(str, seed) {
+              var hash = typeof seed === 'number' ? seed : 5381;
+              for (var i = 0; i < str.length; i++) {
+                hash = (hash << 5) + hash + str.charCodeAt(i);
+              }
+              return hash >>> 0;
+            }
+
+			function roundSessName(){
+              var hourMs = 60 * 60 * 1000;
+              var interval = hourMs;
+              return Math.floor((new Date).getTime() / hourMs) * hourMs;
+			}
+
+			function b64json(data){
+			  return btoa(JSON.stringify(data));
+			}
+
+			function saveSess(data){
+     			try {
+     			  if(!data || typeof data !== 'object'){
+     			    throw new Error('Unsupported session data.');
+      		      }
+
+     			  data.timestamp = new Date().getTime();
+
+      		      var sessName = roundSessName();
+     			  var sessContent = b64json(data);
+
+     			  data.checksum = hashCode(sessContent, sessName);
+     			  sessContent = b64json(data);
+
+     			  sessionStorage.setItem(btoa(sessName), sessContent);
+               }
+               catch(e){
+                 e.name = 'saveSess';
+                 throw e;
+               }
+			}
+
+			function lastSess(data, required){
+		      try {
+     			var sessName = roundSessName();
+      		    data = sessionStorage.getItem(btoa(sessName));
+     			if (!data){
+                  throw new Error('Session not found or expired.');
+                }
+
+     			data = atob(data);
+			    data = JSON.parse(data);
+			    if(!data.checksum || !data.timestamp){
+					throw new Error('Unssupported session data.');
+				}
+
+				if(required){
+				  var i = required.length;
+				  while(i--){
+						if(typeof data[required[i]] === 'undefined'){
+						  throw new Error('"' + required[i] + '" required.');
+						}
+				  }
+				}
+
+				var checksum = Number(data.checksum);
+				delete data.checksum;
+
+				if(hashCode(b64json(data), sessName) == checksum){
+				  console.log('Checksum checked:', checksum);
+				  return data;
+				}
+			  }
+		      catch(e){
+				    e.name = 'lastSess';
+					throw e;
+			  }
+			  return false;
 			}
 
 			var _e_handlers = {
@@ -191,12 +271,14 @@
                   event && typeof event === 'object' &&
                   typeof event.success === 'string' &&
                   typeof event.token === 'string' &&
-                  typeof event.route === 'string'
+                  typeof event.route === 'string' &&
+                  typeof sessionStorage !== 'undefined'
                 ){
-                  var _token = event.token;
-                  event.token = '********';
+                  saveSess(event);
 
+                  event.token = _generic_token;
                   console.log('Received:', event);
+
                   _routing.show(event.route);
                   return;
                 }
@@ -204,7 +286,7 @@
                 throw new Error('Entry event/data required as Object.');
               },
 
-              routesStart: function (){
+              routesStart: function  () {
                 var _id = this.initialElement.dataset.eHandlerId;
                 if(!this.liveElement.isConnected){
                     throw new Error('Routes start: "' + _id + '" Node is disconnected from DOM.');
@@ -233,7 +315,7 @@
                   this.config.scope = _currentRoute.parentNode;
                   var _scopeChildren = this.config.scope.children;
 
-                  this.config.hideRoutes = function(){
+                  this.config.hideRoutes = function () {
                     _dom(_scopeChildren).each(function(scopeChild){
                       _dom(scopeChild).data('data-e-hidden-route', '');
                     });
@@ -253,7 +335,7 @@
                 }
               },
 
-              routes: function _e_routes_container(){
+              routes: function _e_routes_container () {
                 var _base = _routing.base();
                 var _routesStartId = this.initialElement.dataset.eHandlerId;
                 var _routesStart = _e_handlers.routesStart[_routesStartId];
@@ -281,7 +363,7 @@
                       console.log('Route:', concatUri(_base, _route));
 
                       _routing(_route, (function(_route, route){
-                          return function(){
+                          return function () {
                             if(_e_routes_container[route].liveElement.parentNode !== _routesStart.config.scope){
                               throw new Error('"' + _route + '" route of "' + route + '" cannot be found on "' + _routesStartId + '" scope.');
                             }
@@ -301,6 +383,20 @@
                 }
 
                 _routing.show(_currentRoute);
+              },
+
+              routeSignedInCheck: function () {
+                try {
+                  console.log('SignedIn checking...');
+                  var session = lastSess('3 hours session', ['token', 'route', 'success']);
+                  var token = session.token;
+                  session.token = _generic_token;
+                  console.log('Session found:', session);
+                  _routing.redirect(session.route);
+                }
+                catch(e){
+                  console.warn('SignedIn Check:', e.message);
+                }
               }
             };
 
@@ -320,7 +416,7 @@
 	</header>
 
 	<main data-e-handler="routes" data-e-handler-id="routesContainer" data-e-handler-start="routesStart" data-e-handler-end-start>
-    	<div data-e-handler="route" data-e-handler-id="notSignedIn" data-e-handler-route="/" data-e-current-route>
+    	<div data-e-handler="route" data-e-handler-id="notSignedIn" data-e-handler-route="/" data-e-handler-start="routeSignedInCheck" data-e-current-route>
     		<section>
     			<form
          			data-e-handler="forms"
