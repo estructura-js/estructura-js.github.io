@@ -58,7 +58,21 @@
                   formDataTarget = this.initialElement.dataset.eHandlerData,
                   formConnect = this.connect;
 
-                if (!/\s*(http\:\/\/|https\:\/\/)/.test(formDataTarget)) { formDataTarget = window.location.pathname + formDataTarget; }
+                if (!/\s*(http\:\/\/|https\:\/\/)/.test(formDataTarget)) {
+                  var _pathname = window.location.pathname;
+                  var _lastSlash = formDataTarget.charAt(0) === '/';
+                  var _firstSlash = _pathname.charAt(_pathname.length - 1) === '/';
+
+                  if(!_lastSlash && !_firstSlash){
+                    formDataTarget = '/' + formDataTarget;
+                  }
+
+                  if(_lastSlash && _firstSlash){
+                    formDataTarget = formDataTarget.slice(1);
+                  }
+
+                  formDataTarget = _pathname + formDataTarget;
+                }
 
                 try {
                   var _form = Object.fromEntries(form.entries());
@@ -75,8 +89,25 @@
                   onSuccess: function (r) {
                     try {
                       r = JSON.parse(r);
-                      if (typeof r[formId] === 'undefined' || typeof r.error !== 'undefined') {
-                        _error('Unrecognized response.');
+
+                      if (!r || typeof r !== 'object') {
+                        throw new Error('Response format not supported, Object required.');
+                      }
+
+                      if (typeof r.error !== 'undefined'){
+                        throw new Error(r.error);
+                      }
+
+                      if (typeof r[formId] === 'undefined') {
+                        throw new Error('Response requires Object."' + formId + '".');
+                      }
+
+                      if (typeof r[formId] === 'string') {
+                        throw new Error(r[formId]);
+                      }
+
+                      if (!r[formId] || typeof r[formId] !== 'object'){
+                        throw new Error('Response Object."' + formId + '" value required as Object.');
                       }
 
                       formConnect('success', r[formId]);
@@ -95,16 +126,16 @@
                 });
               },
 
-              formRouting: function (event) {
+              formsResponse: function (event) {
                 event.preventDefault();
 
-                var formRoutingId = this.initialElement.dataset.eHandlerId;
-                console.log('formRouting:', formRoutingId);
+                var formsResponseId = this.initialElement.dataset.eHandlerId;
+                console.log('formsResponse:', formsResponseId);
               },
 
               notification: function (event) {
                 if (!this.initialElement || !this.liveElement) {
-                  _error(_e_handler_id_required);
+                  throw new Error(_e_handler_id_required);
                 }
 
                 var _element = _dom(this.initialElement);
@@ -113,7 +144,7 @@
                 var _type = _e.type(event);
                 if (_type['Error']) {
                   element.data('data-error', '');
-                  element.set('textContent', event.error || event.message || 'Error.');
+                  element.set('textContent', event.message || 'Error.');
                 }
                 else if (_type['String']) {
                   element.data('data-error', '');
@@ -145,32 +176,51 @@
 
               remove: function (event) {
                 if (!this.liveElement.isConnected) {
-                  _error('"' + this.initialElement.nodeName + '" Node is disconnected from DOM.');
+                  throw new Error('"' + this.initialElement.nodeName + '" Node is disconnected from DOM.');
                 }
 
                 this.liveElement.parentNode.removeChild(this.liveElement);
               },
 
-              mw: function(e, d, n){
-                console.log('MW:', e, d);
-                console.log('MW:', this);
-                this.connect('success', { hello: 'world' })
-                return n(d);
+              formsResponseRoute: function(event){
+                if(
+                  event && typeof event === 'object' &&
+                  typeof event.success === 'string' &&
+                  typeof event.token === 'string'
+                ){
+                  console.log('Received:', _routing.base(), event);
+
+                  _routing.redirect('/account');
+                  return;
+                }
+
+                throw new Error('Entry event/data required as Object.');
               },
 
-              mw3: function(e, d, n){
-                console.log('MW3:', e, d);
-                return n(d);
-              },
+              routes: function _routes_box(){
+                _routing.start({
+       			  click: false,
+       			  dispatch: false
+       			});
 
-              mw2: function(d, z, n){
-                console.log('MW2:', d, z, n);
+                var _base = window.location.pathname;
+                console.log('Routes base:', _base);
+       			_routing.base(_base);
 
+                for(var route in _routes_box){
+                  if (_routes_box.hasOwnProperty(route)) {
+                    var _route = _routes_box[route].initialElement.dataset.eHandlerRoute;
+                    if(_route){
+                      console.log('Need to register:', (_base + _route));
+                    }
+                  }
+                }
               }
             };
 
             var _e_handlers_shortcuts = {
-              'selectiveAccordion': ['hideAccordions', 'accordion']
+              'selectiveAccordion': ['hideAccordions', 'accordion'],
+              'route': 'routes'
             };
 
 			_handlers(_e_handlers, _e_handlers_shortcuts).start();
@@ -183,108 +233,97 @@
 		<h1><img src="icon.png" alt="Icon"><span>Gestor de Tiques Tarifarios Horarios</span></h1>
 	</header>
 
-	<main>
-	    <div
-			data-e-handler="mw, mw.test2"
-			data-e-handler-id="test"
-			data-e-handler-middleware
+	<main data-e-handler="routes" data-e-handler-id="routesBox" data-e-handler-end-init>
+    	<div data-e-handler="route" data-e-handler-id="notSignedIn" data-e-handler-route="/">
+    		<section>
+    			<form
+         			data-e-handler="forms"
+         			data-e-handler-id="signup-form"
+         			data-e-handler-event="submit"
+         			data-e-handler-data="/auth/signup"
 
-			data-e-mw-connect="mw3"
-			data-e-mw3-success="mw2"
+         			data-e-forms-connect="formsResponse.signup-form"
 
-			data-e-handler-event="click.test"
-		>Click & console test</div>
-
-		<div data-e-handler="mw" data-e-handler-id="test2">Test2 box</div>
-
-
-		<section>
-			<form
-			data-e-handler="forms"
-			data-e-handler-id="signup-form"
-			data-e-handler-event="submit.forms"
-			data-e-handler-data="auth/signup"
-
-			data-e-forms-connect="formRouting.signup-form"
-			data-e-form-routing-error="notification.signup-notif"
-			data-e-form-routing-success="notification.signup-form"
-			>
-    			<fieldset>
-    			    <legend data-selected="no" data-e-handler="selectiveAccordion" data-e-handler-id="signup-header" data-e-handler-event="click.accordion" data-e-handler-data="#signup">Registro</legend>
-
-    				<div id="signup" data-box data-hidden>
-                        <div data-e-handler="notification" data-e-handler-id="signup-notif" data-hidden>Loading...</div>
-
-        				<div>
-        				    <h4>Tipo</h4>
-            				<label data-flex-childs-center>
-            				    <input type="radio" name="type" value="admin">
-            				    <b>Administrador</b>
-            				</label>
-            				<label data-flex-childs-center>
-            				    <input type="radio" name="type" value="operator" checked>
-            				    <b>Operador</b>
-            				</label>
-        				</div>
-
-        				<label data-flex-column>
-        				    <h4>Usuario</h4>
-     			        <input type="text" name="user">
-        				</label>
-
-        				<label data-flex-column>
-        				    <h4>Contraseña</h4>
-     			        <input type="password" name="password">
-        				</label>
-
-        				<label data-flex-column>
-        				    <h4>Espacio de trabajo</h4>
-     			        <input type="text" name="workspace">
-        				</label>
-
-        				<button type="submit">Registrar</button>
-    				</div>
-    			</fieldset>
-			</form>
-		</section>
-
-	    <section>
-			<form
-			data-e-handler="forms"
-			data-e-handler-id="signin-form"
-			data-e-handler-event="submit.forms"
-			data-e-handler-data="auth/signin"
-
-			data-e-forms-connect="formRouting.signin-form"
-
-			data-e-form-routing-error="notification.signin-notif"
-			data-e-form-routing-success=""
-			>
+         			data-e-forms-response-error="notification.signup-notif"
+         			data-e-forms-response-success="notification.signup-form"
+    			>
      			<fieldset>
-     			    <legend data-e-handler="selectiveAccordion" data-e-handler-id="signin-header" data-e-handler-event="click.accordion" data-e-handler-data="#signin">Ingreso</legend>
+     			    <legend data-selected="no" data-e-handler="selectiveAccordion" data-e-handler-id="signup-header" data-e-handler-event="click" data-e-handler-data="#signup">Registro</legend>
 
-    				<div id="signin" data-box data-hidden="no">
-                        <div data-e-handler="notification" data-e-handler-id="signin-notif" data-hidden>Loading...</div>
-        				<label data-flex-column>
-        				    <h4>Usuario</h4>
-     			        <input type="text" name="user">
-        				</label>
+        				<div id="signup" data-box data-hidden>
+                            <div data-e-handler="notification" data-e-handler-id="signup-notif" data-hidden>Loading...</div>
 
-        				<label data-flex-column>
-        				    <h4>Contraseña</h4>
-     			        <input type="password" name="password">
-        				</label>
+            				<div>
+            				    <h4>Tipo</h4>
+                				<label data-flex-childs-center>
+                				    <input type="radio" name="type" value="admin">
+                				    <b>Administrador</b>
+                				</label>
+                				<label data-flex-childs-center>
+                				    <input type="radio" name="type" value="operator" checked>
+                				    <b>Operador</b>
+                				</label>
+            				</div>
 
-        				<label data-flex-column>
-        				    <h4>Espacio de trabajo</h4>
-     			            <input type="text" name="workspace">
-        				</label>
+            				<label data-flex-column>
+            				    <h4>Usuario</h4>
+         			        <input type="text" name="user">
+            				</label>
 
-        				<button type="submit">Ingresar</button>
-    				</div>
+            				<label data-flex-column>
+            				    <h4>Contraseña</h4>
+         			        <input type="password" name="password">
+            				</label>
+
+            				<label data-flex-column>
+            				    <h4>Espacio de trabajo</h4>
+         			        <input type="text" name="workspace">
+            				</label>
+
+            				<button type="submit">Registrar</button>
+        				</div>
      			</fieldset>
-			</form>
-		</section>
+    			</form>
+    		</section>
+
+    	    <section>
+    			<form
+         			data-e-handler="forms"
+         			data-e-handler-id="signin-form"
+         			data-e-handler-event="submit"
+         			data-e-handler-data="/auth/signin"
+
+         			data-e-forms-connect="formsResponse.signin-form"
+
+         			data-e-forms-response-error="notification.signin-notif"
+         			data-e-forms-response-success="notification.signin-notif, formsResponseRoute"
+    			>
+         			<fieldset>
+         			    <legend data-e-handler="selectiveAccordion" data-e-handler-id="signin-header" data-e-handler-event="click" data-e-handler-data="#signin">Ingreso</legend>
+
+        				<div id="signin" data-box data-hidden="no">
+                            <div data-e-handler="notification" data-e-handler-id="signin-notif" data-hidden>Loading...</div>
+            				<label data-flex-column>
+            				    <h4>Usuario</h4>
+         			        <input type="text" name="user">
+            				</label>
+
+            				<label data-flex-column>
+            				    <h4>Contraseña</h4>
+         			        <input type="password" name="password">
+            				</label>
+
+            				<label data-flex-column>
+            				    <h4>Espacio de trabajo</h4>
+         			            <input type="text" name="workspace">
+            				</label>
+
+            				<button type="submit">Ingresar</button>
+        				</div>
+         			</fieldset>
+    			</form>
+    		</section>
+    	</div>
 	</main>
 
 	<footer>

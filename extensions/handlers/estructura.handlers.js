@@ -16,10 +16,13 @@
     _e_handlers = {},
     _e_handlers_shortcuts = {},
     _e_ids_re = /\s+/g,
+    _e_trim_re = /^\s+|\s+$/g,
     _e_handlers_re = /[\s\,]+/,
     _e_handlers_ids_re = /[\|\.]+/,
-    _e_handlers_str = '[data-e-handler]',
-    _e_handler_id_required = '"data-e-handler-id" required.',
+    _e_handler_str_int = 'data-e-handler',
+    _e_handlers_str = '[' + _e_handler_str_int + ']',
+    _e_handler_id_required = '"' + _e_handler_str_int + '-id" required.',
+    _e_handler_required = '"' + _e_handler_str_int + '" required.',
     _e_reserved = { 'liveElement': 1, 'initialElement': 1, 'connect': 1, 'ready': 1 },
     _handlers = _e.instance('handlers');
 
@@ -110,7 +113,7 @@
           }
         },
         enumerable: true,
-        configurable: true
+        configurable: false
       });
     }
   }
@@ -354,6 +357,14 @@
     }
   }
 
+  function _clear_handler_str(str) {
+    return (str || '').replace(_e_ids_re, ' ').replace(_e_trim_re, '').split(_e_handlers_re);
+  }
+
+  function _clear_handler_id(str) {
+    return (str || '').replace(_e_ids_re, '');
+  }
+
   _handlers.fn(function (handlers, handlers_shortcuts) {
     _check_object(handlers);
 
@@ -382,23 +393,39 @@
           }
 
           var start_nodes = (start_node ? start_node : '>' + _e_handlers_str);
+          var end_inits = [];
 
           _dom(start_nodes).each(function (element) {
-            var id = (element.dataset.eHandlerId || '').replace(_e_ids_re, '');
+            var id = _clear_handler_id(element.dataset.eHandlerId);
             if (!id) {
               _error(_e_handler_id_required);
             }
 
-            var handlers = element.dataset.eHandler.split(_e_handlers_re);
+            var handlers = _clear_handler_str(element.dataset.eHandler);
+            if (!handlers[0]) {
+              _error(_e_handler_required);
+            }
+
             var _handler_middleware = typeof element.dataset.eHandlerMiddleware !== 'undefined';
-            _e_handlers_execute(id, handlers, _e_handlers_register(id, element, element.cloneNode()), _handler_middleware);
+            var _handlers = _e_handlers_execute(id, handlers, _e_handlers_register(id, element, element.cloneNode()), _handler_middleware);
 
-            if (!element.dataset.eHandlerEvent || typeof element.dataset.eHandlerEvent !== 'string') { return; }
+            var _handler_event = typeof element.dataset.eHandlerEvent !== 'undefined';
+            if (_handler_event) {
+              _events(element).on(element.dataset.eHandlerEvent, function (event) {
+                _e_handlers_execute(id, handlers, event, _handler_middleware);
+              });
+            }
 
-            _events(element).on(element.dataset.eHandlerEvent, function (event) {
-              _e_handlers_execute(id, handlers, event, _handler_middleware);
-            });
+            var _handler_init = typeof element.dataset.eHandlerInit !== 'undefined';
+            var _handler_init_fn = function (data) { _e_handlers_execute(id, handlers, data || Object.create(null), _handler_middleware); };
+            if (_handler_init) { _handler_init_fn(_handlers); }
+
+            var _handler_end_init = typeof element.dataset.eHandlerEndInit !== 'undefined';
+            if (_handler_end_init) { end_inits.push({ handler: _handlers, fn: _handler_init_fn }); }
           });
+
+          var _i = end_inits.length;
+          while (_i--) { end_inits[_i].fn(end_inits[_i].handler); }
         }
         catch (e) {
           _error(e.message);
