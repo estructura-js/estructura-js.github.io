@@ -226,24 +226,35 @@
                 var element = _dom(this.liveElement);
 
                 var _type = _e.type(event);
+                var _content;
                 if (_type['Error']) {
                   element.data('data-error', '');
-                  element.set('textContent', event.message || 'Error.');
+                  _content = event.message || 'Error.';
+                  this.error = _content;
+                  element.set('textContent', _content);
                 }
                 else if (_type['String']) {
                   element.data('data-error', '');
-                  element.set('textContent', event);
+                  _content = event;
+                  this.error = _content;
+                  element.set('textContent', _content);
                 }
                 else if (_type['Object']) {
                   if (event.loading) {
                     element.data('data-loading', '');
-                    element.set('textContent', event.loading || event.message || 'Loading.');
+                    _content = event.loading || event.message || 'Loading.'
+                    this.success = _content;
                   }
                   else {
                     element.data('data-success', '');
-                    element.set('textContent', event.success || event.message || 'Success.');
+                    _content = event.success || event.message || 'Success.';
+                    this.success = _content;
                   }
+
+                  element.set('textContent', _content);
                 }
+
+                // Fallback, to restore to original state and content.
 
                 var _success = typeof this.liveElement.dataset.success !== 'undefined';
                 var _error = typeof this.liveElement.dataset.error !== 'undefined';
@@ -335,7 +346,12 @@
                 }
               },
 
-              routes: function _e_routes_container () {
+              routes: function _e_routes_container (event) {
+                var type = _e.type(event);
+                if(type.length > 1){
+                  throw new Error('Unsupported with: ' + type.join(', '));
+                }
+
                 var _base = _routing.base();
                 var _routesStartId = this.initialElement.dataset.eHandlerId;
                 var _routesStart = _e_handlers.routesStart[_routesStartId];
@@ -385,18 +401,23 @@
                 _routing.show(_currentRoute);
               },
 
-              routeSignedInCheck: function () {
+              signedInCheck: function () {
                 try {
                   console.log('SignedIn checking...');
                   var session = lastSess('3 hours session', ['token', 'route', 'success']);
                   var token = session.token;
                   session.token = _generic_token;
-                  console.log('Session found:', session);
+                  console.log('Session found:', session, this.liveElement.dataset.eHandlerId);
                   _routing.redirect(session.route);
+                  this.connect(session);
                 }
                 catch(e){
                   console.warn('SignedIn Check:', e.message);
                 }
+              },
+
+              temporalShow: function(){
+                console.log('Welcome user:', this);
               }
             };
 
@@ -416,7 +437,7 @@
 	</header>
 
 	<main data-e-handler="routes" data-e-handler-id="routesContainer" data-e-handler-start="routesStart" data-e-handler-end-start>
-    	<div data-e-handler="route" data-e-handler-id="notSignedIn" data-e-handler-route="/" data-e-handler-start="routeSignedInCheck" data-e-current-route>
+    	<div data-e-handler="route" data-e-handler-id="notSignedIn" data-e-handler-route="/" data-e-handler-end-start="signedInCheck" data-e-signed-in-check-connect="notification.signedIn-message" data-e-current-route>
     		<section>
     			<form
          			data-e-handler="forms"
@@ -478,7 +499,9 @@
          			data-e-forms-connect="formsResponse.signin-form"
 
          			data-e-forms-response-error="notification.signin-notif"
-         			data-e-forms-response-success="notification.signin-notif, formsResponseRoute"
+         			data-e-forms-response-success="notification.signin-notif, formsResponseRoute, signedInCheck.notSignedIn"
+
+                    data-e-signed-in-check-connect="notification.signedIn-message"
     			>
          			<fieldset>
          			    <legend data-e-handler="selectiveAccordion" data-e-handler-id="signin-header" data-e-handler-event="click" data-e-handler-data="#signin">Ingreso</legend>
@@ -508,7 +531,10 @@
     	</div>
 
         <div data-e-handler="route" data-e-handler-id="signedIn" data-e-handler-route="/account" data-e-hidden-route>
-            Signed in component.
+            <div data-e-handler="notification" data-e-handler-id="signedIn-message" data-e-notification-success="temporalShow">Signed in component.</div>
+
+            <h1>Welcome user!</h1>
+
         </div>
 	</main>
 

@@ -327,8 +327,24 @@
         _e_handlers_execute(id, _data_connect, _e_handlers_register(id, element, _element), _middleware);
 
         this[id].connect = function (state, data, ids) {
-          if (typeof state !== 'string' || _e_reserved[state]) { return console.warn(_handler, id, 'Incorrect target:', state); }
-          _e_handlers_execute(null, _data_connect, _e_handlers_ids(ids, function (handler, _id) { handler[_id][state] = data; }), _middleware);
+          var _state = typeof state === 'string';
+          var _data = typeof data === 'undefined';
+          if (_state && _e_reserved[state]) {
+            return console.warn(_handler, id, 'Incorrect target:', state);
+          }
+
+          _e_handlers_execute(null, _data_connect, _e_handlers_ids(ids, function (handler, _id) {
+            if (_state && !_data) {
+              handler[_id][state] = data;
+              return;
+            }
+
+            if (_data) {
+              return handler.call(handler[_id], state);
+            }
+
+            console.warn('Incorrect connect:', state, data, ids);
+          }), _middleware);
         }
       }
       else {
