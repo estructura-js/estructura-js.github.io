@@ -406,8 +406,9 @@
               _error(_e_handler_required);
             }
 
+            var _element = element.cloneNode();
             var _handler_middleware = typeof element.dataset.eHandlerMiddleware !== 'undefined';
-            var _handlers = _e_handlers_execute(id, handlers, _e_handlers_register(id, element, element.cloneNode()), _handler_middleware);
+            _e_handlers_execute(id, handlers, _e_handlers_register(id, element, _element), _handler_middleware);
 
             var _handler_event = typeof element.dataset.eHandlerEvent !== 'undefined';
             if (_handler_event) {
@@ -417,22 +418,41 @@
             }
 
             var _handler_start = typeof element.dataset.eHandlerStart !== 'undefined';
-            var _handler_start_fn = function (data) { _e_handlers_execute(id, handlers, data || Object.create(null), _handler_middleware); };
-            if (_handler_start) { _handler_start_fn(_handlers); }
+            var _handler_start_fn = function (_handlers, event) {
+              try {
+                _e_handlers_execute(id, _handlers, event || Object.create(null), _handler_middleware);
+              }
+              catch (e) {
+                _error('"' + id + '"."' + data.toString() + '" error: ' + e.message);
+              }
+            };
+
+            if (_handler_start) {
+              var start_handlers = _clear_handler_str(element.dataset.eHandlerStart);
+              if (!start_handlers[0]) { start_handlers = handlers; }
+              _e_handlers_execute(id, start_handlers, _e_handlers_register(id, element, _element), _handler_middleware)
+              _handler_start_fn(start_handlers);
+            }
 
             var _handler_end = typeof element.dataset.eHandlerEndStart !== 'undefined';
             if (_handler_end) {
-              var _id = _handlers.toString();
+              var end_handlers = _clear_handler_str(element.dataset.eHandlerEndStart);
+              if (!end_handlers[0]) { end_handlers = handlers; }
+
+              _e_handlers_execute(id, end_handlers, _e_handlers_register(id, element, _element), _handler_middleware)
+
+              var _id = end_handlers.toString();
               if (!end_starts[_id]) { end_starts[_id] = []; }
-              end_starts[_id].push({ handler: _handlers, fn: _handler_start_fn });
+              end_starts[_id].push({ handler: end_handlers, fn: _handler_start_fn });
             }
           });
 
           for (var key in end_starts) {
-            var i = 0;
-            while (i < end_starts[key].length) {
-              end_starts[key][i].fn(end_starts[key][i].handler);
-              i++;
+            if (end_starts[key].length < 1) { continue; }
+            var callback = 0;
+            while (callback < end_starts[key].length) {
+              end_starts[key][callback].fn(end_starts[key][callback].handler);
+              callback++;
             }
           }
         }

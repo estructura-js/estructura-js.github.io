@@ -199,7 +199,7 @@
                 throw new Error('Entry event/data required as Object.');
               },
 
-              routes: function _routes_box(){
+              routesStart: function(){
                 _routing.start({
        			  click: false,
        			  dispatch: false
@@ -208,13 +208,19 @@
                 var _base = window.location.pathname;
                 console.log('Routes base:', _base);
        			_routing.base(_base);
+              },
+
+              routes: function _routes_box(){
+                var _base = _routing.base();
 
                 for(var route in _routes_box){
                   if (_routes_box.hasOwnProperty(route)) {
                     var _route = _routes_box[route].initialElement.dataset.eHandlerRoute;
                     if(_route){
                       console.log('Route:', concatUri(_base, _route));
-                      //_routing(_route)
+                      _routing(_route, function(){
+                        console.log('Current route:', _route);
+                      });
                     }
                   }
                 }
@@ -236,8 +242,8 @@
 		<h1><img src="icon.png" alt="Icon"><span>Gestor de Tiques Tarifarios Horarios</span></h1>
 	</header>
 
-	<main data-e-handler="routes" data-e-handler-id="routesBox" data-e-handler-end-start>
-    	<div data-e-handler="route" data-e-handler-id="notSignedIn" data-e-handler-route="/">
+	<main data-e-handler="routes" data-e-handler-id="routesBox" data-e-handler-start="routesStart" data-e-handler-end-start>
+    	<div data-e-handler="route" data-e-handler-id="notSignedIn" data-e-handler-route="/" data-e-current-route>
     		<section>
     			<form
          			data-e-handler="forms"
@@ -328,7 +334,7 @@
     		</section>
     	</div>
 
-        <div data-e-handler="route" data-e-handler-id="signedIn" data-e-handler-route="/account">
+        <div data-e-handler="route" data-e-handler-id="signedIn" data-e-handler-route="/account" data-e-hidden-route>
             Signed in component.
         </div>
 	</main>
