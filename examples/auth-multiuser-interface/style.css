@@ -211,7 +211,10 @@ fieldset h4, fieldset div label {
 fieldset div label:last-child { margin-bottom: 0; }
 @media screen and (max-width: 640px), (max-width: 960px) {
     *, *::after, *::before { font-size: 0.9rem; }
-    main { flex-flow: column; }
+    main {
+        flex-flow: column;
+        flex-grow: 1;
+    }
 }
 @media screen and (max-width: 320px) {
     *, *::after, *::before { font-size: 0.85rem; }
@@ -219,15 +222,78 @@ fieldset div label:last-child { margin-bottom: 0; }
 
 /* Particular styles */
 
-[data-e-handler-id="signedIn"] h1 {
-    font-size: 1.5rem;
-    padding: 1.5rem 0;
-    text-align: center;
+[data-e-handler-id="signedIn"] {
+    width: 100%;
+    height: 100%;
+    flex-grow: 1;
+    background: var(--color3);
+}
+
+[data-e-handler-id="signedIn"] section {
+    margin: 0;
+    height: 100%;
+    display: flex;
+    flex-flow: column;
+}
+[data-e-handler-id="signedIn"] section > * { width: 100%; }
+
+#app,
+#app nav,
+#app .left-side,
+#app .right-side {
+    display: flex;
+}
+
+#app .left-side {
+    background: var(--color5);
+    width: 75%;
+    flex-flow: column;
+}
+
+#app .right-side {
+    background: var(--color3);
+    width: 25%;
+}
+
+#app nav {
+    border-bottom: 1px solid var(--color7);
+    height: 4rem;
+    padding: 0 1rem;
+    justify-content: center;
+}
+
+#app nav > * { align-self: center; }
+
+#app .content {
+    flex-grow: 1;
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+}
+
+#app .content ol {
+    align-self: center;
+    width: 50%;
+    padding: 1.5rem;
+}
+
+
+#app, #app iframe {
+    width: 100%;
+    height: 100%;
 }
 
 @media screen and (max-width: 640px), (max-width: 960px) {
-
-}
-@media screen and (max-width: 320px) {
-
+    #app, #app .left-side {
+        flex-flow: column;
+    }
+    #app .left-side {
+        width: 100%;
+        height: 75%;
+        flex-grow: 1;
+    }
+    #app .right-side {
+        width: 100%;
+        max-height: 25%;
+    }
 }

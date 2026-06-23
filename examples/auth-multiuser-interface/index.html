@@ -2,7 +2,7 @@
 <html>
 
 <head>
-	<title>Gestor de Tiques Tarifarios Horarios</title>
+	<title>Tiques Tarifarios Horarios</title>
 	<meta charset="UTF-8">
 	<link rel="icon" href="icon.png">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -80,7 +80,8 @@
 			function lastSess(data, required){
 		      try {
      			var sessName = roundSessName();
-      		    data = sessionStorage.getItem(btoa(sessName));
+                var _sessName = btoa(sessName);
+      		    data = sessionStorage.getItem(_sessName);
      			if (!data){
                   throw new Error('Session not found or expired.');
                 }
@@ -105,6 +106,10 @@
 
 				if(hashCode(b64json(data), sessName) == checksum){
 				  console.log('Checksum checked:', checksum);
+				  data.name = _sessName;
+				  data.del = function(){
+						sessionStorage.removeItem(_sessName);
+				  };
 				  return data;
 				}
 			  }
@@ -425,6 +430,19 @@
                   _ref.data('data-hidden', '');
                   _ref.set('textContent', _textOriginal);
                 }, 4567);
+              },
+
+              signout: function(event){
+                event.preventDefault();
+                try {
+                  console.log('SignOut...');
+                  var session = lastSess();
+                  session.del();
+                }
+                catch(e){
+                  console.warn('SignOut:', e.message);
+                }
+                _routing.redirect('/');
               }
             };
 
@@ -440,7 +458,7 @@
 
 <body>
 	<header>
-		<h1><img src="icon.png" alt="Icon"><span>Gestor de Tiques Tarifarios Horarios</span></h1>
+		<h1><img src="icon.png" alt="Icon"><span>Tiques Tarifarios Horarios</span></h1>
 	</header>
 
 	<main data-e-handler="routes" data-e-handler-id="routesContainer" data-e-handler-start="routesStart" data-e-handler-end-start>
@@ -538,10 +556,26 @@
     	</div>
 
         <div data-e-handler="route" data-e-handler-id="signedIn" data-e-handler-route="/account" data-e-hidden-route>
-            <div data-e-handler="notification" data-e-handler-id="signedIn-message" data-e-notification-success="temporalShow">Signed in component.</div>
-
-            <h1>Welcome user!</h1>
-
+            <section>
+                <div data-e-handler="notification" data-e-handler-id="signedIn-message" data-e-notification-success="temporalShow">Signed in component.</div>
+                <div id="app">
+                    <div class="left-side">
+                        <nav>
+                            <button data-e-handler="signout" data-e-handler-id="signout-btn" data-e-handler-event="click">Salir</button>
+                        </nav>
+                        <div class="content">
+                            <ol>
+                                <li>Contenido A</li>
+                                <li>Contenido B</li>
+                                <li>Contenido C</li>
+                            </ol>
+                        </div>
+                    </div>
+                    <aside class="right-side">
+                        <iframe src="about:blank"></iframe>
+                    </aside>
+                </div>
+            </section>
         </div>
 	</main>
 
