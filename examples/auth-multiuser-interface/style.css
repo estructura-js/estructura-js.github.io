@@ -317,12 +317,12 @@ fieldset div label:last-child { margin-bottom: 0; }
 }
 
 #app .left-side {
-    width: 75%;
+    width: 77%;
 }
 
 #app .right-side {
     background: var(--color3);
-    width: 25%;
+    width: 23%;
 }
 
 #app .options {
@@ -449,7 +449,7 @@ fieldset div label:last-child { margin-bottom: 0; }
 }
 
 #app .ticket .attached .cost {
-    width: 3.5rem;
+    width: 2.5rem;
 }
 
 #app .ticket .attached .start, #app .ticket .attached .end {
@@ -457,7 +457,7 @@ fieldset div label:last-child { margin-bottom: 0; }
 }
 
 #app .ticket .attached .note {
-    width: calc(100% - 60% - 3.5rem - 1.5rem);
+    width: calc(100% - 60% - 2.5rem - 1.5rem);
     margin-right: 0;
 }
 
@@ -468,6 +468,7 @@ fieldset div label:last-child { margin-bottom: 0; }
 
     #app .ticket .attached {
         width: calc(100% - 75% - 7rem - 2rem);
+        height: calc(2.5rem - var(--border-input));
     }
 
     #app .ticket .attached:before {
