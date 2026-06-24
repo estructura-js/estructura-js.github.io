@@ -165,9 +165,12 @@ footer {
     border-top: 1px solid var(--color7);
 	background: var(--color7);
 	color: var(--color2);
-	padding: var(--half-space) var(--space);
+	padding: 0 var(--space);
 	text-align: center;
 	font-weight: bold;
+}
+header, footer {
+    height: 3rem;
 }
 @media (prefers-color-scheme: dark) {
     :root {
@@ -206,6 +209,7 @@ footer {
 /* General styles */
 
 main {
+    height: calc(100% - 6rem);
     flex-grow: 1;
     background: var(--color3);
 }
@@ -284,7 +288,9 @@ fieldset div label:last-child { margin-bottom: 0; }
 
 [data-e-handler-id="signedIn-message"] {
     justify-content: center;
-    margin: var(--border-input) 0;
+    position: fixed;
+    bottom: 3rem;
+    left: 0;
 }
 
 /* App general styles */
@@ -297,7 +303,10 @@ fieldset div label:last-child { margin-bottom: 0; }
     display: flex;
 }
 
-#app { flex-grow: 1; }
+#app {
+    height: 100%;
+    overflow: hidden;
+}
 
 #app .content,
 #app .left-side,
