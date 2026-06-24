@@ -491,7 +491,7 @@ _events(document).ready(function () {
         }
       }
 
-      delayInt('checkConnection', connCheckFn);
+      delayInt('checkConnection', connCheckFn, 2500);
       _events(window).on('online', connCheckFn);
       _events(window).on('offline', connCheckFn);
     },
@@ -507,11 +507,22 @@ _events(document).ready(function () {
         return;
       }
 
-      var _data = data;
-      console.log('generateTicket:', _data);
+      data = data.replace(/\s+/g, '');
+
+      if (/[^a-zA-Z0-9_\.\-]/.test(data)) {
+        this.error = 'Wrong ticket id.';
+        return;
+      }
+
+      console.log('generateTicket:', data);
       this.success = '';
 
-      this.liveElement.insertAdjacentHTML('afterbegin', '<li>' + _data + '</li>');
+      var _ticket = {
+        n: Math.round(Math.random() * (((new Date).getTime() / 1000) / 60)),
+        id: data
+      };
+
+      this.liveElement.insertAdjacentHTML('afterbegin', '<li class="ticket"><span class="n">' + _ticket.n + '</span><span class="id">' + _ticket.id + '</span></li>');
     },
 
     updateExistentTicket: function (data) {
