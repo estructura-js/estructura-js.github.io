@@ -164,6 +164,7 @@ body, fieldset, fieldset > div, [data-flex-column] {
 header > *, footer > *, [data-flex-childs-center] > *, h1 > *, main > * { align-self: center; }
 main, footer { justify-content: center; }
 footer {
+    border-top: 1px solid var(--color7);
 	background: var(--color7);
 	color: var(--color2);
 	padding: var(--half-space) var(--space);
@@ -203,6 +204,8 @@ footer {
     }
     footer { color: var(--color11); }
 }
+
+/* General styles */
 
 main {
     flex-grow: 1;
@@ -286,6 +289,8 @@ fieldset div label:last-child { margin-bottom: 0; }
     margin: var(--border-input) 0;
 }
 
+/* App general styles */
+
 #app,
 #app .content,
 #app .options,
@@ -344,3 +349,5 @@ fieldset div label:last-child { margin-bottom: 0; }
         height: 35%;
     }
 }
+
+/* App particular styles */
