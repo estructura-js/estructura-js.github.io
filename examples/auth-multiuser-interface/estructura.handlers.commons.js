@@ -508,9 +508,9 @@ _events(document).ready(function () {
       }
 
       data = data.replace(/\s+/g, '');
-
-      if (/[^a-zA-Z0-9_\.\-]/.test(data)) {
-        this.error = 'Wrong ticket id.';
+      var _ticket_re = /[^a-zA-Z0-9_\.\-]+/;
+      if (_ticket_re.test(data)) {
+        this.error = 'Wrong ticket id characters: ' + data.match(_ticket_re)[0];
         return;
       }
 
