@@ -175,19 +175,19 @@
     	</div>
 
         <div data-e-handler="route" data-e-handler-id="signedIn" data-e-handler-route="/account" data-e-hidden-route>
-            <section>
+            <section data-e-handler="checkConnection" data-e-check-connection-connect="notification.signedIn-message" data-e-handler-id="signedIn-connChecker" data-e-handler-start>
                 <div data-e-handler="notification" data-e-handler-id="signedIn-message" data-e-notification-success="temporalShow">Signed in component.</div>
                 <div id="app">
                     <div class="left-side">
                         <div class="options">
                             <div>
-                                <input type="text" name="ticket-value" data-e-handler="ticket" data-e-handler-id="ticketValue">
-                                <button data-e-handler="createTicket" data-e-handler-id="ticket-btn" data-e-handler-event="click">Crear tique</button>
-                                <button data-e-handler="updateTicket" data-e-handler-id="update-ticket-btn" data-e-handler-event="click">Actualizar tique</button>
+                                <input type="text" autocomplete="off" name="ticket-value" data-e-handler="ticket" data-e-handler-id="ticketValue" data-e-handler-start>
+                                <button data-e-handler="createTicket" data-e-handler-id="ticket-btn" data-e-handler-event="click" data-e-create-ticket-connect="generateTicket">Crear tique</button>
+                                <button data-e-handler="updateTicket" data-e-handler-id="update-ticket-btn" data-e-handler-event="click" data-e-update-ticket-connect="updateExistentTicket">Actualizar tique</button>
                             </div>
                             <button data-e-handler="signout" data-e-handler-id="signout-btn" data-e-handler-event="click">Salir</button>
                         </div>
-                        <div class="content">
+                        <div class="content" data-e-handler="generateTicket, updateExistentTicket" data-e-handler-id="ticket-generator" data-e-generate-ticket-success="ticket.ticketValue" data-e-generate-ticket-error="notification.signedIn-message" data-e-update-existent-ticket-success="ticket.ticketValue" data-e-update-existent-ticket-error="notification.signedIn-message" data-e-handler-start>
 
                         </div>
                     </div>

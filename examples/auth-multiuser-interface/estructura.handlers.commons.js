@@ -3,11 +3,17 @@ _events(document).ready(function () {
 
   var
     _generic_token = '********',
-    _sessStore = window[atob('c2Vzc2lvblN0b3JhZ2U=')];
+    _sessStore = window[atob('c2Vzc2lvblN0b3JhZ2U=')],
+    _grlConnState = false;
 
 	function delay(id, callback, time){
       clearTimeout(delay[id]);
    	  delay[id] = setTimeout(callback, time || 5000);
+  }
+
+  function delayInt(id, callback, time){
+       clearInterval(delayInt[id]);
+    	  delayInt[id] = setInterval(callback, time || 5000);
 	}
 
 	function concatUri(str, str2){
@@ -234,10 +240,19 @@ _events(document).ready(function () {
         element.set('textContent', _content);
       }
       else if (_type['Object']) {
+        delete this.liveElement.dataset.loading;
+        delete this.liveElement.dataset.error;
+        delete this.liveElement.dataset.success;
+
         if (event.loading) {
           element.data('data-loading', '');
-          _content = event.loading || event.message || 'Loading.'
+          _content = event.loading || event.message || 'Loading...'
           this.success = _content;
+        }
+        else if(event.error){
+          element.data('data-error', '');
+          _content = event.error || event.message || 'Error.';
+          this.error = _content;
         }
         else {
           element.data('data-success', '');
@@ -399,7 +414,6 @@ _events(document).ready(function () {
       try {
         console.log('signedInCheck checking...');
         var session = lastSess('3 hours session', ['token', 'route', 'success']);
-        var token = session.token;
         session.token = _generic_token;
         console.log('signedInCheck session found:', session, this.liveElement.dataset.eHandlerId);
         _routing.redirect(session.route);
@@ -436,15 +450,18 @@ _events(document).ready(function () {
       _routing.redirect('/');
     },
 
-    ticket: function () {
+    ticket: function (data) {
       console.log('ticket:', this.initialElement.dataset.eHandlerId);
+
+      this.liveElement.value = (typeof data === 'string' ? data : '');
+      this.liveElement.focus();
     },
 
     createTicket: function () {
       var _value = _e_handlers.ticket['ticketValue'].liveElement.value;
       if (_value) {
         console.log('createTicket:', _value);
-
+        this.connect(_value);
       }
     },
 
@@ -452,9 +469,64 @@ _events(document).ready(function () {
       var _value = _e_handlers.ticket['ticketValue'].liveElement.value;
       if (_value) {
         console.log('updateTicket:', _value);
-
+        this.connect(_value);
       }
-    }
+    },
+
+    checkConnection: function () {
+      var _this = this, _prevConnState;
+
+      function connCheckFn() {
+        _prevConnState = _grlConnState;
+        _grlConnState = navigator.onLine;
+
+        if (_grlConnState !== _prevConnState) {
+          if (_grlConnState) {
+            console.info('checkConnection:', true);
+            _this.connect({ success: 'Online.' });
+            return;
+          }
+          console.info('checkConnection:', false);
+          _this.connect({ error: 'Offline.' });
+        }
+      }
+
+      delayInt('checkConnection', connCheckFn);
+      _events(window).on('online', connCheckFn);
+      _events(window).on('offline', connCheckFn);
+    },
+
+    generateTicket: function (data) {
+      if (typeof data !== 'string') {
+        console.log('generateTicket init.');
+        return;
+      }
+
+      if (!_grlConnState) {
+        this.error = 'Offline, cannot generate ticket.';
+        return;
+      }
+
+      var _data = data;
+      console.log('generateTicket:', _data);
+      this.success = '';
+    },
+
+    updateExistentTicket: function (data) {
+      if (typeof data !== 'string') {
+        console.log('updateExistentTicket init.');
+        return;
+      }
+
+      if (!_grlConnState) {
+        this.error = 'Offline, cannot update ticket.';
+        return;
+      }
+
+      var _data = data;
+      console.log('updateExistentTicket:', _data);
+      this.success = '';
+    },
   };
 
   var _e_handlers_shortcuts = {
