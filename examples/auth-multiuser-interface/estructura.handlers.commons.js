@@ -510,6 +510,8 @@ _events(document).ready(function () {
       var _data = data;
       console.log('generateTicket:', _data);
       this.success = '';
+
+      this.liveElement.innerHTML += '<li>' + _data + '</li>';
     },
 
     updateExistentTicket: function (data) {
@@ -526,6 +528,8 @@ _events(document).ready(function () {
       var _data = data;
       console.log('updateExistentTicket:', _data);
       this.success = '';
+
+
     },
   };
 

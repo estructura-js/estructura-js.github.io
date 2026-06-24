@@ -182,14 +182,22 @@
                         <div class="options">
                             <div>
                                 <input type="text" autocomplete="off" name="ticket-value" data-e-handler="ticket" data-e-handler-id="ticketValue" data-e-handler-start>
-                                <button data-e-handler="createTicket" data-e-handler-id="ticket-btn" data-e-handler-event="click" data-e-create-ticket-connect="generateTicket">Crear tique</button>
-                                <button data-e-handler="updateTicket" data-e-handler-id="update-ticket-btn" data-e-handler-event="click" data-e-update-ticket-connect="updateExistentTicket">Actualizar tique</button>
+                                <button data-e-handler="createTicket" data-e-handler-id="ticket-btn" data-e-handler-event="click" data-e-create-ticket-connect="generateTicket.ticket-generator">Crear tique</button>
+                                <button data-e-handler="updateTicket" data-e-handler-id="update-ticket-btn" data-e-handler-event="click" data-e-update-ticket-connect="updateExistentTicket.ticket-generator">Actualizar tique</button>
                             </div>
                             <button data-e-handler="signout" data-e-handler-id="signout-btn" data-e-handler-event="click">Salir</button>
                         </div>
-                        <div class="content" data-e-handler="generateTicket, updateExistentTicket" data-e-handler-id="ticket-generator" data-e-generate-ticket-success="ticket.ticketValue" data-e-generate-ticket-error="notification.signedIn-message" data-e-update-existent-ticket-success="ticket.ticketValue" data-e-update-existent-ticket-error="notification.signedIn-message" data-e-handler-start>
+                        <ol
+                            class="content tickets-list"
+                            data-e-handler="generateTicket, updateExistentTicket"
+                            data-e-handler-id="ticket-generator"
+                            data-e-generate-ticket-success="ticket.ticketValue"
+                            data-e-generate-ticket-error="notification.signedIn-message"
+                            data-e-update-existent-ticket-success="ticket.ticketValue"
+                            data-e-update-existent-ticket-error="notification.signedIn-message" data-e-handler-start
+                        >
 
-                        </div>
+                        </ol>
                     </div>
                     <aside class="right-side">
                         <div class="options">
