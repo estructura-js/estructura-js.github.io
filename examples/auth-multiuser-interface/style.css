@@ -268,6 +268,9 @@ fieldset div label:last-child { margin-bottom: 0; }
         flex-grow: 1;
     }
 }
+@media screen and (max-height: 640px) {
+    main { justify-content: flex-start; }
+}
 @media screen and (max-width: 320px) {
     *, *::after, *::before { font-size: 0.85rem; }
 }
