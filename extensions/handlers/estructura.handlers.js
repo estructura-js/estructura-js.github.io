@@ -246,7 +246,7 @@
     if (handlers && typeof handlers === 'object' && handlers.length) {
       if (!middleware) {
         return function (data) {
-          console.info(state, id);
+          console.info('_handlers:', state, id);
           return _e_handlers_execute(null, handlers, _e_handlers_ids(null, function (handler, _id) {
             try {
               handler.call(handler[_id], data);
@@ -259,7 +259,7 @@
       }
 
       return function (data) {
-        console.info(state, id);
+        console.info('_handlers:', state, id);
         return _e_handlers_execute(null, handlers, null, function (_handler, _handler_ids, _middleware) {
           var _middlewares = _handler_ids.length ? _handler_ids : Object.keys(_e_handlers[_handler]);
           for (var i = _middlewares.length - 1; i >= 0; i--) {
@@ -306,7 +306,7 @@
   function _e_handlers_register(id, element, _element) {
     return function (_handler) {
       if (this[id]) {
-        return console.info('Handler "' + _handler + '.' + id + '" already used.');
+        return console.info('_handlers: Handler "' + _handler + '.' + id + '" already used.');
       }
 
       this[id] = Object.create(null);
@@ -330,7 +330,7 @@
           var _state = typeof state === 'string';
           var _data = typeof data === 'undefined';
           if (_state && _e_reserved[state]) {
-            return console.warn(_handler, id, 'Incorrect target:', state);
+            return console.warn('_handlers:', _handler, id, 'Incorrect target:', state);
           }
 
           _e_handlers_execute(null, _data_connect, _e_handlers_ids(ids, function (handler, _id) {
@@ -343,7 +343,7 @@
               return handler.call(handler[_id], state);
             }
 
-            console.warn('Incorrect connect:', state, data, ids);
+            console.warn('_handlers: Incorrect connect:', state, data, ids);
           }), _middleware);
         }
       }

@@ -1,27 +1,33 @@
 :root {
 	--color1: #004e9b;
 	--color2: #555;
-	--color3: #f0f0f0;
-	--color4: #000;
-	--color5: #fff;
-	--color6: #eee;
-	--color7: #ccc;
+	--color3: rgba(0, 0, 0, 0.05);
+	--color4: #000d1a;
+	--color5: rgba(255, 255, 255, 0.5);
+	--color6: #fff;
+	--color7: rgba(0, 0, 0, 0.125);
 	--color8: #093;
-	--color9: #ffc;
+	--color9: #ccc;
 	--color10: #c30;
-	--color11: #fec;
+	--color11: rgba(255, 255, 255, 0.66);
+	--color12: #3cf;
+	--color13: rgba(0, 0, 0, 0.25);
+	--color14: rgba(255, 255, 255, 0.8);
 	--radius: 0.25rem;
 	--border: 2px;
 	--border-input: 1px;
+	--radio-width: 1.5rem;
 	--space: 1rem;
 	--half-space: 0.5rem;
 	--font: 1rem;
 	--input: 15rem;
 }
+
 @font-face {
-	font-family: 'A';
-	src: url(inter_variable.woff2) format('woff');
-	font-weight: normal;
+    font-family: 'Inter';
+    src: url('./inter_variable.woff2') format('woff2');
+    font-weight: normal bold;
+    font-display: swap;
 }
 
 *, *::after, *::before {
@@ -33,14 +39,15 @@
 	scrollbar-color: var(--color2) var(--color3);
 	scrollbar-width: thin;
 	transition: all 0.125s;
-	font-family: 'A', helvetica;
+	font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
 	font-size: var(--font);
-	word-spacing: 0.25rem;
-	line-height: 1.25;
+    word-spacing: 0.2rem;
+    line-height: 1.25;
+    color-scheme: light dark;
 }
 :active, :focus {
-	outline: 0;
-	-webkit-tap-highlight-color: transparent;
+    outline: 0;
+    -webkit-tap-highlight-color: transparent;
 }
 :focus-visible {
    	outline: 2px solid var(--color1);
@@ -49,7 +56,11 @@
 ::selection {
 	opacity: 1;
 	background: var(--color1) !important;
-	color: var(--color3);
+	color: var(--color6);
+}
+::placeholder {
+    color: var(--color11);
+    opacity: 1;
 }
 ::-webkit-scrollbar {
 	width: 0.25rem;
@@ -81,38 +92,38 @@ body {
 }
 input[type="text"], input[type="password"], button {
 	padding: var(--half-space);
-	border: var(--border) solid transparent;
+	border: var(--border-input) solid transparent;
 }
 input[type="radio"], input[type="checkbox"] { margin-right: var(--space); }
 input[type="text"], input[type="password"] {
-	border: var(--border-input) solid var(--color2);
+	border-color: var(--color2);
 	width: var(--input);
 }
 input[type="text"], input[type="password"], input[type="radio"], input[type="checkbox"], select, textarea {
-    background-color: transparent;
+    background-color: var(--color5);
 }
 input[type="text"]:hover, input[type="text"]:active, input[type="text"]:focus,
-input[type="password"]:hover, input[type="password"]:active, input[type="password"]:focus { border-color: var(--color4); }
+input[type="password"]:hover, input[type="password"]:active, input[type="password"]:focus { border-color: var(--color1); }
 input[type="radio"], input[type="checkbox"] {
-    width: 1.5rem;
-    height: 1.5rem;
+    width: var(--radio-width);
+    height: var(--radio-width);
 }
 button {
-	color: var(--color5);
+	color: var(--color6);
 	font-weight: bold;
 	background: var(--color1);
 	cursor: pointer;
 }
 button.green, [data-success] {
     background: var(--color8);
-    color: var(--color5);
+    color: var(--color6);
 }
 button.gray, [data-error] {
     background: var(--color10);
-    color: var(--color5);
+    color: var(--color6);
 }
 button:hover, button:focus, button:active {
-	color: var(--color7);
+	color: var(--color14);
 	background: var(--color4);
 }
 [data-success], [data-error] {
@@ -133,7 +144,7 @@ button:hover, button:focus, button:active {
 @keyframes l { from { background: var(--color1); } to { background: var(--color2); } }
 header {
 	background: var(--color1);
-	color: var(--color5);
+	color: var(--color6);
 }
 h1 span { font-size: 1.25rem; }
 h1 img {
@@ -159,6 +170,40 @@ footer {
 	text-align: center;
 	font-weight: bold;
 }
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color3: rgba(255, 255, 255, 0.05);
+        --color5: rgba(255, 255, 255, 0.25);
+        --color7: rgba(255, 255, 255, 0.125);
+    }
+    :focus-visible { outline-color: var(--color12); }
+    body {
+        background-color: var(--color4);
+        color: var(--color6);
+    }
+    a { color: var(--color12); }
+    a:hover, a:active, a:focus { color: var(--color6); }
+    input, button, textarea, select {
+        accent-color: var(--color12);
+    }
+    input, textarea, select {
+        background-color: var(--color7) !important;
+        border-color: var(--color6) !important;
+    }
+    input:hover, input:active, input:focus {
+        border-color: var(--color12) !important;
+    }
+    button {
+        background-color: var(--color12);
+        color: var(--color4);
+    }
+    button:hover, button:focus, button:active {
+        border-color: var(--color5);
+        background: var(--color1);
+    }
+    footer { color: var(--color11); }
+}
+
 main {
     flex-grow: 1;
     background: var(--color3);
@@ -178,7 +223,7 @@ fieldset legend, fieldset legend[data-selected] {
     border-bottom-right-radius: 0;
     position: relative;
     top: var(--radius);
-    background: var(--color6);
+    background: var(--color3);
     font-weight: bold;
 }
 fieldset legend[data-selected="no"] {
@@ -226,7 +271,6 @@ fieldset div label:last-child { margin-bottom: 0; }
     width: 100%;
     height: 100%;
     flex-grow: 1;
-    background: var(--color3);
 }
 
 [data-e-handler-id="signedIn"] section {
@@ -238,16 +282,23 @@ fieldset div label:last-child { margin-bottom: 0; }
 [data-e-handler-id="signedIn"] section > * { width: 100%; }
 
 #app,
-#app nav,
+#app .content,
+#app .options,
 #app .left-side,
 #app .right-side {
     display: flex;
 }
 
-#app .left-side {
-    background: var(--color5);
-    width: 75%;
+#app { flex-grow: 1; }
+
+#app .content,
+#app .left-side,
+#app .right-side {
     flex-flow: column;
+}
+
+#app .left-side {
+    width: 75%;
 }
 
 #app .right-side {
@@ -255,45 +306,36 @@ fieldset div label:last-child { margin-bottom: 0; }
     width: 25%;
 }
 
-#app nav {
+#app .options {
     border-bottom: 1px solid var(--color7);
-    height: 4rem;
-    padding: 0 1rem;
-    justify-content: center;
+    height: 3.5rem;
+    padding: 0 0.5rem;
 }
 
-#app nav > * { align-self: center; }
+#app .options,
+#app .content { justify-content: center; }
 
-#app .content {
-    flex-grow: 1;
-    display: flex;
-    flex-flow: column;
-    justify-content: center;
+#app .options > * { align-self: center; }
+
+#app .right-side .content {
+    height: calc(100% - 3.5rem);
 }
 
-#app .content ol {
-    align-self: center;
-    width: 50%;
-    padding: 1.5rem;
-}
-
-
-#app, #app iframe {
+#app .right-side iframe {
     width: 100%;
     height: 100%;
 }
 
 @media screen and (max-width: 640px), (max-width: 960px) {
-    #app, #app .left-side {
+    #app {
         flex-flow: column;
     }
     #app .left-side {
         width: 100%;
-        height: 75%;
-        flex-grow: 1;
+        height: 65%;
     }
     #app .right-side {
         width: 100%;
-        max-height: 25%;
+        height: 35%;
     }
 }
