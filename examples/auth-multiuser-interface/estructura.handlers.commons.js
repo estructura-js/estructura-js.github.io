@@ -434,6 +434,26 @@ _events(document).ready(function () {
         console.warn('signout:', e.message);
       }
       _routing.redirect('/');
+    },
+
+    ticket: function () {
+      console.log('ticket:', this.initialElement.dataset.eHandlerId);
+    },
+
+    createTicket: function () {
+      var _value = _e_handlers.ticket['ticketValue'].liveElement.value;
+      if (_value) {
+        console.log('createTicket:', _value);
+
+      }
+    },
+
+    updateTicket: function () {
+      var _value = _e_handlers.ticket['ticketValue'].liveElement.value;
+      if (_value) {
+        console.log('updateTicket:', _value);
+
+      }
     }
   };
 

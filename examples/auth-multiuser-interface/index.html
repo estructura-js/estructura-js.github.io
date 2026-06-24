@@ -19,7 +19,7 @@
 	<meta name="theme-color" content="#000d1a" media="(prefers-color-scheme: dark)">
 
 	<meta name="format-detection" content="telephone=no">
-	<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self'; child-src 'none';">
+	<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self'; child-src 'self';">
 
 	<meta property="og:title" content="Tiques Tarifarios Horarios">
 	<meta property="og:description" content="Gestor de Tiques Tarifarios Horarios en línea.">
@@ -114,12 +114,12 @@
 
             				<label data-flex-column>
             				    <h4>Usuario</h4>
-         			        <input type="text" name="user">
+         			        <input type="text" name="user" autocomplete="off">
             				</label>
 
             				<label data-flex-column>
             				    <h4>Contraseña</h4>
-         			        <input type="password" name="password">
+         			        <input type="password" name="password" autocomplete="off">
             				</label>
 
             				<label data-flex-column>
@@ -154,12 +154,12 @@
                             <div data-e-handler="notification" data-e-handler-id="signin-notif" data-hidden>Loading...</div>
             				<label data-flex-column>
             				    <h4>Usuario</h4>
-         			        <input type="text" name="user">
+         			        <input type="text" name="user" autocomplete="on">
             				</label>
 
             				<label data-flex-column>
             				    <h4>Contraseña</h4>
-         			        <input type="password" name="password">
+         			        <input type="password" name="password" autocomplete="current-password">
             				</label>
 
             				<label data-flex-column>
@@ -180,6 +180,11 @@
                 <div id="app">
                     <div class="left-side">
                         <div class="options">
+                            <div>
+                                <input type="text" name="ticket-value" data-e-handler="ticket" data-e-handler-id="ticketValue" >
+                                <button data-e-handler="createTicket" data-e-handler-id="ticket-btn" data-e-handler-event="click">Crear tique</button>
+                                <button data-e-handler="updateTicket" data-e-handler-id="update-ticket-btn" data-e-handler-event="click">Actualizar tique</button>
+                            </div>
                             <button data-e-handler="signout" data-e-handler-id="signout-btn" data-e-handler-event="click">Salir</button>
                         </div>
                         <div class="content">
@@ -188,7 +193,8 @@
                     </div>
                     <aside class="right-side">
                         <div class="options">
-                            <button data-e-handler="signout" data-e-handler-id="signout-btn" data-e-handler-event="click">Salir</button>
+                            <button data-e-handlerx="" data-e-handler-id="report-btn" data-e-handler-event="click">Reporte</button>
+                            <button data-e-handlerx="" data-e-handler-id="pendings-btn" data-e-handler-event="click">Pendientes</button>
                         </div>
                         <div class="content">
                             <iframe src="about:blank"></iframe>
