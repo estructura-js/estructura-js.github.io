@@ -511,7 +511,7 @@ _events(document).ready(function () {
       console.log('generateTicket:', _data);
       this.success = '';
 
-      this.liveElement.innerHTML += '<li>' + _data + '</li>';
+      this.liveElement.insertAdjacentHTML('afterbegin', '<li>' + _data + '</li>');
     },
 
     updateExistentTicket: function (data) {
