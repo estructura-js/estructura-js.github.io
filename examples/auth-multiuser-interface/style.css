@@ -73,6 +73,7 @@ html, body {
 	height: 100%;
 	height: 100vh;
 	height: 100dvh;
+	overflow-x: hidden;
 }
 input, button, textarea, select {
     accent-color: var(--color1);
