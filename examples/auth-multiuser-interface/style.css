@@ -424,12 +424,6 @@ fieldset div label:last-child { margin-bottom: 0; }
     overflow: hidden;
 }
 
-#app .ticket .id {
-    width: 33%;
-    font-weight: bold;
-    letter-spacing: 1px;
-}
-
 #app .ticket .n {
     width: 7rem;
     font-weight: bold;
@@ -437,8 +431,70 @@ fieldset div label:last-child { margin-bottom: 0; }
     margin-left: var(--half-space);
 }
 
-@media screen and (max-width: 640px), (max-width: 960px) {
+#app .ticket .id {
+    width: 33%;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+#app .ticket .attached {
+    width: calc(100% - 33% - 7rem - 2rem);
+    display: flex;
+    height: 2.5rem;
+}
+
+#app .ticket .attached span {
+    margin-right: var(--space);
+    align-self: center;
+}
+
+#app .ticket .attached .cost {
+    width: 3.5rem;
+}
+
+#app .ticket .attached .start, #app .ticket .attached .end {
+    width: 30%;
+}
+
+#app .ticket .attached .note {
+    width: calc(100% - 60% - 3.5rem - 1.5rem);
+    margin-right: 0;
+}
+
+@media screen and (max-width: 960px) {
+    #app .ticket .id {
+        width: 75%;
+    }
+
+    #app .ticket .attached {
+        width: calc(100% - 75% - 7rem - 2rem);
+    }
+
+    #app .ticket .attached:before {
+        content: '+';
+        width: 100%;
+        height: 100%;
+        background: var(--color8);
+        color: var(--color6);
+        font-weight: bold;
+        display: flex;
+        flex-flow: column;
+        justify-content: center;
+        text-align: center;
+        font-size: 1.25rem;
+    }
+
+    #app .ticket .attached span {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 640px) {
     #app .ticket .id {
         width: 50%;
+    }
+
+    #app .ticket .attached {
+        width: calc(100% - 50% - 7rem - 2rem);
     }
 }

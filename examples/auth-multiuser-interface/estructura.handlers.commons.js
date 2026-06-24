@@ -519,10 +519,14 @@ _events(document).ready(function () {
 
       var _ticket = {
         n: Math.round(Math.random() * (((new Date).getTime() / 1000) / 60)),
-        id: data
+        id: data,
+        cost: Math.max(Math.round(Math.random() * 10), 0.5),
+        start: new Date(new Date((new Date).setMinutes(Math.round(Math.random() * 20))).setSeconds(Math.round(Math.random() * 59))).toLocaleString(),
+        end: new Date(new Date((new Date).setMinutes(Math.max(Math.round(Math.random() * 59), 21))).setSeconds(Math.round(Math.random() * 59))).toLocaleString(),
+        note: 'Nota ' + Math.round(Math.random() * 99)
       };
 
-      this.liveElement.insertAdjacentHTML('afterbegin', '<li class="ticket"><span class="n">' + _ticket.n + '</span><span class="id">' + _ticket.id + '</span></li>');
+      this.liveElement.insertAdjacentHTML('afterbegin', '<li class="ticket"><span class="n">' + _ticket.n + '</span><span class="id">' + _ticket.id + '</span><span class="attached"><span class="cost">' + _ticket.cost + '</span><span class="start">' + _ticket.start + '</span><span class="end">' + _ticket.end + '</span><span class="note">' + _ticket.note + '</span></span></li>');
     },
 
     updateExistentTicket: function (data) {
