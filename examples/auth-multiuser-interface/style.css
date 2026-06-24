@@ -213,7 +213,7 @@ main {
     height: calc(100% - 6rem);
     flex-grow: 1;
     background: var(--color3);
-    overflow: hidden;
+    overflow-y: auto;
 }
 main section {
     margin: var(--half-space);
