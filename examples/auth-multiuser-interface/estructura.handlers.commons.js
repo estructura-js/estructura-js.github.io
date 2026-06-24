@@ -3,7 +3,7 @@ _events(document).ready(function () {
 
   var
     _generic_token = '********',
-    _selectedStorage = window['sessionStorage'];
+    _sessStore = window[atob('c2Vzc2lvblN0b3JhZ2U=')];
 
 	function delay(id, callback, time){
       clearTimeout(delay[id]);
@@ -57,7 +57,7 @@ _events(document).ready(function () {
 		  data.checksum = hashCode(sessContent, sessName);
 		  sessContent = b64json(data);
 
-		  _selectedStorage.setItem(btoa(sessName), sessContent);
+		  _sessStore.setItem(btoa(sessName), sessContent);
           }
           catch(e){
             e.name = 'saveSess';
@@ -69,7 +69,7 @@ _events(document).ready(function () {
       try {
 		var sessName = roundSessName();
           var _sessName = btoa(sessName);
-		    data = _selectedStorage.getItem(_sessName);
+		    data = _sessStore.getItem(_sessName);
 		if (!data){
             throw new Error('Session not found or expired.');
           }
@@ -96,7 +96,7 @@ _events(document).ready(function () {
 		  console.log('lastSess checksum checked:', checksum);
 		  data.name = _sessName;
 		  data.del = function(){
-				_selectedStorage.removeItem(_sessName);
+				_sessStore.removeItem(_sessName);
 		  };
 		  return data;
 		}
@@ -277,7 +277,7 @@ _events(document).ready(function () {
         typeof event.success === 'string' &&
         typeof event.token === 'string' &&
         typeof event.route === 'string' &&
-        typeof _selectedStorage !== 'undefined'
+        typeof _sessStore !== 'undefined'
       ){
         saveSess(event);
 
