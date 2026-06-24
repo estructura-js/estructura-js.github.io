@@ -281,6 +281,11 @@ fieldset div label:last-child { margin-bottom: 0; }
 }
 [data-e-handler-id="signedIn"] section > * { width: 100%; }
 
+[data-e-handler-id="signedIn-message"] {
+    justify-content: center;
+    margin: var(--border-input) 0;
+}
+
 #app,
 #app .content,
 #app .options,
