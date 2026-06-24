@@ -22,6 +22,11 @@
 
 			var _generic_token = '********';
 
+			function delay(id, callback, time){
+  		      clearTimeout(delay[id]);
+         	  delay[id] = setTimeout(callback, time || 5000);
+			}
+
 			function concatUri(str, str2){
                 var _lastSlash = str2.charAt(0) === '/';
                 var _firstSlash = str.charAt(str.length - 1) === '/';
@@ -421,15 +426,17 @@
                 }
               },
 
-              temporalShow: function _e_temporal_show(data){
+              temporalShow: function(data){
                 console.log('Temporal show:', data);
 
-                var _ref = _dom(this.liveElement), _textOriginal = this.initialElement.textContent;
-                clearTimeout(_e_temporal_show.__$timeout);
-                _e_temporal_show.__$timeout = setTimeout(function(){
+                var
+                  _ref = _dom(this.liveElement),
+                  _original_text = this.initialElement.textContent;
+
+                delay('temporalShow', function(){
                   _ref.data('data-hidden', '');
-                  _ref.set('textContent', _textOriginal);
-                }, 4567);
+                  _ref.set('textContent', _original_text);
+                });
               },
 
               signout: function(event){
