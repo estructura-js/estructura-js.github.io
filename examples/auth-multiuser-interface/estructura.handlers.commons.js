@@ -1,10 +1,16 @@
 _events(document).ready(function () {
-	console.log('Estructura Handlers Commons ready.');
+  console.log('Estructura Handlers Commons ready.');
 
   var
     _generic_token = '********',
     _sessStore = window[atob('c2Vzc2lvblN0b3JhZ2U=')],
-    _grlConnState = false;
+    _grlConnState = false,
+    _required_sess_fields = {
+      token: true,
+      route: true,
+      success: true,
+      user: true
+    };
 
 	function delay(id, callback, time){
       clearTimeout(delay[id]);
@@ -286,24 +292,27 @@ _events(document).ready(function () {
       this.liveElement.parentNode.removeChild(this.liveElement);
     },
 
-    formsResponseRoute: function(event){
-      if(
-        event && typeof event === 'object' &&
-        typeof event.success === 'string' &&
-        typeof event.token === 'string' &&
-        typeof event.route === 'string' &&
-        typeof _sessStore !== 'undefined'
-      ){
-        saveSess(event);
-
-        event.token = _generic_token;
-        console.log('formsResponseRoute:', event);
-
-        _routing.show(event.route);
-        return;
+    formsResponseRoute: function (event) {
+      if (typeof _sessStore === 'undefined') {
+        throw new Error('Session store not found.');
       }
 
-      throw new Error('Entry event/data required as Object.');
+      if (!event || typeof event !== 'object') {
+        throw new Error('Entry event/data required as Object.');
+      }
+
+      for (var key in _required_sess_fields) {
+        if (typeof event[key] === 'undefined' || !event[key]) {
+          throw new Error('Entry data require: ' + key);
+        }
+      }
+
+      saveSess(event);
+
+      event.token = _generic_token;
+      console.log('formsResponseRoute:', event);
+
+      _routing.show(event.route);
     },
 
     routesStart: function  () {
@@ -413,7 +422,7 @@ _events(document).ready(function () {
     signedInCheck: function () {
       try {
         console.log('signedInCheck checking...');
-        var session = lastSess('3 hours session', ['token', 'route', 'success']);
+        var session = lastSess('3 hours session', _required_sess_fields);
         session.token = _generic_token;
         console.log('signedInCheck session found:', session, this.liveElement.dataset.eHandlerId);
         _routing.redirect(session.route);
@@ -517,6 +526,7 @@ _events(document).ready(function () {
       console.log('generateTicket:', data);
       this.success = '';
 
+      // Ticket mocks...
       var _ticket = {
         n: Math.round(Math.random() * (((new Date).getTime() / 1000) / 60)),
         id: data,
@@ -544,8 +554,14 @@ _events(document).ready(function () {
       console.log('updateExistentTicket:', _data);
       this.success = '';
 
-
+      // Update ticket...
     },
+
+    userData: function (data) {
+      console.log('userData:', data);
+      var _ref = _dom(this.liveElement);
+      _ref.set('textContent', data.user + ':');
+    }
   };
 
   var _e_handlers_shortcuts = {
