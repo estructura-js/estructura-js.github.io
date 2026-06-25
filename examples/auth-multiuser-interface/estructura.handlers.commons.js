@@ -12,6 +12,29 @@ _events(document).ready(function () {
       user: true
     };
 
+  function ticketMockData(data) {
+    return {
+      n: Math.round(Math.random() * (((new Date).getTime() / 1000) / 60)),
+      id: data,
+      cost: Math.max(Math.round(Math.random() * 10), 0.5),
+      start: new Date(new Date((new Date).setMinutes(Math.round(Math.random() * 20))).setSeconds(Math.round(Math.random() * 59))).toLocaleString(),
+      end: new Date(new Date((new Date).setMinutes(Math.max(Math.round(Math.random() * 59), 21))).setSeconds(Math.round(Math.random() * 59))).toLocaleString(),
+      note: 'Nota ' + Math.round(Math.random() * 99)
+    };
+  }
+
+  function ticketMock(_ticket) {
+    _ticket = ticketMockData(_ticket ? _ticket : 'ID' + ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'][Math.round(Math.random() * 10)] + Math.round(Math.random() * 9999999));
+    return '<li class="ticket"><span class="n">' + _ticket.n + '</span><span class="id">' + _ticket.id + '</span><span class="attached"><span class="cost">' + _ticket.cost + '</span><span class="start">' + _ticket.start + '</span><span class="end">' + _ticket.end + '</span><span class="note">' + _ticket.note + '</span></span></li>';
+  }
+
+  function ticketMocks(n, callback) {
+    var _mock = n;
+    while (_mock--) {
+      callback(ticketMock());
+    }
+  }
+
 	function delay(id, callback, time){
       clearTimeout(delay[id]);
    	  delay[id] = setTimeout(callback, time || 5000);
@@ -507,8 +530,7 @@ _events(document).ready(function () {
 
     generateTicket: function (data) {
       if (typeof data !== 'string') {
-        console.log('generateTicket init.');
-        return;
+        throw new Error('generateTicket: Entry data required as String.');
       }
 
       if (!_grlConnState) {
@@ -527,22 +549,12 @@ _events(document).ready(function () {
       this.success = '';
 
       // Ticket mocks...
-      var _ticket = {
-        n: Math.round(Math.random() * (((new Date).getTime() / 1000) / 60)),
-        id: data,
-        cost: Math.max(Math.round(Math.random() * 10), 0.5),
-        start: new Date(new Date((new Date).setMinutes(Math.round(Math.random() * 20))).setSeconds(Math.round(Math.random() * 59))).toLocaleString(),
-        end: new Date(new Date((new Date).setMinutes(Math.max(Math.round(Math.random() * 59), 21))).setSeconds(Math.round(Math.random() * 59))).toLocaleString(),
-        note: 'Nota ' + Math.round(Math.random() * 99)
-      };
-
-      this.liveElement.insertAdjacentHTML('afterbegin', '<li class="ticket"><span class="n">' + _ticket.n + '</span><span class="id">' + _ticket.id + '</span><span class="attached"><span class="cost">' + _ticket.cost + '</span><span class="start">' + _ticket.start + '</span><span class="end">' + _ticket.end + '</span><span class="note">' + _ticket.note + '</span></span></li>');
+      this.liveElement.insertAdjacentHTML('afterbegin', ticketMock(data));
     },
 
     updateExistentTicket: function (data) {
       if (typeof data !== 'string') {
-        console.log('updateExistentTicket init.');
-        return;
+        throw new Error('updateExistentTicket: Entry data required as String.');
       }
 
       if (!_grlConnState) {
@@ -561,6 +573,14 @@ _events(document).ready(function () {
       console.log('userData:', data);
       var _ref = _dom(this.liveElement);
       _ref.set('textContent', data.user + ':');
+    },
+
+    getTickets: function (event) {
+      var _this = this;
+      console.log('getTickets:', event);
+      ticketMocks(20, function (mock) {
+        _this.liveElement.insertAdjacentHTML('afterbegin', mock);
+      });
     }
   };
 

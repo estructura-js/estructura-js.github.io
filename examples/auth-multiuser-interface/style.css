@@ -36,15 +36,21 @@
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
-	scrollbar-color: var(--color2) var(--color6);
-	scrollbar-width: thin;
 	transition: all 0.125s;
 	font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
 	font-size: var(--font);
     word-spacing: 0.2rem;
     line-height: 1.25;
     color-scheme: light dark;
+    scrollbar-color: var(--color4) var(--color14);
+	scrollbar-width: thin;
 }
+::-webkit-scrollbar {
+	width: 0.25rem;
+	height: 0.25rem;
+}
+::-webkit-scrollbar-thumb { background: var(--color4); }
+::-webkit-scrollbar-track { background: var(--color14); }
 :active, :focus {
     outline: 0;
     -webkit-tap-highlight-color: transparent;
@@ -62,12 +68,6 @@
     color: var(--color11);
     opacity: 1;
 }
-::-webkit-scrollbar {
-	width: 0.25rem;
-	height: 0.25rem;
-}
-::-webkit-scrollbar-thumb { background: var(--color2); }
-::-webkit-scrollbar-track { background: var(--color6); }
 html, body {
 	width: 100%;
 	height: 100%;
@@ -179,6 +179,11 @@ header, footer {
         --color5: rgba(255, 255, 255, 0.25);
         --color7: rgba(255, 255, 255, 0.125);
     }
+    *, *::after, *::before {
+        scrollbar-color: var(--color6) var(--color5);
+    }
+    ::-webkit-scrollbar-thumb { background: var(--color6); }
+    ::-webkit-scrollbar-track { background: var(--color5); }
     :focus-visible { outline-color: var(--color12); }
     body {
         background-color: var(--color4);
@@ -424,6 +429,11 @@ fieldset div label:last-child { margin-bottom: 0; }
     height: 2.5rem;
     border-bottom: 1px solid var(--color7);
     display: flex;
+    cursor: default;
+}
+
+#app .ticket:hover {
+    background: var(--color14);
 }
 
 #app .ticket > * {
@@ -507,5 +517,11 @@ fieldset div label:last-child { margin-bottom: 0; }
 
     #app .ticket .attached {
         width: calc(100% - 50% - 7rem - 2rem);
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    #app .ticket:hover {
+        background: var(--color5);
     }
 }
