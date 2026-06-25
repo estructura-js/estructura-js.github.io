@@ -81,7 +81,7 @@
 	</header>
 
 	<main data-e-handler="routes" data-e-handler-id="routesContainer" data-e-handler-start="routesStart" data-e-handler-end-start>
-    	<div data-e-handler="route" data-e-handler-id="notSignedIn" data-e-handler-route="/" data-e-handler-end-start="signedInCheck" data-e-signed-in-check-connect="notification.signedIn-message, userData.signedIn-userdata" data-e-current-route>
+    	<div data-e-handler="route" data-e-handler-id="notSignedIn" data-e-handler-route="/" data-e-handler-end-start="signedInCheck" data-e-signed-in-check-connect="notification.signedIn-message, textFromObject.signedIn-username" data-e-current-route>
     		<section>
     			<form
          			data-e-handler="forms"
@@ -145,7 +145,7 @@
          			data-e-forms-response-error="notification.signin-notif"
          			data-e-forms-response-success="formsResponseRoute, signedInCheck.notSignedIn"
 
-                    data-e-signed-in-check-connect="notification.signedIn-message, userData.signedIn-userdata"
+                    data-e-signed-in-check-connect="notification.signedIn-message, textFromObject.signedIn-username"
     			>
          			<fieldset>
          			    <legend data-e-handler="selectiveAccordion" data-e-handler-id="signin-header" data-e-handler-event="click" data-e-handler-data="#signin">Ingreso</legend>
@@ -174,7 +174,7 @@
     		</section>
     	</div>
 
-        <div data-e-handler="route" data-e-handler-id="signedIn" data-e-handler-route="/account" data-e-hidden-route>
+        <div data-e-handler="route" data-e-handler-id="signedIn" data-e-handler-route="/account" data-e-hidden-route data-e-handler-lazy>
             <section data-e-handler="checkConnection" data-e-check-connection-connect="notification.signedIn-message" data-e-handler-id="signedIn-connChecker" data-e-handler-start>
                 <div data-e-handler="notification" data-e-handler-id="signedIn-message" data-e-notification-success="temporalShow">Signed in component.</div>
                 <div id="app">
@@ -182,27 +182,36 @@
                         <div class="options">
                             <div>
                                 <input type="text" autocomplete="off" name="ticket-value" data-e-handler="ticket" data-e-handler-id="ticketValue" data-e-handler-start>
-                                <button data-e-handler="createTicket" data-e-handler-id="ticket-btn" data-e-handler-event="click" data-e-create-ticket-connect="generateTicket.ticket-generator">Crear tique</button>
-                                <button data-e-handler="updateTicket" data-e-handler-id="update-ticket-btn" data-e-handler-event="click" data-e-update-ticket-connect="updateExistentTicket.ticket-generator">Actualizar tique</button>
+                                <button data-e-handler="createNewTicket" data-e-handler-id="ticket-btn" data-e-handler-event="click" data-e-create-new-ticket-connect="generateNewTicket.ticket-generator">Crear tique</button>
+                                <button data-e-handler="updateNewTicket" data-e-handler-id="update-ticket-btn" data-e-handler-event="click" data-e-update-new-ticket-connect="updateExistentTicket.ticket-generator">Actualizar tique</button>
                             </div>
-                            <button data-e-handler="signout" data-e-handler-id="signout-btn" data-e-handler-event="click">Salir</button>
+                            <button data-e-handler="signout" data-e-handler-id="signout-btn" data-e-handler-event="click" data-e-signout-route="/">Salir</button>
                         </div>
                         <ol
                             class="content tickets-list"
-                            data-e-handler="generateTicket, updateExistentTicket"
+                            data-e-handler="generateNewTicket, updateExistentTicket"
                             data-e-handler-id="ticket-generator"
-                            data-e-generate-ticket-success="ticket.ticketValue"
-                            data-e-generate-ticket-error="notification.signedIn-message"
+
+                            data-e-generate-new-ticket-success="ticket.ticketValue, generateExistentTicket"
+                            data-e-generate-new-ticket-error="notification.signedIn-message"
+
                             data-e-update-existent-ticket-success="ticket.ticketValue"
                             data-e-update-existent-ticket-error="notification.signedIn-message"
+
                             data-e-handler-start="getTickets"
+
+                            data-e-get-tickets-success="listFromObjectsArray"
+                            data-e-get-tickets-error="notification.signedIn-message"
+
+                            data-e-list-from-objects-array-fields="n, id, cost, start, end, note"
+                            data-e-list-from-objects-array-success="generateExistentTicket"
                         >
 
                         </ol>
                     </div>
                     <aside class="right-side">
                         <div class="options">
-                            <b data-e-handler="userData" data-e-handler-id="signedIn-userdata"></b>
+                            <b data-e-handler="textFromObject" data-e-handler-id="signedIn-username" data-e-handler-field="user"></b>
                             <button data-e-handlerx="" data-e-handler-id="report-btn" data-e-handler-event="click">Reporte</button>
                             <button data-e-handlerx="" data-e-handler-id="pendings-btn" data-e-handler-event="click">Pendientes</button>
                         </div>

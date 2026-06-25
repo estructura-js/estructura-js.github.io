@@ -21,15 +21,51 @@
     _e_handlers_ids_re = /[\|\.]+/,
     _e_handler_str_int = 'data-e-handler',
     _e_handlers_str = '[' + _e_handler_str_int + ']',
+    _e_handler_event_required = '"' + _e_handler_str_int + '-event" required.',
     _e_handler_id_required = '"' + _e_handler_str_int + '-id" required.',
     _e_handler_required = '"' + _e_handler_str_int + '" required.',
-    _e_reserved = { 'liveElement': 1, 'initialElement': 1, 'connect': 1, 'ready': 1 },
+    _e_reserved = {
+      'liveElement': 1,
+      'initialElement': 1,
+      'connect': 1,
+      'ready': 1
+    },
+    _e_non_bubbling = {
+      'load': 1,
+      'unload': 1,
+      'error': 1,
+      'scroll': 1,
+      'resize': 1,
+      'abort': 1,
+      'focus': 1,
+      'blur': 1,
+      'mouseenter': 1,
+      'mouseleave': 1
+    },
     _handlers = _e.instance('handlers');
 
   function _error(message) {
     var e = new Error(message);
     e.name = '_handlers';
     throw e;
+  }
+
+  function _splitEventTypes(events) {
+    var bubbling    = '';
+    var nonBubbling = '';
+
+    for (var i = 0; i < events.length; i++) {
+      var _event = events[i];
+      var name = _event.split('.')[0];
+
+      if (_e_non_bubbling[name]) {
+        nonBubbling += (nonBubbling ? ' ' : '') + _event;
+      } else {
+        bubbling    += (bubbling    ? ' ' : '') + _event;
+      }
+    }
+
+    return { bubbling: bubbling, nonBubbling: nonBubbling };
   }
 
   function _extend(source, target, mode) {
@@ -404,12 +440,14 @@
               start_node = (!_start_node_type ? start_node : document.querySelector(start_node)).querySelectorAll(_e_handlers_str);
             }
             catch (e) {
-              throw new Error('Start Node must not be: ' + _e.type(start_node).join(', '));
+              throw new Error('Start Node must not be: ' + _e.type(start_node).join(', ') + ', or: ' + e.message);
             }
           }
 
-          var start_nodes = (start_node ? start_node : '>' + _e_handlers_str);
-          var end_starts = Object.create(null);
+          var
+            start_nodes = (start_node ? start_node : '>' + _e_handlers_str),
+            end_starts = Object.create(null),
+            event_nodes = [];
 
           _dom(start_nodes).each(function (element) {
             var id = _clear_handler_id(element.dataset.eHandlerId);
@@ -428,8 +466,17 @@
 
             var _handler_event = typeof element.dataset.eHandlerEvent !== 'undefined';
             if (_handler_event) {
-              _events(element).on(element.dataset.eHandlerEvent, function (event) {
-                _e_handlers_execute(id, handlers, event, _handler_middleware);
+              var _handler_events = _clear_handler_str(element.dataset.eHandlerEvent);
+              if (!_handler_events[0]) {
+                _error(_e_handler_event_required);
+              }
+
+              var _handler_event_types = _splitEventTypes(_handler_events);
+
+              event_nodes.push(function () {
+                _events(element).on(element.dataset.eHandlerEvent, function (event) {
+                  _e_handlers_execute(id, handlers, event, _handler_middleware);
+                  });
               });
             }
 
@@ -462,6 +509,11 @@
               end_starts[_id].push({ handler: end_handlers, fn: _handler_start_fn });
             }
           });
+
+          // Set event listeners before 'end_starts'
+          for (var i = 0; i < event_nodes.length; i++) {
+            event_nodes[i]();
+          }
 
           for (var key in end_starts) {
             if (end_starts[key].length < 1) { continue; }

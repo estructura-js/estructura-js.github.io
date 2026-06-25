@@ -23,16 +23,18 @@ _events(document).ready(function () {
     };
   }
 
-  function ticketMock(_ticket) {
-    _ticket = mockData(_ticket ? _ticket : 'ID' + ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'][Math.round(Math.random() * 10)] + Math.round(Math.random() * 9999999));
-    return '<li><div class="ticket"><span class="n">' + _ticket.n + '</span><span class="id">' + _ticket.id + '</span><span class="attached"><span class="cost">' + _ticket.cost + '</span><span class="start">' + _ticket.start + '</span><span class="end">' + _ticket.end + '</span><span class="note">' + _ticket.note + '</span></span></div></li>';
+  function mockDataId() { return mockData('ID' + ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'][Math.round(Math.random() * 10)] + Math.round(Math.random() * 9999999));  }
+
+  function mockHTML(data) {
+    return '<div class="ticket"><span class="n">' + data.n + '</span><span class="id">' + data.id + '</span><span class="attached"><span class="cost">' + data.cost + '</span><span class="start">' + data.start + '</span><span class="end">' + data.end + '</span><span class="note">' + data.note + '</span></span></div>';
   }
 
-  function ticketMocks(n, callback) {
-    var _mock = n;
+  function mocksArray(n) {
+    var _mock = n, _mocks = [];
     while (_mock--) {
-      callback(ticketMock());
+      _mocks.push(mockDataId())
     }
+    return _mocks;
   }
 
 	function delay(id, callback, time){
@@ -101,40 +103,40 @@ _events(document).ready(function () {
 	}
 
 	function lastSess(data, required){
-      try {
-		var sessName = roundSessName();
-          var _sessName = btoa(sessName);
-		    data = _sessStore.getItem(_sessName);
-		if (!data){
-            throw new Error('Session not found or expired.');
-          }
+    try {
+  		var sessName = roundSessName();
+            var _sessName = btoa(sessName);
+  		    data = _sessStore.getItem(_sessName);
+  		if (!data){
+              throw new Error('Session not found or expired.');
+            }
 
-		data = atob(data);
-	    data = JSON.parse(data);
-	    if(!data.checksum || !data.timestamp){
-			throw new Error('Unssupported session data.');
-		}
+  		data = atob(data);
+  	    data = JSON.parse(data);
+  	    if(!data.checksum || !data.timestamp){
+  			throw new Error('Unssupported session data.');
+  		}
 
-		if(required){
-		  var i = required.length;
-		  while(i--){
-				if(typeof data[required[i]] === 'undefined'){
-				  throw new Error('"' + required[i] + '" required.');
-				}
-		  }
-		}
+  		if(required){
+  		  var i = required.length;
+  		  while(i--){
+  				if(typeof data[required[i]] === 'undefined'){
+  				  throw new Error('"' + required[i] + '" required.');
+  				}
+  		  }
+  		}
 
-		var checksum = Number(data.checksum);
-		delete data.checksum;
+  		var checksum = Number(data.checksum);
+  		delete data.checksum;
 
-		if(hashCode(b64json(data), sessName) == checksum){
-		  console.log('lastSess checksum checked:', checksum);
-		  data.name = _sessName;
-		  data.del = function(){
-				_sessStore.removeItem(_sessName);
-		  };
-		  return data;
-		}
+  		if(hashCode(b64json(data), sessName) == checksum){
+  		  console.log('lastSess checksum checked:', checksum);
+  		  data.name = _sessName;
+  		  data.del = function(){
+  				_sessStore.removeItem(_sessName);
+  		  };
+  		  return data;
+  		}
 	  }
       catch(e){
 		    e.name = 'lastSess';
@@ -143,7 +145,7 @@ _events(document).ready(function () {
 	  return false;
 	}
 
-	var _e_handlers = {
+  var _e_handlers = {
     hideAccordions: function (event) {
       var id = this.initialElement.dataset.eHandlerId;
       for (var _id in _e_handlers.accordion) {
@@ -203,30 +205,30 @@ _events(document).ready(function () {
             r = JSON.parse(r);
 
             if (!r || typeof r !== 'object') {
-              throw new Error('Response format not supported, Object required.');
+              throw new Error('forms: Response format not supported, Object required.');
             }
 
-            if (typeof r.error !== 'undefined'){
+            if (typeof r.error !== 'undefined') {
               throw new Error(r.error);
             }
 
             if (typeof r[formId] === 'undefined') {
-              throw new Error('Response requires Object."' + formId + '".');
+              throw new Error('forms: Response requires Object."' + formId + '".');
             }
 
             if (typeof r[formId] === 'string') {
               throw new Error(r[formId]);
             }
 
-            if (!r[formId] || typeof r[formId] !== 'object'){
-              throw new Error('Response Object."' + formId + '" value required as Object.');
+            if (!r[formId] || typeof r[formId] !== 'object') {
+              throw new Error('forms: Response Object."' + formId + '" value required as Object.');
             }
 
             formConnect('success', r[formId]);
           }
           catch (e) {
             if (typeof r.error !== 'undefined') {
-              e.message = r.error;
+              e.message = 'forms: ' + r.error;
             }
 
             formConnect('error', e);
@@ -239,8 +241,6 @@ _events(document).ready(function () {
     },
 
     formsResponse: function (event) {
-      event.preventDefault();
-
       var formsResponseId = this.initialElement.dataset.eHandlerId;
       console.log('formsResponse:', formsResponseId);
     },
@@ -278,7 +278,7 @@ _events(document).ready(function () {
           _content = event.loading || event.message || 'Loading...'
           this.success = _content;
         }
-        else if(event.error){
+        else if (event.error) {
           element.data('data-error', '');
           _content = event.error || event.message || 'Error.';
           this.error = _content;
@@ -309,7 +309,7 @@ _events(document).ready(function () {
 
     remove: function (event) {
       if (!this.liveElement.isConnected) {
-        throw new Error('"' + this.initialElement.nodeName + '" Node is disconnected from DOM.');
+        throw new Error('remove: "' + this.initialElement.nodeName + '" Node is disconnected from DOM.');
       }
 
       this.liveElement.parentNode.removeChild(this.liveElement);
@@ -317,16 +317,16 @@ _events(document).ready(function () {
 
     formsResponseRoute: function (event) {
       if (typeof _sessStore === 'undefined') {
-        throw new Error('Session store not found.');
+        throw new Error('formsResponseRoute: Session store not found.');
       }
 
       if (!event || typeof event !== 'object') {
-        throw new Error('Entry event/data required as Object.');
+        throw new Error('formsResponseRoute: Entry event/data required as Object.');
       }
 
       for (var key in _required_sess_fields) {
         if (typeof event[key] === 'undefined' || !event[key]) {
-          throw new Error('Entry data require: ' + key);
+          throw new Error('formsResponseRoute: Entry data require: ' + key);
         }
       }
 
@@ -338,17 +338,17 @@ _events(document).ready(function () {
       _routing.show(event.route);
     },
 
-    routesStart: function  () {
+    routesStart: function () {
       var _id = this.initialElement.dataset.eHandlerId;
-      if(!this.liveElement.isConnected){
-          throw new Error('routesStart: "' + _id + '" Node is disconnected from DOM.');
+      if (!this.liveElement.isConnected) {
+        throw new Error('routesStart: "' + _id + '" Node is disconnected from DOM.');
       }
 
-      if(!this.config){
+      if (!this.config) {
         this.config = {
           ref: _routing.start({
-        		  click: false,
-        		  dispatch: false
+            click: false,
+            dispatch: false
           }),
           base: window.location.pathname
         }
@@ -358,22 +358,20 @@ _events(document).ready(function () {
 
         var _currentRouteStr = 'data-e-current-route';
         var _currentRoute = this.liveElement.querySelector('[' + _currentRouteStr + ']');
-        if(!_currentRoute || !_currentRoute.dataset.eHandlerRoute){
+        if (!_currentRoute || !_currentRoute.dataset.eHandlerRoute) {
           throw new Error('routesStart: "' + _currentRouteStr + '" not found.');
         }
-
-        console.log('routesStart current route:', _currentRoute.dataset.eHandlerRoute);
 
         this.config.scope = _currentRoute.parentNode;
         var _scopeChildren = this.config.scope.children;
 
         this.config.hideRoutes = function () {
-          _dom(_scopeChildren).each(function(scopeChild){
+          _dom(_scopeChildren).each(function (scopeChild) {
             _dom(scopeChild).data('data-e-hidden-route', '');
           });
         };
 
-        this.config.showRoute = function(route){
+        this.config.showRoute = function (route) {
           _dom(route.liveElement).data('data-e-hidden-route', 'no');
         };
 
@@ -382,14 +380,14 @@ _events(document).ready(function () {
         return;
       }
 
-      if(!this.config.scope.isConnected){
-          throw new Error('routesStart: "' + _currentRouteStr + '" Node is disconnected from DOM.');
+      if (!this.config.scope.isConnected) {
+        throw new Error('routesStart: "' + _currentRouteStr + '" Node is disconnected from DOM.');
       }
     },
 
-    routes: function _e_routes_container (event) {
+    routes: function _e_routes_container(event) {
       var type = _e.type(event);
-      if(type.length > 1){
+      if (type.length > 1) {
         throw new Error('routes: Unsupported types "' + type.join(', ') + '"');
       }
 
@@ -397,18 +395,18 @@ _events(document).ready(function () {
       var _routesStartId = this.initialElement.dataset.eHandlerId;
       var _routesStart = _e_handlers.routesStart[_routesStartId];
 
-      if(!_routesStart){
+      if (!_routesStart) {
         throw new Error('routes: Required "routesStart" handler for route views container.');
       }
 
       var _routesStartMode = typeof _routesStart.initialElement.dataset.eHandlerStart !== 'undefined';
       var _routesEndStart = typeof _routesStart.initialElement.dataset.eHandlerEndStart !== 'undefined';
 
-      if(!_routesStartMode){
+      if (!_routesStartMode) {
         throw new Error('routes: "data-e-handler-start" required for "' + _routesStartId + '" with "routesStart" handler.');
       }
 
-      if(!_routesEndStart){
+      if (!_routesEndStart) {
         throw new Error('routes: "data-e-handler-end-start" required for "' + _routesStartId + '".');
       }
 
@@ -416,23 +414,23 @@ _events(document).ready(function () {
       for (var route in _e_routes_container) {
         if (_e_routes_container.hasOwnProperty(route)) {
           var _route = _e_routes_container[route].initialElement.dataset.eHandlerRoute;
-          if(_route){
+          if (_route) {
             console.log('routes route:', concatUri(_base, _route));
 
-            _routing(_route, (function(_route, route){
-                return function () {
-                  if(_e_routes_container[route].liveElement.parentNode !== _routesStart.config.scope){
-                    throw new Error('routes: "' + _route + '" route of "' + route + '" cannot be found on "' + _routesStartId + '" scope.');
-                  }
+            _routing(_route, (function (_route, route) {
+              return function () {
+                if (_e_routes_container[route].liveElement.parentNode !== _routesStart.config.scope) {
+                  throw new Error('routes: "' + _route + '" route of "' + route + '" cannot be found on "' + _routesStartId + '" scope.');
+                }
 
-                  console.log('routes selected route:', _route);
-                  _routesStart.config.hideRoutes();
-                  _routesStart.config.showRoute(_e_routes_container[route]);
+                console.log('routes selected route:', _route);
+                _routesStart.config.hideRoutes();
+                _routesStart.config.showRoute(_e_routes_container[route]);
               }
             })(_route, route));
 
             var _current = _e_routes_container[route].initialElement.dataset.eCurrentRoute;
-            if(typeof _current !== 'undefined' && !_currentRoute){
+            if (typeof _current !== 'undefined' && !_currentRoute) {
               _currentRoute = _route;
             }
           }
@@ -451,58 +449,31 @@ _events(document).ready(function () {
         _routing.redirect(session.route);
         this.connect(session);
       }
-      catch(e){
+      catch (e) {
         console.warn('signedInCheck:', e.message);
       }
     },
 
-    temporalShow: function(data){
+    temporalShow: function (data) {
       console.log('temporalShow:', data);
 
       var
         _ref = _dom(this.liveElement),
         _original_text = this.initialElement.textContent;
 
-      delay('temporalShow', function(){
+      delay('temporalShow', function () {
         _ref.data('data-hidden', '');
         _ref.set('textContent', _original_text);
       });
     },
 
-    signout: function(event){
-      event.preventDefault();
-      try {
-        console.log('signout...');
-        var session = lastSess();
-        session.del();
-      }
-      catch(e){
-        console.warn('signout:', e.message);
-      }
-      _routing.redirect('/');
-    },
+    signout: function (event) {
+      console.log('signout...');
+      var session = lastSess();
+      session.del();
 
-    ticket: function (data) {
-      console.log('ticket:', this.initialElement.dataset.eHandlerId);
-
-      this.liveElement.value = (typeof data === 'string' ? data : '');
-      this.liveElement.focus();
-    },
-
-    createTicket: function () {
-      var _value = _e_handlers.ticket['ticketValue'].liveElement.value;
-      if (_value) {
-        console.log('createTicket:', _value);
-        this.connect(_value);
-      }
-    },
-
-    updateTicket: function () {
-      var _value = _e_handlers.ticket['ticketValue'].liveElement.value;
-      if (_value) {
-        console.log('updateTicket:', _value);
-        this.connect(_value);
-      }
+      var _route = this.initialElement.dataset.eSignoutRoute || '/';
+      _routing.redirect(_route);
     },
 
     checkConnection: function () {
@@ -528,9 +499,85 @@ _events(document).ready(function () {
       _events(window).on('offline', connCheckFn);
     },
 
-    generateTicket: function (data) {
+    textFromObject: function (data) {
+      if (!data || typeof data !== 'object') {
+        throw new Error('textFromObject: Entry data/event must be an Object.');
+      }
+
+      console.log('textFromObject:', data);
+
+      var
+        _ref = _dom(this.liveElement),
+        _field = this.initialElement.dataset.eHandlerField,
+        _text = (typeof data === 'string' ? data : (_field && typeof data[_field] === 'string' ? data[_field] : false));
+
+      if (_text) {
+        _ref.set('textContent', _text);
+      }
+    },
+
+    listFromObjectsArray: function (event) {
+      if (!_e.type(event)['Array']) {
+        throw new Error('listFromObjectsArray: Entry data/event must be an Array.');
+      }
+
+      console.log('listFromObjectsArray:', event);
+
+      var _fields = this.initialElement.dataset.eListFromObjectsArrayFields;
+      if (_fields) {
+        _fields = _fields.replace(/\s+/g, '').split(',');
+      }
+
+      if (!_fields.length) {
+        throw new Error('listFromObjectsArray: Fields list must have comma separated values.');
+      }
+
+      for (var i = 0; i < event.length; i++) {
+        if (!event[i] || typeof event[i] !== 'object') { continue; }
+
+        var j = _fields.length, _collected = {}, _state = false;
+        while (j--) {
+          var _field = _fields[j];
+          if (event[i][_field]) {
+            _collected[_field] = event[i][_field];
+            _state = true;
+          }
+        }
+
+        if (_state) {
+          this.success = _collected;
+        }
+      }
+    },
+
+    /* App particular handlers */
+
+    ticket: function (data) {
+      console.log('ticket:', this.initialElement.dataset.eHandlerId);
+
+      this.liveElement.value = (typeof data === 'string' ? data : '');
+      this.liveElement.focus();
+    },
+
+    createNewTicket: function () {
+      var _value = _e_handlers.ticket['ticketValue'].liveElement.value;
+      if (_value) {
+        console.log('createNewTicket:', _value);
+        this.connect(_value);
+      }
+    },
+
+    updateNewTicket: function () {
+      var _value = _e_handlers.ticket['ticketValue'].liveElement.value;
+      if (_value) {
+        console.log('updateNewTicket:', _value);
+        this.connect(_value);
+      }
+    },
+
+    generateNewTicket: function (data) {
       if (typeof data !== 'string') {
-        throw new Error('generateTicket: Entry data required as String.');
+        throw new Error('generateNewTicket: Entry data required as String.');
       }
 
       if (!_grlConnState) {
@@ -541,15 +588,22 @@ _events(document).ready(function () {
       data = data.replace(/\s+/g, '');
       var _ticket_re = /[^a-zA-Z0-9_\.\-]+/;
       if (_ticket_re.test(data)) {
-        this.error = 'Wrong ticket id characters: ' + data.match(_ticket_re)[0];
+        this.error = 'Wrong ticket ID characters: ' + data.match(_ticket_re)[0];
         return;
       }
 
-      console.log('generateTicket:', data);
-      this.success = '';
+      if (data.length < 2) {
+        this.error = 'Ticket ID must have at least 2 characters.';
+      }
 
-      // Ticket mocks...
-      this.liveElement.insertAdjacentHTML('afterbegin', ticketMock(data));
+      if (data.length > 128) {
+        this.error = 'Ticket ID must not exceed 128 characters.';
+      }
+
+      console.log('generateNewTicket:', data);
+      var _data = mockData(data);
+      _data.id = data;
+      this.success = _data;
     },
 
     updateExistentTicket: function (data) {
@@ -569,19 +623,23 @@ _events(document).ready(function () {
       // Update ticket...
     },
 
-    userData: function (data) {
-      console.log('userData:', data);
-      var _ref = _dom(this.liveElement);
-      _ref.set('textContent', data.user + ':');
-    },
-
     getTickets: function (event) {
       var _this = this;
       console.log('getTickets:', event);
-      ticketMocks(20, function (mock) {
-        _this.liveElement.insertAdjacentHTML('afterbegin', mock);
-      });
-    }
+
+      var _tickets = mocksArray(20);
+      this.success = _tickets;
+    },
+
+    generateExistentTicket: function (event) {
+      if (!event || typeof event !== 'object') {
+        throw new Error('generateExistentTicket: Entry data/event must be an object.');
+      }
+
+      //console.log('generateExistentTicket:', event);
+
+      this.liveElement.insertAdjacentHTML('afterbegin', mockHTML(event));
+    },
   };
 
   var _e_handlers_shortcuts = {
