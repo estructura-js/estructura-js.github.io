@@ -12,7 +12,7 @@ _events(document).ready(function () {
       user: true
     };
 
-  function ticketMockData(data) {
+  function mockData(data) {
     return {
       n: Math.round(Math.random() * (((new Date).getTime() / 1000) / 60)),
       id: data,
@@ -24,8 +24,8 @@ _events(document).ready(function () {
   }
 
   function ticketMock(_ticket) {
-    _ticket = ticketMockData(_ticket ? _ticket : 'ID' + ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'][Math.round(Math.random() * 10)] + Math.round(Math.random() * 9999999));
-    return '<li class="ticket"><span class="n">' + _ticket.n + '</span><span class="id">' + _ticket.id + '</span><span class="attached"><span class="cost">' + _ticket.cost + '</span><span class="start">' + _ticket.start + '</span><span class="end">' + _ticket.end + '</span><span class="note">' + _ticket.note + '</span></span></li>';
+    _ticket = mockData(_ticket ? _ticket : 'ID' + ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'][Math.round(Math.random() * 10)] + Math.round(Math.random() * 9999999));
+    return '<li><div class="ticket"><span class="n">' + _ticket.n + '</span><span class="id">' + _ticket.id + '</span><span class="attached"><span class="cost">' + _ticket.cost + '</span><span class="start">' + _ticket.start + '</span><span class="end">' + _ticket.end + '</span><span class="note">' + _ticket.note + '</span></span></div></li>';
   }
 
   function ticketMocks(n, callback) {
