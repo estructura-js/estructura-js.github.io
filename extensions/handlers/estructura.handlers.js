@@ -220,7 +220,7 @@
       _direct_mode = _middleware_type === 'function';
 
       var _middleware = function (data) {
-        //console.info('Middleware for:', handler);
+        //console.info('_handlers: Middleware for:', handler);
         return data;
       };
 
@@ -388,7 +388,7 @@
       }
       else {
         this[id].connect = function () {
-          console.info('Nothing to be connected, add "' + _data_connect + '".');
+          console.info('_handlers: Nothing to be connected, add "' + _data_connect + '".');
         };
       }
 
@@ -446,7 +446,7 @@
 
               var ignored = typeof element.dataset.eHandlerIgnore !== 'undefined';
               if (ignored && element.parentNode) {
-                console.info('Ignored handler:', id);
+                console.info('_handlers: Ignored handler:', id);
                 var _ingoredNodeFragment = document.createDocumentFragment();
                 var _ignoredNodePlaceholder = document.createComment(id);
                 element.parentNode.replaceChild(_ignoredNodePlaceholder, element);
