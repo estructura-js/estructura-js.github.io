@@ -313,15 +313,22 @@
         throw new Error('formsResponseRoute: "routesStart" and "routes" handlers required.');
       }
 
-      if (!_e_handlers.routes[event.handler]) {
+      var _route = _e_handlers.routes[event.handler];
+      if (!_route) {
         throw new Error('formsResponseRoute: "routes"."' + event.handler + '" handler not found.');
       }
 
-      if (!_e_handlers.routes[event.handler].mounted) {
+      var _mounted;
+      if (!_route.mounted) {
         console.info(event.handler + ': Not mounted.');
+        _mounted = _route.mount();
       }
 
-      console.log(1212121212121212,  _e_handlers.routes[event.handler].mounted, _e_handlers.routes[event.handler])
+      console.log('formsResponseRoute:', event.handler, _route.mounted, _route, _mounted);
+
+
+      _handlers(_e_handlers , _e_handlers_shortcuts).start(_mounted);
+      //_handlers(event.handler).start(_mounted);
 
       /*saveSess(event);
 

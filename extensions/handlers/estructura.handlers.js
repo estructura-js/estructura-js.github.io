@@ -193,11 +193,12 @@
       _event_type = typeof event,
       _event_type_fn = _event_type === 'function',
       _middleware_type = typeof middleware,
-      _direct_mode = _event_type === 'function';
+      _direct_mode = _event_type === 'function',
+      _shortcuts = _source_shortcuts || {};
 
     for (var i = 0; i < handler.length; i++) {
       handler[i] = handler[i].trim();
-      handler[i] = _resolve_shortcut(_source_shortcuts, handler[i]);
+      handler[i] = _resolve_shortcut(_shortcuts, handler[i]);
 
       for (var j = 0; j < handler[i].length; j++) {
         if (typeof handler[i][j] !== 'string') { continue; }
@@ -445,6 +446,144 @@
     }
   }
 
+  function _e_iteration(handlers, handlers_shortcuts, start_nodes, end_starts, event_bubbling, event_nonBubbling){
+    for (var i = 0, parentIgnoredElement, previousElement; i < start_nodes.length; i++) {
+      if (parentIgnoredElement) {
+        if (parentIgnoredElement.contains(start_nodes[i])) { continue; }
+        parentIgnoredElement = null;
+      }
+
+      (function (element, previous, next) {
+        var id = _clear_handler_id(element.dataset.eHandlerId);
+        if (!id) {
+          _error(_e_handler_id_required);
+        }
+
+        var handler_list = _clear_handler_str(element.dataset.eHandler);
+        if (!handler_list[0]) {
+          _error(_e_handler_required);
+        }
+
+        var
+          _element = element.cloneNode(),
+          _handler_middleware = typeof element.dataset.eHandlerMiddleware !== 'undefined';
+
+        var
+          component = {
+          fragment: null,
+          fragmentPlaceholder: null,
+
+          ignored: typeof element.dataset.eHandlerIgnore !== 'undefined',
+
+          unmount_fn: function () {
+            try {
+              if (element.isConnected && element.parentNode && element.parentNode.isConnected) {
+                console.log('_handlers unmount:', id);
+                component.fragment = document.createDocumentFragment();
+                component.fragmentPlaceholder = document.createComment(id);
+
+                element.parentNode.replaceChild(component.fragmentPlaceholder, element);
+                component.fragment.appendChild(element);
+
+                component.ignored = true;
+                return component.fragment;
+              }
+            }
+            catch(e){
+              _error('unmount: ' + e.message);
+            }
+            console.warn('_handlers unmount error: "' + id + '" Node or parent disconnected from DOM.');
+          },
+
+          mount_fn: function () {
+            try {
+              if (component.fragment && component.fragmentPlaceholder && component.fragmentPlaceholder.isConnected && component.fragmentPlaceholder.parentNode && component.fragmentPlaceholder.parentNode.isConnected) {
+                console.log('_handlers mount:', id);
+
+                component.fragmentPlaceholder.parentNode.replaceChild(component.fragment, component.fragmentPlaceholder);
+
+                component.fragment = null;
+                component.fragmentPlaceholder = null;
+
+                component.ignored = false;
+                return element;
+              }
+            }
+            catch(e){
+              _error('mount: ' + e.message);
+            }
+
+            console.warn('_handlers mount error: "' + id + '" Node or parent disconnected from DOM.');
+          }
+        };
+
+        _e_handlers_execute(
+          handlers, handlers_shortcuts, id, handler_list,
+          _e_handlers_register(handlers, handlers_shortcuts, id, element, _element, component),
+          _handler_middleware
+        );
+
+        if (component.ignored) {
+          console.info('_handlers ignored:', id, handler_list);
+          component.unmount_fn();
+          delete element.dataset.eHandlerIgnore;
+          parentIgnoredElement = element;
+          return;
+        }
+
+        var _handler_event = typeof element.dataset.eHandlerEvent !== 'undefined';
+        if (_handler_event) {
+          var _handler_events = _clear_handler_str(element.dataset.eHandlerEvent);
+          if (!_handler_events[0]) {
+            _error(_e_handler_event_required);
+          }
+
+          var _event_nonBubbling = {};
+          var _handler_event_types = _splitEventTypes(_handler_events, event_bubbling, _event_nonBubbling, element, [id, handler_list, null, _handler_middleware]);
+          if (_handler_event_types.nonBubbling) {
+            event_nonBubbling.push(function () {
+              _events(element).on(Object.keys(_event_nonBubbling).join(','), function (event) {
+                _e_handlers_execute(handlers, handlers_shortcuts, id, handler_list, event, _handler_middleware);
+              });
+            });
+          }
+        }
+
+        var _handler_start = typeof element.dataset.eHandlerStart !== 'undefined';
+        var _handler_start_fn = function (_handlers, event) {
+          try {
+            _e_handlers_execute(handlers, handlers_shortcuts, id, _handlers, event || Object.create(null), _handler_middleware);
+          }
+          catch (e) {
+            _error('"' + id + '"."' + _handlers.toString() + '" error: ' + e.message);
+          }
+        };
+
+        if (_handler_start) {
+          var start_handlers = _clear_handler_str(element.dataset.eHandlerStart);
+          if (!start_handlers[0]) { start_handlers = handler_list; }
+
+          _e_handlers_execute(handlers, handlers_shortcuts, id, start_handlers, _e_handlers_register(handlers, handlers_shortcuts, id, element, _element, component), _handler_middleware)
+
+          _handler_start_fn(start_handlers);
+        }
+
+        var _handler_end = typeof element.dataset.eHandlerEndStart !== 'undefined';
+        if (_handler_end) {
+          var end_handlers = _clear_handler_str(element.dataset.eHandlerEndStart);
+          if (!end_handlers[0]) { end_handlers = handler_list; }
+
+          _e_handlers_execute(handlers, handlers_shortcuts, id, end_handlers, _e_handlers_register(handlers, handlers_shortcuts, id, element, _element, component), _handler_middleware)
+
+          var _id = end_handlers.toString();
+          if (!end_starts[_id]) { end_starts[_id] = []; }
+          end_starts[_id].push({ handler: end_handlers, fn: _handler_start_fn });
+        }
+      })(start_nodes[i], previousElement, start_nodes[i + 1]);
+      previousElement = start_nodes[i];
+    }
+  }
+
   _handlers.fn(function (handlers, handlers_shortcuts) {
     if(typeof handlers === 'string' && _e_public_handlers[handlers]){
       if (_e_public_handlers[handlers].handlers_shortcuts) {
@@ -484,8 +623,11 @@
 
       start: function (args, start_node) {
         try {
+          var
+            _start_node = start_node,
+            _start_node_type = typeof start_node === 'string';
+
           if (start_node) {
-            var _start_node_type = typeof start_node === 'string';
             if (!_start_node_type) {
               _check_object(start_node);
             }
@@ -504,143 +646,11 @@
             event_bubbling = {},
             event_nonBubbling = [];
 
-          for (var i = 0, parentIgnoredElement, previousElement; i < start_nodes.length; i++) {
-            if (parentIgnoredElement) {
-              if (parentIgnoredElement.contains(start_nodes[i])) { continue; }
-              parentIgnoredElement = null;
-            }
-
-            (function (element, previous, next) {
-              var id = _clear_handler_id(element.dataset.eHandlerId);
-              if (!id) {
-                _error(_e_handler_id_required);
-              }
-
-              var handler_list = _clear_handler_str(element.dataset.eHandler);
-              if (!handler_list[0]) {
-                _error(_e_handler_required);
-              }
-
-              var
-                _element = element.cloneNode(),
-                _handler_middleware = typeof element.dataset.eHandlerMiddleware !== 'undefined';
-
-              var
-                component = {
-                fragment: null,
-                fragmentPlaceholder: null,
-
-                ignored: typeof element.dataset.eHandlerIgnore !== 'undefined',
-
-                unmount_fn: function () {
-                  try {
-                    if (element.isConnected && element.parentNode && element.parentNode.isConnected) {
-                      console.log('_handlers unmount:', id);
-                      component.fragment = document.createDocumentFragment();
-                      component.fragmentPlaceholder = document.createComment(id);
-
-                      element.parentNode.replaceChild(component.fragmentPlaceholder, element);
-                      component.fragment.appendChild(element);
-
-                      component.ignored = true;
-                      return;
-                    }
-                  }
-                  catch(e){
-                    _error('unmount: ' + e.message);
-                  }
-                  console.warn('_handlers unmount error: "' + id + '" Node or parent disconnected from DOM.');
-                },
-
-                mount_fn: function () {
-                  try {
-                    if (component.fragment && component.fragmentPlaceholder && component.fragmentPlaceholder.isConnected && component.fragmentPlaceholder.parentNode && component.fragmentPlaceholder.parentNode.isConnected) {
-                      console.log('_handlers mount:', id);
-
-                      component.fragmentPlaceholder.parentNode.replaceChild(component.fragment, component.fragmentPlaceholder);
-
-                      component.fragment = null;
-                      component.fragmentPlaceholder = null;
-
-                      component.ignored = false;
-                      return;
-                    }
-                  }
-                  catch(e){
-                    _error('mount: ' + e.message);
-                  }
-
-                  console.warn('_handlers mount error: "' + id + '" Node or parent disconnected from DOM.');
-                }
-              };
-
-              _e_handlers_execute(
-                handlers, handlers_shortcuts, id, handler_list,
-                _e_handlers_register(handlers, handlers_shortcuts, id, element, _element, component),
-                _handler_middleware
-              );
-
-              if (component.ignored) {
-                console.info('_handlers ignored:', id, handler_list);
-                component.unmount_fn();
-                delete element.dataset.eHandlerIgnore;
-                parentIgnoredElement = element;
-                return;
-              }
-
-              var _handler_event = typeof element.dataset.eHandlerEvent !== 'undefined';
-              if (_handler_event) {
-                var _handler_events = _clear_handler_str(element.dataset.eHandlerEvent);
-                if (!_handler_events[0]) {
-                  _error(_e_handler_event_required);
-                }
-
-                var _event_nonBubbling = {};
-                var _handler_event_types = _splitEventTypes(_handler_events, event_bubbling, _event_nonBubbling, element, [id, handler_list, null, _handler_middleware]);
-                if (_handler_event_types.nonBubbling) {
-                  event_nonBubbling.push(function () {
-                    _events(element).on(Object.keys(_event_nonBubbling).join(','), function (event) {
-                      _e_handlers_execute(handlers, handlers_shortcuts, id, handler_list, event, _handler_middleware);
-                    });
-                  });
-                }
-              }
-
-              var _handler_start = typeof element.dataset.eHandlerStart !== 'undefined';
-              var _handler_start_fn = function (_handlers, event) {
-                try {
-                  _e_handlers_execute(handlers, handlers_shortcuts, id, _handlers, event || Object.create(null), _handler_middleware);
-                }
-                catch (e) {
-                  _error('"' + id + '"."' + _handlers.toString() + '" error: ' + e.message);
-                }
-              };
-
-              if (_handler_start) {
-                var start_handlers = _clear_handler_str(element.dataset.eHandlerStart);
-                if (!start_handlers[0]) { start_handlers = handler_list; }
-
-                _e_handlers_execute(handlers, handlers_shortcuts, id, start_handlers, _e_handlers_register(handlers, handlers_shortcuts, id, element, _element, component), _handler_middleware)
-
-                _handler_start_fn(start_handlers);
-              }
-
-              var _handler_end = typeof element.dataset.eHandlerEndStart !== 'undefined';
-              if (_handler_end) {
-                var end_handlers = _clear_handler_str(element.dataset.eHandlerEndStart);
-                if (!end_handlers[0]) { end_handlers = handler_list; }
-
-                _e_handlers_execute(handlers, handlers_shortcuts, id, end_handlers, _e_handlers_register(handlers, handlers_shortcuts, id, element, _element, component), _handler_middleware)
-
-                var _id = end_handlers.toString();
-                if (!end_starts[_id]) { end_starts[_id] = []; }
-                end_starts[_id].push({ handler: end_handlers, fn: _handler_start_fn });
-              }
-
-              return;
-            })(start_nodes[i], previousElement, start_nodes[i + 1]);
-            previousElement = start_nodes[i];
+          if (_start_node && !_start_node_type) {
+            _e_iteration(handlers, handlers_shortcuts, [_start_node], end_starts, event_bubbling, event_nonBubbling);
           }
+
+          _e_iteration(handlers, handlers_shortcuts, start_nodes, end_starts, event_bubbling, event_nonBubbling);
 
           // Set bubbling event listeners before 'end_starts'
           _events(document.documentElement).on(Object.keys(event_bubbling).join(','), function (event) {
