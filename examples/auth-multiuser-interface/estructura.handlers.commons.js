@@ -189,10 +189,9 @@ _events(document).ready(function () {
       }
 
       try {
-        var _form = Object.fromEntries(form.entries());
-        _form.password = _generic_token;
+        form.set('password', _generic_token);
 
-        console.info('forms:', this.initialElement.dataset.eHandlerData, _form);
+        console.info('forms:', this.initialElement.dataset.eHandlerData, form);
       }
       catch (e) {
         console.warn('forms:', e.message);
