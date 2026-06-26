@@ -16,7 +16,6 @@
 	<script src="https://cdn.jsdelivr.net/npm/estructura-js"></script>
 	<script src="../../main.js"></script>
 	<script src="../events/estructura.events.js"></script>
-	<script src="../dom/estructura.dom.js"></script>
 	<script src="estructura.handlers.js"></script>
 	<script>
 		document.addEventListener('DOMContentLoaded', function(){
@@ -74,7 +73,7 @@
 				<div class="padding">
 					Motor declarativo de alta abstracción orientado a la gestión, orquestación e interconexión de flujos de lógica (handlers) desacoplados a nivel de interfaz. Permite mapear elementos del DOM directamente con lógica de JavaScript a través de atributos descriptivos de datos (<code>dataset</code>), proporcionando flujos de ejecución secuenciales, encadenamiento mediante middlewares y control dinámico de estados de éxito y error mediante asignaciones reactivas.<br><br>
 					<b>Librería:</b> <a target="_blank" href="estructura.handlers.js">estructura.handlers.js</a><br><br>
-					<b>Dependencias obligatorias:</b> <a href="../dom/estructura.dom.js">estructura.dom.js</a> (<a href="../dom/index.html">DOM, documentación</a>), <a href="../events/estructura.events.js">estructura.events.js</a> (<a href="../events/index.html">Events, documentación</a>). Extensiones requeridas junto con sus objetos globales accesibles (<code>_dom</code>, <code>_events</code>) para consultar elementos e inyectar escuchadores de eventos del DOM. Deben estar disponibles en el entorno antes de inicializar <code>_handlers</code>; de lo contrario, el proceso se interrumpirá emitiendo una excepción en consola.
+					<b>Dependencias obligatorias:</b> <a href="../events/estructura.events.js">estructura.events.js</a> (<a href="../events/index.html">Events, documentación</a>). Extensión requerida junto con su objeto global accesible (<code>_events</code>) para inyectar escuchadores de eventos del DOM. Debe estar disponible en el entorno antes de inicializar <code>_handlers</code>; de lo contrario, el proceso se interrumpirá emitiendo una excepción en consola.
 				</div>
 			</section>
 
@@ -82,7 +81,7 @@
 				<h2 id="docs">Documentación</h2>
 				<div class="padding">
 					<h3>1. Inicialización y Dependencias Directas</h3>
-					<p>El motor expone globalmente la interfaz <code>_handlers</code>. Al ser una extensión coordinada, se apoya de forma directa en <code>_dom</code> para la selección e iteración de los nodos declarados en el HTML, y en <code>_events</code> para vincular los disparadores físicos del ciclo de vida del DOM.</p>
+					<p>El motor expone globalmente la interfaz <code>_handlers</code>. Al ser una extensión coordinada, se apoya de forma directa en <code>_events</code> para vincular los disparadores físicos del ciclo de vida del DOM.</p>
 					<br>
 					<p><b>Sintaxis de Registro:</b></p>
 					<pre><code>_handlers(handlersMap, shortcutsMap?).start(startNode?);</code></pre>

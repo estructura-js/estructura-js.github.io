@@ -104,20 +104,24 @@ _events(document).ready(function () {
 
 	function lastSess(data, required){
     try {
-  		var sessName = roundSessName();
-            var _sessName = btoa(sessName);
-  		    data = _sessStore.getItem(_sessName);
-  		if (!data){
-              throw new Error('Session not found or expired.');
-            }
+      var
+        sessName = roundSessName(),
+        _sessName = btoa(sessName);
+
+      data = _sessStore.getItem(_sessName);
+
+  		if (!data) {
+        throw new Error('Session not found or expired.');
+      }
 
   		data = atob(data);
-  	    data = JSON.parse(data);
-  	    if(!data.checksum || !data.timestamp){
+      data = JSON.parse(data);
+
+  	  if (!data.checksum || !data.timestamp) {
   			throw new Error('Unssupported session data.');
   		}
 
-  		if(required){
+  		if (required) {
   		  var i = required.length;
   		  while(i--){
   				if(typeof data[required[i]] === 'undefined'){
@@ -129,7 +133,7 @@ _events(document).ready(function () {
   		var checksum = Number(data.checksum);
   		delete data.checksum;
 
-  		if(hashCode(b64json(data), sessName) == checksum){
+  		if (hashCode(b64json(data), sessName) == checksum) {
   		  console.log('lastSess checksum checked:', checksum);
   		  data.name = _sessName;
   		  data.del = function(){
@@ -138,10 +142,11 @@ _events(document).ready(function () {
   		  return data;
   		}
 	  }
-      catch(e){
-		    e.name = 'lastSess';
+    catch(e){
+		  e.name = 'lastSess';
 			throw e;
-	  }
+    }
+
 	  return false;
 	}
 
@@ -468,9 +473,13 @@ _events(document).ready(function () {
 
     signout: function (event) {
       console.log('signout...');
-      var session = lastSess();
-      session.del();
-
+      try {
+        var session = lastSess();
+        session.del();
+      }
+      catch (e) {
+        console.warn('signout:', e.message);
+      }
       var _route = this.initialElement.dataset.eSignoutRoute || '/';
       _routing.redirect(_route);
     },

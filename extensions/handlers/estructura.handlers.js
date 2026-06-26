@@ -74,19 +74,6 @@
     return { bubbling: bubbling, nonBubbling: nonBubbling };
   }
 
-  /*function _extend(source, target, mode) {
-    for (var key in target) {
-      if (target.hasOwnProperty(key)) {
-        if (typeof key !== 'string') { continue; }
-        if (!mode && typeof source[key] !== 'undefined') {
-          console.warn('Key "' + key + '" from target already exists in source, not overwritten.');
-          continue;
-        }
-        source[key] = target[key];
-      }
-    }
-    }*/
-
   function _capitalizeAndCamelCase(str) {
     if (!str) return '';
     str = str.charAt(0).toUpperCase() + str.slice(1);
@@ -99,25 +86,21 @@
     visited = visited || {};
     name = (name || '').trim();
 
-    // Circular control
     if (visited[name]) {
       _error('Circular shortcut reference detected: ' + name);
     }
 
     var target = _source[name];
 
-    // Final if not alias
     if (typeof target === 'undefined') {
       return [name];
     }
 
     visited[name] = true;
 
-    // Normalization
     var target_array = _e.type(target)['Array'] ? target : [target];
     var resolved = [];
 
-    // Recursive
     for (var i = 0; i < target_array.length; i++) {
       var item = target_array[i];
       if (typeof item === 'string') {
@@ -128,7 +111,6 @@
       }
     }
 
-    // Backtracking
     delete visited[name];
     return resolved;
   }
@@ -448,72 +430,75 @@
           }
 
           var
-            start_nodes = (start_node ? start_node : '>' + _e_handlers_str),
+            start_nodes = (start_node ? start_node : document.querySelectorAll(_e_handlers_str)),
             end_starts = Object.create(null),
             event_bubbling = {},
             event_nonBubbling = {};
 
-          _dom(start_nodes).each(function (element) {
-            var id = _clear_handler_id(element.dataset.eHandlerId);
-            if (!id) {
-              _error(_e_handler_id_required);
-            }
+          for (var i = 0; i < start_nodes.length; i++) {
+            (function (element) {
+              var id = _clear_handler_id(element.dataset.eHandlerId);
 
-            var handler_list = _clear_handler_str(element.dataset.eHandler);
-            if (!handler_list[0]) {
-              _error(_e_handler_required);
-            }
-
-            var _element = element.cloneNode();
-            var _handler_middleware = typeof element.dataset.eHandlerMiddleware !== 'undefined';
-            _e_handlers_execute(handlers, handlers_shortcuts, id, handler_list, _e_handlers_register(handlers, handlers_shortcuts, id, element, _element), _handler_middleware);
-
-            var _handler_event = typeof element.dataset.eHandlerEvent !== 'undefined';
-            if (_handler_event) {
-              var _handler_events = _clear_handler_str(element.dataset.eHandlerEvent);
-              if (!_handler_events[0]) {
-                _error(_e_handler_event_required);
+              if (!id) {
+                _error(_e_handler_id_required);
               }
 
-              var
-                _handler_event_types = _splitEventTypes(_handler_events, event_bubbling, event_nonBubbling, element, [id, handler_list, null, _handler_middleware]);
-
-              if (_handler_event_types.nonBubbling) {
-                _events(element).on(Object.keys(event_notBubbling).join(','), function (event) {
-                  _e_handlers_execute(handlers, handlers_shortcuts, id, handler_list, event, _handler_middleware);
-                });
+              var handler_list = _clear_handler_str(element.dataset.eHandler);
+              if (!handler_list[0]) {
+                _error(_e_handler_required);
               }
-            }
 
-            var _handler_start = typeof element.dataset.eHandlerStart !== 'undefined';
-            var _handler_start_fn = function (_handlers, event) {
-              try {
-                _e_handlers_execute(handlers, handlers_shortcuts, id, _handlers, event || Object.create(null), _handler_middleware);
+              var _element = element.cloneNode();
+              var _handler_middleware = typeof element.dataset.eHandlerMiddleware !== 'undefined';
+              _e_handlers_execute(handlers, handlers_shortcuts, id, handler_list, _e_handlers_register(handlers, handlers_shortcuts, id, element, _element), _handler_middleware);
+
+              var _handler_event = typeof element.dataset.eHandlerEvent !== 'undefined';
+              if (_handler_event) {
+                var _handler_events = _clear_handler_str(element.dataset.eHandlerEvent);
+                if (!_handler_events[0]) {
+                  _error(_e_handler_event_required);
+                }
+
+                var
+                  _handler_event_types = _splitEventTypes(_handler_events, event_bubbling, event_nonBubbling, element, [id, handler_list, null, _handler_middleware]);
+
+                if (_handler_event_types.nonBubbling) {
+                  _events(element).on(Object.keys(event_notBubbling).join(','), function (event) {
+                    _e_handlers_execute(handlers, handlers_shortcuts, id, handler_list, event, _handler_middleware);
+                  });
+                }
               }
-              catch (e) {
-                _error('"' + id + '"."' + _handlers.toString() + '" error: ' + e.message);
+
+              var _handler_start = typeof element.dataset.eHandlerStart !== 'undefined';
+              var _handler_start_fn = function (_handlers, event) {
+                try {
+                  _e_handlers_execute(handlers, handlers_shortcuts, id, _handlers, event || Object.create(null), _handler_middleware);
+                }
+                catch (e) {
+                  _error('"' + id + '"."' + _handlers.toString() + '" error: ' + e.message);
+                }
+              };
+
+              if (_handler_start) {
+                var start_handlers = _clear_handler_str(element.dataset.eHandlerStart);
+                if (!start_handlers[0]) { start_handlers = handler_list; }
+                _e_handlers_execute(handlers, handlers_shortcuts, id, start_handlers, _e_handlers_register(handlers, handlers_shortcuts, id, element, _element), _handler_middleware)
+                _handler_start_fn(start_handlers);
               }
-            };
 
-            if (_handler_start) {
-              var start_handlers = _clear_handler_str(element.dataset.eHandlerStart);
-              if (!start_handlers[0]) { start_handlers = handler_list; }
-              _e_handlers_execute(handlers, handlers_shortcuts, id, start_handlers, _e_handlers_register(handlers, handlers_shortcuts, id, element, _element), _handler_middleware)
-              _handler_start_fn(start_handlers);
-            }
+              var _handler_end = typeof element.dataset.eHandlerEndStart !== 'undefined';
+              if (_handler_end) {
+                var end_handlers = _clear_handler_str(element.dataset.eHandlerEndStart);
+                if (!end_handlers[0]) { end_handlers = handler_list; }
 
-            var _handler_end = typeof element.dataset.eHandlerEndStart !== 'undefined';
-            if (_handler_end) {
-              var end_handlers = _clear_handler_str(element.dataset.eHandlerEndStart);
-              if (!end_handlers[0]) { end_handlers = handler_list; }
+                _e_handlers_execute(handlers, handlers_shortcuts, id, end_handlers, _e_handlers_register(handlers, handlers_shortcuts, id, element, _element), _handler_middleware)
 
-              _e_handlers_execute(handlers, handlers_shortcuts, id, end_handlers, _e_handlers_register(handlers, handlers_shortcuts, id, element, _element), _handler_middleware)
-
-              var _id = end_handlers.toString();
-              if (!end_starts[_id]) { end_starts[_id] = []; }
-              end_starts[_id].push({ handler: end_handlers, fn: _handler_start_fn });
-            }
-          });
+                var _id = end_handlers.toString();
+                if (!end_starts[_id]) { end_starts[_id] = []; }
+                end_starts[_id].push({ handler: end_handlers, fn: _handler_start_fn });
+              }
+            })(start_nodes[i]);
+          }
 
           // Set event listeners before 'end_starts'
           _events(document.documentElement).on(Object.keys(event_bubbling).join(','), function (event) {
@@ -539,7 +524,7 @@
           }
         }
         catch (e) {
-          _error(e.message);
+          _error('DOM iteration: ' + e.message);
         }
       }
     }
