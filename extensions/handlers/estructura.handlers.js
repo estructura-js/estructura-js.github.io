@@ -48,6 +48,28 @@
     throw e;
   }
 
+  function _check_object(object) {
+    if (!object || typeof object !== 'object') {
+      _error('"' + _e.type(object).join(', ') + '" must be an Object.');
+    }
+  }
+
+  function _clear_handler_str(str) {
+    return (str || '').replace(_e_ids_re, ' ').replace(_e_trim_re, '').split(_e_handlers_re);
+  }
+
+  function _clear_handler_id(str) {
+    return (str || '').replace(_e_ids_re, '');
+  }
+
+  function _capitalizeAndCamelCase(str) {
+    if (!str) { return ''; }
+    str = str.charAt(0).toUpperCase() + str.slice(1);
+    return str.replace(/-([a-z])/g, function(match, letter) {
+        return letter.toUpperCase();
+    });
+  }
+
   function _splitEventTypes(events, events_bubbling, events_nonBubbling, element, data) {
     var bubbling = false, nonBubbling = false;
 
@@ -59,27 +81,20 @@
       if (_e_non_bubbling[name]) {
         events_nonBubbling[name] = true;
         nonBubbling = true;
+        continue;
       }
-      else {
-        if (!events_bubbling[name]) {
-          events_bubbling[name] = { elements: [], data: [] };
-        }
 
-        events_bubbling[name].elements.push(element);
-        events_bubbling[name].data.push(data);
-        bubbling = true;
+      if (!events_bubbling[name]) {
+        events_bubbling[name] = { elements: [], data: [] };
       }
+
+      events_bubbling[name].elements.push(element);
+      events_bubbling[name].data.push(data);
+      bubbling = true;
+
     }
 
     return { bubbling: bubbling, nonBubbling: nonBubbling };
-  }
-
-  function _capitalizeAndCamelCase(str) {
-    if (!str) return '';
-    str = str.charAt(0).toUpperCase() + str.slice(1);
-    return str.replace(/-([a-z])/g, function(match, letter) {
-        return letter.toUpperCase();
-    });
   }
 
   function _resolve_shortcut(_source, name, visited) {
@@ -354,7 +369,7 @@
           var _state = typeof state === 'string';
           var _data = typeof data === 'undefined';
           if (_state && _e_reserved[state]) {
-            return console.warn('_handlers:', _handler, id, 'Incorrect target:', state);
+            return console.warn('_handlers:', _handler, id, 'Wrong target:', state);
           }
 
           _e_handlers_execute(_source, _source_shortcuts, null, _data_connect, _e_handlers_ids(_source, ids, function (handler, _id) {
@@ -367,7 +382,7 @@
               return handler.call(handler[_id], state);
             }
 
-            console.warn('_handlers: Incorrect connect:', state, data, ids);
+            console.warn('_handlers: Wrong connect:', state, data, ids);
           }), _middleware);
         }
       }
@@ -389,20 +404,6 @@
       _e_handlers_execute(_source, _source_shortcuts, id, _data_error, _e_handlers_register(_source, _source_shortcuts, id, element, _element), _middleware);
       _define(this[id], 'error', false, _e_execute_fn(_source, _source_shortcuts, _handler + ' error', _data_error, id, _middleware));
     }
-  }
-
-  function _check_object(object) {
-    if (!object || typeof object !== 'object') {
-      _error('"' + _e.type(object).join(', ') + '" must be an Object.');
-    }
-  }
-
-  function _clear_handler_str(str) {
-    return (str || '').replace(_e_ids_re, ' ').replace(_e_trim_re, '').split(_e_handlers_re);
-  }
-
-  function _clear_handler_id(str) {
-    return (str || '').replace(_e_ids_re, '');
   }
 
   _handlers.fn(function (handlers, handlers_shortcuts) {
@@ -433,14 +434,24 @@
             start_nodes = (start_node ? start_node : document.querySelectorAll(_e_handlers_str)),
             end_starts = Object.create(null),
             event_bubbling = {},
-            event_nonBubbling = {};
+            event_nonBubbling = [],
+            ignored_nodes = [];
 
           for (var i = 0; i < start_nodes.length; i++) {
             (function (element) {
               var id = _clear_handler_id(element.dataset.eHandlerId);
-
               if (!id) {
                 _error(_e_handler_id_required);
+              }
+
+              var ignored = typeof element.dataset.eHandlerIgnore !== 'undefined';
+              if (ignored && element.parentNode) {
+                console.info('Ignored handler:', id);
+                var _ingoredNodeFragment = document.createDocumentFragment();
+                var _ignoredNodePlaceholder = document.createComment(id);
+                element.parentNode.replaceChild(_ignoredNodePlaceholder, element);
+                _ingoredNodeFragment.appendChild(element);
+                return;
               }
 
               var handler_list = _clear_handler_str(element.dataset.eHandler);
@@ -459,12 +470,13 @@
                   _error(_e_handler_event_required);
                 }
 
-                var
-                  _handler_event_types = _splitEventTypes(_handler_events, event_bubbling, event_nonBubbling, element, [id, handler_list, null, _handler_middleware]);
-
+                var _event_nonBubbling = {};
+                var _handler_event_types = _splitEventTypes(_handler_events, event_bubbling, _event_nonBubbling, element, [id, handler_list, null, _handler_middleware]);
                 if (_handler_event_types.nonBubbling) {
-                  _events(element).on(Object.keys(event_notBubbling).join(','), function (event) {
-                    _e_handlers_execute(handlers, handlers_shortcuts, id, handler_list, event, _handler_middleware);
+                  event_nonBubbling.push(function () {
+                    _events(element).on(Object.keys(_event_nonBubbling).join(','), function (event) {
+                      _e_handlers_execute(handlers, handlers_shortcuts, id, handler_list, event, _handler_middleware);
+                    });
                   });
                 }
               }
@@ -482,7 +494,9 @@
               if (_handler_start) {
                 var start_handlers = _clear_handler_str(element.dataset.eHandlerStart);
                 if (!start_handlers[0]) { start_handlers = handler_list; }
+
                 _e_handlers_execute(handlers, handlers_shortcuts, id, start_handlers, _e_handlers_register(handlers, handlers_shortcuts, id, element, _element), _handler_middleware)
+
                 _handler_start_fn(start_handlers);
               }
 
@@ -500,18 +514,21 @@
             })(start_nodes[i]);
           }
 
-          // Set event listeners before 'end_starts'
+          // Set bubbling event listeners before 'end_starts'
           _events(document.documentElement).on(Object.keys(event_bubbling).join(','), function (event) {
             var _event = event_bubbling[event.type];
             if (_event) {
               var _element = _event.elements.indexOf(event.target);
-              if (_element !== -1 && _event.elements[_element] && _event.elements[_element].isConnected) {
+              if (_element !== -1 && _event.elements[_element]) {
                 var _data = _event.data[_element];
                 _data[2] = event;
                 _e_handlers_execute.apply(null, [handlers, handlers_shortcuts].concat(_data));
               }
             }
           }, { capture: true });
+
+          // Set non bubbling event listeners before 'end_starts'
+          for (var i = 0; i < event_nonBubbling.length; i++) { event_nonBubbling[i](); }
 
           // Execute 'end_starts' handler_list
           for (var key in end_starts) {
