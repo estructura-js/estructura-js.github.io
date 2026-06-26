@@ -1,4 +1,4 @@
-_events(document).ready(function () {
+(function () {
   console.log('Estructura Handlers Commons ready.');
 
   var
@@ -7,35 +7,10 @@ _events(document).ready(function () {
     _grlConnState = false,
     _required_sess_fields = {
       token: true,
-      route: true,
+      handler: true,
       success: true,
       user: true
     };
-
-  function mockData(data) {
-    return {
-      n: Math.round(Math.random() * (((new Date).getTime() / 1000) / 60)),
-      id: data,
-      cost: Math.max(Math.round(Math.random() * 10), 0.5),
-      start: new Date(new Date((new Date).setMinutes(Math.round(Math.random() * 20))).setSeconds(Math.round(Math.random() * 59))).toLocaleString(),
-      end: new Date(new Date((new Date).setMinutes(Math.max(Math.round(Math.random() * 59), 21))).setSeconds(Math.round(Math.random() * 59))).toLocaleString(),
-      note: 'Nota ' + Math.round(Math.random() * 99)
-    };
-  }
-
-  function mockDataId() { return mockData('ID' + ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'][Math.round(Math.random() * 10)] + Math.round(Math.random() * 9999999));  }
-
-  function mockHTML(data) {
-    return '<div class="ticket"><span class="n">' + data.n + '</span><span class="id">' + data.id + '</span><span class="attached"><span class="cost">' + data.cost + '</span><span class="start">' + data.start + '</span><span class="end">' + data.end + '</span><span class="note">' + data.note + '</span></span></div>';
-  }
-
-  function mocksArray(n) {
-    var _mock = n, _mocks = [];
-    while (_mock--) {
-      _mocks.push(mockDataId())
-    }
-    return _mocks;
-  }
 
 	function delay(id, callback, time){
       clearTimeout(delay[id]);
@@ -334,12 +309,26 @@ _events(document).ready(function () {
         }
       }
 
-      saveSess(event);
+      if (!_e_handlers.routes || !_e_handlers.routesStart) {
+        throw new Error('formsResponseRoute: "routesStart" and "routes" handlers required.');
+      }
+
+      if (!_e_handlers.routes[event.handler]) {
+        throw new Error('formsResponseRoute: "routes"."' + event.handler + '" handler not found.');
+      }
+
+      if (!_e_handlers.routes[event.handler].mounted) {
+        console.info(event.handler + ': Not mounted.');
+      }
+
+      console.log(1212121212121212,  _e_handlers.routes[event.handler].mounted, _e_handlers.routes[event.handler])
+
+      /*saveSess(event);
 
       event.token = _generic_token;
       console.log('formsResponseRoute:', event);
 
-      _routing.show(event.route);
+      _routing.show(event.route);*/
     },
 
     routesStart: function () {
@@ -395,6 +384,10 @@ _events(document).ready(function () {
         throw new Error('routes: Unsupported types "' + type.join(', ') + '"');
       }
 
+      if (!this.mounted) {
+        return;
+      }
+
       var _base = _routing.base();
       var _routesStartId = this.initialElement.dataset.eHandlerId;
       var _routesStart = _e_handlers.routesStart[_routesStartId];
@@ -417,7 +410,10 @@ _events(document).ready(function () {
       var _currentRoute;
       for (var route in _e_routes_container) {
         if (_e_routes_container.hasOwnProperty(route)) {
-          var _route = _e_routes_container[route].initialElement.dataset.eHandlerRoute;
+          var _route = _e_routes_container[route];
+          if (!_route.mounted) { continue;  }
+
+          _route = _route.initialElement.dataset.eHandlerRoute;
           if (_route) {
             console.log('routes route:', concatUri(_base, _route));
 
@@ -444,7 +440,7 @@ _events(document).ready(function () {
       _routing.show(_currentRoute);
     },
 
-    signedInCheck: function () {
+    signedInCheck: function (event) {
       try {
         console.log('signedInCheck checking...');
         var session = lastSess('3 hours session', _required_sess_fields);
@@ -455,6 +451,8 @@ _events(document).ready(function () {
       }
       catch (e) {
         console.warn('signedInCheck:', e.message);
+        if (!event || typeof event !== 'object' || !Object.keys(event).length) { return; }
+        this.error = e.message;
       }
     },
 
@@ -556,98 +554,7 @@ _events(document).ready(function () {
           this.success = _collected;
         }
       }
-    },
-
-    /* App particular handlers */
-
-    ticket: function (data) {
-      console.log('ticket:', this.initialElement.dataset.eHandlerId);
-
-      this.liveElement.value = (typeof data === 'string' ? data : '');
-      this.liveElement.focus();
-    },
-
-    createNewTicket: function () {
-      var _value = _e_handlers.ticket['ticketValue'].liveElement.value;
-      if (_value) {
-        console.log('createNewTicket:', _value);
-        this.connect(_value);
-      }
-    },
-
-    updateNewTicket: function () {
-      var _value = _e_handlers.ticket['ticketValue'].liveElement.value;
-      if (_value) {
-        console.log('updateNewTicket:', _value);
-        this.connect(_value);
-      }
-    },
-
-    generateNewTicket: function (data) {
-      if (typeof data !== 'string') {
-        throw new Error('generateNewTicket: Entry data required as String.');
-      }
-
-      if (!_grlConnState) {
-        this.error = 'Offline, cannot generate ticket.';
-        return;
-      }
-
-      data = data.replace(/\s+/g, '');
-      var _ticket_re = /[^a-zA-Z0-9_\.\-]+/;
-      if (_ticket_re.test(data)) {
-        this.error = 'Wrong ticket ID characters: ' + data.match(_ticket_re)[0];
-        return;
-      }
-
-      if (data.length < 2) {
-        this.error = 'Ticket ID must have at least 2 characters.';
-      }
-
-      if (data.length > 128) {
-        this.error = 'Ticket ID must not exceed 128 characters.';
-      }
-
-      console.log('generateNewTicket:', data);
-      var _data = mockData(data);
-      _data.id = data;
-      this.success = _data;
-    },
-
-    updateExistentTicket: function (data) {
-      if (typeof data !== 'string') {
-        throw new Error('updateExistentTicket: Entry data required as String.');
-      }
-
-      if (!_grlConnState) {
-        this.error = 'Offline, cannot update ticket.';
-        return;
-      }
-
-      var _data = data;
-      console.log('updateExistentTicket:', _data);
-      this.success = '';
-
-      // Update ticket...
-    },
-
-    getTickets: function (event) {
-      var _this = this;
-      console.log('getTickets:', event);
-
-      var _tickets = mocksArray(20);
-      this.success = _tickets;
-    },
-
-    generateExistentTicket: function (event) {
-      if (!event || typeof event !== 'object') {
-        throw new Error('generateExistentTicket: Entry data/event must be an object.');
-      }
-
-      //console.log('generateExistentTicket:', event);
-
-      this.liveElement.insertAdjacentHTML('afterbegin', mockHTML(event));
-    },
+    }
   };
 
   var _e_handlers_shortcuts = {
@@ -655,5 +562,5 @@ _events(document).ready(function () {
     'route': 'routes'
   };
 
-	_handlers(_e_handlers, _e_handlers_shortcuts).start();
-});
+	_handlers(_e_handlers, _e_handlers_shortcuts).public('commons');
+})();

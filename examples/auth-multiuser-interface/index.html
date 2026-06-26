@@ -48,6 +48,7 @@
 	<script src="../../extensions/routing/estructura.routing.js"></script>
 	<script src="../../extensions/handlers/estructura.handlers.js"></script>
 	<script src="estructura.handlers.commons.js"></script>
+	<script src="app.bundle.js"></script>
 
 	<script type="application/ld+json">
 	{
@@ -81,7 +82,7 @@
 	</header>
 
 	<main data-e-handler="routes" data-e-handler-id="routesContainer" data-e-handler-start="routesStart" data-e-handler-end-start>
-    	<div data-e-handler="route" data-e-handler-id="notSignedIn" data-e-handler-route="/" data-e-handler-end-start="signedInCheck" data-e-signed-in-check-connect="notification.signedIn-message, textFromObject.signedIn-username" data-e-current-route>
+    	<div data-e-handler="route" data-e-handler-id="notSignedIn" data-e-handler-route="/" data-e-handler-end-start="signedInCheck" data-e-signed-in-check-connect="notification.signedIn-message, textFromObject.signedIn-username" data-e-signed-in-check-error="notification.signin-notif" data-e-current-route>
     		<section>
     			<form
          			data-e-handler="forms"
@@ -144,8 +145,6 @@
 
          			data-e-forms-response-error="notification.signin-notif"
          			data-e-forms-response-success="formsResponseRoute, signedInCheck.notSignedIn"
-
-                    data-e-signed-in-check-connect="notification.signedIn-message, textFromObject.signedIn-username"
     			>
          			<fieldset>
          			    <legend data-e-handler="selectiveAccordion" data-e-handler-id="signin-header" data-e-handler-event="click" data-e-handler-data="#signin">Ingreso</legend>
