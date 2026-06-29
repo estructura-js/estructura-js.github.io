@@ -322,7 +322,10 @@
       if (!_route.mounted) {
         console.info(event.handler + ': Not mounted.', _route);
         _mounted = _route.mount();
-        _handlers(_e_handlers, event.handler).end(_mounted); // TODO: continue to off to element ant after that implment live...
+        if (_mounted) {
+          console.log('Mounted:', _mounted);
+          _handlers(_e_handlers, event.handler).end(_mounted);
+        }
       }
 
       console.log('formsResponseRoute:', _mounted, _route.mounted, _e_handlers.routes[event.handler]);

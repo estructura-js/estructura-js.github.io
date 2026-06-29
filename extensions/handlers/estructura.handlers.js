@@ -74,24 +74,36 @@
   }
 
   function _splitEventTypes(id, events, events_bubbling, events_bubbling_private, events_nonBubbling, events_nonBubbling_private, element, data) {
-    var bubbling = false, nonBubbling = false;
+    var
+      bubbling = false,
+      nonBubbling = false,
+      _events_bubbling_private = {},
+      _events_nonBubbling_private = {};
 
     for (var i = 0; i < events.length; i++) {
       var
         _event = events[i],
         name = _event.split('.')[0],
-        _name = name + '.e_handler_id_' + id;
+        _name = name + '._e_handler_id_' + id;
 
       if (_e_non_bubbling[name]) {
         events_nonBubbling[name] = true;
-        events_nonBubbling_private[_name] = true;
+        events_nonBubbling_private[_name] = events_nonBubbling_private[_name] || {};
+        events_nonBubbling_private[_name][id] = _events_nonBubbling_private;
+
+        _events_nonBubbling_private[id] = _events_nonBubbling_private[id] || [];
+        _events_nonBubbling_private[id][_name] = true;
         nonBubbling = true;
         continue;
       }
 
       if (!events_bubbling[name]) {
         events_bubbling[name] = { elements: [], data: [] };
-        events_bubbling_private[_name] = true;
+        events_bubbling_private[_name] = events_bubbling_private[_name] || {};
+        events_bubbling_private[_name][id] = _events_bubbling_private;
+
+        _events_bubbling_private[id] = _events_bubbling_private[id] || [];
+        _events_bubbling_private[id][_name] = true;
       }
 
       events_bubbling[name].elements.push(element);
@@ -466,10 +478,23 @@
 
       _e_nodes_iteration(start_nodes, _e_collect_metadata(ids, handlers_list, event_bubbling, event_bubbling_private, event_nonBubbling, event_nonBubbling_private));
 
-      console.log(1, ids);
-      console.log(2, handlers_list);
-      console.log(3, event_bubbling_private);
-      console.log(4, event_nonBubbling_private);
+      for (var i = 0; i < handlers_list.length; i++) {
+        var _handler = _resolve_shortcut(handlers, handlers_list[i]);
+
+        for (var j = 0; j < _handler.length; j++) {
+          var _handler_fn = handlers[_handler[j]];
+          if (typeof _handler_fn !== 'function') { continue; }
+
+          for (var k = 0; k < ids.length; k++) {
+            if (_handler_fn[ids[k]]) {
+              console.log(1, _handler[j], ids[k], _handler_fn[ids[k]]);
+
+              console.log(2, event_bubbling_private);
+              console.log(3, event_nonBubbling_private);
+            }
+          }
+        }
+      }
     });
   }
 
