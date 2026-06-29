@@ -320,22 +320,18 @@
 
       var _mounted;
       if (!_route.mounted) {
-        console.info(event.handler + ': Not mounted.');
+        console.info(event.handler + ': Not mounted.', _route);
         _mounted = _route.mount();
+        _handlers(_e_handlers, event.handler).end(_mounted); // TODO: continue to off to element ant after that implment live...
       }
 
-      console.log('formsResponseRoute:', event.handler, _route.mounted, _route, _mounted);
+      console.log('formsResponseRoute:', _mounted, _route.mounted, _e_handlers.routes[event.handler]);
 
+      //saveSess(event);
 
-      _handlers(_e_handlers , _e_handlers_shortcuts).start(_mounted);
-      //_handlers(event.handler).start(_mounted);
+      //event.token = _generic_token;
 
-      /*saveSess(event);
-
-      event.token = _generic_token;
-      console.log('formsResponseRoute:', event);
-
-      _routing.show(event.route);*/
+      //_routing.show('/account');
     },
 
     routesStart: function () {
@@ -561,13 +557,11 @@
           this.success = _collected;
         }
       }
-    }
-  };
+    },
 
-  var _e_handlers_shortcuts = {
     'selectiveAccordion': ['hideAccordions', 'accordion'],
     'route': 'routes'
   };
 
-	_handlers(_e_handlers, _e_handlers_shortcuts).public('commons');
+	_handlers(_e_handlers).public('commons');
 })();
