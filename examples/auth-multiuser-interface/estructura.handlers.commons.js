@@ -325,16 +325,20 @@
         if (_mounted) {
           console.log('Mounted:', _mounted);
           _handlers(_e_handlers, event.handler).end(_mounted);
+          _handlers(_e_handlers, event.handler).start(_mounted);
+          _route = _e_handlers.routes[event.handler];
         }
       }
 
-      console.log('formsResponseRoute:', _mounted, _route.mounted, _e_handlers.routes[event.handler]);
+      // TODO: Change routesStart and routes implementation
+
+      console.log('formsResponseRoute:', _route.initialElement.dataset.eHandlerRoute);
 
       //saveSess(event);
 
       //event.token = _generic_token;
 
-      //_routing.show('/account');
+      //_routing.show(_route.initialElement.dataset.eHandlerRoute);
     },
 
     routesStart: function () {
@@ -417,7 +421,7 @@
       for (var route in _e_routes_container) {
         if (_e_routes_container.hasOwnProperty(route)) {
           var _route = _e_routes_container[route];
-          if (!_route.mounted) { continue;  }
+          if (!_route.mounted) { continue; }
 
           _route = _route.initialElement.dataset.eHandlerRoute;
           if (_route) {

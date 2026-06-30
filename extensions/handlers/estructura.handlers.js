@@ -76,9 +76,13 @@
   function _splitEventTypes(id, events, events_bubbling, events_bubbling_private, events_nonBubbling, events_nonBubbling_private, element, data) {
     var
       bubbling = false,
-      nonBubbling = false,
-      _events_bubbling_private = {},
-      _events_nonBubbling_private = {};
+      nonBubbling = false;
+
+    events_nonBubbling_private.events = events_nonBubbling_private.events || {};
+    events_nonBubbling_private.ids = events_nonBubbling_private.ids || {};
+
+    events_bubbling_private.events = events_bubbling_private.events || {};
+    events_bubbling_private.ids = events_bubbling_private.ids || {};
 
     for (var i = 0; i < events.length; i++) {
       var
@@ -88,22 +92,20 @@
 
       if (_e_non_bubbling[name]) {
         events_nonBubbling[name] = true;
-        events_nonBubbling_private[_name] = events_nonBubbling_private[_name] || {};
-        events_nonBubbling_private[_name][id] = _events_nonBubbling_private;
+        events_nonBubbling_private.events[_name] = true;
 
-        _events_nonBubbling_private[id] = _events_nonBubbling_private[id] || [];
-        _events_nonBubbling_private[id][_name] = true;
+        events_nonBubbling_private.ids[id] = events_nonBubbling_private.ids[id] || {};
+        events_nonBubbling_private.ids[id][_name] = true;
         nonBubbling = true;
         continue;
       }
 
       if (!events_bubbling[name]) {
         events_bubbling[name] = { elements: [], data: [] };
-        events_bubbling_private[_name] = events_bubbling_private[_name] || {};
-        events_bubbling_private[_name][id] = _events_bubbling_private;
+        events_bubbling_private.events[_name] = true;
 
-        _events_bubbling_private[id] = _events_bubbling_private[id] || [];
-        _events_bubbling_private[id][_name] = true;
+        events_bubbling_private.ids[id] = events_bubbling_private.ids[id] || {};
+        events_bubbling_private.ids[id][_name] = true;
       }
 
       events_bubbling[name].elements.push(element);
@@ -487,10 +489,21 @@
 
           for (var k = 0; k < ids.length; k++) {
             if (_handler_fn[ids[k]]) {
-              console.log(1, _handler[j], ids[k], _handler_fn[ids[k]]);
+              //console.log(_handler[j], ids[k], _handler_fn[ids[k]]);
 
-              console.log(2, event_bubbling_private);
-              console.log(3, event_nonBubbling_private);
+              if (_handler_fn[ids[k]].liveElement) {
+                var _event = _events(_handler_fn[ids[k]].liveElement);
+
+                if (event_bubbling_private.ids[ids[k]]) {
+                  _event.off(Object.keys(event_bubbling_private.ids[ids[k]]).join(','));
+                }
+
+                if (event_nonBubbling_private.ids[ids[k]]) {
+                  _event.off(Object.keys(event_nonBubbling_private.ids[ids[k]]).join(','));
+                }
+              }
+
+              delete _handler_fn[ids[k]];
             }
           }
         }
@@ -565,7 +578,7 @@
       _e_iteration(handlers, start_nodes, end_starts, event_bubbling, event_bubbling_private, event_nonBubbling, event_nonBubbling_private);
 
       // Set bubbling event listeners before 'end_starts'
-      _events(document.documentElement).on(Object.keys(event_bubbling_private).join(','), function (event) {
+      _events(document.documentElement).on(Object.keys(event_bubbling_private.events).join(','), function (event) {
         var _event = event_bubbling[event.type];
         if (_event) {
           var _element = _event.elements.indexOf(event.target);
@@ -697,10 +710,10 @@
           _handler_event_types = _splitEventTypes(id, _handler_events, event_bubbling, event_bubbling_private, _event_nonBubbling, _event_nonBubbling_private, element, [id, handler_list, null, _handler_middleware]);
 
         if (_handler_event_types.nonBubbling) {
-          _extend(event_nonBubbling_private, _event_nonBubbling_private);
+          _extend(event_nonBubbling_private, _event_nonBubbling_private.events);
 
           event_nonBubbling.push(function () {
-            _events(element).on(Object.keys(_event_nonBubbling_private).join(','), function (event) {
+            _events(element).on(Object.keys(_event_nonBubbling_private.events).join(','), function (event) {
               _e_handlers_execute(_handlers_source, id, handler_list, event, _handler_middleware);
             });
           });
