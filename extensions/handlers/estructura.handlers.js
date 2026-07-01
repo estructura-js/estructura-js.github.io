@@ -28,7 +28,8 @@
       'connect': 1,
       'ready': 1,
       'mount': 1,
-      'unmount': 1
+      'unmount': 1,
+      'mounted': 1
     },
     _e_non_bubbling = {
       'load': 1,

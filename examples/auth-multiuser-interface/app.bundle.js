@@ -35,7 +35,7 @@ _events(document).ready(function(){
     },
 
     createNewTicket: function () {
-      var _value = _e_handlers.ticket['ticketValue'].liveElement.value;
+      var _value = _e_app_bundle_handlers.ticket['ticketValue'].liveElement.value;
       if (_value) {
         console.log('createNewTicket:', _value);
         this.connect(_value);
@@ -43,7 +43,7 @@ _events(document).ready(function(){
     },
 
     updateNewTicket: function () {
-      var _value = _e_handlers.ticket['ticketValue'].liveElement.value;
+      var _value = _e_app_bundle_handlers.ticket['ticketValue'].liveElement.value;
       if (_value) {
         console.log('updateNewTicket:', _value);
         this.connect(_value);
@@ -55,7 +55,7 @@ _events(document).ready(function(){
         throw new Error('generateNewTicket: Entry data required as String.');
       }
 
-      if (!_grlConnState) {
+      if (!navigator.onLine) {
         this.error = 'Offline, cannot generate ticket.';
         return;
       }
@@ -86,7 +86,7 @@ _events(document).ready(function(){
         throw new Error('updateExistentTicket: Entry data required as String.');
       }
 
-      if (!_grlConnState) {
+      if (!navigator.onLine) {
         this.error = 'Offline, cannot update ticket.';
         return;
       }

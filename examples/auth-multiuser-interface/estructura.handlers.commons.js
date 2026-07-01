@@ -9,10 +9,7 @@
       token: true,
       handler: true,
       success: true,
-      user: true,
-      mounted: true,
-      unmount: true,
-      mount: true
+      user: true
     };
 
 	function delay(id, callback, time){
@@ -325,23 +322,19 @@
       if (!_route.mounted) {
         console.info(event.handler + ': Not mounted.', _route);
         _mounted = _route.mount();
+
         if (_mounted) {
-          console.log('Mounted:', _mounted);
           _handlers(_e_handlers, event.handler).end(_mounted);
           _handlers(_e_handlers, event.handler).start(_mounted);
           _route = _e_handlers.routes[event.handler];
         }
       }
 
-      // TODO: Change routesStart and routes implementation
+      saveSess(event);
+      event.token = _generic_token;
 
       console.log('formsResponseRoute:', _route.initialElement.dataset.eHandlerRoute);
-
-      //saveSess(event);
-
-      //event.token = _generic_token;
-
-      //_routing.show(_route.initialElement.dataset.eHandlerRoute);
+      _routing.show(_route.initialElement.dataset.eHandlerRoute);
     },
 
     routesStart: function () {
@@ -401,16 +394,18 @@
         return;
       }
 
-      var _base = _routing.base();
-      var _routesStartId = this.initialElement.dataset.eHandlerId;
-      var _routesStart = _e_handlers.routesStart[_routesStartId];
+      var
+        _base = _routing.base(),
+        _routesStartId = this.initialElement.dataset.eHandlerId,
+        _routesStart = _e_handlers.routesStart[_routesStartId];
 
       if (!_routesStart) {
         throw new Error('routes: Required "routesStart" handler for route views container.');
       }
 
-      var _routesStartMode = typeof _routesStart.initialElement.dataset.eHandlerStart !== 'undefined';
-      var _routesEndStart = typeof _routesStart.initialElement.dataset.eHandlerEndStart !== 'undefined';
+      var
+        _routesStartMode = typeof _routesStart.initialElement.dataset.eHandlerStart !== 'undefined',
+        _routesEndStart = typeof _routesStart.initialElement.dataset.eHandlerEndStart !== 'undefined';
 
       if (!_routesStartMode) {
         throw new Error('routes: "data-e-handler-start" required for "' + _routesStartId + '" with "routesStart" handler.');
@@ -420,37 +415,33 @@
         throw new Error('routes: "data-e-handler-end-start" required for "' + _routesStartId + '".');
       }
 
-      var _currentRoute;
-      for (var route in _e_routes_container) {
-        if (_e_routes_container.hasOwnProperty(route)) {
-          var _route = _e_routes_container[route];
-          if (!_route.mounted) { continue; }
+      _routing(function (ctx) {
+        var _found = false;
+        for (var route in _e_routes_container) {
+          if (_e_routes_container.hasOwnProperty(route)) {
+            var _route = _e_routes_container[route];
+            if (!_route.mounted) { continue; }
 
-          _route = _route.initialElement.dataset.eHandlerRoute;
-          if (_route) {
-            console.log('routes route:', concatUri(_base, _route));
+            _route = _route.initialElement.dataset.eHandlerRoute;
+            if (_route && ctx.path === _route) {
+              _found = true;
+              //console.log('routes route:', concatUri(_base, _route));
 
-            _routing(_route, (function (_route, route) {
-              return function () {
-                if (_e_routes_container[route].liveElement.parentNode !== _routesStart.config.scope) {
-                  throw new Error('routes: "' + _route + '" route of "' + route + '" cannot be found on "' + _routesStartId + '" scope.');
-                }
-
-                console.log('routes selected route:', _route);
-                _routesStart.config.hideRoutes();
-                _routesStart.config.showRoute(_e_routes_container[route]);
+              if (_e_routes_container[route].liveElement.parentNode !== _routesStart.config.scope) {
+                throw new Error('routes: "' + _route + '" route of "' + route + '" cannot be found on "' + _routesStartId + '" scope.');
               }
-            })(_route, route));
 
-            var _current = _e_routes_container[route].initialElement.dataset.eCurrentRoute;
-            if (typeof _current !== 'undefined' && !_currentRoute) {
-              _currentRoute = _route;
+              console.log('routes selected route:', _route);
+              _routesStart.config.hideRoutes();
+              _routesStart.config.showRoute(_e_routes_container[route]);
             }
           }
         }
-      }
 
-      _routing.show(_currentRoute);
+        if (!_found) {
+          throw new Error('routes: "' + ctx.path + '" route not found.');
+        }
+      });
     },
 
     signedInCheck: function (event) {
