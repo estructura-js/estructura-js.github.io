@@ -322,13 +322,13 @@
         var _scopeChildren = this.config.scope.children;
 
         this.config.hideRoutes = function () {
-          _dom(_scopeChildren).each(function (scopeChild) {
-            _dom(scopeChild).data('data-e-hidden-route', '');
-          });
+          for (var i = 0; i < _scopeChildren.length; i++) {
+            _scopeChildren[i].dataset.eHiddenRoute = '';
+          }
         };
 
         this.config.showRoute = function (route) {
-          _dom(route.liveElement).data('data-e-hidden-route', 'no');
+          route.liveElement.dataset.eHiddenRoute = 'no';
         };
 
         this.config.hideRoutes();

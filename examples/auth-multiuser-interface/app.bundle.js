@@ -69,10 +69,12 @@ _events(document).ready(function(){
 
       if (data.length < 2) {
         this.error = 'Ticket ID must have at least 2 characters.';
+        return;
       }
 
       if (data.length > 128) {
         this.error = 'Ticket ID must not exceed 128 characters.';
+        return;
       }
 
       console.log('generateNewTicket:', data);
