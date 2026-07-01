@@ -294,49 +294,6 @@
       this.liveElement.parentNode.removeChild(this.liveElement);
     },
 
-    formsResponseRoute: function (event) {
-      if (typeof _sessStore === 'undefined') {
-        throw new Error('formsResponseRoute: Session store not found.');
-      }
-
-      if (!event || typeof event !== 'object') {
-        throw new Error('formsResponseRoute: Entry event/data required as Object.');
-      }
-
-      for (var key in _required_sess_fields) {
-        if (typeof event[key] === 'undefined' || !event[key]) {
-          throw new Error('formsResponseRoute: Entry data require: ' + key);
-        }
-      }
-
-      if (!_e_handlers.routes || !_e_handlers.routesStart) {
-        throw new Error('formsResponseRoute: "routesStart" and "routes" handlers required.');
-      }
-
-      var _route = _e_handlers.routes[event.handler];
-      if (!_route) {
-        throw new Error('formsResponseRoute: "routes"."' + event.handler + '" handler not found.');
-      }
-
-      var _mounted;
-      if (!_route.mounted) {
-        console.info(event.handler + ': Not mounted.', _route);
-        _mounted = _route.mount();
-
-        if (_mounted) {
-          _handlers(_e_handlers, event.handler).end(_mounted);
-          _handlers(_e_handlers, event.handler).start(_mounted);
-          _route = _e_handlers.routes[event.handler];
-        }
-      }
-
-      saveSess(event);
-      event.token = _generic_token;
-
-      console.log('formsResponseRoute:', _route.initialElement.dataset.eHandlerRoute);
-      _routing.show(_route.initialElement.dataset.eHandlerRoute);
-    },
-
     routesStart: function () {
       var _id = this.initialElement.dataset.eHandlerId;
       if (!this.liveElement.isConnected) {
@@ -444,13 +401,56 @@
       });
     },
 
+    signedInSession: function (event) {
+      if (!event || typeof event !== 'object') {
+        throw new Error('signedInSession: Entry event/data required as Object.');
+      }
+
+      if (typeof _sessStore === 'undefined') {
+        throw new Error('signedInSession: Session store not found.');
+      }
+
+      for (var key in _required_sess_fields) {
+        if (typeof event[key] === 'undefined' || !event[key]) {
+          throw new Error('signedInSession: Entry data require: ' + key);
+        }
+      }
+
+      saveSess(event);
+    },
+
     signedInCheck: function (event) {
       try {
         console.log('signedInCheck checking...');
+
         var session = lastSess('3 hours session', _required_sess_fields);
         session.token = _generic_token;
-        console.log('signedInCheck session found:', session, this.liveElement.dataset.eHandlerId);
-        _routing.redirect(session.route);
+
+        console.log('signedInCheck session found:', session);
+        console.log('signedInCheck origin id:', this.liveElement.dataset.eHandlerId);
+
+        if (!_e_handlers.routesStart || !_e_handlers.routes) {
+          throw new Error('signedInCheck: "routesStart" and "routes" handlers required.');
+        }
+
+        var _route = _e_handlers.routes[session.handler];
+        if (!_route) {
+          throw new Error('signedInCheck: "routes"."' + session.handler + '" handler not found.');
+        }
+
+        var _mounted;
+        if (!_route.mounted) {
+          console.info('signedInCheck: ' + session.handler + ': Not mounted:', _route);
+          _mounted = _route.mount();
+
+          if (_mounted) {
+            _handlers(_e_handlers, session.handler).end(_mounted);
+            _handlers(_e_handlers, session.handler).start(_mounted);
+            _route = _e_handlers.routes[session.handler];
+          }
+        }
+
+        _routing.redirect(_route.initialElement.dataset.eHandlerRoute);
         this.connect(session);
       }
       catch (e) {
