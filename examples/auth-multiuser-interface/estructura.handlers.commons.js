@@ -9,7 +9,10 @@
       token: true,
       handler: true,
       success: true,
-      user: true
+      user: true,
+      mounted: true,
+      unmount: true,
+      mount: true
     };
 
 	function delay(id, callback, time){
