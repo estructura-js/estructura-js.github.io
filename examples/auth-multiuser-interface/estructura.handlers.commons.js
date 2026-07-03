@@ -18,63 +18,64 @@
   }
 
   function delayInt(id, callback, time){
-       clearInterval(delayInt[id]);
-    	  delayInt[id] = setInterval(callback, time || 5000);
+      clearInterval(delayInt[id]);
+      delayInt[id] = setInterval(callback, time || 5000);
 	}
 
 	function concatUri(str, str2){
-          var _lastSlash = str2.charAt(0) === '/';
-          var _firstSlash = str.charAt(str.length - 1) === '/';
+      var _lastSlash = str2.charAt(0) === '/';
+      var _firstSlash = str.charAt(str.length - 1) === '/';
 
-          if(!_lastSlash && !_firstSlash){
-            str2 = '/' + str2;
-          }
+      if(!_lastSlash && !_firstSlash){
+        str2 = '/' + str2;
+      }
 
-          if(_lastSlash && _firstSlash){
-            str2 = str2.slice(1);
-          }
+      if(_lastSlash && _firstSlash){
+        str2 = str2.slice(1);
+      }
 
-          return str + str2;
+      return str + str2;
 	}
 
 	function hashCode(str, seed) {
-        var hash = typeof seed === 'number' ? seed : 5381;
-        for (var i = 0; i < str.length; i++) {
-          hash = (hash << 5) + hash + str.charCodeAt(i);
-        }
-        return hash >>> 0;
+      var hash = typeof seed === 'number' ? seed : 5381;
+      for (var i = 0; i < str.length; i++) {
+        hash = (hash << 5) + hash + str.charCodeAt(i);
       }
+      return hash >>> 0;
+  }
 
 	function roundSessName(){
-        var hourMs = 60 * 60 * 1000;
-        var interval = hourMs;
-        return Math.floor((new Date).getTime() / hourMs) * hourMs;
+      var hourMs = 60 * 60 * 1000;
+      var interval = hourMs;
+      return Math.floor((new Date).getTime() / hourMs) * hourMs;
 	}
 
 	function b64json(data){
-	  return btoa(JSON.stringify(data));
+	    return btoa(JSON.stringify(data));
 	}
 
 	function saveSess(data){
 		try {
 		  if(!data || typeof data !== 'object'){
 		    throw new Error('Unsupported session data.');
-		      }
+		  }
 
 		  data.timestamp = new Date().getTime();
 
-		      var sessName = roundSessName();
-		  var sessContent = b64json(data);
+      var
+        sessName = roundSessName(),
+        sessContent = b64json(data);
 
 		  data.checksum = hashCode(sessContent, sessName);
 		  sessContent = b64json(data);
 
 		  _sessStore.setItem(btoa(sessName), sessContent);
-          }
-          catch(e){
-            e.name = 'saveSess';
-            throw e;
-          }
+    }
+    catch(e){
+      e.name = 'saveSess';
+      throw e;
+    }
 	}
 
 	function lastSess(data, required){
