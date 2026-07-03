@@ -658,7 +658,7 @@
           catch(e){
             _error('unmount: ' + e.message);
           }
-          console.warn('_handlers unmount error: "' + id + '" Node or parent disconnected from DOM.');
+          console.warn('_handlers unmount: "' + id + '" Node or parent disconnected from DOM.');
         },
 
         mount_fn: function () {
@@ -678,7 +678,7 @@
             _error('mount: ' + e.message);
           }
 
-          console.warn('_handlers mount error: "' + id + '" Node or parent disconnected from DOM.');
+          console.warn('_handlers mount: "' + id + '" Node or parent disconnected from DOM.');
         }
       };
 

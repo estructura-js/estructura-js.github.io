@@ -307,7 +307,7 @@
             dispatch: false
           }),
           base: window.location.pathname
-        }
+        };
 
         console.log('routesStart base:', this.config.base);
         _routing.base(this.config.base);
@@ -319,20 +319,6 @@
         }
 
         this.config.scope = _currentRoute.parentNode;
-        var _scopeChildren = this.config.scope.children;
-
-        this.config.hideRoutes = function () {
-          for (var i = 0; i < _scopeChildren.length; i++) {
-            _scopeChildren[i].dataset.eHiddenRoute = '';
-          }
-        };
-
-        this.config.showRoute = function (route) {
-          route.liveElement.dataset.eHiddenRoute = 'no';
-        };
-
-        this.config.hideRoutes();
-        this.config.showRoute({ liveElement: _currentRoute });
         return;
       }
 
@@ -374,23 +360,26 @@
 
       _routing(function (ctx) {
         var _found = false;
+
         for (var route in _e_routes_container) {
           if (_e_routes_container.hasOwnProperty(route)) {
             var _route = _e_routes_container[route];
-            if (!_route.mounted) { continue; }
+            var _routePath = _route.initialElement.dataset.eHandlerRoute;
 
-            _route = _route.initialElement.dataset.eHandlerRoute;
-            if (_route && ctx.path === _route) {
-              _found = true;
-              //console.log('routes route:', concatUri(_base, _route));
+            if (_routePath && ctx.path === _routePath) {
+              console.log('routes selected route:', _routePath);
+              //console.log('routes route:', concatUri(_base, _routePath));
 
-              if (_e_routes_container[route].liveElement.parentNode !== _routesStart.config.scope) {
-                throw new Error('routes: "' + _route + '" route of "' + route + '" cannot be found on "' + _routesStartId + '" scope.');
+              if (!_found) { _found = _route; }
+              if (_found.liveElement.parentNode !== _routesStart.config.scope && _found.liveElement.parentNode.nodeType !== Node.DOCUMENT_FRAGMENT_NODE) {
+                throw new Error('routes: "' + _routePath + '" route of "' + route + '" cannot be found on "' + _routesStartId + '" scope.');
               }
+              continue;
+            }
 
-              console.log('routes selected route:', _route);
-              _routesStart.config.hideRoutes();
-              _routesStart.config.showRoute(_e_routes_container[route]);
+            if (_route.liveElement !== _routesStart.liveElement) {
+              _dom(_route.liveElement).data('data-e-hidden-route', '');
+              _route.unmount();
             }
           }
         }
@@ -398,6 +387,9 @@
         if (!_found) {
           throw new Error('routes: "' + ctx.path + '" route not found.');
         }
+
+        _dom(_found.liveElement).data('data-e-hidden-route', 'no');
+        _found.mount();
       });
     },
 
