@@ -176,8 +176,9 @@ header, footer {
 @media (prefers-color-scheme: dark) {
     :root {
         --color3: rgba(255, 255, 255, 0.05);
-        --color5: rgba(255, 255, 255, 0.25);
-        --color7: rgba(255, 255, 255, 0.125);
+        --color5: rgba(255, 255, 255, 0.125);
+        --color7: rgba(255, 255, 255, 0.15);
+        --color13: rgba(255, 255, 255, 0.0125);
     }
     *, *::after, *::before {
         scrollbar-color: var(--color6) var(--color5);
@@ -195,8 +196,8 @@ header, footer {
         accent-color: var(--color12);
     }
     input, textarea, select {
-        background-color: var(--color7) !important;
-        border-color: var(--color6) !important;
+        background-color: var(--color13) !important;
+        border-color: var(--color11) !important;
     }
     input:hover, input:active, input:focus {
         border-color: var(--color12) !important;
