@@ -31,7 +31,6 @@ _events(document).ready(function(){
       console.log('ticket:', this.initialElement.dataset.eHandlerId);
 
       this.liveElement.value = (typeof data === 'string' ? data : '');
-      this.liveElement.focus();
     },
 
     createNewTicket: function () {

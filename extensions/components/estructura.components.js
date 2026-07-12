@@ -12,6 +12,11 @@
 }(this, function () {
   "use strict";
 
+  var _http_check = typeof _http;
+  if (_http_check === 'undefined' || _http_check !== 'function') {
+    throw new Error('"_http" extension required before "_components".');
+  }
+
   var _components = _e.instance('components');
 
   /** @type {number} Maximum limit of memory cache entries before eviction */
