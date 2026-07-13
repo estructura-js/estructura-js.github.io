@@ -78,6 +78,7 @@
     },
     _e_cache_delete = function (cache, key) {
       var cached = _e_cache_has(cache, key);
+      if (cached === -1) { return; }
       cache.splice(cached, 1);
       cache.values.splice(cached, 1);
     };
@@ -107,6 +108,42 @@
 
   _e_cache = _e_cache_create();
 
+  /*
+  function _kebab_case(str) {
+    return str
+        .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
+        .replace(/([A-Z])([A-Z][a-z])/g, '$1-$2')
+        .toLowerCase();
+  }
+  */
+
+  function _kebab_case(str) {
+    var result = '';
+    var len = str.length;
+
+    for (var i = 0; i < len; i++) {
+      var code = str.charCodeAt(i);
+
+      if (code >= 65 && code <= 90) { // A-Z
+        var prevCode = i > 0 ? str.charCodeAt(i - 1) : 0;
+        var nextCode = i + 1 < len ? str.charCodeAt(i + 1) : 0;
+
+        var prevIsLowerOrDigit = (prevCode >= 97 && prevCode <= 122) || (prevCode >= 48 && prevCode <= 57);
+        var prevIsUpper = prevCode >= 65 && prevCode <= 90;
+        var nextIsLower = nextCode >= 97 && nextCode <= 122;
+
+        if (i > 0 && (prevIsLowerOrDigit || (prevIsUpper && nextIsLower))) {
+          result += '-';
+        }
+        result += String.fromCharCode(code + 32); // = .toLowerCase()
+      } else {
+        result += str.charAt(i);
+      }
+    }
+
+    return result;
+  }
+
   function _check_object(object) {
     if (!object || typeof object !== 'object') {
       _error('"' + _e.type(object).join(', ') + '" must be an Object.');
@@ -121,15 +158,7 @@
     return (str || '').replace(_e_ids_re, '');
   }
 
-  function _capitalizeAndCamelCase(str) {
-    if (!str) { return ''; }
-    str = str.charAt(0).toUpperCase() + str.slice(1);
-    return str.replace(/-([a-z])/g, function (match, letter) {
-      return letter.toUpperCase();
-    });
-  }
-
-  function _splitEventTypes(id, events, events_bubbling, events_bubbling_private, events_nonBubbling, events_nonBubbling_private, element, data) {
+  function _spli_event_types(id, events, events_bubbling, events_bubbling_private, events_nonBubbling, events_nonBubbling_private, element, data) {
     var
       bubbling = false,
       nonBubbling = false;
@@ -464,12 +493,12 @@
 
       _get_set(this[id], 'ready', true);
 
-      _handler = 'e' + _capitalizeAndCamelCase(_handler);
+      _handler = 'data-e-' + _kebab_case(_handler);
 
-      var _middleware = typeof this[id].initialElement.dataset[_handler + 'Middleware'] !== 'undefined';
+      var _middleware = this[id].initialElement.hasAttribute(_handler + '-middleware');
 
-      var _data_connect = _handler + 'Connect';
-      var data_connect = this[id].initialElement.dataset[_data_connect];
+      var _data_connect = _handler + '-connect';
+      var data_connect = this[id].initialElement.getAttribute(_data_connect);
 
       if (data_connect) {
         _data_connect = data_connect.split(_e_handlers_re);
@@ -502,13 +531,13 @@
         });
       }
 
-      var data_success = this[id].initialElement.dataset[_handler + 'Success'];
+      var data_success = this[id].initialElement.getAttribute(_handler + '-success');
       var _data_success = (data_success ? data_success.split(_e_handlers_re) : []);
 
       _e_handlers_execute(_source, id, _data_success, _e_handlers_register(_source, id, element, elementClone, _component), _middleware);
       _get_set(this[id], 'success', false, _e_execute_fn(_source, _handler + ' success', _data_success, id, _middleware));
 
-      var data_error = this[id].initialElement.dataset[_handler + 'Error'];
+      var data_error = this[id].initialElement.getAttribute(_handler + '-error');
       var _data_error = (data_error ? data_error.split(_e_handlers_re) : []);
 
       _e_handlers_execute(_source, id, _data_error, _e_handlers_register(_source, id, element, elementClone, _component), _middleware);
@@ -568,21 +597,21 @@
 
   function _e_collect_metadata(_ids, _handlers, event_bubbling, event_bubbling_private, event_nonBubbling, event_nonBubbling_private) {
     return function (element) {
-      var id = _clear_handler_id(element.dataset.eHandlerId);
+      var id = _clear_handler_id(element.getAttribute('data-e-handler-id'));
       if (!id) { return; }
 
-      var handler_list = _clear_handler_str(element.dataset.eHandler);
+      var handler_list = _clear_handler_str(element.getAttribute('data-e-handler'));
       if (!handler_list[0]) { return; }
 
       _ids.push(id);
       for (var i = 0; i < handler_list.length; i++) { _handlers.push(handler_list[i]); }
 
-      var _handler_event = typeof element.dataset.eHandlerEvent !== 'undefined';
+      var _handler_event = element.hasAttribute('data-e-handler-event');
       if (_handler_event) {
-        var _handler_events = _clear_handler_str(element.dataset.eHandlerEvent);
+        var _handler_events = _clear_handler_str(element.getAttribute('data-e-handler-event'));
         if (!_handler_events[0]) { return; }
 
-        _splitEventTypes(id, _handler_events, event_bubbling, event_bubbling_private, event_nonBubbling, event_nonBubbling_private);
+        _spli_event_types(id, _handler_events, event_bubbling, event_bubbling_private, event_nonBubbling, event_nonBubbling_private);
       }
     }
   }
@@ -693,26 +722,26 @@
 
   function _e_iteration(_handlers_source, start_nodes, end_starts, event_bubbling, event_bubbling_private, event_nonBubbling, event_nonBubbling_private){
     _e_nodes_iteration(start_nodes, function (element, previous, next) {
-      var id = _clear_handler_id(element.dataset.eHandlerId);
+      var id = _clear_handler_id(element.getAttribute('data-e-handler-id'));
       if (!id) {
         _error(_e_handler_id_required);
       }
 
-      var handler_list = _clear_handler_str(element.dataset.eHandler);
+      var handler_list = _clear_handler_str(element.getAttribute('data-e-handler'));
       if (!handler_list[0]) {
         _error(_e_handler_required);
       }
 
       var
         _element = element.cloneNode(true),
-        _handler_middleware = typeof element.dataset.eHandlerMiddleware !== 'undefined';
+        _handler_middleware = element.hasAttribute('data-e-handler-middleware');
 
       var
         component = {
         fragment: null,
         fragmentPlaceholder: null,
 
-        ignored: typeof element.dataset.eHandlerIgnore !== 'undefined',
+        ignored: element.hasAttribute('data-e-handler-ignore'),
 
         unmountFn: function () {
           try {
@@ -758,7 +787,7 @@
       if (component.ignored) {
         console.info('_handlers ignored:', id, handler_list);
         component.unmountFn();
-        delete element.dataset.eHandlerIgnore;
+        element.removeAttribute('data-e-handler-ignore');
       }
 
       _e_handlers_execute(
@@ -771,9 +800,9 @@
         return element;
       }
 
-      var _handler_event = typeof element.dataset.eHandlerEvent !== 'undefined';
+      var _handler_event = element.hasAttribute('data-e-handler-event');
       if (_handler_event) {
-        var _handler_events = _clear_handler_str(element.dataset.eHandlerEvent);
+        var _handler_events = _clear_handler_str(element.getAttribute('data-e-handler-event'));
         if (!_handler_events[0]) {
           _error(_e_handler_event_required);
         }
@@ -781,7 +810,7 @@
         var
           _event_nonBubbling = Object.create(null),
           _event_nonBubbling_private = Object.create(null),
-          _handler_event_types = _splitEventTypes(id, _handler_events, event_bubbling, event_bubbling_private, _event_nonBubbling, _event_nonBubbling_private, element, [id, handler_list, null, _handler_middleware]);
+          _handler_event_types = _spli_event_types(id, _handler_events, event_bubbling, event_bubbling_private, _event_nonBubbling, _event_nonBubbling_private, element, [id, handler_list, null, _handler_middleware]);
 
         if (_handler_event_types.nonBubbling) {
           _extend(event_nonBubbling_private, _event_nonBubbling_private.events);
@@ -794,7 +823,7 @@
         }
       }
 
-      var _handler_start = typeof element.dataset.eHandlerStart !== 'undefined';
+      var _handler_start = element.hasAttribute('data-e-handler-start');
       var _handler_start_fn = function (_handlers, event) {
         try {
           _e_handlers_execute(_handlers_source, id, _handlers, event || Object.create(null), _handler_middleware);
@@ -805,7 +834,7 @@
       };
 
       if (_handler_start) {
-        var start_handlers = _clear_handler_str(element.dataset.eHandlerStart);
+        var start_handlers = _clear_handler_str(element.getAttribute('data-e-handler-start'));
         if (!start_handlers[0]) { start_handlers = handler_list; }
 
         _e_handlers_execute(_handlers_source, id, start_handlers, _e_handlers_register(_handlers_source, id, element, _element, component), _handler_middleware)
@@ -813,9 +842,9 @@
         _handler_start_fn(start_handlers);
       }
 
-      var _handler_end = typeof element.dataset.eHandlerEndStart !== 'undefined';
+      var _handler_end =  element.hasAttribute('data-e-handler-end-start');
       if (_handler_end) {
-        var end_handlers = _clear_handler_str(element.dataset.eHandlerEndStart);
+        var end_handlers = _clear_handler_str(element.getAttribute('data-e-handler-end-start'));
         if (!end_handlers[0]) { end_handlers = handler_list; }
 
         _e_handlers_execute(_handlers_source, id, end_handlers, _e_handlers_register(_handlers_source, id, element, _element, component), _handler_middleware)
