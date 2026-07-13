@@ -82,6 +82,29 @@
       cache.values.splice(cached, 1);
     };
 
+  if (typeof WeakMap !== 'undefined') {
+    _e_cache_create = function () {
+      var _cache = Object.create(null);
+      _cache.object = new WeakMap();
+      _cache.string = new Map();
+      _cache._ = new Map();
+      return _cache;
+    };
+    _e_cache_has = function (cache, key) {
+      return (cache[key ? typeof key : '_'] || cache._).has(key);
+    };
+    _e_cache_get = function (cache, key) {
+      var cached = _e_cache_has(cache, key);
+      return cached ? (cache[key ? typeof key : '_'] || cache._).get(key) : undefined;
+    };
+    _e_cache_register = function (cache, key, value) {
+      (cache[key ? typeof key : '_'] || cache._).set(key, value);
+    };
+    _e_cache_delete = function (cache, key) {
+      (cache[key ? typeof key : '_'] || cache._).delete(key);
+    };
+  }
+
   _e_cache = _e_cache_create();
 
   function _check_object(object) {
