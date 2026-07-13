@@ -108,16 +108,14 @@
 
   _e_cache = _e_cache_create();
 
-  /*
   function _kebab_case(str) {
-    return str
-        .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
-        .replace(/([A-Z])([A-Z][a-z])/g, '$1-$2')
-        .toLowerCase();
-  }
-  */
+    /*
+      return str
+          .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
+          .replace(/([A-Z])([A-Z][a-z])/g, '$1-$2')
+          .toLowerCase();
+    */
 
-  function _kebab_case(str) {
     var result = '';
     var len = str.length;
 
