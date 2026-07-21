@@ -156,7 +156,7 @@
     return (str || '').replace(_e_ids_re, '');
   }
 
-  function _spli_event_types(id, events, events_bubbling, events_bubbling_private, events_nonBubbling, events_nonBubbling_private, element, data) {
+  function _split_event_types(id, events, events_bubbling, events_bubbling_private, events_nonBubbling, events_nonBubbling_private, element, data) {
     var
       bubbling = false,
       nonBubbling = false;
@@ -544,7 +544,7 @@
   }
 
   function _e_end(handlers) {
-    return _e_nodes(function (start_nodes, _start_node, _start_node_type) {
+    return _e_nodes(function (start_nodes, _start_node, _start_node_string_type) {
       var
         ids = [],
         handlers_list = [],
@@ -553,7 +553,7 @@
         event_nonBubbling = [],
         event_nonBubbling_private = Object.create(null);
 
-      if (_start_node && !_start_node_type) {
+      if (_start_node) {
         _e_nodes_iteration([_start_node], _e_collect_metadata(ids, handlers_list, event_bubbling, event_bubbling_private, event_nonBubbling, event_nonBubbling_private));
       }
 
@@ -609,7 +609,7 @@
         var _handler_events = _clear_handler_str(element.getAttribute('data-e-handler-event'));
         if (!_handler_events[0]) { return; }
 
-        _spli_event_types(id, _handler_events, event_bubbling, event_bubbling_private, event_nonBubbling, event_nonBubbling_private);
+        _split_event_types(id, _handler_events, event_bubbling, event_bubbling_private, event_nonBubbling, event_nonBubbling_private);
       }
     }
   }
@@ -624,15 +624,21 @@
       try {
         var
           _start_node = start_node,
-          _start_node_type = typeof start_node === 'string';
+          _start_node_string_type = typeof start_node === 'string',
+          _start_node_string_type_root;
 
         if (start_node) {
-          if (!_start_node_type) {
+          if (!_start_node_string_type) {
             _check_object(start_node);
           }
 
           try {
-            start_node = (!_start_node_type ? start_node : document.querySelector(start_node)).querySelectorAll(_e_handlers_str);
+            if (_start_node_string_type) {
+              _start_node_string_type_root = _start_node_string_type ? document.querySelector(start_node) : null;
+              _start_node = _start_node_string_type_root;
+            }
+
+            start_node = (!_start_node_string_type ? start_node : _start_node_string_type_root).querySelectorAll(_e_handlers_str);
           }
           catch (e) {
             _error('Start Node must not be: ' + _e.type(start_node).join(', ') + ', or: ' + e.message, e);
@@ -640,7 +646,7 @@
         }
 
         var start_nodes = (start_node ? start_node : document.querySelectorAll(_e_handlers_str));
-        var start_values = [start_nodes, _start_node, _start_node_type, Object.create(null)];
+        var start_values = [start_nodes, _start_node, _start_node_string_type, Object.create(null)];
 
         // If start_node is a String, subsequent calls to .start(StringNodeStr) with the same CSS selector will use the cached elements. It is required to apply .end(StringNodeStr) and call .start() again to update the selected nodes.
         _e_cache_register(_e_cache, _start_node, start_values);
@@ -654,7 +660,7 @@
   }
 
   function _e_start(handlers) {
-    return _e_nodes(function (start_nodes, _start_node, _start_node_type, _events_ref) {
+    return _e_nodes(function (start_nodes, _start_node, _start_node_string_type, _events_ref) {
       var
         end_starts = Object.create(null),
         event_bubbling = Object.create(null),
@@ -662,7 +668,7 @@
         event_nonBubbling = [],
         event_nonBubbling_private = Object.create(null);
 
-      if (_start_node && !_start_node_type) {
+      if (_start_node) {
         _e_iteration(handlers, [_start_node], end_starts, event_bubbling, event_bubbling_private, event_nonBubbling, event_nonBubbling_private);
       }
 
@@ -689,18 +695,24 @@
             }
           }
         }, { capture: true });
+      }
 
-        // Set non bubbling event listeners before 'end_starts'
+      // Set non bubbling event listeners before 'end_starts'
+      var _events_nonBubbling_ref = Object.keys(event_nonBubbling_private.events).join(',');
+      if (_events_nonBubbling_ref && !_events_ref[_events_nonBubbling_ref]) {
+        _events_ref[_events_nonBubbling_ref] = true;
+
         for (var i = 0; i < event_nonBubbling.length; i++) { event_nonBubbling[i](); }
+      }
 
-        // Execute 'end_starts' handler_list
-        for (var key in end_starts) {
-          if (end_starts[key].length < 1) { continue; }
-          var callback = 0;
-          while (callback < end_starts[key].length) {
-            end_starts[key][callback].fn(end_starts[key][callback].handler);
-            callback++;
-          }
+      // Execute 'end_starts' handler_list
+      for (var key in end_starts) {
+        if (end_starts[key].length < 1) { continue; }
+
+        var callback = 0;
+        while (callback < end_starts[key].length) {
+          end_starts[key][callback].fn(end_starts[key][callback].handler);
+          callback++;
         }
       }
     });
@@ -808,7 +820,7 @@
         var
           _event_nonBubbling = Object.create(null),
           _event_nonBubbling_private = Object.create(null),
-          _handler_event_types = _spli_event_types(id, _handler_events, event_bubbling, event_bubbling_private, _event_nonBubbling, _event_nonBubbling_private, element, [id, handler_list, null, _handler_middleware]);
+          _handler_event_types = _split_event_types(id, _handler_events, event_bubbling, event_bubbling_private, _event_nonBubbling, _event_nonBubbling_private, element, [id, handler_list, null, _handler_middleware]);
 
         if (_handler_event_types.nonBubbling) {
           _extend(event_nonBubbling_private, _event_nonBubbling_private.events);
