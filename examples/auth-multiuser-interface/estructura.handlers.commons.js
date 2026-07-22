@@ -94,7 +94,7 @@
       data = JSON.parse(data);
 
   	  if (!data.checksum || !data.timestamp) {
-  			throw new Error('Unssupported session data.');
+  			throw new Error('Unsupported session data.');
   		}
 
   		if (required) {
