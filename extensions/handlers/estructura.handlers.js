@@ -544,7 +544,7 @@
   }
 
   function _e_end(handlers) {
-    return _e_nodes(function (start_nodes, _start_node, _start_node_string_type) {
+    return _e_nodes(function (start_nodes, _start_node) {
       var
         ids = [],
         handlers_list = [],
@@ -625,7 +625,8 @@
         var
           _start_node = start_node,
           _start_node_string_type = typeof start_node === 'string',
-          _start_node_string_type_root;
+          _start_node_string_type_root,
+          _start_node_string_str;
 
         if (start_node) {
           if (!_start_node_string_type) {
@@ -634,6 +635,7 @@
 
           try {
             if (_start_node_string_type) {
+              _start_node_string_str = start_node;
               _start_node_string_type_root = _start_node_string_type ? document.querySelector(start_node) : null;
               _start_node = _start_node_string_type_root;
             }
@@ -646,10 +648,10 @@
         }
 
         var start_nodes = (start_node ? start_node : document.querySelectorAll(_e_handlers_str));
-        var start_values = [start_nodes, _start_node, _start_node_string_type, Object.create(null)];
+        var start_values = [start_nodes, _start_node, Object.create(null)];
 
         // If start_node is a String, subsequent calls to .start(StringNodeStr) with the same CSS selector will use the cached elements. It is required to apply .end(StringNodeStr) and call .start() again to update the selected nodes.
-        _e_cache_register(_e_cache, _start_node, start_values);
+        _e_cache_register(_e_cache, _start_node_string_str || _start_node, start_values);
 
         callback.apply(null, start_values);
       }
@@ -660,7 +662,7 @@
   }
 
   function _e_start(handlers) {
-    return _e_nodes(function (start_nodes, _start_node, _start_node_string_type, _events_ref) {
+    return _e_nodes(function (start_nodes, _start_node, _events_ref) {
       var
         end_starts = Object.create(null),
         event_bubbling = Object.create(null),
@@ -680,6 +682,10 @@
         _events_ref[_events_bubbling_ref] = true;
 
         _events(document.documentElement).on(_events_bubbling_ref, function (event) {
+          // Preventing duplicate execution triggered by the same DOM element, when the 'event' object is identical.
+          if (event._e_handled) { return; }
+          event._e_handled = true;
+
           var _event = event_bubbling[event.type];
           if (_event) {
             var _current = event.target;
@@ -698,7 +704,7 @@
       }
 
       // Set non bubbling event listeners before 'end_starts'
-      var _events_nonBubbling_ref = Object.keys(event_nonBubbling_private.events).join(',');
+      var _events_nonBubbling_ref = Object.keys(event_nonBubbling_private).join(',');
       if (_events_nonBubbling_ref && !_events_ref[_events_nonBubbling_ref]) {
         _events_ref[_events_nonBubbling_ref] = true;
 
