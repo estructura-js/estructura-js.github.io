@@ -47,8 +47,8 @@
 	<script src="../../extensions/http/estructura.http.js"></script>
 	<script src="../../extensions/routing/estructura.routing.js"></script>
 	<script src="../../extensions/handlers/estructura.handlers.js"></script>
-	<script src="estructura.handlers.commons.js"></script>
-	<script src="app.bundle.js"></script>
+	<script src="estructura.handlers.commons.js" defer></script>
+	<script src="app.bundle.js" defer></script>
 
 	<script type="application/ld+json">
 	{
@@ -78,7 +78,7 @@
 
 <body>
 	<header>
-		<h1><img src="icon.png" alt="Icon"><span>Tiques Tarifarios Horarios</span></h1>
+		<h1><img src="icon.png" alt="Icon" fetchpriority="high"><span>Tiques Tarifarios Horarios</span></h1>
 	</header>
 
 	<main data-e-handler="routes" data-e-handler-id="routesContainer" data-e-handler-start="routesStart" data-e-handler-end-start>
@@ -102,7 +102,7 @@
                             <div data-e-handler="notification" data-e-handler-id="signup-notif" data-hidden>Loading...</div>
 
             				<div>
-            				    <h4>Tipo</h4>
+            				    <strong>Tipo</strong>
                 				<label data-flex-childs-center>
                 				    <input type="radio" name="type" value="admin">
                 				    <b>Administrador</b>
@@ -114,17 +114,17 @@
             				</div>
 
             				<label data-flex-column>
-            				    <h4>Usuario</h4>
+            				    <strong>Usuario</strong>
          			        <input type="text" name="user" autocomplete="off">
             				</label>
 
             				<label data-flex-column>
-            				    <h4>Contraseña</h4>
+            				    <strong>Contraseña</strong>
          			        <input type="password" name="password" autocomplete="off">
             				</label>
 
             				<label data-flex-column>
-            				    <h4>Espacio de trabajo</h4>
+            				    <strong>Espacio de trabajo</strong>
          			        <input type="text" name="workspace">
             				</label>
 
@@ -152,17 +152,17 @@
         				<div id="signin" data-box data-hidden="no">
                             <div data-e-handler="notification" data-e-handler-id="signin-notif" data-hidden>Loading...</div>
             				<label data-flex-column>
-            				    <h4>Usuario</h4>
+            				    <strong>Usuario</strong>
          			        <input type="text" name="user" autocomplete="on">
             				</label>
 
             				<label data-flex-column>
-            				    <h4>Contraseña</h4>
+            				    <strong>Contraseña</strong>
          			        <input type="password" name="password" autocomplete="current-password">
             				</label>
 
             				<label data-flex-column>
-            				    <h4>Espacio de trabajo</h4>
+            				    <strong>Espacio de trabajo</strong>
          			            <input type="text" name="workspace">
             				</label>
 
@@ -215,7 +215,7 @@
                             <button data-e-handler-id="pendings-btn" data-e-handler-event="click">Pendientes</button>
                         </div>
                         <div class="content">
-                            <iframe src="about:blank"></iframe>
+                            <iframe title="Vista de salida" src="about:blank"></iframe>
                         </div>
                     </aside>
                 </div>

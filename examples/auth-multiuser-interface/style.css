@@ -170,6 +170,7 @@ footer {
 	text-align: center;
 	font-weight: bold;
 }
+footer a { text-decoration: underline; }
 header, footer {
     height: 3rem;
 }
@@ -263,7 +264,7 @@ fieldset legend[data-selected="no"]:focus {
 [data-box] > *:last-child {
     margin-bottom: 0;
 }
-fieldset h4, fieldset div label {
+fieldset strong, fieldset div label {
     margin-bottom: var(--half-space);
 }
 fieldset div label:last-child { margin-bottom: 0; }
