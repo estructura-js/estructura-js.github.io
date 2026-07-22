@@ -15,13 +15,13 @@
   function _noop() { };
 
   var
-    _error,
     _error_fn = function (message, original_error) {
       original_error = original_error || new Error();
       original_error.name = '_handlers';
       original_error.message = message;
       throw original_error;
-    };
+    },
+    _error = _noop;
 
   var
     _events_check = typeof _events;
@@ -469,7 +469,7 @@
             catch (e) {
               _error('"' + _id + '" direct sequential execution: ' + e.message, e);
             }
-          }), data);
+          }), false/* Previously: data */);
         };
       }
 

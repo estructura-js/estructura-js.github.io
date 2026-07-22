@@ -116,7 +116,7 @@
 							<li><br><b><code>data-e-handler-propagation</code></b> (Boolean): Opcional. Controla el flujo de burbujeo simulado. Por defecto, los eventos que burbujean detienen su propagación inmediatamente tras ejecutar el handler del elemento receptor. Si se incluye este atributo en el marcado, el motor permitirá que el evento continúe ascendiendo hacia los elementos contenedores superiores (padres). <i>Regla de diseño:</i> La propagación es estrictamente declarativa; el marcado HTML es la única autoridad de control y las mutaciones programáticas sobre el evento en JS no alteran esta regla.</li>
 							<li><br><b><code>data-e-handler-ignore</code></b> (Boolean): Opcional. Si está presente, el elemento es ignorado durante la inicialización inicial en el DOM activo, forzando de inmediato su desmontaje (remoción física del nodo y reemplazo por un comentario placeholder).</li>
 							<li><br><b><code>data-e-handler-start</code></b> (<code>String</code>): Opcional. Lista de handlers específicos que se registrarán y ejecutarán <b>inmediatamente</b> con un objeto de payload limpio durante la fase de carga de este elemento. Si se declara vacío, se ejecutan todos los declarados en <code>data-e-handler</code>.</li>
-							<li><br><b><code>data-e-handler-end-start</code></b> (<code>String</code>): Opcional. Lista de handlers que se registrarán y ejecutarán <b>al final de todo el proceso de inicialización</b>, una vez que el motor ha terminado de procesar e instanciar todos los nodos del DOM identificados por el arranque global.</li>
+							<li><br><b><code>data-e-handler-end-start</code></b> (<code>String</code>): Opcional. Lista de handlers que se registrarán y ejecutarán <b>al final de todo el proceso de inicialización</b>, una vez que el motor ha terminado de procesar e instanciar todos los nodos del DOM identificados por el arranque del <code>.start()</code>.</li>
 						</ul>
 						<br>
 						<p><b>Enlaces Dinámicos Específicos por Handler:</b></p>
@@ -192,7 +192,7 @@
 						<h3>5. Ejemplos Prácticos de Implementación</h3>
 
 						<p><b>Estructuración de Compartición Pública e Inicialización Diferida:</b></p>
-						<pre><code>&lt;!-- El botón 'validador' se inicialización al final del arranque global --&gt;
+						<pre><code>&lt;!-- El botón 'validador' se inicializará al final del arranque global --&gt;
 &lt;button id="accion"
 	data-e-handler="comun.logger, validador"
 	data-e-handler-id="btn-enviar"
