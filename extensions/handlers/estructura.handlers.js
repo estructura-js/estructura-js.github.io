@@ -12,17 +12,63 @@
 }(this, function () {
   'use strict';
 
-  function _error(message, original_error) {
-    original_error = original_error || new Error();
-    original_error.name = '_handlers';
-    original_error.message = message;
-    throw original_error;
-  }
+  function _noop() { };
 
-  var _events_check = typeof _events;
+  var
+    _error,
+    _error_fn = function (message, original_error) {
+      original_error = original_error || new Error();
+      original_error.name = '_handlers';
+      original_error.message = message;
+      throw original_error;
+    };
+
+  var
+    _events_check = typeof _events;
+
   if (_events_check === 'undefined' || _events_check !== 'function') {
     _error('"_events" extension required before "_handlers".');
   }
+
+  function _console(type) {
+    return function () {
+      console[type].apply(null, arguments);
+    }
+  }
+
+  var
+    _handlers = _e.instance('handlers');
+
+  _handlers.console = function (on) {
+    if (on === false) {
+      _console.log = _noop;
+      _console.info = _noop;
+      _console.warn = _noop;
+      _console.error = _noop;
+      return;
+    }
+
+    var args = arguments;
+    if (on === true) {
+      args = ['log', 'info', 'warn', 'error'];
+    }
+
+    for (var i = 0; i < args.length; i++) {
+      switch (args[i]) {
+        case 'log': _console.log = _console('log'); break;
+        case 'info': _console.info = _console('info'); break;
+        case 'warn': _console.warn = _console('warn'); break;
+        case 'error': _console.error = _console('error'); break;
+      }
+    }
+  };
+
+  _handlers.errors = function (on) {
+    _error = on === false ? _noop : _error_fn;
+  };
+
+  _handlers.console(true);
+  _handlers.errors(true);
 
   var
     _e_cache,
@@ -56,10 +102,10 @@
       'mouseenter': 1,
       'mouseleave': 1
     },
-    _e_public_handlers = Object.create(null),
-    _handlers = _e.instance('handlers');
+    _e_public_handlers = Object.create(null);
 
   var
+    _bubbling_cache,
     _e_cache_create = function () {
       var _cache = [];
       _cache.values = [];
@@ -107,6 +153,7 @@
   }
 
   _e_cache = _e_cache_create();
+  _bubbling_cache = _e_cache_create();
 
   function _kebab_case(str) {
     /*
@@ -204,7 +251,7 @@
     for (var key in target) {
       if (typeof key !== 'string') { continue; }
       if (!mode && typeof source[key] !== 'undefined') {
-        console.warn('Key "' + key + '" from target already exists in source, not overwritten.');
+        _console.warn('Key "' + key + '" from target already exists in source, not overwritten.');
         continue;
       }
       source[key] = target[key];
@@ -349,7 +396,7 @@
       _direct_mode = _middleware_type === 'function';
 
       var _middleware = function (data) {
-        //console.info('_handlers: Middleware for:', handler);
+        //_console.info('_handlers: Middleware for:', handler);
         return data;
       };
 
@@ -414,7 +461,7 @@
     if (handlers && typeof handlers === 'object' && handlers.length) {
       if (!middleware) {
         return function (data) {
-          console.info('_handlers:', state, id);
+          _console.info('_handlers:', state, id);
           return _e_handlers_execute(_source, null, handlers, _e_handlers_ids(_source, null, function (handler, _id) {
             try {
               handler.call(handler[_id], data);
@@ -427,7 +474,7 @@
       }
 
       return function (data) {
-        console.info('_handlers:', state, id);
+        _console.info('_handlers:', state, id);
         return _e_handlers_execute(_source, null, handlers, null, function (_handler, _handler_ids, _middleware) {
           var _middlewares = _handler_ids.length ? _handler_ids : Object.keys(_source[_handler]);
           for (var i = _middlewares.length - 1; i >= 0; i--) {
@@ -472,14 +519,14 @@
   function _e_handlers_register(_source, id, element, elementClone, component) {
     return function (_handler) {
       if (this[id]) {
-        return console.info('_handlers: Handler "' + _handler + '.' + id + '" already used.');
+        return _console.info('_handlers: Handler "' + _handler + '.' + id + '" already used.');
       }
 
       var _component = _extend(Object.create(null), component);
       this[id] = Object.create(null);
 
       _const(this[id], 'mount', function () { return _component.mountFn.call(_component); });
-      _get_set(this[id], 'mounted', !_component.ignored, null, function(){ return !_component.ignored; });
+      _get_set(this[id], 'mounted', !_component.ignored, function () { _console.warn('_handlers: Trying to set "mounted" does nothing.'); }, function(){ return !_component.ignored; });
       _const(this[id], 'unmount', function () { return _component.unmountFn.call(_component); });
 
       if (_component.ignored) {
@@ -506,7 +553,7 @@
           var _state = typeof state === 'string';
           var _data = typeof data === 'undefined';
           if (_state && _e_reserved[state]) {
-            return console.warn('_handlers:', _handler, id, 'Wrong target:', state);
+            return _console.warn('_handlers:', _handler, id, 'Wrong target:', state);
           }
 
           _e_handlers_execute(_source, null, _data_connect, _e_handlers_ids(_source, ids, function (handler, _id) {
@@ -519,13 +566,13 @@
               return handler.call(handler[_id], state);
             }
 
-            console.warn('_handlers: Wrong connect:', state, data, ids);
+            _console.warn('_handlers: Wrong connect:', state, data, ids);
           }), _middleware);
         });
       }
       else {
         _const(this[id], 'connect', function () {
-          console.info('_handlers: Nothing to be connected, add "' + _data_connect + '".');
+          _console.info('_handlers: Nothing to be connected, add "' + _data_connect + '".');
         });
       }
 
@@ -568,7 +615,7 @@
 
           for (var k = 0; k < ids.length; k++) {
             if (_handler_fn[ids[k]]) {
-              //console.log(_handler[j], ids[k], _handler_fn[ids[k]]);
+              //_console.log(_handler[j], ids[k], _handler_fn[ids[k]]);
 
               if (_handler_fn[ids[k]].liveElement) {
                 var _event;
@@ -682,21 +729,47 @@
         _events_ref[_events_bubbling_ref] = true;
 
         _events(document.documentElement).on(_events_bubbling_ref, function (event) {
-          // Preventing duplicate execution triggered by the same DOM element, when the 'event' object is identical.
-          if (event._e_handled) { return; }
-          event._e_handled = true;
+          // Some logic to prevent duplicate execution triggered by the same DOM element, when the 'event' object is identical.
+
+          var _event_found = _e_cache_get(_bubbling_cache, event);
+          if (typeof _event_found !== 'undefined') {
+            if (_event_found.no_propagation) { return; }
+          }
+          else {
+            var _cache_ref = Object.create(null);
+            _e_cache_register(_bubbling_cache, event, _cache_ref);
+            _event_found = _cache_ref;
+          }
 
           var _event = event_bubbling[event.type];
           if (_event) {
             var _current = event.target;
             while (_current) {
               var _match = _e_cache_get(_event.elements, _current);
+
               if (typeof _match !== 'undefined') {
-                  var _data = _match;
+                var _propagation_ref = _event_found.propagation;
+
+                if (!(_propagation_ref && _e_cache_has(_propagation_ref, _current))) {
+                  var
+                    _data = _match,
+                    _props = _data[_data.length - 1],
+                    _propagation = _props.propagation;
+
                   _data[2] = event;
+
+                  _event_found.propagation = _event_found.propagation || _e_cache_create();
+                  _e_cache_register(_event_found.propagation, _current, true);
+
                   _e_handlers_execute.apply(null, [handlers].concat(_data));
-                  return;
+
+                  if (!_propagation && typeof _event_found.no_propagation === 'undefined') {
+                    _event_found.no_propagation = true;
+                    return;
+                  }
+                }
               }
+
               _current = _current.parentNode;
             }
           }
@@ -738,12 +811,14 @@
 
   function _e_iteration(_handlers_source, start_nodes, end_starts, event_bubbling, event_bubbling_private, event_nonBubbling, event_nonBubbling_private){
     _e_nodes_iteration(start_nodes, function (element, previous, next) {
-      var id = _clear_handler_id(element.getAttribute('data-e-handler-id'));
+      var
+        id = _clear_handler_id(element.getAttribute('data-e-handler-id'));
       if (!id) {
         _error(_e_handler_id_required);
       }
 
-      var handler_list = _clear_handler_str(element.getAttribute('data-e-handler'));
+      var
+        handler_list = _clear_handler_str(element.getAttribute('data-e-handler'));
       if (!handler_list[0]) {
         _error(_e_handler_required);
       }
@@ -762,7 +837,7 @@
         unmountFn: function () {
           try {
             if (element.isConnected && element.parentNode && element.parentNode.isConnected) {
-              console.log('_handlers unmount:', id);
+              _console.log('_handlers unmount:', id);
               this.fragment = document.createDocumentFragment();
               this.fragmentPlaceholder = document.createComment(id);
 
@@ -776,13 +851,13 @@
           catch(e){
             _error('unmount: ' + e.message, e);
           }
-          console.warn('_handlers unmount: "' + id + '" Node or parent disconnected from DOM.');
+          _console.warn('_handlers unmount: "' + id + '" Node or parent disconnected from DOM.');
         },
 
         mountFn: function () {
           try {
             if (this.fragment && this.fragmentPlaceholder && this.fragmentPlaceholder.isConnected && this.fragmentPlaceholder.parentNode && this.fragmentPlaceholder.parentNode.isConnected) {
-              console.log('_handlers mount:', id);
+              _console.log('_handlers mount:', id);
 
               this.fragmentPlaceholder.parentNode.replaceChild(this.fragment, this.fragmentPlaceholder);
 
@@ -796,12 +871,12 @@
             _error('mount: ' + e.message, e);
           }
 
-          console.warn('_handlers mount: "' + id + '" Node or parent disconnected from DOM.');
+          _console.warn('_handlers mount: "' + id + '" Node or parent disconnected from DOM.');
         }
       };
 
       if (component.ignored) {
-        console.info('_handlers ignored:', id, handler_list);
+        _console.info('_handlers ignored:', id, handler_list);
         component.unmountFn();
         element.removeAttribute('data-e-handler-ignore');
       }
@@ -824,9 +899,17 @@
         }
 
         var
+          _event_properties = Object.create(null);
+
+        _event_properties.propagation = element.hasAttribute('data-e-handler-propagation');
+
+        var
           _event_nonBubbling = Object.create(null),
           _event_nonBubbling_private = Object.create(null),
-          _handler_event_types = _split_event_types(id, _handler_events, event_bubbling, event_bubbling_private, _event_nonBubbling, _event_nonBubbling_private, element, [id, handler_list, null, _handler_middleware]);
+          _handler_event_types = _split_event_types(
+            id, _handler_events, event_bubbling, event_bubbling_private, _event_nonBubbling, _event_nonBubbling_private, element,
+            [id, handler_list, null, _handler_middleware, _event_properties]
+          );
 
         if (_handler_event_types.nonBubbling) {
           _extend(event_nonBubbling_private, _event_nonBubbling_private.events);
@@ -902,7 +985,7 @@
 
         _e_public_handlers[name] = handlers;
 
-        console.info('_handlers: Public "' + name + '" handlers registered.');
+        _console.info('_handlers: Public "' + name + '" handlers registered.');
       },
 
       start: _e_start(handlers),

@@ -67,129 +67,132 @@
 	</nav>
 
 	<main>
-			<h2 class="title">Handlers</h2>
-			<section class="margin-y">
-				<h2 id="description">Descripción</h2>
-				<div class="padding">
-					Motor declarativo de alta abstracción orientado a la gestión, orquestación e interconexión de flujos de lógica (handlers) desacoplados a nivel de interfaz. Permite mapear elementos del DOM directamente con lógica de JavaScript a través de atributos descriptivos de datos, proporcionando flujos de ejecución secuenciales, encadenamiento mediante middlewares, control dinámico de estados de éxito/error mediante asignaciones reactivas, y un sistema integrado de ciclo de vida de componentes (montaje, desmontaje y destrucción).<br><br>
-					<b>Librería:</b> <a target="_blank" href="estructura.handlers.js">estructura.handlers.js</a><br><br>
-					<b>Dependencias obligatorias:</b> <a href="../events/estructura.events.js">estructura.events.js</a> (<a href="../events/index.html">Events, documentación</a>). Extensión requerida junto con su objeto global accesible (<code>_events</code>) para inyectar escuchadores de eventos del DOM. Debe estar disponible en el entorno antes de inicializar <code>_handlers</code>; de lo contrario, el proceso se interrumpirá emitiendo una excepción en consola.
-				</div>
-			</section>
+				<h2 class="title">Handlers</h2>
+				<section class="margin-y">
+					<h2 id="description">Descripción</h2>
+					<div class="padding">
+						Motor declarativo de alta abstracción orientado a la gestión, orquestación e interconexión de flujos de lógica (handlers) desacoplados a nivel de interfaz. Permite mapear elementos del DOM directamente con lógica de JavaScript a través de atributos descriptivos de datos, proporcionando flujos de ejecución secuenciales, encadenamiento mediante middlewares, control dinámico de estados de éxito/error mediante asignaciones reactivas, control declarativo estricto de propagación de eventos, gestión centralizada de consola/errores y un sistema integrado de ciclo de vida de componentes (montaje, desmontaje y destrucción).<br><br>
+						<b>Librería:</b> <a target="_blank" href="estructura.handlers.js">estructura.handlers.js</a><br><br>
+						<b>Dependencias obligatorias:</b> <a href="../events/estructura.events.js">estructura.events.js</a> (<a href="../events/index.html">Events, documentación</a>). Extensión requerida junto con su objeto global accesible (<code>_events</code>) para inyectar escuchadores de eventos del DOM. Debe estar disponible en el entorno antes de inicializar <code>_handlers</code>; de lo contrario, el proceso se interrumpirá emitiendo una excepción en consola.
+					</div>
+				</section>
 
-			<section class="margin-y">
-				<h2 id="docs">Documentación</h2>
-				<div class="padding">
-					<h3>1. Inicialización, Métodos de Control y Dependencias Directas</h3>
-					<p>El motor expone globalmente la interfaz <code>_handlers</code>. Esta extensión coordina la lógica declarativa y se apoya directamente en <code>_events</code> para la vinculación física de los disparadores del DOM.</p>
-					<br>
-					<p><b>Sintaxis de Registro:</b></p>
-					<pre><code>_handlers(...handlersMapsOrStrings).start(startNode?);</code></pre>
-					<br>
-					<p><b>Argumentos del Constructor:</b></p>
-					<ul>
-						<li><code>handlersMapsOrStrings</code> (<code>Object / String</code>): Uno o varios argumentos secuenciales. Pueden ser colecciones de funciones de JavaScript (donde cada clave representa un identificador de handler) o cadenas de texto (<code>String</code>) que hagan referencia a configuraciones registradas previamente de manera pública. El motor fusionará todos los parámetros suministrados de izquierda a derecha.</li>
-					</ul>
-					<br>
-					<p><b>Métodos de la Interfaz de Retorno:</b></p>
-					<p>Al invocar la función <code>_handlers(...)</code>, se obtiene un objeto de control que expone tres métodos fundamentales:</p>
-					<ul>
-						<li><b><code>.start(startNode?)</code></b>: Inicializa el motor. Escanea el DOM buscando elementos con el atributo <code>data-e-handler</code>. El parámetro opcional <code>startNode</code> (objeto <code>Node</code> o selector <code>String</code> CSS) permite restringir la búsqueda a un subárbol específico. Si se pasa un nodo raíz o un selector de texto, dicho elemento raíz también será evaluado de forma consistente junto con sus descendientes. Si se omite, se procesa de forma segura el documento completo.
-							<br><br>
-							<i>Nota de integración:</i> Debido al patrón de envoltura de métodos de Estructura (<code>adjust_method</code>), los argumentos del despachador inicial se inyectan en primer lugar, por lo que la firma interna del método de arranque es <code>start(args, start_node)</code>.
-						</li>
-						<li><br><b><code>.end(startNode?)</code></b>: Realiza el proceso inverso a <code>.start()</code>. Desmantela de manera controlada los listeners vinculados mediante <code>_events</code> (tanto delegados como locales) de los elementos identificados bajo el ámbito de búsqueda (global o delimitado por <code>startNode</code>), destruye los estados lógicos activos en memoria y elimina sus referencias de instancia en los diccionarios internos para liberar la memoria de forma rigurosa.</li>
-						<li><br><b><code>.public(args, name)</code></b>: Registra la colección de handlers actualmente instanciada en un repositorio global bajo el identificador <code>name</code>. Requiere que <code>name</code> sea un <code>String</code> de entre 1 y 128 caracteres. El motor validará estrictamente que no exista una colisión con un identificador público registrado previamente; de ocurrir, interrumpirá el proceso emitiendo una excepción. Permite que llamadas posteriores a <code>_handlers</code> importen y reutilicen esta lógica compartida pasando simplemente el nombre como argumento de tipo cadena de texto.</li>
-					</ul>
-					<br>
+				<section class="margin-y">
+					<h2 id="docs">Documentación</h2>
+					<div class="padding">
+						<h3>1. Inicialización, Métodos de Control y Configuración Global</h3>
+						<p>El motor expone globalmente la interfaz <code>_handlers</code>. Esta extensión coordina la lógica declarativa y se apoya directamente en <code>_events</code> para la vinculación física de los disparadores del DOM.</p>
+						<br>
+						<p><b>Sintaxis de Registro:</b></p>
+						<pre><code>_handlers(...handlersMapsOrStrings).start(startNode?);</code></pre>
+						<br>
+						<p><b>Argumentos del Constructor:</b></p>
+						<ul>
+							<li><code>handlersMapsOrStrings</code> (<code>Object / String</code>): Uno o varios argumentos secuenciales. Pueden ser colecciones de funciones de JavaScript (donde cada clave representa un identificador de handler) o cadenas de texto (<code>String</code>) que hagan referencia a configuraciones registradas previamente de manera pública. El motor fusionará todos los parámetros suministrados de izquierda a derecha.</li>
+						</ul>
+						<br>
+						<p><b>Métodos de la Interfaz de Retorno e Instancia:</b></p>
+						<p>Al invocar la función <code>_handlers(...)</code> se obtiene un objeto de control. Además, la interfaz global <code>_handlers</code> expone métodos de configuración de trazabilidad:</p>
+						<ul>
+							<li><b><code>.start(startNode?)</code></b>: Inicializa el motor. Escanea el DOM buscando elementos con el atributo <code>data-e-handler</code>. El parámetro opcional <code>startNode</code> (objeto <code>Node</code> o selector <code>String</code> CSS) permite restringir la búsqueda a un subárbol específico. Si se pasa un nodo raíz o un selector de texto, dicho elemento raíz también será evaluado de forma consistente junto con sus descendientes. Si se omite, se procesa de forma segura el documento completo.
+								<br><br>
+								<i>Nota de integración:</i> Debido al patrón de envoltura de métodos de Estructura (<code>adjust_method</code>), los argumentos del despachador inicial se inyectan en primer lugar, por lo que la firma interna del método de arranque es <code>start(args, start_node)</code>.
+							</li>
+							<li><br><b><code>.end(startNode?)</code></b>: Realiza el proceso inverso a <code>.start()</code>. Desmantela de manera controlada los listeners vinculados mediante <code>_events</code> (tanto delegados como locales) de los elementos identificados bajo el ámbito de búsqueda (global o delimitado por <code>startNode</code>), destruye los estados lógicos activos en memoria y elimina sus referencias de instancia en los diccionarios internos para liberar la memoria de forma rigurosa.</li>
+							<li><br><b><code>.public(args, name)</code></b>: Registra la colección de handlers actualmente instanciada en un repositorio global bajo el identificador <code>name</code>. Requiere que <code>name</code> sea un <code>String</code> de entre 1 y 128 caracteres. El motor validará estrictamente que no exista una colisión con un identificador público registrado previamente; de ocurrir, interrumpirá el proceso emitiendo una excepción. Permite que llamadas posteriores a <code>_handlers</code> importen y reutilicen esta lógica compartida pasando simplemente el nombre como argumento de tipo cadena de texto.</li>
+							<li><br><b><code>_handlers.console(on)</code></b>: Configura globalmente la emisión de salidas por consola (<code>log</code>, <code>info</code>, <code>warn</code>, <code>error</code>). Acepta un booleano (<code>true</code> para activar todos los canales, <code>false</code> para silenciarlos mediante funciones <i>noop</i>) o cadenas de texto individuales especificando los canales a habilitar. Habilitado por defecto (<code>true</code>).</li>
+							<li><br><b><code>_handlers.errors(on)</code></b>: Habilita (<code>true</code>) o deshabilita (<code>false</code>) la emisión de excepciones internas lanzadas por el motor. Habilitado por defecto (<code>true</code>). Si se establece en <code>false</code>, las excepciones se reemplazan por ejecuciones neutras silenciosas.</li>
+						</ul>
+						<br>
 
-					<h3>2. Sintaxis Declarativa en HTML (Atributos Dataset)</h3>
-					<p>El comportamiento lógico se asocia a los elementos del HTML a través de atributos de datos específicos (<code>data-*</code>):</p>
-					<br>
-					<ul>
-						<li><b><code>data-e-handler</code></b> (<code>String</code>): Lista de controladores lógicos (o atajos) separados por comas o espacios. Admite sub-identificadores mediante puntos (<code>.</code>) o barras (<code>|</code>) para una gestión de instancias granular (ej. <code>peticion.idInstancia</code>).</li>
-						<li><br><b><code>data-e-handler-id</code></b> (<code>String</code>): <b>Requerido</b>. Identificador único de instancia del elemento. El sistema remueve de forma automática todos los espacios en blanco (ej. <code>"btn - registro"</code> se convierte internamente en <code>"btn-registro"</code>). Permite mantener un contexto de estado aislado en memoria para ese nodo sin colisiones.</li>
-						<li><br><b><code>data-e-handler-event</code></b> (<code>String</code>): Opcional. Evento o eventos del DOM que dispararán el flujo lógico (ej. <code>"click"</code>, <code>"submit"</code>, <code>"focusout"</code>, <code>"dblclick.test"</code>).</li>
-						<li><br><b><code>data-e-handler-middleware</code></b> (Boolean): Opcional. Si está presente, indica que la secuencia principal de ejecución para este elemento operará bajo el modo de middleware (paso de acumulador de datos y callback de continuación).</li>
-						<li><br><b><code>data-e-handler-ignore</code></b> (Boolean): Opcional. Si está presente, el elemento es ignorado durante la inicialización inicial en el DOM activo, forzando de inmediato su desmontaje (remoción física del nodo y reemplazo por un comentario placeholder).</li>
-						<li><br><b><code>data-e-handler-start</code></b> (<code>String</code>): Opcional. Lista de handlers específicos que se registrarán y ejecutarán <b>inmediatamente</b> con un objeto de payload limpio durante la fase de carga de este elemento. Si se declara vacío, se ejecutan todos los declarados en <code>data-e-handler</code>.</li>
-						<li><br><b><code>data-e-handler-end-start</code></b> (<code>String</code>): Opcional. Lista de handlers que se registrarán y ejecutarán <b>al final de todo el proceso de inicialización</b>, una vez que el motor ha terminado de procesar e instanciar todos los nodos del DOM identificados por el arranque global.</li>
-					</ul>
-					<br>
-					<p><b>Enlaces Dinámicos Específicos por Handler:</b></p>
-					<p>Para cada handler declarado, el motor busca y asocia atributos dinámicos construidos dinámicamente a partir de su nombre en formato <code>kebab-case</code> (ej. el handler <code>mi-peticion</code> se asociará con los atributos de marcado correspondientes en el DOM, resolviéndose mediante lecturas directas del nodo):</p>
-					<br>
-					<ul>
-						<li><code>data-e-[nombre-handler]-middleware</code>: Opcional. Si está presente, determina que los flujos de éxito, error o conexión correspondientes a este handler se procesen mediante la arquitectura de middlewares.</li>
-						<li><br><code>data-e-[nombre-handler]-connect</code>: Lista de handlers adicionales que se conectarán e instanciarán en la carga.</li>
-						<li><br><code>data-e-[nombre-handler]-success</code>: Flujo de handlers que se ejecutarán automáticamente al establecer un estado de éxito.</li>
-						<li><br><code>data-e-[nombre-handler]-error</code>: Flujo de handlers que se ejecutarán automáticamente al establecer un estado de error.</li>
-					</ul>
-					<br>
+						<h3>2. Sintaxis Declarativa en HTML (Atributos Dataset)</h3>
+						<p>El comportamiento lógico se asocia a los elementos del HTML a través de atributos de datos específicos (<code>data-*</code>):</p>
+						<br>
+						<ul>
+							<li><b><code>data-e-handler</code></b> (<code>String</code>): Lista de controladores lógicos (o atajos) separados por comas o espacios. Admite sub-identificadores mediante puntos (<code>.</code>) o barras (<code>|</code>) para una gestión de instancias granular (ej. <code>peticion.idInstancia</code>).</li>
+							<li><br><b><code>data-e-handler-id</code></b> (<code>String</code>): <b>Requerido</b>. Identificador único de instancia del elemento. El sistema remueve de forma automática todos los espacios en blanco (ej. <code>"btn - registro"</code> se convierte internamente en <code>"btn-registro"</code>). Permite mantener un contexto de estado aislado en memoria para ese nodo sin colisiones.</li>
+							<li><br><b><code>data-e-handler-event</code></b> (<code>String</code>): Opcional. Evento o eventos del DOM que dispararán el flujo lógico (ej. <code>"click"</code>, <code>"submit"</code>, <code>"focusout"</code>, <code>"dblclick.test"</code>).</li>
+							<li><br><b><code>data-e-handler-middleware</code></b> (Boolean): Opcional. Si está presente, indica que la secuencia principal de ejecución para este elemento operará bajo el modo de middleware (paso de acumulador de datos y callback de continuación).</li>
+							<li><br><b><code>data-e-handler-propagation</code></b> (Boolean): Opcional. Controla el flujo de burbujeo simulado. Por defecto, los eventos que burbujean detienen su propagación inmediatamente tras ejecutar el handler del elemento receptor. Si se incluye este atributo en el marcado, el motor permitirá que el evento continúe ascendiendo hacia los elementos contenedores superiores (padres). <i>Regla de diseño:</i> La propagación es estrictamente declarativa; el marcado HTML es la única autoridad de control y las mutaciones programáticas sobre el evento en JS no alteran esta regla.</li>
+							<li><br><b><code>data-e-handler-ignore</code></b> (Boolean): Opcional. Si está presente, el elemento es ignorado durante la inicialización inicial en el DOM activo, forzando de inmediato su desmontaje (remoción física del nodo y reemplazo por un comentario placeholder).</li>
+							<li><br><b><code>data-e-handler-start</code></b> (<code>String</code>): Opcional. Lista de handlers específicos que se registrarán y ejecutarán <b>inmediatamente</b> con un objeto de payload limpio durante la fase de carga de este elemento. Si se declara vacío, se ejecutan todos los declarados en <code>data-e-handler</code>.</li>
+							<li><br><b><code>data-e-handler-end-start</code></b> (<code>String</code>): Opcional. Lista de handlers que se registrarán y ejecutarán <b>al final de todo el proceso de inicialización</b>, una vez que el motor ha terminado de procesar e instanciar todos los nodos del DOM identificados por el arranque global.</li>
+						</ul>
+						<br>
+						<p><b>Enlaces Dinámicos Específicos por Handler:</b></p>
+						<p>Para cada handler declarado, el motor busca y asocia atributos dinámicos construidos dinámicamente a partir de su nombre en formato <code>kebab-case</code> (ej. el handler <code>mi-peticion</code> se asociará con los atributos de marcado correspondientes en el DOM, resolviéndose mediante lecturas directas del nodo):</p>
+						<br>
+						<ul>
+							<li><code>data-e-[nombre-handler]-middleware</code>: Opcional. Si está presente, determina que los flujos de éxito, error o conexión correspondientes a este handler se procesen mediante la arquitectura de middlewares.</li>
+							<li><br><code>data-e-[nombre-handler]-connect</code>: Lista de handlers adicionales que se conectarán e instanciarán en la carga.</li>
+							<li><br><code>data-e-[nombre-handler]-success</code>: Flujo de handlers que se ejecutarán automáticamente al establecer un estado de éxito.</li>
+							<li><br><code>data-e-[nombre-handler]-error</code>: Flujo de handlers que se ejecutarán automáticamente al establecer un estado de error.</li>
+						</ul>
+						<br>
 
-					<h3>3. El Contexto de Ejecución (<code>this</code>) y Ciclo de Vida</h3>
-					<p>Al invocarse un handler, su contexto (<code>this</code>) apunta a un objeto de estado seguro creado con herencia limpia (<code>Object.create(null)</code>). Este entorno provee acceso a propiedades dinámicas y operaciones de flujo de ciclo de vida:</p>
-					<br>
-					<ul>
-						<li><b><code>this.liveElement</code></b> (<code>Node</code>): Referencia directa al elemento activo en el árbol del DOM.</li>
-						<li><br><b><code>this.initialElement</code></b> (<code>Node</code>): Clon inmutable (<code>cloneNode</code>) del elemento en su estado original de registro. Mantiene la configuración y atributos originales intactos frente a mutaciones del flujo.</li>
-						<li><br><b><code>this.ready</code></b> (<code>Boolean</code>): Rastreador de inicialización. Indica si la instancia está lista para recibir conexiones lógicas.</li>
-						<li><br><b><code>this.mounted</code></b> (<code>Boolean</code>): <b>Propiedad de Solo Lectura</b>. Devuelve un booleano que indica de manera dinámica si el elemento está actualmente integrado y conectado dentro del DOM activo o si se encuentra desmontado.</li>
-						<li><br><b><code>this.mount()</code></b> (<code>Function</code>): Reinserta el elemento en el DOM activo en su ubicación original, reemplazando el nodo de comentario placeholder que se generó al desmontarlo. Devuelve la referencia al nodo reinsertado.</li>
-						<li><br><b><code>this.unmount()</code></b> (<code>Function</code>): Remueve físicamente el elemento del DOM activo de manera segura, insertando en su lugar un comentario placeholder (etiquetado con el `id` de la instancia) y preservando el nodo original dentro de un fragmento de documento (<code>DocumentFragment</code>). Devuelve la referencia al fragmento.</li>
-						<li><br><b><code>this.success</code></b> (<code>Cualquier tipo</code>): <b>Setter Reactivo</b>. Al asignarle un valor, dispara automáticamente la cadena de handlers especificada en el atributo de éxito (<code>-success</code>) correspondiente, propagando el valor asignado.</li>
-						<li><br><b><code>this.error</code></b> (<code>Cualquier tipo</code>): <b>Setter Reactivo</b>. Al asignarle un valor, dispara automáticamente la cadena de handlers especificada en el atributo de error (<code>-error</code>) correspondiente.</li>
-						<li><br><b><code>this.connect(state, data, ids?)</code></b> (<code>Function</code>): Permite propagar estados y datos estructurados hacia los handlers indicados en la declaración de conexión. El destino <code>ids</code> puede ser un string único o un arreglo de strings identificadores de instancias.
-							<br><br>
-							<i>Restricción de seguridad:</i> No está permitido alterar estados que coincidan con nombres de claves reservadas del motor. Si el argumento <code>state</code> coincide con <code>"liveElement"</code>, <code>"initialElement"</code>, <code>"connect"</code>, <code>"ready"</code>, <code>"mount"</code>, <code>"unmount"</code> o <code>"mounted"</code>, la operación se omitirá de inmediato emitiendo una advertencia en la consola.
-						</li>
-					</ul>
-					<br>
+						<h3>3. El Contexto de Ejecución (<code>this</code>) y Ciclo de Vida</h3>
+						<p>Al invocarse un handler, su contexto (<code>this</code>) apunta a un objeto de estado seguro creado con herencia limpia (<code>Object.create(null)</code>). Este entorno provee acceso a propiedades dinámicas y operaciones de flujo de ciclo de vida:</p>
+						<br>
+						<ul>
+							<li><b><code>this.liveElement</code></b> (<code>Node</code>): Referencia directa al elemento activo en el árbol del DOM.</li>
+							<li><br><b><code>this.initialElement</code></b> (<code>Node</code>): Clon inmutable (<code>cloneNode</code>) del elemento en su estado original de registro. Mantiene la configuración y atributos originales intactos frente a mutaciones del flujo.</li>
+							<li><br><b><code>this.ready</code></b> (<code>Boolean</code>): Rastreador de inicialización. Indica si la instancia está lista para recibir conexiones lógicas.</li>
+							<li><br><b><code>this.mounted</code></b> (<code>Boolean</code>): <b>Propiedad de Solo Lectura</b>. Devuelve un booleano que indica de manera dinámica si el elemento está actualmente integrado y conectado dentro del DOM activo o si se encuentra desmontado. Asignar un valor directamente a esta propiedad emitirá una advertencia en consola y no alterará el estado.</li>
+							<li><br><b><code>this.mount()</code></b> (<code>Function</code>): Reinserta el elemento en el DOM activo en su ubicación original, reemplazando el nodo de comentario placeholder que se generó al desmontarlo. Devuelve la referencia al nodo reinsertado.</li>
+							<li><br><b><code>this.unmount()</code></b> (<code>Function</code>): Remueve físicamente el elemento del DOM activo de manera segura, insertando en su lugar un comentario placeholder (etiquetado con el `id` de la instancia) y preservando el nodo original dentro de un fragmento de documento (<code>DocumentFragment</code>). Devuelve la referencia al fragmento.</li>
+							<li><br><b><code>this.success</code></b> (<code>Cualquier tipo</code>): <b>Setter Reactivo</b>. Al asignarle un valor, dispara automáticamente la cadena de handlers especificada en el atributo de éxito (<code>-success</code>) correspondiente, propagando el valor asignado.</li>
+							<li><br><b><code>this.error</code></b> (<code>Cualquier tipo</code>): <b>Setter Reactivo</b>. Al asignarle un valor, dispara automáticamente la cadena de handlers especificada en el atributo de error (<code>-error</code>) correspondiente.</li>
+							<li><br><b><code>this.connect(state, data, ids?)</code></b> (<code>Function</code>): Permite propagar estados y datos estructurados hacia los handlers indicados en la declaración de conexión. El destino <code>ids</code> puede ser un string único o un arreglo de strings identificadores de instancias.
+								<br><br>
+								<i>Restricción de seguridad:</i> No está permitido alterar estados que coincidan con nombres de claves reservadas del motor. Si el argumento <code>state</code> coincide con <code>"liveElement"</code>, <code>"initialElement"</code>, <code>"connect"</code>, <code>"ready"</code>, <code>"mount"</code>, <code>"unmount"</code> o <code>"mounted"</code>, la operación se omitirá de inmediato emitiendo una advertencia en la consola.
+							</li>
+						</ul>
+						<br>
 
-					<h3>4. Modos de Ejecución y Firmas de Argumentos</h3>
-					<p>Las firmas de los argumentos de los controladores lógicos se unifican según el modo de operation activo:</p>
-					<br>
-					<h4>A. Modo Secuencial (Estándar)</h4>
-					<p>Los controladores se llaman directamente de forma sucesiva e independiente. Cada función se ejecuta de forma aislada.</p>
-					<ul>
-						<li><br><b>Manejadores de Evento DOM:</b> Reciben el evento nativo capturado por el motor o el desencadenante de arranque.
-							<pre><code>function miHandler(event) {
-    // event: Objeto Event del DOM o trigger de activación
-    console.log("Elemento emisor:", this.liveElement);
+						<h3>4. Modos de Ejecución y Firmas de Argumentos</h3>
+						<p>Las firmas de los argumentos de los controladores lógicos se unifican según el modo de operación activo:</p>
+						<br>
+						<h4>A. Modo Secuencial (Estándar)</h4>
+						<p>Los controladores se llaman directamente de forma sucesiva e independiente. Cada función se ejecuta de forma aislada.</p>
+						<ul>
+							<li><br><b>Manejadores de Evento DOM:</b> Reciben el evento nativo capturado por el motor o el desencadenante de arranque.
+								<pre><code>function miHandler(event) {
+	// event: Objeto Event del DOM o trigger de activación
+	console.log("Elemento emisor:", this.liveElement);
 }</code></pre>
-						</li>
-						<li><br><b>Manejadores de Éxito / Error:</b> Reciben el payload asignado al descriptor de acceso reactivo.
-							<pre><code>function miHandlerExito(data) {
-    // data: El valor asignado a this.success o this.error
-    console.log("Datos de éxito recibidos:", data);
+							</li>
+							<li><br><b>Manejadores de Éxito / Error:</b> Reciben el payload asignado al descriptor de acceso reactivo.
+								<pre><code>function miHandlerExito(data) {
+	// data: El valor asignado a this.success o this.error
+	console.log("Datos de éxito recibidos:", data);
 }</code></pre>
-						</li>
-					</ul>
-					<br>
+							</li>
+						</ul>
+						<br>
 
-					<h4>B. Modo Middleware</h4>
-					<p>Activado mediante la bandera <code>data-e-handler-middleware</code> o mediante configuraciones de handler específicas. Organiza el flujo como una cadena secuencial asíncrona donde cada eslabón puede interactuar, modificar o abortar el proceso. El acumulador de datos compartidos (<code>data</code>) se inicializa como un objeto limpio sin prototipo (<code>Object.create(null)</code>).</p>
-					<ul>
-						<li><br><b>Middlewares de Evento DOM:</b> Reciben el evento, el acumulador de datos y la función de llamada de continuación (<code>next</code>).
-							<pre><code>function miMiddleware(event, data, next) {
-    data.timestamp = Date.now();
-    return next(data); // Propaga la continuación del flujo
+						<h4>B. Modo Middleware</h4>
+						<p>Activado mediante la bandera <code>data-e-handler-middleware</code> o mediante configuraciones de handler específicas. Organiza el flujo como una cadena secuencial asíncrona donde cada eslabón puede interactuar, modificar o abortar el proceso. El acumulador de datos compartidos (<code>data</code>) se inicializa como un objeto limpio sin prototipo (<code>Object.create(null)</code>).</p>
+						<ul>
+							<li><br><b>Middlewares de Evento DOM:</b> Reciben el evento, el acumulador de datos y la función de llamada de continuación (<code>next</code>).
+								<pre><code>function miMiddleware(event, data, next) {
+	data.timestamp = Date.now();
+	return next(data); // Propaga la continuación del flujo
 }</code></pre>
     				</li>
     				<li><br><b>Middlewares de Éxito o Error:</b> Reciben el valor asignado al setter reactivo (payload), el acumulador y la función de continuación.
     					<pre><code>function miMiddlewareExito(payload, data, next) {
-    data.resultado = payload;
-    return next(data);
+	data.resultado = payload;
+	return next(data);
 }</code></pre>
-						</li>
-					</ul>
-					<p>Si alguna de las funciones interceptoras en la tubería de middlewares omite llamar o retornar la ejecución de <code>next(data)</code>, la ejecución de los handlers posteriores en la secuencia se cancela por completo.</p>
-					<br>
+							</li>
+						</ul>
+						<p>Si alguna de las funciones interceptoras en la tubería de middlewares omite llamar o retornar la ejecución de <code>next(data)</code>, la ejecución de los handlers posteriores en la secuencia se cancela por completo.</p>
+						<br>
 
-					<h3>5. Ejemplos Prácticos de Implementación</h3>
+						<h3>5. Ejemplos Prácticos de Implementación</h3>
 
-					<p><b>Estructuración de Compartición Pública e Inicialización Diferida:</b></p>
-					<pre><code>&lt;!-- El botón 'validador' se inicializará al final del arranque global --&gt;
+						<p><b>Estructuración de Compartición Pública e Inicialización Diferida:</b></p>
+						<pre><code>&lt;!-- El botón 'validador' se inicialización al final del arranque global --&gt;
 &lt;button id="accion"
 	data-e-handler="comun.logger, validador"
 	data-e-handler-id="btn-enviar"
@@ -198,10 +201,19 @@
 	data-e-validador-success="moduloOk"&gt;
 	Procesar Formulario
 &lt;/button&gt;</code></pre>
-					<br>
+						<br>
 
-					<p><b>Registro de Handlers Públicos, Reutilización y Control de Flujo:</b></p>
-					<pre><code>// 1. Definición y registro de un grupo de handlers de utilidad común
+						<p><b>Control Declarativo de Propagación Ascendente (Burbujeo):</b></p>
+						<pre><code>&lt;!-- El contenedor padre responderá al click únicamente porque el hijo declara 'data-e-handler-propagation' --&gt;
+&lt;div data-e-handler="padreLogger" data-e-handler-id="box-padre" data-e-handler-event="click"&gt;
+	&lt;button data-e-handler="hijoAccion" data-e-handler-id="btn-hijo" data-e-handler-event="click" data-e-handler-propagation&gt;
+		Ejecutar y Propagar al Padre
+	&lt;/button&gt;
+&lt;/div&gt;</code></pre>
+						<br>
+
+						<p><b>Registro de Handlers Públicos, Reutilización y Control de Flujo:</b></p>
+						<pre><code>// 1. Definición y registro de un grupo de handlers de utilidad común
 _handlers({
 	logger: function(event) {
 		console.log("Acción detectada en el elemento id:", this.liveElement.id);
@@ -222,22 +234,24 @@ _handlers("comun", {
 		console.log("Flujo completado exitosamente con datos:", data);
 	}
 }).start();</code></pre>
-					<br>
+						<br>
 
-					<h3>6. Características Técnicas de la Implementación</h3>
-					<div class="features">
-						<p><strong>Delegación Inteligente de Eventos (Burbujeantes y No Burbujeantes):</strong> El motor optimiza el uso de la memoria clasificando los eventos asignados. Los eventos que no burbujean (tales como <code>focus</code>, <code>blur</code>, <code>scroll</code>, <code>resize</code>, <code>mouseenter</code> o <code>mouseleave</code>) se enlazan localmente sobre cada elemento específico. Por el contrario, los eventos burbujeantes se capturan de forma centralizada mediante un único listener delegado en el nodo raíz (<code>document.documentElement</code>) con fase de captura habilitada, determinando en tiempo de ejecución a qué handler e instancia corresponde el evento.</p>
-						<br><p><strong>Aislamiento de Instancia Seguro:</strong> Cada instancia lógica se ejecuta dentro de un contexto de almacenamiento exclusivo mapeado por su identificador único (<code>id</code>), construido de forma limpia con <code>Object.create(null)</code> para erradicar posibles interferencias con propiedades heredadas del prototipo de JavaScript.</p>
-						<br><p><strong>Ciclo de Vida de Componente Reutilizable (Placeholder):</strong> Mediante los métodos <code>mount</code> y <code>unmount</code>, el motor permite retirar físicamente nodos del DOM y reemplazarlos por comentarios de marcado (comentarios placeholder) de forma reactiva, salvaguardando la estructura original del elemento en memoria en un fragmento de documento (<code>DocumentFragment</code>) para su posterior restitución en el lugar exacto que ocupaban.</p>
-						<br><p><strong>Control Reactivo mediante Descriptores de Acceso:</strong> Las propiedades clave de estado y flujo (<code>ready</code>, <code>success</code>, <code>error</code>, <code>mounted</code>) se gestionan mediante descriptores dinámicos (<code>Object.defineProperty</code>), permitiendo que la simple asignación de un valor a estas variables actúe como disparador inmediato para ejecutar secuencias completas de callbacks.</p>
-						<br><p><strong>Protección de Referencias Circulares en Atajos:</strong> El motor implementa una rutina de rastreo de recursividad durante la resolución de atajos de handlers. Si se detecta que dos o más atajos se referencian mutuamente en un bucle circular infinito, el sistema aborta de inmediato la ejecución lanzando una excepción controlada, asegurando la estabilidad del hilo de ejecución.</p>
-						<br><p><strong>Auditoría de Configuración Persistente:</strong> A través de la propiedad <code>initialElement</code>, que resguarda una copia inalterada del nodo (<code>cloneNode</code>) obtenida al momento del arranque, los desarrolladores mantienen la capacidad de auditar la parametrización de atributos <code>data-e-handler-*</code> original, sin importar las mutaciones o cambios dinámicos sufridos por el nodo activo de la interfaz (<code>liveElement</code>).</p>
-						<br><p><strong>Normalización Automatizada de Nombres:</strong> El motor procesa internamente el identificador de cada handler aplicando un formateo <code>kebab-case</code> para resolver atributos en el marcado DOM (ej. asociando un handler "miHandler" con selectores de tipo <code>"data-e-mi-handler-*"</code>). Las lecturas dinámicas se evalúan directamente sobre los atributos del nodo para prescindir del mapeo nativo camelCase del objeto dataset y agilizar las comprobaciones.</p>
-						<br><p><strong>Limpieza de Memoria Rigurosa:</strong> El método <code>.end()</code> asegura el desmontaje absoluto de los recursos, desvinculando de forma programática las escuchas de eventos del DOM (utilizando <code>.off()</code> de la extensión <code>_events</code>) y liberando los diccionarios de estados lógicos creados durante el ciclo de vida.</p>
+						<h3>6. Características Técnicas de la Implementación</h3>
+						<div class="features">
+							<p><strong>Delegación Inteligente de Eventos y Desacoplamiento de Estado:</strong> El motor optimiza el uso de la memoria clasificando los eventos asignados. Los eventos que no burbujean (tales como <code>focus</code>, <code>blur</code>, <code>scroll</code>, <code>resize</code>, <code>mouseenter</code> o <code>mouseleave</code>) se enlazan localmente sobre cada elemento específico. Los eventos burbujeantes se capturan de forma centralizada mediante un único listener delegado en el nodo raíz (<code>document.documentElement</code>) con fase de captura habilitada. Un almacenamiento desacoplado (<code>_bubbling_cache</code>) mapea los metadatos de los eventos nativos mediante <code>WeakMap</code>/<code>Map</code>, asegurando el rastreo de nodos procesados entre múltiples instancias simultáneas sin mutar ni definir propiedades sobre los objetos <code>Event</code> del navegador.</p>
+							<br><p><strong>Autoridad Declarativa Estricta (Single Source of Truth):</strong> La propagación de eventos está regida de manera exclusiva por el marcado HTML mediante la presencia del atributo <code>data-e-handler-propagation</code>. Por defecto, el motor frena la propagación simulada al ejecutar el primer nodo receptor. Esta regla prevalece sobre cualquier intento de alteración procedimental en JavaScript, garantizando una trazabilidad del flujo 100% predecible a nivel de plantilla.</p>
+							<br><p><strong>Aislamiento de Instancia Seguro:</strong> Cada instancia lógica se ejecuta dentro de un contexto de almacenamiento exclusivo mapeado por su identificador único (<code>id</code>), construido de forma limpia con <code>Object.create(null)</code> para erradicar posibles interferencias con propiedades heredadas del prototipo de JavaScript.</p>
+							<br><p><strong>Ciclo de Vida de Componente Reutilizable (Placeholder):</strong> Mediante los métodos <code>mount</code> y <code>unmount</code>, el motor permite retirar físicamente nodos del DOM y reemplazarlos por comentarios de marcado (comentarios placeholder) de forma reactiva, salvaguardando la estructura original del elemento en memoria en un fragmento de documento (<code>DocumentFragment</code>) para su posterior restitución en el lugar exacto que ocupaban.</p>
+							<br><p><strong>Control Reactivo mediante Descriptores de Acceso:</strong> Las propiedades clave de estado y flujo (<code>ready</code>, <code>success</code>, <code>error</code>, <code>mounted</code>) se gestionan mediante descriptores dinámicos (<code>Object.defineProperty</code>), permitiendo que la simple asignación de un valor a estas variables actúe como disparador inmediato para ejecutar secuencias completas de callbacks.</p>
+							<br><p><strong>Protección de Referencias Circulares en Atajos:</strong> El motor implementa una rutina de rastreo de recursividad durante la resolución de atajos de handlers. Si se detecta que dos o más atajos se referencian mutuamente en un bucle circular infinito, el sistema aborta de inmediato la ejecución lanzando una excepción controlada, asegurando la estabilidad del hilo de ejecución.</p>
+							<br><p><strong>Auditoría de Configuración Persistente:</strong> A través de la propiedad <code>initialElement</code>, que resguarda una copia inalterada del nodo (<code>cloneNode</code>) obtenida al momento del arranque, los desarrolladores mantienen la capacidad de auditar la parametrización de atributos <code>data-e-handler-*</code> original, sin importar las mutaciones o cambios dinámicos sufridos por el nodo activo de la interfaz (<code>liveElement</code>).</p>
+							<br><p><strong>Normalización Automatizada de Nombres:</strong> El motor procesa internamente el identificador de cada handler aplicando un formateo <code>kebab-case</code> optimizado para resolver atributos en el marcado DOM (ej. asociando un handler "miHandler" con selectores de tipo <code>"data-e-mi-handler-*"</code>). Las lecturas dinámicas se evalúan directamente sobre los atributos del nodo para prescindir del mapeo nativo camelCase del objeto dataset y agilizar las comprobaciones.</p>
+							<br><p><strong>Gestión Global de Trazabilidad y Excepciones:</strong> Los métodos globales <code>_handlers.console()</code> y <code>_handlers.errors()</code> permiten controlar de forma quirúrgica la visibilidad de los avisos por consola y la interrupción del hilo por excepciones, permitiendo alternar de forma transparente entre un entorno de desarrollo ruidoso e informativo y un entorno de producción optimizado y silencioso.</p>
+							<br><p><strong>Limpieza de Memoria Rigurosa:</strong> El método <code>.end()</code> asegura el desmontaje absoluto de los recursos, desvinculando de forma programática las escuchas de eventos del DOM (utilizando <code>.off()</code> de la extensión <code>_events</code>) y liberando los diccionarios de estados lógicos y de caché creados durante el ciclo de vida.</p>
+						</div>
 					</div>
-				</div>
-			</section>
-	</main>
+				</section>
+		</main>
 
 	<footer class="center-y padding">
 		<p>&copy; 2026 <a href="https://okzgn.com">OKZGN</a></p>
