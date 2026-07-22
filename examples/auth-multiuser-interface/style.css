@@ -416,6 +416,7 @@ fieldset div label:last-child { margin-bottom: 0; }
 
     #app .left-side .options input[type="text"] {
         margin-bottom: 0.5rem;
+        width: 100%;
     }
 }
 
