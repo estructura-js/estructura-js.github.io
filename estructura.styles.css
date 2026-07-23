@@ -1,6 +1,6 @@
 :root {
 	--main-color: #555;
-	--secondary-color: #8de6c1;
+	--secondary-color: #fbf7ea; /*#8de6c1*/
     --tertiary-color: #eee;
 
 	--black-color: #000;
@@ -8,10 +8,10 @@
 
 	--text-color: #000;
 	--bg-color: #fff;
-	--links-color: #318964;
-    --links-color-hover-active-focus: #164635;
-	--headers-color: #19523E;
-    --headers-bg-color: #c1eedb;
+	--links-color: #886d1b; /* #318964 */
+    --links-color-hover-active-focus: #3c300c; /* #164635 */
+	--headers-color: #541;
+    --headers-bg-color: #f3e7c3; /* #c1eedb */
     --headers-color-2: var(--main-color);
     --headers-bg-color-2: var(--tertiary-color);
 

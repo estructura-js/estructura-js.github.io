@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
     var link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/styles/atom-one-dark.css';
+    link.href = 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/styles/stackoverflow-dark.min.css';
     document.body.appendChild(link);
 
     var script = document.createElement('script');
