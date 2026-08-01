@@ -70,9 +70,9 @@
 			<div class="padding">
 				<ul class="lines center-y">
 					<li><a href="#description">Descripción</a></li>
+					<li><a href="#examples">Ejemplos</a></li>
 					<li><a href="#docs">Documentación</a></li>
 					<li><a href="#extensions">Extensiones</a></li>
-					<li><a href="#examples">Ejemplos</a></li>
 				</ul>
 			</div>
 		</section>
@@ -88,43 +88,55 @@
 		</section>
 
 		<section class="margin-y">
+			<h2 id="examples">Ejemplos</h2>
+			<div class="padding">
+				<ul class="lines">
+					<li><strong>Código:</strong> <a href="https://github.com/okzgn/estructura#guía-de-inicio-rápido">Guía de inicio rápido</a> — (Estructura)</li>
+					<li><strong>Código:</strong> <a href="https://github.com/okzgn/estructura#_efnassignments">Registrar asignaciones de funciones/métodos para tipos o subtipos</a> — (Estructura)</li>
+					<li><strong>Código:</strong> <a href="https://github.com/okzgn/estructura#_esubtypedefinitions">Registrar definiciones de tipos nuevos/personalizados</a> — (Estructura)</li>
+					<li><strong>Implementación:</strong> <a href="examples/auth-multiuser-interface/">Interfaz de autenticación para aplicación multiusuario</a> — (Estructura, Handlers [Events], DOM, HTTP, Routing)</li>
+				</ul>
+			</div>
+		</section>
+
+		<section class="margin-y">
 			<h2 id="docs">Documentación</h2>
 			<div class="padding">
 				<ul class="lines">
 					<li><strong>Versión: 1.20.0</strong></li>
+					<li><strong>Licencia: MIT</strong></li>
 					<li>NPM: <a target="_blank" href="https://npmjs.com/estructura-js">https://npmjs.com/estructura-js</a></li>
 					<li>GITHUB: <a target="_blank" href="https://github.com/okzgn/estructura">https://github.com/okzgn/estructura</a></li>
 				</ul>
+				<p>Las extensiones contienen sus documentaciones en los siguientes enlaces (no tienen repositorios públicos).</p>
 			</div>
 		</section>
 
 		<section class="margin-y">
 			<h2 id="extensions">Extensiones</h2>
 			<div class="padding">
-			    <strong>Las extensiones o librerías dependen del framework principal. Importar:</strong>
-				<pre><code>&lt;script src="https://cdn.jsdelivr.net/npm/estructura-js"&gt;&lt;/script&gt;</code></pre>
+			    <strong>Importar el framework principal primero para usar las extensiones/librerías:</strong>
+				<pre><code>&lt;script src="https://unpkg.com/estructura-js"&gt;&lt;/script&gt; &lt;!-- CDN: Unpkg --&gt;
+&lt;script src="https://cdn.jsdelivr.net/npm/estructura-js"&gt;&lt;/script&gt; &lt;!-- CDN: JSDelivr --&gt;
+&lt;script src="https://estructura.okzgn.com/estructura.umd.js"&gt;&lt;/script&gt; &lt;!-- CDN: Cloudflare/Estructura --&gt;</code></pre>
 			</div>
 			<div class="padding">
-				<ul class="lines">
-					<li><a href="extensions/http/">HTTP — (RC1, prod., ES3/ES5+)</a></li>
-
-					<li><a href="extensions/dom/">DOM — (RC1, prod., ES5+)</a></li>
-
-					<li><a href="extensions/events/">Events — (RC1, prod., ES5/ES6+)</a></li>
-					<li><a href="extensions/components/">Components — (RC2, prod., ES5/ES6+)</a></li>
-					<li><a href="extensions/handlers/">Handlers — (RC2, prod., ES5/ES6+)</a></li>
-
-					<li><a href="extensions/reactive/">Reactive — (RC1, prod., ES6+)</a></li>
-					<li><a href="extensions/routing/">Routing — (RC1, prod., ES6+)</a></li>
-				</ul>
+			    <strong>Vincular la extensión/librería correspondiente.</strong>
+				<pre><code>&lt;script src="https://estructura.okzgn.com/extensions/<b>EXTENSION</b>/estructura.<b>EXTENSION</b>.js"&gt;&lt;/script&gt;</code></pre>
 			</div>
-		</section>
-
-		<section class="margin-y">
-			<h2 id="examples">Ejemplos</h2>
 			<div class="padding">
+			    <strong>Extensiones/librerías y documentaciones disponibles:</strong>
 				<ul class="lines">
-					<li><a href="examples/auth-multiuser-interface/">Interfaz de autenticación para aplicación multiusuario — (Handlers [Events], DOM, HTTP, Routing)</a></li>
+					<li><a href="extensions/http/">HTTP</a> — (RC1, ES3/ES5+, AGPL v3)</li>
+
+					<li><a href="extensions/dom/">DOM</a> — (RC1, ES5+, AGPL v3)</li>
+
+					<li><a href="extensions/events/">Events</a> — (RC1, ES5/ES6+, AGPL v3)</li>
+					<li><a href="extensions/components/">Components</a> — (RC2, ES5/ES6+, AGPL v3)</li>
+					<li><a href="extensions/handlers/">Handlers</a> — (RC2, ES5/ES6+, AGPL v3)</li>
+
+					<li><a href="extensions/reactive/">Reactive</a> — (RC1, ES6+, AGPL v3)</li>
+					<li><a href="extensions/routing/">Routing</a> — (RC1, ES6+, AGPL v3)</li>
 				</ul>
 			</div>
 		</section>
