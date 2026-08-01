@@ -103,7 +103,6 @@ ul { list-style: none; }
 
 }
 @media screen and (min-width: 640px){
-    nav h2 { display: none !important; }
     nav ul {
         display: flex;
         flex-flow: row !important;
@@ -264,3 +263,7 @@ section pre code {
 }
 
 nav .lines li { margin: 0; }
+
+nav h2 {
+    display: none !important;
+}
