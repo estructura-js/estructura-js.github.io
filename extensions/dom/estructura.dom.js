@@ -12,11 +12,7 @@
 }(this, function () {
     'use strict';
 
-    var
-    array_check_str = '[object Array]',
-    get_primitive_type_fn = Object.prototype.toString,
-    _dom = _e.instance('dom');
-
+    var _dom = _e.instance('dom');
     _dom.subtype('browser-dom');
 
     _dom.subtype({
@@ -164,8 +160,8 @@
         }
 
         property = _property_function(property);
-        if(!property || typeof property !== 'object' || get_primitive_type_fn.call(property.keys) !== array_check_str){
-            var error = new Error('returns "' + get_primitive_type_fn.call(property) + '" without array keys');
+        if(!property || typeof property !== 'object' || !_e.type(property.keys)['Array']){
+            var error = new Error('returns "' + _e.type(property).join(', ') + '" without array keys');
             error.name = 'can\'t access to object properties';
             throw error;
         }

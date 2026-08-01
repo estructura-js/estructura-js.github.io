@@ -19,8 +19,6 @@
     }
 
     var
-    array_check_str = '[object Array]',
-    get_primitive_type_fn = Object.prototype.toString,
     verify_own_property_fn = Object.prototype.hasOwnProperty,
     verify_weakmap = typeof WeakMap === 'function';
 
@@ -37,7 +35,7 @@
     }
 
     function _is_array(object) {
-        return get_primitive_type_fn.call(object) === array_check_str;
+        return _e.type(object)['Array'];
     }
 
 	function simple_object_copy(destination_object, source_object) {
