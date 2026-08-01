@@ -77,11 +77,25 @@
 				<p><b>Configuración global del entorno:</b></p>
 <pre><code>// Definición de parámetros globales
 var configActiva = _components({
-       	origin: './src/components/',   // Ruta base para localizar recursos estáticos
-	timeout: 10000,         // Límite de tiempo máximo para las peticiones (10s)
-	autoScan: false         // Desactiva el escaneo automático del DOM al arrancar
+    // Ruta base para localizar recursos estáticos
+    origin: './src/components/',
+
+    // Límite de tiempo máximo para las peticiones (10s)
+    timeout: 10000,
+
+    // Desactiva el escaneo automático del DOM al arrancar
+    autoScan: false,
+
+    // Nombres de archivos de componentes por defecto
+    files: {
+        css: '.css',
+        html: '.html',
+        js: '.js'
+    }
 }).config();
 </code></pre>
+                <br>
+                <p><strong>Propiedad <code>files</code> (<code>Object</code>):</strong> Permite personalizar los nombres de archivos de los componentes para cada tipo de recurso (<code>css</code>, <code>html</code>, <code>js</code>). Si no se especifica, por defecto utiliza el nombre de archivo precedido por un punto (<code>.css</code>, <code>.html</code>, <code>.js</code>).</p>
 				<br>
 				<p><b>Inicialización y captura de referencia manual:</b></p>
 <pre><code>var contenedor = document.querySelector('#ficha_usuario');

@@ -24,7 +24,8 @@
   var global_config = {
       origin: './',
       timeout: 10000,
-      autoScan: false
+      autoScan: false,
+      files: { css: '.css', html: '.html', js: '.js' }
   };
 
   var
@@ -299,7 +300,9 @@
           id: get_option(config, 'id', element, 'data-e-component-id'),
           required: get_option(config, 'required', element, 'data-e-component-required'),
           fallback: get_option(config, 'fallback', element, 'data-e-component-fallback'),
-          timeout: get_option(config, 'timeout', element, 'data-e-component-timeout'),
+         timeout: get_option(config, 'timeout', element, 'data-e-component-timeout'),
+
+          files: (config && config.files && typeof config.files === 'object' ? config.files : global_config.files),
 
           fallbackSrc: get_option(config, 'fallbackSrc', element, 'data-e-component-fallback-src'),
           fallbackOrder: get_option(config, 'fallbackOrder', element, 'data-e-component-fallback-order')
@@ -1084,7 +1087,7 @@
               for (var i = 0; i < count; i++) {
                   var
                     type = group[i].toLowerCase(),
-                    url = resolved_src + type,
+                    url = resolved_src + (options.files && typeof options.files[type] === 'string' ? options.files[type] : '.' + type),
                     timeout_value = options.timeout ? parseInt(options.timeout, 10) : global_config.timeout;
 
                   (function(t, u) {
