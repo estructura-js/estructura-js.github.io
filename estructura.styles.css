@@ -136,6 +136,7 @@ ul { list-style: none; }
 }
 .lines li {
     text-indent: var(--width-base-negative);
+    margin-top: 0.5rem;
 }
 .lines li:before {
     content: '';
@@ -261,3 +262,5 @@ section pre code {
     margin-top: 0;
     text-align: center;
 }
+
+nav .lines li { margin: 0; }
