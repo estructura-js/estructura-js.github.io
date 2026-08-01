@@ -90,7 +90,7 @@ a {
 	color: var(--links-color);
 	text-decoration: none;
 }
-a:hover, a:focus, a:active {
+a:hover, a:focus, a:active  {
     color: var(--links-color-hover-active-focus);
 	background-color: var(--secondary-color);
 	outline: 0.125rem solid var(--links-color-hover-active-focus);
@@ -129,6 +129,15 @@ ul { list-style: none; }
 }
 .padding {
     padding: var(--width-base);
+}
+.padding-y {
+    padding: var(--width-base-0-5) var(--width-base);
+}
+.collapsed {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
 }
 .lines {
     padding-left: var(--width-base-2);

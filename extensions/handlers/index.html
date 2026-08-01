@@ -14,8 +14,9 @@
 
 	<link href="../../estructura.styles.css" rel="stylesheet" />
 	<script src="https://cdn.jsdelivr.net/npm/estructura-js"></script>
-	<script src="../../main.js"></script>
+	<script src="../dom/estructura.dom.js"></script>
 	<script src="../events/estructura.events.js"></script>
+	<script src="../../main.js"></script>
 	<script src="estructura.handlers.js"></script>
 	<script>
 		document.addEventListener('DOMContentLoaded', function(){
@@ -70,11 +71,16 @@
 				<h2 class="title">Handlers</h2>
 				<section class="margin-y">
 					<h2 id="description">Descripción</h2>
-					<div class="padding">
-						Motor declarativo de alta abstracción orientado a la gestión, orquestación e interconexión de flujos de lógica (handlers) desacoplados a nivel de interfaz. Permite mapear elementos del DOM directamente con lógica de JavaScript a través de atributos descriptivos de datos, proporcionando flujos de ejecución secuenciales, encadenamiento mediante middlewares, control dinámico de estados de éxito/error mediante asignaciones reactivas, control declarativo estricto de propagación de eventos, gestión centralizada de consola/errores y un sistema integrado de ciclo de vida de componentes (montaje, desmontaje y destrucción).<br><br>
-						<b>Librería:</b> <a target="_blank" href="estructura.handlers.js">estructura.handlers.js</a><br><br>
-						<b>Dependencias obligatorias:</b> <a href="../events/estructura.events.js">estructura.events.js</a> (<a href="../events/index.html">Events, documentación</a>). Extensión requerida junto con su objeto global accesible (<code>_events</code>) para inyectar escuchadores de eventos del DOM. Debe estar disponible en el entorno antes de inicializar <code>_handlers</code>; de lo contrario, el proceso se interrumpirá emitiendo una excepción en consola.
-					</div>
+					<div class="padding">Motor declarativo de alta abstracción orientado a la gestión, orquestación e interconexión de flujos de lógica (handlers) desacoplados a nivel de interfaz. Permite mapear elementos del DOM directamente con lógica de JavaScript a través de atributos descriptivos de datos, proporcionando flujos de ejecución secuenciales, encadenamiento mediante middlewares, control dinámico de estados de éxito/error mediante asignaciones reactivas, control declarativo estricto de propagación de eventos, gestión centralizada de consola/errores y un sistema integrado de ciclo de vida de componentes (montaje, desmontaje y destrucción).</div>
+					<p class="padding-y">
+					    <b>Librería:</b> <a target="_blank" href="estructura.handlers.js">estructura.handlers.js</a>
+					</p>
+					<p class="padding-y">
+						<b>Compatibilidad:</b> <a target="_blank" href="https://okzgn.com/articles/why-not-build-frontend-frameworks-on-raw-html-css-or-js/#point-1">ES5/ES6+</a>
+					</p>
+					<p class="padding-y">
+					    <b>Dependencias obligatorias:</b> <a href="../events/estructura.events.js">estructura.events.js</a> (<a href="../events/index.html">Events, documentación</a>). Extensión requerida junto con su objeto global accesible (<code>_events</code>) para inyectar escuchadores de eventos del DOM. Debe estar disponible en el entorno antes de inicializar <code>_handlers</code>; de lo contrario, el proceso se interrumpirá emitiendo una excepción en consola.
+					</p>
 				</section>
 
 				<section class="margin-y">
