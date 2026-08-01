@@ -14,15 +14,15 @@
 
   var
     _routing = _e.instance('routing'),
-    hasWindow = typeof window !== 'undefined',
-    hasHistory = hasWindow && !!window.history,
-    hasOwnProp = Object.prototype.hasOwnProperty;
+    has_window = typeof window !== 'undefined',
+    has_history = has_window && !!window.history,
+    has_own_prop = Object.prototype.hasOwnProperty;
 
   // Direct property copy. Note: Prototype properties of 'source'
   // are deliberately ignored for security due to the hasOwnProperty guard.
   function extend(target, source) {
     for (var key in source) {
-      if (hasOwnProp.call(source, key)) {
+      if (has_own_prop.call(source, key)) {
         target[key] = source[key];
       }
     }
@@ -59,22 +59,22 @@
 
     // Deep clone for Map
     if (obj instanceof Map) {
-      var cloneMap = new Map();
-      cache.set(obj, cloneMap);
+      var clone_map = new Map();
+      cache.set(obj, clone_map);
       obj.forEach(function (value, key) {
-        cloneMap.set(deepClone(key, cache), deepClone(value, cache));
+        clone_map.set(deepClone(key, cache), deepClone(value, cache));
       });
-      return cloneMap;
+      return clone_map;
     }
 
     // Deep clone for Set
     if (obj instanceof Set) {
-      var cloneSet = new Set();
-      cache.set(obj, cloneSet);
+      var clone_set = new Set();
+      cache.set(obj, clone_set);
       obj.forEach(function (value) {
-        cloneSet.add(deepClone(value, cache));
+        clone_set.add(deepClone(value, cache));
       });
-      return cloneSet;
+      return clone_set;
     }
 
     // Secure support for ArrayBuffer
@@ -93,7 +93,7 @@
     cache.set(obj, clone);
 
     for (var key in obj) {
-      if (hasOwnProp.call(obj, key)) {
+      if (has_own_prop.call(obj, key)) {
         clone[key] = deepClone(obj[key], cache);
       }
     }
@@ -104,17 +104,17 @@
   function parseRoute(path) {
     var
       keys = [],
-      sanitizedPath = path;
+      sanitized_path = path;
 
-    if (sanitizedPath !== '/' && sanitizedPath.charAt(sanitizedPath.length - 1) === '/') {
-      sanitizedPath = sanitizedPath.slice(0, -1);
+    if (sanitized_path !== '/' && sanitized_path.charAt(sanitized_path.length - 1) === '/') {
+      sanitized_path = sanitized_path.slice(0, -1);
     }
 
     // The path is analyzed using a prioritized order of alternatives:
     // 1. Parameters (required or optional with a single leading slash '?')
     // 2. Strict escaping of special characters (including '/' for proper anchoring)
     // 3. Wildcards '*'
-    var regexString = sanitizedPath.replace(
+    var regex_str = sanitized_path.replace(
       /(\/)?:(\w+)(\?)?|([.+\/\\^${}()[\]|])|(\*)/g,
       function (_, slash, name, optional, special, wildcard) {
         if (wildcard) {
@@ -135,7 +135,7 @@
     );
 
     return {
-      regexp: new RegExp('^' + regexString + '$'),
+      regexp: new RegExp('^' + regex_str + '$'),
       keys: keys
     };
   }
@@ -179,61 +179,61 @@
   // Context Constructor
   function Context(path, state, basepath) {
     var
-      origin = (hasWindow && window.location.origin) || 'http://localhost',
-      resolvedPath = path;
+      origin = (has_window && window.location.origin) || 'http://localhost',
+      resolved_path = path;
 
     /*
     Previous (without double slash guards):
-    if (resolvedPath.indexOf('/') === 0 && basepath) {
-        var hasBasepath = resolvedPath === basepath || resolvedPath.indexOf(basepath + '/') === 0;
-        if (!hasBasepath) {
-            resolvedPath = basepath + resolvedPath;
+    if (resolved_path.indexOf('/') === 0 && basepath) {
+        var has_base_path = resolved_path === basepath || resolved_path.indexOf(basepath + '/') === 0;
+        if (!has_base_path) {
+            resolved_path = basepath + resolved_path;
         }
     }
     */
 
     // The following IF was added in order to avoid double slash
-    if (resolvedPath.indexOf('/') === 0 && basepath) {
+    if (resolved_path.indexOf('/') === 0 && basepath) {
       var
-        basepathWithSlash = basepath.charAt(basepath.length - 1) === '/' ? basepath : basepath + '/',
-        hasBasepath = resolvedPath === basepath || resolvedPath.indexOf(basepathWithSlash) === 0;
+        basepath_with_slash = basepath.charAt(basepath.length - 1) === '/' ? basepath : basepath + '/',
+        has_base_path = resolved_path === basepath || resolved_path.indexOf(basepath_with_slash) === 0;
 
-      if (!hasBasepath) {
-        var cleanBase = basepath.charAt(basepath.length - 1) === '/' ? basepath.slice(0, -1) : basepath;
-        resolvedPath = cleanBase + resolvedPath;
+      if (!has_base_path) {
+        var clean_base = basepath.charAt(basepath.length - 1) === '/' ? basepath.slice(0, -1) : basepath;
+        resolved_path = clean_base + resolved_path;
       }
     }
 
-    var url = new URL(resolvedPath, origin);
+    var url = new URL(resolved_path, origin);
     this.canonicalPath = url.pathname + url.search + url.hash;
 
-    var cleanPath = url.pathname;
-    if (basepath && cleanPath.indexOf(basepath) === 0) {
-      cleanPath = cleanPath.slice(basepath.length);
+    var clean_path = url.pathname;
+    if (basepath && clean_path.indexOf(basepath) === 0) {
+      clean_path = clean_path.slice(basepath.length);
     }
-    if (cleanPath.charAt(0) !== '/') {
-      cleanPath = '/' + cleanPath;
+    if (clean_path.charAt(0) !== '/') {
+      clean_path = '/' + clean_path;
     }
 
     // Consistently remove the trailing slash for strict '$' matching
-    if (cleanPath !== '/' && cleanPath.charAt(cleanPath.length - 1) === '/') {
-      cleanPath = cleanPath.slice(0, -1);
+    if (clean_path !== '/' && clean_path.charAt(clean_path.length - 1) === '/') {
+      clean_path = clean_path.slice(0, -1);
     }
 
-    this.path = cleanPath + url.search + url.hash;
-    this.pathname = cleanPath || '/';
+    this.path = clean_path + url.search + url.hash;
+    this.pathname = clean_path || '/';
     this.querystring = url.search.slice(1);
 
-    var rawState = deepClone(state) || {};
+    var raw_state = deepClone(state) || {};
 
-    if (rawState.path && rawState.path !== this.canonicalPath) {
-      console.warn('_routing: Router is overwriting state.path from "' + rawState.path + '" to "' + this.canonicalPath + '"');
+    if (raw_state.path && raw_state.path !== this.canonicalPath) {
+      console.warn('_routing: Router is overwriting state.path from "' + raw_state.path + '" to "' + this.canonicalPath + '"');
     }
-    if (rawState.cleanPath && rawState.cleanPath !== this.path) {
-      console.warn('_routing: Router is overwriting state.cleanPath from "' + rawState.cleanPath + '" to "' + this.path + '"');
+    if (raw_state.cleanPath && raw_state.cleanPath !== this.path) {
+      console.warn('_routing: Router is overwriting state.cleanPath from "' + raw_state.cleanPath + '" to "' + this.path + '"');
     }
 
-    this.state = extend(rawState, {
+    this.state = extend(raw_state, {
       path: this.canonicalPath,
       cleanPath: this.path
     });
@@ -266,13 +266,13 @@
   }
 
   Context.prototype.pushState = function () {
-    if (hasHistory) {
+    if (has_history) {
       window.history.pushState(this.state, document.title, this.canonicalPath);
     }
   };
 
   Context.prototype.save = function () {
-    if (hasHistory) {
+    if (has_history) {
       window.history.replaceState(this.state, document.title, this.canonicalPath);
     }
   };
@@ -282,7 +282,7 @@
     routes = new Map(),
     basepath = '',
     running = false,
-    errorListeners = [];
+    error_listeners = [];
 
   // Strict ES5-compatible router signature
   var router = {};
@@ -290,18 +290,18 @@
   // Returns a shallow copy to prevent direct modifications of the internal reference
   router.onError = function (callback) {
     if (arguments.length === 0) {
-      return errorListeners.slice();
+      return error_listeners.slice();
     }
     if (typeof callback === 'function') {
-      errorListeners.push(callback);
+      error_listeners.push(callback);
     }
   };
 
   router.offError = function (callback) {
     if (callback === undefined) {
-      errorListeners = [];
+      error_listeners = [];
     } else {
-      errorListeners = errorListeners.filter(function (cb) {
+      error_listeners = error_listeners.filter(function (cb) {
         return cb !== callback;
       });
     }
@@ -349,46 +349,46 @@
       var len = Math.max(a.score.length, b.score.length);
       for (var i = 0; i < len; i++) {
         var
-          scoreA = a.score[i] !== undefined ? a.score[i] : -1,
-          scoreB = b.score[i] !== undefined ? b.score[i] : -1;
-        if (scoreA !== scoreB) {
-          return scoreB - scoreA;
+          score_a = a.score[i] !== undefined ? a.score[i] : -1,
+          score_b = b.score[i] !== undefined ? b.score[i] : -1;
+        if (score_a !== score_b) {
+          return score_b - score_a;
         }
       }
       return 0;
     });
 
     var
-      currentMatchIndex = 0,
-      currentCallbackIndex = 0;
+      current_match_index = 0,
+      current_callback_index = 0;
 
     function next() {
-      if (currentMatchIndex >= matches.length) {
+      if (current_match_index >= matches.length) {
         if (callback) callback();
         return;
       }
 
       var
-        match = matches[currentMatchIndex],
+        match = matches[current_match_index],
         callbacks = match.callbacks;
 
-      if (currentCallbackIndex >= callbacks.length) {
-        currentMatchIndex++;
-        currentCallbackIndex = 0;
+      if (current_callback_index >= callbacks.length) {
+        current_match_index++;
+        current_callback_index = 0;
         next();
         return;
       }
 
-      var fn = callbacks[currentCallbackIndex++];
+      var fn = callbacks[current_callback_index++];
       ctx.params = match.params;
       ctx.routePath = match.pattern;
 
       try {
         fn(ctx, next);
       } catch (err) {
-        if (errorListeners.length > 0) {
-          for (var k = 0; k < errorListeners.length; k++) {
-            errorListeners[k](err, ctx);
+        if (error_listeners.length > 0) {
+          for (var k = 0; k < error_listeners.length; k++) {
+            error_listeners[k](err, ctx);
           }
         } else {
           throw err;
@@ -418,17 +418,17 @@
     if (/^(mailto|tel|sms|javascript|data):/i.test(href)) return;
 
     var origin = window.location.origin || (window.location.protocol + '//' + window.location.host);
-    var targetUrl;
+    var target_url;
     try {
-      targetUrl = new URL(href, origin);
+      target_url = new URL(href, origin);
     } catch (err) {
       return;
     }
 
-    if (targetUrl.origin !== window.location.origin) return;
+    if (target_url.origin !== window.location.origin) return;
 
     e.preventDefault();
-    router.show(targetUrl.pathname + targetUrl.search + targetUrl.hash);
+    router.show(target_url.pathname + target_url.search + target_url.hash);
   }
 
   function onPopState(e) {
@@ -438,8 +438,8 @@
         : e.state.path;
       router.replace(path, e.state, true, false);
     } else {
-      var currentPath = window.location.pathname + window.location.search + window.location.hash;
-      router.show(currentPath, null, true, false);
+      var current_path = window.location.pathname + window.location.search + window.location.hash;
+      router.show(current_path, null, true, false);
     }
   }
 
@@ -464,16 +464,16 @@
 
     var opts = options || {};
 
-    if (hasWindow && opts.click !== false) {
+    if (has_window && opts.click !== false) {
       window.addEventListener('click', clickHandler, false);
     }
-    if (hasWindow && opts.popstate !== false) {
+    if (has_window && opts.popstate !== false) {
       window.addEventListener('popstate', onPopState, false);
     }
 
-    if (opts.dispatch !== false && hasWindow) {
-      var initialPath = window.location.pathname + window.location.search + window.location.hash;
-      router.replace(initialPath, null, true, false);
+    if (opts.dispatch !== false && has_window) {
+      var initial_path = window.location.pathname + window.location.search + window.location.hash;
+      router.replace(initial_path, null, true, false);
     }
 
     return false;
@@ -482,7 +482,7 @@
   router.stop = function () {
     if (!running) return false;
     running = false;
-    if (hasWindow) {
+    if (has_window) {
       window.removeEventListener('click', clickHandler, false);
       window.removeEventListener('popstate', onPopState, false);
     }

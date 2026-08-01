@@ -21,7 +21,7 @@
   var MAX_CACHE_ENTRIES = 100;
 
   /** @type {Object} Global system configuration */
-  var globalConfig = {
+  var global_config = {
       origin: './',
       timeout: 10000,
       autoScan: false
@@ -29,34 +29,34 @@
 
   var
     _components = _e.instance('components'),
-    registeredOrders = {},
+    registered_orders = {},
     instances = {},
-    resourceCache = {},
-    componentStates = {},
-    globalStateObservers = [],
+    resource_cache = {},
+    component_states = {},
+    global_state_observers = [],
 
-    appliedCSS = {},
-    appliedJS = {},
+    applied_css = {},
+    applied_js = {},
 
-    parsedOrderCache = {},
-    parsedOrderCacheKeys = [],
-    resourceCacheKeys = [];
+    parsed_order_cache = {},
+    parsed_order_cache_keys = [],
+    resource_cache_keys = [];
 
   // Control structures for collision resolution and event queueing
   var
-    componentCounters = {},
-    eventQueues = {},
+    component_counters = {},
+    event_queues = {},
     MAX_QUEUE_SIZE = 50;
 
   // Internal registry to capture execution errors from dynamic scripts
   var
-    executionErrors = {};
+    execution_errors = {};
 
   // Centralized MutationObserver system
   var
-    globalObserver = null,
-    observedInstances = [],
-    randomErrorsId = '_e_components_' + (new Date()).getTime();
+    global_observer = null,
+    observed_instances = [],
+    random_errors_id = '_e_components_' + (new Date()).getTime();
 
   // Register global execution error handler for injected components
   if (typeof window !== 'undefined') {
@@ -64,8 +64,8 @@
       if (!event || typeof event !== 'object') { return; }
       var _err = event.error;
       if (!_err || typeof _err !== 'object') { return; }
-      if (typeof _err[randomErrorsId] !== 'undefined' && _err[randomErrorsId] == _err.name) {
-        executionErrors[_err.name] = _err.message;
+      if (typeof _err[random_errors_id] !== 'undefined' && _err[random_errors_id] == _err.name) {
+        execution_errors[_err.name] = _err.message;
       }
     });
   }
@@ -85,29 +85,29 @@
 
   /**
     * Sends an event to a specific instance or queues it if the instance is not ready.
-    * @param {string} targetId - Target instance ID.
+    * @param {string} target_id - Target instance ID.
     * @param {string} event - Event name.
     * @param {*} data - Data associated with the event.
     */
-  main.emit = function(targetId, event, data) {
-      var state = componentStates[targetId];
+  main.emit = function(target_id, event, data) {
+      var state = component_states[target_id];
 
       if (state === 'failed') {
-          console.warn('_components: Event delivery for "' + event + '" has been discarded because the target component "' + targetId + '" is in a failed state.');
+          console.warn('_components: Event delivery for "' + event + '" has been discarded because the target component "' + target_id + '" is in a failed state.');
           return;
       }
 
-      var inst = instances[targetId];
+      var inst = instances[target_id];
       if (inst && state === 'ready') {
           inst.emitter.emit(event, data);
       } else {
-          if (!eventQueues[targetId]) {
-              eventQueues[targetId] = [];
+          if (!event_queues[target_id]) {
+              event_queues[target_id] = [];
           }
-          if (eventQueues[targetId].length < MAX_QUEUE_SIZE) {
-              eventQueues[targetId].push({ event: event, data: data });
+          if (event_queues[target_id].length < MAX_QUEUE_SIZE) {
+              event_queues[target_id].push({ event: event, data: data });
           } else {
-              console.warn('_components: Event queue limit (' + MAX_QUEUE_SIZE + ') exceeded for ID "' + targetId + '". Discarding event "' + event + '".');
+              console.warn('_components: Event queue limit (' + MAX_QUEUE_SIZE + ') exceeded for ID "' + target_id + '". Discarding event "' + event + '".');
           }
       }
   };
@@ -120,14 +120,14 @@
     */
   main.order = function(name, value) {
       if (value) {
-          registeredOrders[name] = value;
-          if (parsedOrderCache[name]) {
-              delete parsedOrderCache[name];
-              var idx = parsedOrderCacheKeys.indexOf(name);
-              if (idx > -1) parsedOrderCacheKeys.splice(idx, 1);
+          registered_orders[name] = value;
+          if (parsed_order_cache[name]) {
+              delete parsed_order_cache[name];
+              var idx = parsed_order_cache_keys.indexOf(name);
+              if (idx > -1) parsed_order_cache_keys.splice(idx, 1);
           }
       }
-      return registeredOrders[name];
+      return registered_orders[name];
   };
 
   /**
@@ -135,11 +135,11 @@
     * @param {Element} [root] - Root node for the search.
     */
   main.scan = function(root) {
-      var searchRoot = root || document.body;
-      if (!searchRoot) return;
+      var search_root = root || document.body;
+      if (!search_root) return;
 
       var
-        roots = searchRoot.querySelectorAll('[data-e-components]'),
+        roots = search_root.querySelectorAll('[data-e-components]'),
         len = roots.length;
       for (var i = 0; i < len; i++) {
           main(roots[i]);
@@ -163,7 +163,7 @@
     * Releases memory occupied by caches, safely destroying active instances.
     */
   main.resetCache = function() {
-      globalStateObservers = [];
+      global_state_observers = [];
 
       var keys = [];
       for (var id in instances) {
@@ -180,42 +180,42 @@
       }
 
       instances = {};
-      componentStates = {};
-      appliedCSS = {};
-      appliedJS = {};
-      resourceCache = {};
-      resourceCacheKeys = [];
-      parsedOrderCache = {};
-      parsedOrderCacheKeys = [];
-      componentCounters = {};
-      eventQueues = {};
-      executionErrors = {};
-      stopGlobalObserver();
+      component_states = {};
+      applied_css = {};
+      applied_js = {};
+      resource_cache = {};
+      resource_cache_keys = [];
+      parsed_order_cache = {};
+      parsed_order_cache_keys = [];
+      component_counters = {};
+      event_queues = {};
+      execution_errors = {};
+      stop_global_observer();
   };
 
   main._unregisterInstance = function(id) {
       delete instances[id];
-      delete componentStates[id];
-      delete eventQueues[id];
-      delete componentCounters[id];
-      delete executionErrors[id];
+      delete component_states[id];
+      delete event_queues[id];
+      delete component_counters[id];
+      delete execution_errors[id];
   };
 
   main._registerStateObserver = function(fn) {
-      globalStateObservers.push(fn);
+      global_state_observers.push(fn);
   };
 
   main._unregisterStateObserver = function(fn) {
-      var index = globalStateObservers.indexOf(fn);
+      var index = global_state_observers.indexOf(fn);
       if (index > -1) {
-          globalStateObservers.splice(index, 1);
+          global_state_observers.splice(index, 1);
       }
   };
 
   main._notifyStateChange = function (id, state) {
       // Snapshot to avoid index shifting on concurrent unregistration
       var
-        observers = globalStateObservers.slice(0),
+        observers = global_state_observers.slice(0),
         len = observers.length;
       for (var i = 0; i < len; i++) {
           try {
@@ -233,7 +233,7 @@
     * @param {*} obj
     * @returns {boolean}
     */
-  function isPlainObject(obj) {
+  function is_plain_object(obj) {
       return !!obj &&
               typeof obj === 'object' &&
               !obj.nodeType &&
@@ -250,16 +250,16 @@
   function configure(opts) {
       for (var key in opts) {
           if (opts.hasOwnProperty(key)) {
-              globalConfig[key] = opts[key];
+              global_config[key] = opts[key];
           }
       }
-      if (globalConfig.autoScan) {
+      if (global_config.autoScan) {
           main.autoScan();
       }
-      return globalConfig;
+      return global_config;
   }
 
-  function getAttr(element, name) {
+  function get_attr(element, name) {
       return element ? element.getAttribute(name) : null;
   }
 
@@ -268,16 +268,16 @@
     * @param {Object} config - Dynamic configuration object.
     * @param {string} key - Property key.
     * @param {Element} element - DOM node.
-    * @param {string} attrName - Associated data attribute in the DOM.
-    * @param {*} [defaultValue] - Default value.
+    * @param {string} attr_name - Associated data attribute in the DOM.
+    * @param {*} [default_value] - Default value.
     * @returns {*}
     */
-  function getOption(config, key, element, attrName, defaultValue) {
+  function get_option(config, key, element, attr_name, default_value) {
       if (config && config[key] !== undefined) {
           return config[key];
       }
-      var attrVal = getAttr(element, attrName);
-      return attrVal !== null ? attrVal : defaultValue;
+      var attr_val = get_attr(element, attr_name);
+      return attr_val !== null ? attr_val : default_value;
   }
 
   /**
@@ -286,23 +286,23 @@
     * @param {Object} [config]
     * @returns {Object}
     */
-  function resolveConfig(element, config) {
+  function resolve_config(element, config) {
       config = config || {};
       var options = {
-          components: getOption(config, 'components', element, 'data-e-components'),
-          origin: getOption(config, 'origin', element, 'data-e-components-origin'),
-          order: getOption(config, 'order', element, 'data-e-components-order'),
+          components: get_option(config, 'components', element, 'data-e-components'),
+          origin: get_option(config, 'origin', element, 'data-e-components-origin'),
+          order: get_option(config, 'order', element, 'data-e-components-order'),
 
-          component: getOption(config, 'component', element, 'data-e-component'),
-          src: getOption(config, 'src', element, 'data-e-component-src'),
-          componentOrder: getOption(config, 'componentOrder', element, 'data-e-component-order', 'css,html,js'),
-          id: getOption(config, 'id', element, 'data-e-component-id'),
-          required: getOption(config, 'required', element, 'data-e-component-required'),
-          fallback: getOption(config, 'fallback', element, 'data-e-component-fallback'),
-          timeout: getOption(config, 'timeout', element, 'data-e-component-timeout'),
+          component: get_option(config, 'component', element, 'data-e-component'),
+          src: get_option(config, 'src', element, 'data-e-component-src'),
+          componentOrder: get_option(config, 'componentOrder', element, 'data-e-component-order', 'css,html,js'),
+          id: get_option(config, 'id', element, 'data-e-component-id'),
+          required: get_option(config, 'required', element, 'data-e-component-required'),
+          fallback: get_option(config, 'fallback', element, 'data-e-component-fallback'),
+          timeout: get_option(config, 'timeout', element, 'data-e-component-timeout'),
 
-          fallbackSrc: getOption(config, 'fallbackSrc', element, 'data-e-component-fallback-src'),
-          fallbackOrder: getOption(config, 'fallbackOrder', element, 'data-e-component-fallback-order')
+          fallbackSrc: get_option(config, 'fallbackSrc', element, 'data-e-component-fallback-src'),
+          fallbackOrder: get_option(config, 'fallbackOrder', element, 'data-e-component-fallback-order')
       };
 
       if (options.component && !options.id) {
@@ -315,13 +315,13 @@
   /**
     * Iteratively traverses up the DOM tree looking for the presence of an attribute.
     * @param {Element} element - Starting element.
-    * @param {string} attrName - Name of the attribute.
+    * @param {string} attr_name - Name of the attribute.
     * @returns {string|null}
     */
-  function findNearestAttr(element, attrName) {
+  function find_nearest_attr(element, attr_name) {
       var current = element;
       while (current) {
-          var val = current.getAttribute(attrName);
+          var val = current.getAttribute(attr_name);
           if (val) {
               return val;
           }
@@ -330,28 +330,28 @@
       return null;
   }
 
-  function findNearestOrigin(element) {
-      var origin = findNearestAttr(element, 'data-e-components-origin');
+  function find_nearest_origin(element) {
+      var origin = find_nearest_attr(element, 'data-e-components-origin');
       if (origin) {
-          return normalizeOrigin(origin);
+          return normalize_origin(origin);
       }
-      var globalOrigin = globalConfig.origin;
-      if (globalOrigin) {
-          return normalizeOrigin(globalOrigin);
+      var global_origin = global_config.origin;
+      if (global_origin) {
+          return normalize_origin(global_origin);
       }
       return './';
   }
 
-  function findNearestFallbackOrigin(element) {
-      var origin = findNearestAttr(element, 'data-e-components-fallback-origin');
-      return origin ? normalizeOrigin(origin) : null;
+  function find_nearest_fallback_origin(element) {
+      var origin = find_nearest_attr(element, 'data-e-components-fallback-origin');
+      return origin ? normalize_origin(origin) : null;
   }
 
-  function findNearestFallbackOrder(element) {
-      return findNearestAttr(element, 'data-e-components-fallback-order');
+  function find_nearest_fallback_order(element) {
+      return find_nearest_attr(element, 'data-e-components-fallback-order');
   }
 
-  function normalizeOrigin(url) {
+  function normalize_origin(url) {
       if (!url) return '';
       if (url.charAt(url.length - 1) !== '/') {
           return url + '/';
@@ -364,55 +364,55 @@
     * @param {string} key
     * @param {Array} value
     */
-  function addToParsedOrderCache(key, value) {
-      if (!parsedOrderCache[key]) {
-          if (parsedOrderCacheKeys.length >= MAX_CACHE_ENTRIES) {
-              var oldest = parsedOrderCacheKeys.shift();
-              delete parsedOrderCache[oldest];
+  function add_to_parsed_order_cache(key, value) {
+      if (!parsed_order_cache[key]) {
+          if (parsed_order_cache_keys.length >= MAX_CACHE_ENTRIES) {
+              var oldest = parsed_order_cache_keys.shift();
+              delete parsed_order_cache[oldest];
           }
-          parsedOrderCacheKeys.push(key);
+          parsed_order_cache_keys.push(key);
       }
-      parsedOrderCache[key] = value;
+      parsed_order_cache[key] = value;
   }
 
   /**
     * Processes a sequential or parallel loading format.
-    * @param {string} orderVal
+    * @param {string} order_val
     * @returns {Array}
     */
-  function parseOrderString(orderVal) {
-      if (!orderVal) return [];
-      if (parsedOrderCache[orderVal]) {
-          return parsedOrderCache[orderVal];
+  function parse_order_string(order_val) {
+      if (!order_val) return [];
+      if (parsed_order_cache[order_val]) {
+          return parsed_order_cache[order_val];
       }
 
       var
-        registered = registeredOrders[orderVal],
-        resolved = registered ? registered : orderVal,
+        registered = registered_orders[order_val],
+        resolved = registered ? registered : order_val,
 
         steps = resolved.split(','),
         parsed = [],
-        sLen = steps.length;
+        s_len = steps.length;
 
-      for (var i = 0; i < sLen; i++) {
+      for (var i = 0; i < s_len; i++) {
           var step = steps[i].trim();
           if (step) {
               var
-                parallelGroup = step.split('+'),
-                parsedGroup = [],
-                pLen = parallelGroup.length;
-              for (var j = 0; j < pLen; j++) {
-                  var item = parallelGroup[j].trim();
+                parallel_group = step.split('+'),
+                parsed_group = [],
+                p_len = parallel_group.length;
+              for (var j = 0; j < p_len; j++) {
+                  var item = parallel_group[j].trim();
                   if (item) {
-                      parsedGroup.push(item);
+                      parsed_group.push(item);
                   }
               }
-              if (parsedGroup.length > 0) {
-                  parsed.push(parsedGroup);
+              if (parsed_group.length > 0) {
+                  parsed.push(parsed_group);
               }
           }
       }
-      addToParsedOrderCache(orderVal, parsed);
+      add_to_parsed_order_cache(order_val, parsed);
       return parsed;
   }
 
@@ -422,31 +422,31 @@
     * @param {string} url - Destination URL.
     * @param {number} timeout - Maximum timeout duration.
     * @param {Element} element - Component container node.
-    * @param {string|null} componentId - Component ID to track execution failures.
+    * @param {string|null} component_id - Component ID to track execution failures.
     * @param {Function} callback - Callback function.
     */
-  function fetchAndApplyResource(type, url, timeout, element, componentId, callback) {
+  function fetch_and_apply_resource(type, url, timeout, element, component_id, callback) {
       var
-        cacheKey = type + ':' + url,
-        validTypes = ['css', 'html', 'js'];
+        cache_key = type + ':' + url,
+        valid_types = ['css', 'html', 'js'];
 
-      if (validTypes.indexOf(type) === -1) {
+      if (valid_types.indexOf(type) === -1) {
           callback(new Error('_components: Unknown resource type: "' + type + '" for URL: ' + url));
           return;
       }
 
-      if (type === 'css' && appliedCSS[cacheKey]) {
+      if (type === 'css' && applied_css[cache_key]) {
           return callback(null);
       }
-      if (type === 'js' && appliedJS[cacheKey]) {
+      if (type === 'js' && applied_js[cache_key]) {
           return callback(null);
       }
 
-      if (resourceCache[cacheKey]) {
-          var entry = resourceCache[cacheKey];
+      if (resource_cache[cache_key]) {
+          var entry = resource_cache[cache_key];
           if (entry.status === 'loaded') {
               if (type === 'html') {
-                  applyResourceToDOM(type, entry.data, element, componentId, callback);
+                  apply_resource_to_dom(type, entry.data, element, component_id, callback);
               } else {
                   callback(null);
               }
@@ -456,7 +456,7 @@
               entry.callbacks.push(function(err, data) {
                   if (err) return callback(err);
                   if (type === 'html') {
-                      applyResourceToDOM(type, data, element, componentId, callback);
+                      apply_resource_to_dom(type, data, element, component_id, callback);
                   } else {
                       callback(null);
                   }
@@ -466,27 +466,27 @@
       }
 
       // Defensive control of maximum cached resource size (prevents duplicate entries)
-      if (resourceCacheKeys.indexOf(cacheKey) === -1) {
-          if (resourceCacheKeys.length >= MAX_CACHE_ENTRIES) {
-              var oldestKey = resourceCacheKeys.shift();
-              delete resourceCache[oldestKey];
+      if (resource_cache_keys.indexOf(cache_key) === -1) {
+          if (resource_cache_keys.length >= MAX_CACHE_ENTRIES) {
+              var oldest_key = resource_cache_keys.shift();
+              delete resource_cache[oldest_key];
           }
-          resourceCacheKeys.push(cacheKey);
+          resource_cache_keys.push(cache_key);
       }
 
-      var cacheEntry = {
+      var cache_entry = {
           status: 'loading',
           data: null,
           error: null,
           callbacks: []
       };
-      resourceCache[cacheKey] = cacheEntry;
+      resource_cache[cache_key] = cache_entry;
 
       if (typeof _http !== 'function') {
-          var missingDepErr = new Error('_components: Global dependency "_http" not found. Load the HTTP module before proceeding.');
-          cacheEntry.status = 'failed';
-          cacheEntry.error = missingDepErr;
-          callback(missingDepErr);
+          var missing_dep_err = new Error('_components: Global dependency "_http" not found. Load the HTTP module before proceeding.');
+          cache_entry.status = 'failed';
+          cache_entry.error = missing_dep_err;
+          callback(missing_dep_err);
           return;
       }
 
@@ -494,50 +494,50 @@
           method: 'GET',
           url: url,
           timeout: timeout,
-          onSuccess: function(responseText) {
-              cacheEntry.data = responseText;
+          onSuccess: function(response_text) {
+              cache_entry.data = response_text;
 
               if (type === 'html') {
-                  applyResourceToDOM(type, responseText, element, componentId, function(err) {
+                  apply_resource_to_dom(type, response_text, element, component_id, function(err) {
                       if (!err) {
-                          cacheEntry.status = 'loaded';
+                          cache_entry.status = 'loaded';
                       } else {
-                          cacheEntry.status = 'failed';
-                          cacheEntry.error = err;
+                          cache_entry.status = 'failed';
+                          cache_entry.error = err;
                       }
                       callback(err);
 
                       var
-                        list = cacheEntry.callbacks,
+                        list = cache_entry.callbacks,
                         len = list.length;
-                      cacheEntry.callbacks = [];
+                      cache_entry.callbacks = [];
                       for (var i = 0; i < len; i++) {
                           try {
-                              list[i](err, responseText);
+                              list[i](err, response_text);
                           } catch (ex) {
                               console.error('_components: Error processing queued resource callback:', ex);
                           }
                       }
                   });
               } else {
-                  applyResourceToDOM(type, responseText, element, componentId, function(err) {
+                  apply_resource_to_dom(type, response_text, element, component_id, function(err) {
                       if (!err) {
-                          cacheEntry.status = 'loaded';
-                          if (type === 'css') appliedCSS[cacheKey] = true;
-                          if (type === 'js') appliedJS[cacheKey] = true;
+                          cache_entry.status = 'loaded';
+                          if (type === 'css') applied_css[cache_key] = true;
+                          if (type === 'js') applied_js[cache_key] = true;
                       } else {
-                          cacheEntry.status = 'failed';
-                          cacheEntry.error = err;
+                          cache_entry.status = 'failed';
+                          cache_entry.error = err;
                       }
                       callback(err);
 
                       var
-                        list = cacheEntry.callbacks,
+                        list = cache_entry.callbacks,
                         len = list.length;
-                      cacheEntry.callbacks = [];
+                      cache_entry.callbacks = [];
                       for (var i = 0; i < len; i++) {
                           try {
-                              list[i](err, responseText);
+                              list[i](err, response_text);
                           } catch (ex) {
                               console.error('_components: Error processing queued resource callback:', ex);
                           }
@@ -546,15 +546,15 @@
               }
           },
           onError: function(err) {
-              cacheEntry.status = 'failed';
-              cacheEntry.error = err;
+              cache_entry.status = 'failed';
+              cache_entry.error = err;
 
               callback(err);
 
               var
-                list = cacheEntry.callbacks,
+                list = cache_entry.callbacks,
                 len = list.length;
-              cacheEntry.callbacks = [];
+              cache_entry.callbacks = [];
               for (var i = 0; i < len; i++) {
                   try {
                       list[i](err, null);
@@ -566,7 +566,7 @@
       });
   }
 
-  function applyResourceToDOM(type, data, element, componentId, callback) {
+  function apply_resource_to_dom(type, data, element, component_id, callback) {
       try {
           if (type === 'css') {
               var style = document.createElement('style');
@@ -591,80 +591,80 @@
           } else if (type === 'js') {
               var
                 script = document.createElement('script'),
-                wrappedData = data;
+                wrapped_data = data;
 
               // Wrap JS code in a try-catch block while maintaining scope compatibility
-              if (componentId) {
-                  var safeComponentId = componentId
+              if (component_id) {
+                  var safe_component_id = component_id
                       .replace(/\\/g, '\\\\')
                       .replace(/'/g, "\\'")
                       .replace(/\r/g, '\\r')
                       .replace(/\n/g, '\\n');
-                      wrappedData = "try {\n" + data + "\n}\n" +
+                      wrapped_data = "try {\n" + data + "\n}\n" +
                                 "catch(e) {\n" +
-                                "  e." + randomErrorsId + " = '" + safeComponentId + "';\n" +
-                                "  e.name = '" + safeComponentId + "';\n" +
+                                "  e." + random_errors_id + " = '" + safe_component_id + "';\n" +
+                                "  e.name = '" + safe_component_id + "';\n" +
                                 "  throw e;\n" +
                                 "}";
               }
 
               if (typeof Blob !== 'undefined' && typeof URL !== 'undefined' && typeof URL.createObjectURL === 'function') {
                   var
-                    blob = new Blob([wrappedData], { type: 'application/javascript' }),
-                    blobUrl = URL.createObjectURL(blob);
+                    blob = new Blob([wrapped_data], { type: 'application/javascript' }),
+                    blob_url = URL.createObjectURL(blob);
 
-                  script.src = blobUrl;
+                  script.src = blob_url;
 
                   script.onload = function() {
-                      URL.revokeObjectURL(blobUrl);
+                      URL.revokeObjectURL(blob_url);
                       if (script.parentNode) {
                           script.parentNode.removeChild(script);
                       }
-                      var execErr = componentId ? executionErrors[componentId] : null;
-                      if (execErr) {
-                          delete executionErrors[componentId];
-                          callback(execErr);
+                      var exec_err = component_id ? execution_errors[component_id] : null;
+                      if (exec_err) {
+                          delete execution_errors[component_id];
+                          callback(exec_err);
                       } else {
                           callback(null);
                       }
                   };
 
                   script.onerror = function() {
-                      URL.revokeObjectURL(blobUrl);
+                      URL.revokeObjectURL(blob_url);
                       if (script.parentNode) {
                           script.parentNode.removeChild(script);
                       }
                       // Fallback contingency in case of Content Security Policy (CSP) blockages
                       try {
-                          var fallbackScript = document.createElement('script');
-                          fallbackScript.textContent = wrappedData;
-                          document.head.appendChild(fallbackScript);
-                          if (fallbackScript.parentNode) {
-                              fallbackScript.parentNode.removeChild(fallbackScript);
+                          var fallback_script = document.createElement('script');
+                          fallback_script.textContent = wrapped_data;
+                          document.head.appendChild(fallback_script);
+                          if (fallback_script.parentNode) {
+                              fallback_script.parentNode.removeChild(fallback_script);
                           }
-                          var execErr = componentId ? executionErrors[componentId] : null;
-                          if (execErr) {
-                              delete executionErrors[componentId];
-                              callback(execErr);
+                          var exec_err = component_id ? execution_errors[component_id] : null;
+                          if (exec_err) {
+                              delete execution_errors[component_id];
+                              callback(exec_err);
                           } else {
                               callback(null);
                           }
-                      } catch (fallbackErr) {
-                          callback(new Error('_components: Failed to interpret JS resource asynchronously (even with fallback). Details: ' + fallbackErr.message));
+                      } catch (fallback_err) {
+                          callback(new Error('_components: Failed to interpret JS resource asynchronously (even with fallback). Details: ' + fallback_err.message));
                       }
                   };
 
                   document.head.appendChild(script);
               } else {
-                  script.textContent = wrappedData;
+                  script.textContent = wrapped_data;
                   document.head.appendChild(script);
                   if (script.parentNode) {
                       script.parentNode.removeChild(script);
                   }
-                  var execErr = componentId ? executionErrors[componentId] : null;
-                  if (execErr) {
-                      delete executionErrors[componentId];
-                      callback(execErr);
+                  var exec_err = component_id ? execution_errors[component_id] : null;
+                  if (exec_err) {
+                      delete execution_errors[component_id];
+                      callback(exec_err);
                   } else {
                       callback(null);
                   }
@@ -677,13 +677,13 @@
       }
   }
 
-  function isIdInParsedOrder(parsedOrder, id) {
-      var sLen = parsedOrder.length;
-      for (var i = 0; i < sLen; i++) {
+  function is_id_in_parsed_order(parsed_order, id) {
+      var s_len = parsed_order.length;
+      for (var i = 0; i < s_len; i++) {
           var
-            group = parsedOrder[i],
-            gLen = group.length;
-          for (var j = 0; j < gLen; j++) {
+            group = parsed_order[i],
+            g_len = group.length;
+          for (var j = 0; j < g_len; j++) {
               if (group[j] === id) {
                   return true;
               }
@@ -692,78 +692,78 @@
       return false;
   }
 
-  function evaluateDependencies(requiredStr, parentCoordinator, onReady, onFailure) {
-      if (!requiredStr || requiredStr === 'true' || requiredStr === 'false') {
-          onReady();
+  function evaluate_dependencies(required_str, parent_coordinator, on_ready, on_failure) {
+      if (!required_str || required_str === 'true' || required_str === 'false') {
+          on_ready();
           return null;
       }
 
       var
-        depIds = requiredStr.split(/[\s,]+/),
-        pendingSet = {},
-        hasActiveDeps = false,
-        len = depIds.length;
+        dep_ids = required_str.split(/[\s,]+/),
+        pending_set = {},
+        has_active_deps = false,
+        len = dep_ids.length;
 
       for (var i = 0; i < len; i++) {
-          var cleanId = depIds[i].trim();
-          if (cleanId) {
+          var clean_id = dep_ids[i].trim();
+          if (clean_id) {
               var
-                existsGlobally = instances[cleanId] || componentStates[cleanId],
-                existsInCoordinator = false;
+                exists_globally = instances[clean_id] || component_states[clean_id],
+                exists_in_coordinator = false;
 
-              if (parentCoordinator && parentCoordinator.options && parentCoordinator.options.order) {
-                  var parsedOrder = parseOrderString(parentCoordinator.options.order);
-                  if (isIdInParsedOrder(parsedOrder, cleanId)) {
-                      existsInCoordinator = true;
+              if (parent_coordinator && parent_coordinator.options && parent_coordinator.options.order) {
+                  var parsed_order = parse_order_string(parent_coordinator.options.order);
+                  if (is_id_in_parsed_order(parsed_order, clean_id)) {
+                      exists_in_coordinator = true;
                   }
               }
 
-              if (!existsGlobally && !existsInCoordinator) {
-                  onFailure(new Error('_components: Invalid configuration: Dependency "' + cleanId + '" has not been registered or declared in the orchestration.'));
+              if (!exists_globally && !exists_in_coordinator) {
+                  on_failure(new Error('_components: Invalid configuration: Dependency "' + clean_id + '" has not been registered or declared in the orchestration.'));
                   return null;
               }
 
-              pendingSet[cleanId] = true;
-              hasActiveDeps = true;
+              pending_set[clean_id] = true;
+              has_active_deps = true;
           }
       }
 
-      if (!hasActiveDeps) {
-          onReady();
+      if (!has_active_deps) {
+          on_ready();
           return null;
       }
 
-      function checkStates() {
-          var allReady = true;
-          for (var id in pendingSet) {
-              if (pendingSet.hasOwnProperty(id)) {
-                  var state = componentStates[id] || 'pending';
+      function check_states() {
+          var all_ready = true;
+          for (var id in pending_set) {
+              if (pending_set.hasOwnProperty(id)) {
+                  var state = component_states[id] || 'pending';
                   if (state === 'failed') {
-                      onFailure(new Error('_components: Critical failure propagated from required dependency: ' + id));
+                      on_failure(new Error('_components: Critical failure propagated from required dependency: ' + id));
                       cleanup();
                       return;
                   }
                   if (state !== 'ready') {
-                      allReady = false;
+                      all_ready = false;
                   }
               }
           }
-          if (allReady) {
-              onReady();
+          if (all_ready) {
+              on_ready();
               cleanup();
           }
       }
 
-      function onStateUpdate() {
-          checkStates();
+      function on_state_update() {
+          check_states();
       }
 
       function cleanup() {
-          main._unregisterStateObserver(onStateUpdate);
+          main._unregisterStateObserver(on_state_update);
       }
 
-      main._registerStateObserver(onStateUpdate);
-      checkStates();
+      main._registerStateObserver(on_state_update);
+      check_states();
 
       return cleanup;
   }
@@ -782,7 +782,7 @@
       if (!list) return;
       for (var i = list.length - 1; i >= 0; i--) {
           var cb = list[i];
-          if (cb === callback || cb._originalCallback === callback) {
+          if (cb === callback || cb._original_callback === callback) {
               list.splice(i, 1);
           }
       }
@@ -794,8 +794,8 @@
             self.off(event, wrapper);
             callback(data);
         };
-      wrapper._isOnce = true;
-      wrapper._originalCallback = callback;
+      wrapper._is_once = true;
+      wrapper._original_callback = callback;
       this.on(event, wrapper);
   };
   EventEmitter.prototype.emit = function(event, data) {
@@ -810,29 +810,29 @@
       }
   };
 
-  function resolveUniqueId(id) {
-      var resolvedId = id;
-      if (instances[resolvedId]) {
-          if (!componentCounters[id]) {
-              componentCounters[id] = 0;
+  function resolve_unique_id(id) {
+      var resolved_id = id;
+      if (instances[resolved_id]) {
+          if (!component_counters[id]) {
+              component_counters[id] = 0;
           }
           // Deterministic loop to guarantee uniqueness and full integrity of the instance tree
-          while (instances[resolvedId]) {
-              componentCounters[id]++;
-              resolvedId = id + '_' + componentCounters[id];
+          while (instances[resolved_id]) {
+              component_counters[id]++;
+              resolved_id = id + '_' + component_counters[id];
           }
-          console.warn('_components: Duplicate ID detected for "' + id + '". Automatically registered as "' + resolvedId + '". Events sent to the original ID "' + id + '" will not reach this instance.');
+          console.warn('_components: Duplicate ID detected for "' + id + '". Automatically registered as "' + resolved_id + '". Events sent to the original ID "' + id + '" will not reach this instance.');
       }
-      return resolvedId;
+      return resolved_id;
   }
 
-  function registerInstance(resolvedId, instance) {
+  function register_instance(resolved_id, instance) {
       for (var key in instances) {
-          if (instances.hasOwnProperty(key) && key !== resolvedId) {
+          if (instances.hasOwnProperty(key) && key !== resolved_id) {
               var other = instances[key];
               if (other.element === instance.element) {
-                  if (componentStates[key] === 'loading' || componentStates[key] === 'pending' || componentStates[key] === 'loading-fallback') {
-                      componentStates[key] = 'failed';
+                  if (component_states[key] === 'loading' || component_states[key] === 'pending' || component_states[key] === 'loading-fallback') {
+                      component_states[key] = 'failed';
                       main._notifyStateChange(key, 'failed');
                   }
                   other._destroy(true);
@@ -840,43 +840,43 @@
           }
       }
 
-      instances[resolvedId] = instance;
-      componentStates[resolvedId] = 'pending';
+      instances[resolved_id] = instance;
+      component_states[resolved_id] = 'pending';
   }
 
-  function flushQueue(targetId, instance) {
-      var queue = eventQueues[targetId];
+  function flush_queue(target_id, instance) {
+      var queue = event_queues[target_id];
       if (!queue || queue.length === 0) return;
 
-      var tempQueue = queue.slice(0);
-      eventQueues[targetId] = [];
+      var temp_queue = queue.slice(0);
+      event_queues[target_id] = [];
 
-      var len = tempQueue.length;
+      var len = temp_queue.length;
       for (var i = 0; i < len; i++) {
-          if (!instances[targetId] || instances[targetId] !== instance) {
-              console.warn('_components: flushQueue aborted for "' + targetId + '": the instance was destroyed during dispatch.');
+          if (!instances[target_id] || instances[target_id] !== instance) {
+              console.warn('_components: flushQueue aborted for "' + target_id + '": the instance was destroyed during dispatch.');
               break;
           }
-          var item = tempQueue[i];
+          var item = temp_queue[i];
           try {
               instance.emitter.emit(item.event, item.data);
           } catch (e) {
-              console.error('_components: Error dispatching queued event "' + item.event + '" for ' + targetId + ':', e);
+              console.error('_components: Error dispatching queued event "' + item.event + '" for ' + target_id + ':', e);
           }
       }
   }
 
   // --- CENTRALIZED DOM AND MUTATION OBSERVER HANDLING ---
 
-  function ensureGlobalObserverStarted() {
-      if (globalObserver) return;
+  function ensure_global_observer_started() {
+      if (global_observer) return;
 
       var target = document.body || document.documentElement;
       if (!target) return;
 
-      globalObserver = new MutationObserver(function() {
+      global_observer = new MutationObserver(function() {
           var
-            snapshot = observedInstances.slice(0),
+            snapshot = observed_instances.slice(0),
             len = snapshot.length;
           for (var i = 0; i < len; i++) {
               var item = snapshot[i];
@@ -891,95 +891,95 @@
           }
       });
 
-      globalObserver.observe(target, { childList: true, subtree: true });
+      global_observer.observe(target, { childList: true, subtree: true });
   }
 
-  function stopGlobalObserver() {
-      if (globalObserver) {
-          globalObserver.disconnect();
-          globalObserver = null;
+  function stop_global_observer() {
+      if (global_observer) {
+          global_observer.disconnect();
+          global_observer = null;
       }
-      observedInstances = []; // Clear references to allow Garbage Collection (GC)
+      observed_instances = []; // Clear references to allow Garbage Collection (GC)
   }
 
-  function setupObserver(element, instance) {
+  function setup_observer(element, instance) {
       if (typeof MutationObserver === 'undefined') return;
 
-      observedInstances.push({
+      observed_instances.push({
           element: element,
           instance: instance
       });
 
-      ensureGlobalObserverStarted();
+      ensure_global_observer_started();
   }
 
-  function removeObserver(instance) {
-      var len = observedInstances.length;
+  function remove_observer(instance) {
+      var len = observed_instances.length;
       for (var i = 0; i < len; i++) {
-          if (observedInstances[i].instance === instance) {
-              observedInstances.splice(i, 1);
+          if (observed_instances[i].instance === instance) {
+              observed_instances.splice(i, 1);
               break;
           }
       }
-      if (observedInstances.length === 0) {
-          stopGlobalObserver();
+      if (observed_instances.length === 0) {
+          stop_global_observer();
       }
   }
 
   // --- COMPONENT INSTANTIATION ---
 
-  function createComponentInstance(element, config, parentCoordinator) {
+  function create_component_instance(element, config, parent_coordinator) {
       var
-        options = resolveConfig(element, config),
+        options = resolve_config(element, config),
         id = options.id,
-        componentName = options.component,
-        finalId = resolveUniqueId(id),
+        component_name = options.component,
+        final_id = resolve_unique_id(id),
       instance = {
-          id: finalId,
+          id: final_id,
           element: element,
           options: options,
           emitter: new EventEmitter(),
           _cleanups: [],
           on: function(event, callback) {
-              if (isDestroyed()) {
-                  console.warn('_components: Attempt to call "on" on a destroyed or unmounted instance with ID: "' + finalId + '".');
+              if (is_destroyed()) {
+                  console.warn('_components: Attempt to call "on" on a destroyed or unmounted instance with ID: "' + final_id + '".');
                   return;
               }
               this.emitter.on(event, callback);
           },
           off: function(event, callback) {
-              if (isDestroyed()) {
-                  console.warn('_components: Attempt to call "off" on a destroyed or unmounted instance with ID: "' + finalId + '".');
+              if (is_destroyed()) {
+                  console.warn('_components: Attempt to call "off" on a destroyed or unmounted instance with ID: "' + final_id + '".');
                   return;
               }
               this.emitter.off(event, callback);
           },
           once: function(event, callback) {
-              if (isDestroyed()) {
-                  console.warn('_components: Attempt to call "once" on a destroyed or unmounted instance with ID: "' + finalId + '".');
+              if (is_destroyed()) {
+                  console.warn('_components: Attempt to call "once" on a destroyed or unmounted instance with ID: "' + final_id + '".');
                   return;
               }
               this.emitter.once(event, callback);
           },
           emit: function(event, data) {
-              if (isDestroyed()) {
-                  console.warn('_components: Attempt to call "emit" on a destroyed or unmounted instance with ID: "' + finalId + '".');
+              if (is_destroyed()) {
+                  console.warn('_components: Attempt to call "emit" on a destroyed or unmounted instance with ID: "' + final_id + '".');
                   return;
               }
               this.emitter.emit(event, data);
           },
           status: function() {
-              return componentStates[finalId] || 'pending';
+              return component_states[final_id] || 'pending';
           },
-          _destroy: function(isReset) {
-              if (instances[finalId] !== this) {
-                  removeObserver(this);
+          _destroy: function(is_reset) {
+              if (instances[final_id] !== this) {
+                  remove_observer(this);
                   return;
               }
-              if (!isReset && document.documentElement.contains(element)) {
-                  console.warn('_components: Internal unmount cycle (_destroy) invoked for ID "' + finalId + '" while the node remains attached to the DOM tree.');
+              if (!is_reset && document.documentElement.contains(element)) {
+                  console.warn('_components: Internal unmount cycle (_destroy) invoked for ID "' + final_id + '" while the node remains attached to the DOM tree.');
               }
-              removeObserver(this);
+              remove_observer(this);
 
               if (this._cleanups) {
                   for (var i = 0; i < this._cleanups.length; i++) {
@@ -992,91 +992,91 @@
                   this._cleanups = [];
               }
 
-              main._unregisterInstance(finalId);
+              main._unregisterInstance(final_id);
           }
       };
 
-      registerInstance(finalId, instance);
+      register_instance(final_id, instance);
 
-      var isDestroyed = function() {
-          return !instances[finalId] || instances[finalId] !== instance;
+      var is_destroyed = function() {
+          return !instances[final_id] || instances[final_id] !== instance;
       };
 
-      setupObserver(element, instance);
+      setup_observer(element, instance);
 
-      instance.start = function(onReady, onFailure) {
-          var state = componentStates[finalId];
+      instance.start = function(on_ready, on_failure) {
+          var state = component_states[final_id];
           if (state === 'ready') {
-              if (onReady) onReady();
+              if (on_ready) on_ready();
               return;
           }
           if (state === 'loading' || state === 'loading-fallback') {
-              if (onReady) {
-                  instance.emitter.once('ready', function() { onReady(); });
+              if (on_ready) {
+                  instance.emitter.once('ready', function() { on_ready(); });
               }
-              if (onFailure) {
-                  instance.emitter.once('error', onFailure);
+              if (on_failure) {
+                  instance.emitter.once('error', on_failure);
               }
               return;
           }
           if (state === 'failed') {
-              if (onFailure) {
-                  onFailure(new Error('_components: The component with ID "' + finalId + '" is in a failed state.'));
+              if (on_failure) {
+                  on_failure(new Error('_components: The component with ID "' + final_id + '" is in a failed state.'));
               }
               return;
           }
 
-          var originalPlaceholder = element.cloneNode(true);
+          var original_placeholder = element.cloneNode(true);
 
-          componentStates[finalId] = 'loading';
-          main._notifyStateChange(finalId, 'loading');
+          component_states[final_id] = 'loading';
+          main._notifyStateChange(final_id, 'loading');
 
-          var resolvedSrc = options.src;
-          if (!resolvedSrc) {
-              var compPath = componentName || options.id || '';
-              resolvedSrc = findNearestOrigin(element) + compPath + '/';
+          var resolved_src = options.src;
+          if (!resolved_src) {
+              var comp_path = component_name || options.id || '';
+              resolved_src = find_nearest_origin(element) + comp_path + '/';
           }
-          resolvedSrc = normalizeOrigin(resolvedSrc);
+          resolved_src = normalize_origin(resolved_src);
 
           var
-            steps = parseOrderString(options.componentOrder),
-            currentStep = 0;
+            steps = parse_order_string(options.componentOrder),
+            current_step = 0;
 
-          function runStep() {
-              if (currentStep >= steps.length) {
-                  componentStates[finalId] = 'ready';
-                  main._notifyStateChange(finalId, 'ready');
+          function run_step() {
+              if (current_step >= steps.length) {
+                  component_states[final_id] = 'ready';
+                  main._notifyStateChange(final_id, 'ready');
 
-                  flushQueue(finalId, instance);
+                  flush_queue(final_id, instance);
 
                   instance.emit('ready');
-                  if (onReady) onReady();
+                  if (on_ready) on_ready();
                   return;
               }
 
               var
-                group = steps[currentStep],
+                group = steps[current_step],
                 count = group.length,
                 finished = 0,
                 failed = false,
-                stepError = null;
+                step_error = null;
 
-              function next(err, resourceType, resolvedUrl) {
+              function next(err, resource_type, resolved_url) {
                   finished++;
                   if (err) {
-                      if (resourceType === 'js') {
+                      if (resource_type === 'js') {
                           failed = true;
-                          stepError = err;
+                          step_error = err;
                       } else {
-                          console.warn('_components: Non-critical resource "' + resourceType + '" failed at ' + resolvedUrl + '. Initiating UI degradation: ' + err.message);
+                          console.warn('_components: Non-critical resource "' + resource_type + '" failed at ' + resolved_url + '. Initiating UI degradation: ' + err.message);
                       }
                   }
                   if (finished === count) {
                       if (failed) {
-                          handleFailure(stepError);
+                          handle_failure(step_error);
                       } else {
-                          currentStep++;
-                          runStep();
+                          current_step++;
+                          run_step();
                       }
                   }
               }
@@ -1084,122 +1084,122 @@
               for (var i = 0; i < count; i++) {
                   var
                     type = group[i].toLowerCase(),
-                    url = resolvedSrc + type,
-                    timeoutValue = options.timeout ? parseInt(options.timeout, 10) : globalConfig.timeout;
+                    url = resolved_src + type,
+                    timeout_value = options.timeout ? parseInt(options.timeout, 10) : global_config.timeout;
 
                   (function(t, u) {
-                      fetchAndApplyResource(t, u, timeoutValue, element, finalId, function(err) {
+                      fetch_and_apply_resource(t, u, timeout_value, element, final_id, function(err) {
                           next(err, t, u);
                       });
                   })(type, url);
               }
           }
 
-          function handleFailure(err) {
+          function handle_failure(err) {
               if (options.fallback) {
-                  componentStates[finalId] = 'loading-fallback';
-                  main._notifyStateChange(finalId, 'loading-fallback');
+                  component_states[final_id] = 'loading-fallback';
+                  main._notifyStateChange(final_id, 'loading-fallback');
 
                   var
-                    inheritedListeners = instance.emitter ? instance.emitter.listeners : null,
-                    savedEventQueue = eventQueues[finalId] ? eventQueues[finalId].slice(0) : null;
+                    inherited_listeners = instance.emitter ? instance.emitter.listeners : null,
+                    saved_event_queue = event_queues[final_id] ? event_queues[final_id].slice(0) : null;
 
-                  removeObserver(instance);
-                  main._unregisterInstance(finalId);
+                  remove_observer(instance);
+                  main._unregisterInstance(final_id);
 
                   var
-                    resolvedFallbackSrc = options.fallbackSrc || findNearestFallbackOrigin(element),
-                    resolvedFallbackOrder = options.fallbackOrder || findNearestFallbackOrder(element) || 'css,html,js',
-                    fallbackConfig = {
+                    resolved_fallback_src = options.fallbackSrc || find_nearest_fallback_origin(element),
+                    resolved_fallback_order = options.fallbackOrder || find_nearest_fallback_order(element) || 'css,html,js',
+                    fallback_config = {
                       component: options.fallback,
-                      id: finalId,
-                      componentOrder: resolvedFallbackOrder,
-                      src: resolvedFallbackSrc || null
+                      id: final_id,
+                      componentOrder: resolved_fallback_order,
+                      src: resolved_fallback_src || null
                     },
-                    fallbackInst = createComponentInstance(element, fallbackConfig, parentCoordinator);
+                    fallback_inst = create_component_instance(element, fallback_config, parent_coordinator);
 
-                  if (savedEventQueue && savedEventQueue.length > 0) {
-                      eventQueues[finalId] = savedEventQueue;
+                  if (saved_event_queue && saved_event_queue.length > 0) {
+                      event_queues[final_id] = saved_event_queue;
                   }
 
-                  var LIFECYCLE_EVENTS = { 'ready': true, 'error': true };
-                  if (inheritedListeners) {
-                      for (var ev in inheritedListeners) {
-                          if (inheritedListeners.hasOwnProperty(ev) && !LIFECYCLE_EVENTS[ev]) {
-                              var fns = inheritedListeners[ev];
+                  var lifecycle_events = { 'ready': true, 'error': true };
+                  if (inherited_listeners) {
+                      for (var ev in inherited_listeners) {
+                          if (inherited_listeners.hasOwnProperty(ev) && !lifecycle_events[ev]) {
+                              var fns = inherited_listeners[ev];
                               for (var k = 0; k < fns.length; k++) {
                                   var fn = fns[k];
-                                  if (fn && fn._isOnce) {
-                                      fallbackInst.emitter.once(ev, fn._originalCallback);
+                                  if (fn && fn._is_once) {
+                                      fallback_inst.emitter.once(ev, fn._original_callback);
                                   } else {
-                                      fallbackInst.emitter.on(ev, fn);
+                                      fallback_inst.emitter.on(ev, fn);
                                   }
                               }
                           }
                       }
                   }
 
-                  fallbackInst.start(function() {
-                      instance.emitter.emit('ready', { replacedBy: fallbackInst });
-                      if (onReady) onReady();
-                  }, function(fallbackErr) {
-                      terminateWithError(fallbackErr);
+                  fallback_inst.start(function() {
+                      instance.emitter.emit('ready', { replacedBy: fallback_inst });
+                      if (on_ready) on_ready();
+                  }, function(fallback_err) {
+                      terminate_with_error(fallback_err);
                   });
               } else {
-                  terminateWithError(err);
+                  terminate_with_error(err);
               }
           }
 
-          function terminateWithError(err) {
-              componentStates[finalId] = 'failed';
-              main._notifyStateChange(finalId, 'failed');
+          function terminate_with_error(err) {
+              component_states[final_id] = 'failed';
+              main._notifyStateChange(final_id, 'failed');
 
-              if (eventQueues[finalId]) {
-                  delete eventQueues[finalId];
+              if (event_queues[final_id]) {
+                  delete event_queues[final_id];
               }
 
-              if (originalPlaceholder) {
+              if (original_placeholder) {
                   element.innerHTML = '';
 
                   var
-                    attrsToRemove = [],
-                    currentAttrs = element.attributes;
-                  for (var idx = 0; idx < currentAttrs.length; idx++) {
-                      attrsToRemove.push(currentAttrs[idx].name);
+                    attrs_to_remove = [],
+                    current_attrs = element.attributes;
+                  for (var idx = 0; idx < current_attrs.length; idx++) {
+                      attrs_to_remove.push(current_attrs[idx].name);
                   }
-                  for (var idx = 0; idx < attrsToRemove.length; idx++) {
-                      element.removeAttribute(attrsToRemove[idx]);
-                  }
-
-                  var origAttrs = originalPlaceholder.attributes;
-                  for (var a = 0; a < origAttrs.length; a++) {
-                      element.setAttribute(origAttrs[a].name, origAttrs[a].value);
+                  for (var idx = 0; idx < attrs_to_remove.length; idx++) {
+                      element.removeAttribute(attrs_to_remove[idx]);
                   }
 
-                  var restored = originalPlaceholder.cloneNode(true);
+                  var orig_attrs = original_placeholder.attributes;
+                  for (var a = 0; a < orig_attrs.length; a++) {
+                      element.setAttribute(orig_attrs[a].name, orig_attrs[a].value);
+                  }
+
+                  var restored = original_placeholder.cloneNode(true);
                   while (restored.firstChild) {
                       element.appendChild(restored.firstChild);
                   }
               }
 
               // Dual error notification (ensures both fallback and original listeners receive it)
-              var activeInst = instances[finalId];
-              if (activeInst && activeInst !== instance) {
-                  activeInst.emitter.emit('error', err);
+              var active_inst = instances[final_id];
+              if (active_inst && active_inst !== instance) {
+                  active_inst.emitter.emit('error', err);
               }
               instance.emitter.emit('error', err);
 
-              if (onFailure) onFailure(err);
+              if (on_failure) on_failure(err);
           }
 
-          var cancelDeps = evaluateDependencies(options.required, parentCoordinator, function() {
-              runStep();
+          var cancel_deps = evaluate_dependencies(options.required, parent_coordinator, function() {
+              run_step();
           }, function(err) {
-              terminateWithError(err);
+              terminate_with_error(err);
           });
 
-          if (cancelDeps) {
-              instance._cleanups.push(cancelDeps);
+          if (cancel_deps) {
+              instance._cleanups.push(cancel_deps);
           }
       };
 
@@ -1208,14 +1208,14 @@
 
   // --- COORDINATOR INSTANTIATION ---
 
-  function scanDirectSubcoordinators(root) {
+  function scan_direct_subcoordinators(root) {
       var
-        allSubCoords = root.querySelectorAll('[data-e-components]'),
+        all_sub_coords = root.querySelectorAll('[data-e-components]'),
         direct = [],
-        len = allSubCoords.length;
+        len = all_sub_coords.length;
       for (var i = 0; i < len; i++) {
           var
-            el = allSubCoords[i],
+            el = all_sub_coords[i],
             current = el.parentElement;
           while (current && current !== root) {
               if (current.hasAttribute('data-e-components')) {
@@ -1230,54 +1230,54 @@
       return direct;
   }
 
-  function createCoordinatorInstance(element, config) {
+  function create_coordinator_instance(element, config) {
       var
-        options = resolveConfig(element, config),
-        coordinatorId = options.components || null,
-        finalId = coordinatorId ? resolveUniqueId(coordinatorId) : null,
+        options = resolve_config(element, config),
+        coordinator_id = options.components || null,
+        final_id = coordinator_id ? resolve_unique_id(coordinator_id) : null,
 
-        isStarting = false,
-        startCallbacks = [],
+        is_starting = false,
+        start_callbacks = [],
 
       instance = {
-          id: finalId,
+          id: final_id,
           element: element,
           options: options,
-          _destroy: function(isReset) {
-              if (finalId && instances[finalId] !== this) {
-                  removeObserver(this);
+          _destroy: function(is_reset) {
+              if (final_id && instances[final_id] !== this) {
+                  remove_observer(this);
                   return;
               }
-              removeObserver(this);
-              if (finalId) {
-                  main._unregisterInstance(finalId);
+              remove_observer(this);
+              if (final_id) {
+                  main._unregisterInstance(final_id);
               }
           },
-          start: function(onFinished) {
-              if (finalId && componentStates[finalId] === 'ready') {
-                  if (onFinished) onFinished();
+          start: function(on_finished) {
+              if (final_id && component_states[final_id] === 'ready') {
+                  if (on_finished) on_finished();
                   return;
               }
-              if (isStarting) {
-                  if (onFinished) startCallbacks.push(onFinished);
+              if (is_starting) {
+                  if (on_finished) start_callbacks.push(on_finished);
                   return;
               }
-              isStarting = true;
-              if (onFinished) startCallbacks.push(onFinished);
+              is_starting = true;
+              if (on_finished) start_callbacks.push(on_finished);
 
-              if (finalId) {
-                  componentStates[finalId] = 'loading';
-                  main._notifyStateChange(finalId, 'loading');
+              if (final_id) {
+                  component_states[final_id] = 'loading';
+                  main._notifyStateChange(final_id, 'loading');
               }
 
-              function finishCoordinator(err) {
-                  isStarting = false;
-                  if (finalId) {
-                      componentStates[finalId] = err ? 'failed' : 'ready';
-                      main._notifyStateChange(finalId, componentStates[finalId]);
+              function finish_coordinator(err) {
+                  is_starting = false;
+                  if (final_id) {
+                      component_states[final_id] = err ? 'failed' : 'ready';
+                      main._notifyStateChange(final_id, component_states[final_id]);
                   }
-                  var list = startCallbacks;
-                  startCallbacks = [];
+                  var list = start_callbacks;
+                  start_callbacks = [];
                   var len = list.length;
                   for (var i = 0; i < len; i++) {
                       try {
@@ -1288,41 +1288,41 @@
                   }
               }
 
-              function scanAndInitSubcoordinators(root, done) {
+              function scan_and_init_subcoordinators(root, done) {
                   var
-                    subCoords = scanDirectSubcoordinators(root),
-                    total = subCoords.length;
+                    sub_coords = scan_direct_subcoordinators(root),
+                    total = sub_coords.length;
                   if (total === 0) return done();
 
                   var
                     initialized = 0,
-                    criticalFailed = null;
+                    critical_failed = null;
 
                   for (var i = 0; i < total; i++) {
-                      var coordinatorInst = createCoordinatorInstance(subCoords[i], null);
+                      var coordinator_inst = create_coordinator_instance(sub_coords[i], null);
 
                       (function(coord) {
                           coord.start(function(err) {
                               initialized++;
-                              if (err && !criticalFailed) {
-                                  criticalFailed = err;
+                              if (err && !critical_failed) {
+                                  critical_failed = err;
                               }
                               if (initialized === total) {
-                                  done(criticalFailed);
+                                  done(critical_failed);
                               }
                           });
-                      })(coordinatorInst);
+                      })(coordinator_inst);
                   }
               }
 
-              function scanDirectChildren() {
+              function scan_direct_children() {
                   var
-                    allDescendants = element.querySelectorAll('[data-e-component]'),
+                    all_descendants = element.querySelectorAll('[data-e-component]'),
                     direct = [],
-                    len = allDescendants.length;
+                    len = all_descendants.length;
                   for (var i = 0; i < len; i++) {
                       var
-                        el = allDescendants[i],
+                        el = all_descendants[i],
                         current = el.parentElement;
                       while (current && current !== element) {
                           if (current.hasAttribute('data-e-components')) {
@@ -1338,98 +1338,98 @@
               }
 
               var
-                directChildrenNodes = scanDirectChildren(),
-                orderSteps = parseOrderString(options.order),
-                currentStep = 0;
+                direct_children_nodes = scan_direct_children(),
+                order_steps = parse_order_string(options.order),
+                current_step = 0;
 
-              function runCoordinatorStep() {
-                  if (currentStep >= orderSteps.length) {
-                      finishCoordinator();
+              function run_coordinator_step() {
+                  if (current_step >= order_steps.length) {
+                      finish_coordinator();
                       return;
                   }
 
                   var
-                    group = orderSteps[currentStep],
+                    group = order_steps[current_step],
                     count = group.length,
                     finished = 0,
-                    criticalFailed = false;
+                    critical_failed = false;
 
-                  function checkProgress(childId, success, isCritical) {
+                  function check_progress(child_id, success, is_critical) {
                       finished++;
                       if (!success) {
                           var
-                            childInst = instances[childId],
-                            isRequired = false;
-                          if (isCritical) {
-                              isRequired = true;
-                          } else if (childInst && childInst.options.required !== null && childInst.options.required !== undefined) {
-                              var reqVal = childInst.options.required;
-                              if (reqVal !== 'false' && reqVal !== false) {
-                                  isRequired = true;
+                            child_inst = instances[child_id],
+                            is_required = false;
+                          if (is_critical) {
+                              is_required = true;
+                          } else if (child_inst && child_inst.options.required !== null && child_inst.options.required !== undefined) {
+                              var req_val = child_inst.options.required;
+                              if (req_val !== 'false' && req_val !== false) {
+                                  is_required = true;
                               }
                           }
 
-                          if (isRequired) {
-                              criticalFailed = true;
+                          if (is_required) {
+                              critical_failed = true;
                           }
                       }
 
                       if (finished === count) {
-                          if (criticalFailed) {
-                              finishCoordinator(new Error('_components: Orchestration halted due to a failure in a required component.'));
+                          if (critical_failed) {
+                              finish_coordinator(new Error('_components: Orchestration halted due to a failure in a required component.'));
                           } else {
-                              currentStep++;
-                              runCoordinatorStep();
+                              current_step++;
+                              run_coordinator_step();
                           }
                       }
                   }
 
                   for (var i = 0; i < count; i++) {
                       var
-                        childName = group[i],
-                        matchedNode = null,
-                        nodesLen = directChildrenNodes.length;
+                        child_name = group[i],
+                        matched_node = null,
+                        nodes_len = direct_children_nodes.length;
 
-                      for (var j = 0; j < nodesLen; j++) {
-                          if (directChildrenNodes[j].getAttribute('data-e-component') === childName) {
-                              matchedNode = directChildrenNodes[j];
+                      for (var j = 0; j < nodes_len; j++) {
+                          if (direct_children_nodes[j].getAttribute('data-e-component') === child_name) {
+                              matched_node = direct_children_nodes[j];
                               break;
                           }
                       }
 
-                      if (!matchedNode) {
-                          checkProgress(childName, true);
+                      if (!matched_node) {
+                          check_progress(child_name, true);
                           continue;
                       }
 
                       var
-                        childId = matchedNode.getAttribute('data-e-component-id') || childName,
-                        childInst = instances[childId] || createComponentInstance(matchedNode, null, instance);
+                        child_id = matched_node.getAttribute('data-e-component-id') || child_name,
+                        child_inst = instances[child_id] || create_component_instance(matched_node, null, instance);
 
-                      (function(cId, cInst) {
-                          cInst.start(function() {
-                              scanAndInitSubcoordinators(cInst.element, function(err) {
+                      (function(c_id, c_inst) {
+                          c_inst.start(function() {
+                              scan_and_init_subcoordinators(c_inst.element, function(err) {
                                   if (err) {
-                                      checkProgress(cId, false, true); // Added isCritical flag for correct propagation
+                                      check_progress(c_id, false, true); // Added isCritical flag for correct propagation
                                   } else {
-                                      checkProgress(cId, true);
+                                      check_progress(c_id, true);
                                   }
                               });
                           }, function() {
-                              checkProgress(cId, false);
+                              check_progress(c_id, false);
                           });
-                      })(childInst.id, childInst);
+                      })(child_inst.id, child_inst);
                   }
               }
 
-              runCoordinatorStep();
+              run_coordinator_step();
           }
       };
 
-      if (finalId) {
-          registerInstance(finalId, instance);
+      if (final_id) {
+          register_instance(final_id, instance);
       }
-      setupObserver(element, instance);
+      setup_observer(element, instance);
 
       return instance;
   }
@@ -1437,39 +1437,39 @@
   function initialize(element, config) {
       if (!element) return;
       var
-        options = resolveConfig(element, config),
-        isCoordinator = !!options.components,
-        isComponent = !!options.component;
+        options = resolve_config(element, config),
+        is_coordinator = !!options.components,
+        is_component = !!options.component;
 
-      if (isComponent) {
-          var compInstance = createComponentInstance(element, config);
-          compInstance.start(function() {
-              if (isCoordinator) {
-                  var coordInstance = createCoordinatorInstance(element, config);
-                  coordInstance.start();
+      if (is_component) {
+          var comp_instance = create_component_instance(element, config);
+          comp_instance.start(function() {
+              if (is_coordinator) {
+                  var coord_instance = create_coordinator_instance(element, config);
+                  coord_instance.start();
               }
           });
-          return compInstance;
-      } else if (isCoordinator) {
-          var coordInstance = createCoordinatorInstance(element, config);
-          coordInstance.start();
-          return coordInstance;
+          return comp_instance;
+      } else if (is_coordinator) {
+          var coord_instance = create_coordinator_instance(element, config);
+          coord_instance.start();
+          return coord_instance;
       }
   }
 
   /**
     * Main entry point for module initialization or configuration.
-    * @param {Element|Object} elementOrConfig - DOM element to initialize or global configuration.
+    * @param {Element|Object} element_or_config - DOM element to initialize or global configuration.
     * @param {Object} [config] - Instance-specific configuration.
     * @returns {Object|undefined} Global configuration or created instance.
     */
-  _components.fn(function (elementOrConfig, config) {
-    if (isPlainObject(elementOrConfig)) {
-      var _config = configure(elementOrConfig);
+  _components.fn(function (element_or_config, config) {
+    if (is_plain_object(element_or_config)) {
+      var _config = configure(element_or_config);
       return { config: function () { return _config; } };
     }
 
-    var _ref = initialize(elementOrConfig, config);
+    var _ref = initialize(element_or_config, config);
     return { ref: function () { return _ref; } };
   });
 
