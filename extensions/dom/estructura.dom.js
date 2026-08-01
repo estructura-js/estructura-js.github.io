@@ -1,4 +1,4 @@
-﻿(function(global, factory){
+﻿(function (global, factory) {
 	'use strict';
 	if(typeof exports === 'object' && typeof module !== 'undefined'){
 		module.exports = factory();
@@ -9,7 +9,7 @@
 	else {
 		global._dom = factory();
 	}
-}(this, function(){
+}(this, function () {
     'use strict';
 
     var
@@ -21,7 +21,7 @@
 
     _dom.subtype({
         'String': {
-            'DOMQuery': function(input){
+            'DOMQuery': function (input) {
                 return input.length > 1 && input[0] === '>';
             }
         }
@@ -29,10 +29,10 @@
 
     _dom.fn({
         'DOMQuery': {
-            each: function(DOMQuery, fn){
+            each: function (DOMQuery, fn) {
                 return _fn_each.call(this, DOMQuery, fn);
             },
-            get: function(DOMQuery, property){
+            get: function (DOMQuery, property) {
                 return _fn_get.call(this, DOMQuery, property);
             },
             set: _domquery_node_nodes_set_factory('DOMQuery'),
@@ -41,10 +41,10 @@
         },
 
         'Node': {
-            each: function(Node, fn){
+            each: function (Node, fn) {
                 return _fn_each.call(this, null, fn, [Node[0]]);
             },
-            get: function(Node, property){
+            get: function (Node, property) {
                 return _fn_get.call(this, null, property, [Node[0]]);
             },
             set: _domquery_node_nodes_set_factory('Node'),
@@ -53,10 +53,10 @@
         },
 
         'Nodes': {
-            each: function(Nodes, fn){
+            each: function (Nodes, fn) {
                 return _fn_each.call(this, null, fn, Nodes[0]);
             },
-            get: function(Nodes, property){
+            get: function (Nodes, property) {
                 return _fn_get.call(this, null, property, Nodes[0]);
             },
             set: _domquery_node_nodes_set_factory('Nodes'),
@@ -65,9 +65,9 @@
         }
     });
 
-    function _domquery_node_nodes_set_factory(type, property_prefix){
+    function _domquery_node_nodes_set_factory(type, property_prefix) {
         var is_domquery = type === 'DOMQuery';
-        return function(reference, property){
+        return function (reference, property) {
             var have_value = typeof arguments[2] !== 'undefined';
             var args = [
                 (!is_domquery ? null : reference),
@@ -79,13 +79,13 @@
         }
     }
 
-    function _fn_set(DOMQuery, property, array, value){
-        _fn_set_get_wrapper(DOMQuery, property, array, function(element, clean_property){
+    function _fn_set(DOMQuery, property, array, value) {
+        _fn_set_get_wrapper(DOMQuery, property, array, function (element, clean_property) {
             _access_sub_object(element, clean_property, value, true);
         });
     }
 
-    function _property_function(property){
+    function _property_function(property) {
         property = property.split('.');
         if(!property[0]){ return; }
         if(_property_transform[property[0]]){ property = _property_transform[property[0]](property); }
@@ -102,7 +102,7 @@
     };
 
     var _get_functions = {
-        style: function(property, value, previousValue, object){
+        style: function (property, value, previousValue, object) {
             if(this.nodeType === 1 && previousValue === ''){
                 return window.getComputedStyle(this)[property];
             }
@@ -113,21 +113,21 @@
     var _set_functions = {
     };
 
-    function _to_camel_case(property){
-        return property.replace(/-([a-z])/g, function(found, first_letter){ return first_letter.toUpperCase(); });
+    function _to_camel_case(property) {
+        return property.replace(/-([a-z])/g, function (found, first_letter) { return first_letter.toUpperCase(); });
     }
 
-    function _clean_dataset(property){
+    function _clean_dataset(property) {
         return property.replace(/^data\-/, '').replace(/\-+/g, '-').replace(/^\-+|\-+$/g, '');
     }
 
-    function _clean_property(property){
+    function _clean_property(property) {
         if(typeof property !== 'string'){ return; }
         return property.replace(/\s+/g, '').replace(/^\.+|\.+$/g, '');
     }
 
-    function _camel_case_one_level_properties(name){
-        return function(property_parts){
+    function _camel_case_one_level_properties(name) {
+        return function (property_parts) {
             if(property_parts.length > 2){
                 var error = new Error('"' + property_parts.slice(1).join('.') + '"');
                 error.name = 'unknown "' + name + '" property';
@@ -147,15 +147,15 @@
         }
     }
 
-    function _fn_get(DOMQuery, property, array){
+    function _fn_get(DOMQuery, property, array) {
         var results = [];
-        _fn_set_get_wrapper(DOMQuery, property, array, function(element, clean_property){
+        _fn_set_get_wrapper(DOMQuery, property, array, function (element, clean_property) {
             results.push(_access_sub_object(element, clean_property, null, false));
         });
         return results;
     }
 
-    function _fn_set_get_wrapper(DOMQuery, property, array, callback){
+    function _fn_set_get_wrapper(DOMQuery, property, array, callback) {
         var original_property = property;
         if(!(property = _clean_property(property))){
             var error = new Error('resulting an empty string');
@@ -182,7 +182,7 @@
         }
     }
 
-    function _access_sub_object(object, property, value, is_set){
+    function _access_sub_object(object, property, value, is_set) {
         var current = object;
         var keys = property.keys;
         var set_fn = property.set_fn;
@@ -199,7 +199,7 @@
         current[!set_fn ? last_key : (set_fn.key ? set_fn.key.apply(object, args) : set_fn.apply(object, args))] = !set_fn ? value : (set_fn.value ? set_fn.value.apply(object, args) : set_fn.apply(object, args));
     }
 
-    function _fn_each(DOMQuery, fn, array){
+    function _fn_each(DOMQuery, fn, array) {
         if(typeof fn !== 'function'){ return; }
         try {
             var found = array || document.querySelectorAll(DOMQuery[0].slice(1)), item = 0;

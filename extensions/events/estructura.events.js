@@ -1,4 +1,4 @@
-(function(global, factory){
+(function (global, factory) {
 	'use strict';
 	if(typeof exports === 'object' && typeof module !== 'undefined'){
 		module.exports = factory();
@@ -9,10 +9,10 @@
 	else {
 		global._events = factory();
 	}
-}(this, function(){
+}(this, function () {
 	'use strict';
 
-    function _error(message){
+    function _error(message) {
         var e = new Error(message);
         e.name = '_events';
         throw e;
@@ -24,23 +24,23 @@
     verify_own_property_fn = Object.prototype.hasOwnProperty,
     verify_weakmap = typeof WeakMap === 'function';
 
-    function _is_object(object){
+    function _is_object(object) {
         return object && typeof object === 'object';
     }
 
-    function _is_function(fn){
+    function _is_function(fn) {
         return typeof fn === 'function';
     }
 
-    function _is_undefined(data){
+    function _is_undefined(data) {
         return typeof data === 'undefined';
     }
 
-    function _is_array(object){
+    function _is_array(object) {
         return get_primitive_type_fn.call(object) === array_check_str;
     }
 
-	function simple_object_copy(destination_object, source_object){
+	function simple_object_copy(destination_object, source_object) {
 		for(var field in source_object){
 			if(!verify_own_property_fn.call(source_object, field)){ continue; }
 			destination_object[field] = source_object[field];
@@ -54,13 +54,13 @@
     _events_library = verify_weakmap ? new WeakMap() : {},
     _events_last_id = 0;
 
-    _events.pause = function(){ _events_on = false; };
-    _events.resume = function(){ _events_on = true; };
+    _events.pause = function () { _events_on = false; };
+    _events.resume = function () { _events_on = true; };
 
     _events.subtype('browser-dom');
 
     _events.subtype({
-        Object: function(input){
+        Object: function (input) {
             return _is_function(input.addEventListener) && _is_function(input.removeEventListener) ? 'EventTarget' : false;
         }
     });
@@ -77,14 +77,14 @@
         Document: { ready: _custom_iteration_wrapper('Document', 'DOMContentLoaded') }
     });
 
-    function _custom_iteration_wrapper(event_from, events){
-        return function(arg){
+    function _custom_iteration_wrapper(event_from, events) {
+        return function (arg) {
             return _iterate_elements(_on, event_from, [arg[0]], [events].concat(Array.prototype.slice.call(arguments, 1)));
         }
     }
 
-    function _iteration_wrapper(iteration_fn){
-        return function(arg) {
+    function _iteration_wrapper(iteration_fn) {
+        return function (arg) {
             var types = _events.type(arg[0]), event_from = 'EventTarget';
 
             if(types['Node']){ event_from = 'Node'; }
@@ -96,7 +96,7 @@
         }
     }
 
-    function _iterate_elements(iteration_fn, event_from, elements, args){
+    function _iterate_elements(iteration_fn, event_from, elements, args) {
         var iterator = 0;
         var events_list = [];
         var have_event_names = args[0] && typeof args[0] === 'string';
@@ -133,7 +133,7 @@
         return this;
     }
 
-    function _return_event_library(event_from, reference, mode){
+    function _return_event_library(event_from, reference, mode) {
         if(!verify_weakmap){
             try {
                 if(!mode && isNaN(reference._e_events_id)){
@@ -155,7 +155,7 @@
         return _events_library.get(reference);
     }
 
-    function _on(call_mode, event_from, event, fn, data){
+    function _on(call_mode, event_from, event, fn, data) {
         if(!_is_function(fn)){
             return _on_event.call(this, call_mode, event_from, event, {}, (!_is_object(fn) ? {} : fn));
         }
@@ -174,7 +174,7 @@
         event.mode = _event_mode(data);
 
         if(!_is_function(_event_library[event.name][event.mode])){
-            _event_library[event.name][event.mode] = function(event_data){
+            _event_library[event.name][event.mode] = function (event_data) {
                 return _on_event.call(this, call_mode, event_from, { name: event.name, mode: event.mode, id: '' }, event_data, simple_object_copy({}, data));
             };
 
@@ -189,11 +189,11 @@
         else { _event_library[event.name][event.mode][event.id].push(fn); }
     }
 
-    function _event_mode(object){
+    function _event_mode(object) {
         return ((object.once ? '_once' : '') + (object.capture ? '_capture' : '') + (object.passive ? '_passive' : '') + (object.signal ? '_signal' : '')) || 'default';
     }
 
-    function _on_event(call_mode, event_from, event, event_data, data){
+    function _on_event(call_mode, event_from, event, event_data, data) {
         if(!_events_on || !_return_event_library(event_from, this, true)){ return; }
 
         event = !_is_object(event) ? {} : event;
@@ -207,7 +207,7 @@
         }
 
         var have_errors = [];
-        _event_libraries_iteration.call(this, event_from, event, function(event_id_library, id){
+        _event_libraries_iteration.call(this, event_from, event, function (event_id_library, id) {
             if(event_id_library[id].paused && !data.resume){ return; }
 
             if(data.resume){
@@ -236,7 +236,7 @@
         }
     }
 
-    function _change_mode(event, data){
+    function _change_mode(event, data) {
         var has_explicit_data = !!data;
         if(has_explicit_data){
             var have_mode = false;
@@ -257,7 +257,7 @@
         }
     }
 
-    function _off(call_mode, event_from, event, data){
+    function _off(call_mode, event_from, event, data) {
         if(!_events_on || !_return_event_library(event_from, this, true)){ return; }
 
         if(!call_mode){
@@ -271,7 +271,7 @@
         data = (!_is_object(data) ? {} : data);
 
         _event_libraries_iteration.call(this, event_from, event,
-            function(event_id_library, id){
+            function (event_id_library, id) {
                 if(data.pause){
                     event_id_library[id].paused = true;
                     return;
@@ -279,11 +279,11 @@
                 delete event_id_library[id];
             },
 
-            function(event_mode_library, mode){
+            function (event_mode_library, mode) {
 
             },
 
-            function(event_name_library, name){
+            function (event_name_library, name) {
                 if(data.pause){ return; }
 
                 var has_modes_left = false;
@@ -315,7 +315,7 @@
         );
     }
 
-    function _event_libraries_iteration(event_from, event, event_id_fn, event_mode_fn, event_name_fn){
+    function _event_libraries_iteration(event_from, event, event_id_fn, event_mode_fn, event_name_fn) {
         var _event_library = _return_event_library(event_from, this, true);
         for(var registered_event_name in _event_library){
             if(!verify_own_property_fn.call(_event_library, registered_event_name) || (event.name && event.name !== registered_event_name)){ continue; }

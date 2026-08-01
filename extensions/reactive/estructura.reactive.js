@@ -1,4 +1,4 @@
-﻿(function(global, factory){
+﻿(function (global, factory) {
 	'use strict';
 	if(typeof exports === 'object' && typeof module !== 'undefined'){
 		module.exports = factory();
@@ -9,7 +9,7 @@
 	else {
 		global._reactive = factory();
 	}
-}(this, function(){
+}(this, function () {
     'use strict';
 
     var
@@ -17,7 +17,7 @@
     private_fns = { on: true, off: true, stop: true, event: true },
     re_vars = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/;
 
-    function _error(message){
+    function _error(message) {
         var e = new Error(message);
         e.name = '';
         throw e;
@@ -26,14 +26,14 @@
     var _reactive = _e.instance('reactive');
     _reactive.subtype('browser-dom');
 
-    _reactive.fn(function(_reactive_node, _reactive_config){
+    _reactive.fn(function (_reactive_node, _reactive_config) {
         var _reactive_node_type = _reactive.type(_reactive_node);
         if(!_reactive_node_type['Node']){
             _error('"' + _reactive_node_type.join(', ') + '" not a Node.');
         }
 
-        function _extract_variable_fn(callback){
-            return function(text, last_position){
+        function _extract_variable_fn(callback) {
+            return function (text, last_position) {
                 var end = last_position || 0;
                 while(true){
                     var prefix = text.indexOf(re_prefix, end);
@@ -46,7 +46,7 @@
                     var is_var = re_vars.test(name);
 
                     postfix = postfix + re_postfix.length;
-                    
+
                     if(callback){
                         try { name = callback(name, { expr: !is_var, start: prefix, end: postfix }); }
                         catch(e){ _error('Variables processor error: ' + e.message); }
@@ -118,7 +118,7 @@
         _reactive_exposed_object.on = _reactive_state_on;
         _reactive_exposed_object.stop = _reactive_state_stop;
         _reactive_exposed_object.off = _reactive_state_off;
-        _reactive_exposed_object.event = function(eventName, fn){
+        _reactive_exposed_object.event = function (eventName, fn) {
             if(!eventName || typeof eventName !== 'string' || typeof events[eventName] === 'undefined'){
                 _error('Unrecognized event: ' + eventName);
             }
@@ -127,14 +127,14 @@
                 _error('Cannot use with event: ' + String(fn));
             }
 
-            events[eventName] = function(){
+            events[eventName] = function () {
                 try { fn.apply(null, arguments); }
                 catch(e){ _error(eventName + ' event error: ' + e.message); }
             }
         }
 
         var _reactive_exposed_state = new Proxy(_reactive_exposed_object, {
-            set: function(target, property, value){
+            set: function (target, property, value) {
                 if(typeof property !== 'string'){
                   _error('Cannot use symbol as property name: ' + property);
                 }
@@ -146,7 +146,7 @@
                 if(target[property] !== value){
                     target[property] = value;
                     var element = _reactive_render_element || render_pending_updates.get(property);
-  
+
                     render_pending_updates.set(property, element);
                     if(!render_is_flush_scheduled){
                         render_is_flush_scheduled = true;
@@ -157,7 +157,7 @@
             }
         });
 
-        function _render_flush_updates(){
+        function _render_flush_updates() {
             var pending_updates = new Map(render_pending_updates).entries();
             render_pending_updates.clear();
             render_is_flush_scheduled = false;
@@ -172,7 +172,7 @@
         reactive_templates,
         ignored_mutations;
 
-        function _reactive_registries(){
+        function _reactive_registries() {
             variables = new Map();
             variables_nodes = new WeakMap();
             attribute_registry = new WeakMap();
@@ -185,7 +185,7 @@
 
         var _node_types = {
             'add': {
-                '3': function(node){
+                '3': function (node) {
                     var parsed = _parse_template(node.textContent);
                     if(!parsed){ return; }
 
@@ -199,7 +199,7 @@
                         }
 
                         var registry = attribute_registry.get(parent) || {};
-                        
+
                         if(registry['value'] && registry['value'] !== node){
                             var boundVars = variables_nodes.get(registry['value']);
                             var firstVar = boundVars && boundVars[0] ? boundVars[0] : extracted[0];
@@ -219,7 +219,7 @@
                     }
                 },
 
-                '2': function(node){
+                '2': function (node) {
                     if(typeof node.value !== 'string' || node.value.indexOf(re_prefix) === -1){
                         return;
                     }
@@ -250,12 +250,12 @@
                     }
                 },
 
-                '1': function(node){
+                '1': function (node) {
                     if(node !== _reactive_node && node.outerHTML && node.outerHTML.indexOf(re_prefix) === -1){
                         return;
                     }
 
-                    if(node.hasAttributes()){ 
+                    if(node.hasAttributes()){
                         var i = 0, attrs = node.attributes;
                         while(i < attrs.length){
                             if(typeof attrs[i].value === 'string'){
@@ -269,11 +269,11 @@
                 }
             },
             'del': {
-                '3': function(node){
+                '3': function (node) {
                     _delete_variable(node);
                 },
 
-                '2': function(node){
+                '2': function (node) {
                     if(node.ownerElement){
                         _delete_attr_variable(node.ownerElement, node.nodeName);
                     }
@@ -282,7 +282,7 @@
                     }
                 },
 
-                '1': function(node){
+                '1': function (node) {
                     var walker = document.createTreeWalker(
                         node,
                         NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT,
@@ -314,7 +314,7 @@
             }
         };
 
-        function _parse_template(text){
+        function _parse_template(text) {
             var template = _compile_template(text);
             if(template.length <= 1){ return; }
 
@@ -332,7 +332,7 @@
             };
         }
 
-        function _compile_template(text){
+        function _compile_template(text) {
             var segments = [];
             var last_position = 0;
             var result;
@@ -351,7 +351,7 @@
             return segments;
         }
 
-        function _execute_template(compiled){
+        function _execute_template(compiled) {
             var renderedText = compiled[0];
             for(var i = 1; i < compiled.length; i += 2){
                 var val = _reactive_exposed_state[compiled[i]];
@@ -360,7 +360,7 @@
             return renderedText;
         }
 
-        function _ignore_mutation(target, type, attrName){
+        function _ignore_mutation(target, type, attrName) {
             var record = ignored_mutations.get(target);
             if(!record){
                 record = { characterData: 0, attributes: new Set() };
@@ -375,13 +375,13 @@
             }
         }
 
-        function _should_delete_ignored(record, target){
+        function _should_delete_ignored(record, target) {
             if(record.characterData === 0 && record.attributes.size === 0){
                 ignored_mutations.delete(target);
             }
         }
 
-        function _should_ignore_and_consume(mutation){
+        function _should_ignore_and_consume(mutation) {
             var record = ignored_mutations.get(mutation.target);
             if(!record){ return false; }
 
@@ -402,7 +402,7 @@
             return false;
         }
 
-        function _delete_variable(node){
+        function _delete_variable(node) {
             var varsInNode = variables_nodes.get(node);
             if(!varsInNode){ return; }
 
@@ -418,7 +418,7 @@
                 var nodesArray = variables.get(variableName);
 
                 if(nodesArray){
-                    var newNodesArray = nodesArray.filter(function(item){
+                    var newNodesArray = nodesArray.filter(function (item) {
                         return item.node !== node && item.node.isConnected;
                     });
 
@@ -436,22 +436,22 @@
             reactive_templates.delete(node);
         }
 
-        function _delete_attr_variable(element, attrName){
+        function _delete_attr_variable(element, attrName) {
             var registry = attribute_registry.get(element);
             if(registry && registry[attrName]){
                 var attrNode = registry[attrName];
                 var boundVariables = variables_nodes.get(attrNode);
-                
+
                 if(boundVariables){
                     for(var i = 0; i < boundVariables.length; i++){
                         var variableName = boundVariables[i];
                         var nodesArray = variables.get(variableName);
-                        
+
                         if(nodesArray){
-                            var newArray = nodesArray.filter(function(item){
+                            var newArray = nodesArray.filter(function (item) {
                                 return item.node !== attrNode;
                             });
-                            
+
                             if(newArray.length === 0){
                                 variables.delete(variableName);
                                 _reactive_state_on_variable_del(variableName);
@@ -462,14 +462,14 @@
                         }
                     }
                 }
-                
+
                 variables_nodes.delete(attrNode);
                 reactive_templates.delete(attrNode);
                 delete registry[attrName];
             }
         }
 
-        function _add_variable(node, variableName, attrName){
+        function _add_variable(node, variableName, attrName) {
             var is_new_variable = !variables.has(variableName);
 
             if(is_new_variable){
@@ -478,14 +478,14 @@
             else {
                 var nodesArray = variables.get(variableName);
                 var isDuplicated = false;
-                
+
                 for(var i = 0; i < nodesArray.length; i++){
                     if(nodesArray[i].node === node){
                         isDuplicated = true;
                         break;
                     }
                 }
-                
+
                 if(!isDuplicated){
                     nodesArray.push({ node: node, attr: attrName });
                 }
@@ -504,7 +504,7 @@
             }
         }
 
-        function _mutations_iterator(mode, nodes){
+        function _mutations_iterator(mode, nodes) {
             if(!nodes.length){ return; }
             var j = nodes.length;
             while(j--){
@@ -515,7 +515,7 @@
             }
         }
 
-        var _dom_reactive = new MutationObserver(function(list, observer){
+        var _dom_reactive = new MutationObserver(function (list, observer) {
             var l = 0;
             while(l < list.length){
                 var mutation = list[l];
@@ -535,9 +535,9 @@
                         case 'attributes':
                             var element = mutation.target;
                             var attrName = mutation.attributeName;
-                            
+
                             var attrNode = element.attributes.getNamedItem(attrName);
-                            
+
                             _delete_attr_variable(element, attrName);
                             if(attrNode){
                                 _node_types.add['2'](attrNode);
@@ -553,7 +553,7 @@
             }
         });
 
-        function _reactive_state_on(){
+        function _reactive_state_on() {
             if(_reactive_node.nodeType === 1 || _reactive_node.nodeType === 3){
                 _node_types.add[_reactive_node.nodeType](_reactive_node);
             }
@@ -561,7 +561,7 @@
             for(var variableName of variables.keys()){
                 _reactive_state_render_variable(variableName);
             }
-            
+
             _reactive_state_start();
 
             if(typeof events.reactiveOn === 'function'){
@@ -569,7 +569,7 @@
             }
         }
 
-        function _reactive_state_start(){
+        function _reactive_state_start() {
             _reactive_node.addEventListener('input', _reactive_state_input_handler);
             _reactive_node.addEventListener('change', _reactive_state_input_handler);
 
@@ -582,10 +582,10 @@
             });
         }
 
-        function _reactive_state_stop(){
+        function _reactive_state_stop() {
             _reactive_node.removeEventListener('input', _reactive_state_input_handler);
             _reactive_node.removeEventListener('change', _reactive_state_input_handler);
-            
+
             _dom_reactive.disconnect();
 
             render_pending_updates.clear();
@@ -596,7 +596,7 @@
             }
         }
 
-        function _reactive_state_off(){
+        function _reactive_state_off() {
             _reactive_state_stop();
 
             if(typeof events.reactiveOff === 'function'){
@@ -606,19 +606,19 @@
             _reactive_registries();
         }
 
-        function _reactive_state_input_handler(event){
+        function _reactive_state_input_handler(event) {
             if(!event || !event.target){ return; }
             var element = event.target;
-            
+
             var isCheckboxOrRadio = element.type === 'checkbox' || element.type === 'radio';
             var bindingKey = isCheckboxOrRadio ? 'checked' : 'value';
 
             var registry = attribute_registry.get(element);
             if(!registry || !registry[bindingKey]){ return; }
-            
+
             var attrNode = registry[bindingKey];
             var boundVariables = variables_nodes.get(attrNode);
-            
+
             if(boundVariables && boundVariables.length > 0){
                 var variableName = boundVariables[0];
                 var newValue = isCheckboxOrRadio ? element.checked : element.value;
@@ -631,7 +631,7 @@
             }
         }
 
-        function _reactive_state_render_variable(variableName, excludeElement){
+        function _reactive_state_render_variable(variableName, excludeElement) {
             var boundNodes = variables.get(variableName);
             if(!boundNodes){ return; }
 
@@ -745,7 +745,7 @@
             }
         }
 
-        function _reactive_state_on_variable_add(variableName){
+        function _reactive_state_on_variable_add(variableName) {
             if(!(variableName in _reactive_exposed_object)){
                 if(typeof extract_variables_processor === 'function' && expr_registry.has(variableName)){
                     _reactive_exposed_object[variableName] = extract_variables_processor(variableName, expr_registry.get(variableName), _reactive_exposed_object);
@@ -760,7 +760,7 @@
             }
         }
 
-        function _reactive_state_on_variable_del(variableName){
+        function _reactive_state_on_variable_del(variableName) {
             if(variableName in _reactive_exposed_object){
                 if(typeof events.deletedVariable === 'function'){
                     events.deletedVariable(variableName);
