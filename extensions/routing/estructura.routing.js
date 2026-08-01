@@ -12,11 +12,11 @@
 }(this, function () {
   "use strict";
 
-  var _routing = _e.instance('routing');
-
-  var hasWindow = typeof window !== 'undefined';
-  var hasHistory = hasWindow && !!window.history;
-  var hasOwnProp = Object.prototype.hasOwnProperty;
+  var
+    _routing = _e.instance('routing'),
+    hasWindow = typeof window !== 'undefined',
+    hasHistory = hasWindow && !!window.history,
+    hasOwnProp = Object.prototype.hasOwnProperty;
 
   // Direct property copy. Note: Prototype properties of 'source'
   // are deliberately ignored for security due to the hasOwnProperty guard.
@@ -102,8 +102,9 @@
 
   // Routing regular expression generation
   function parseRoute(path) {
-    var keys = [];
-    var sanitizedPath = path;
+    var
+      keys = [],
+      sanitizedPath = path;
 
     if (sanitizedPath !== '/' && sanitizedPath.charAt(sanitizedPath.length - 1) === '/') {
       sanitizedPath = sanitizedPath.slice(0, -1);
@@ -142,8 +143,9 @@
   // Routes punctuation
   function getSpecificityScore(pattern) {
     if (pattern === '*') return [1];
-    var parts = pattern.split('/');
-    var score = [];
+    var
+      parts = pattern.split('/'),
+      score = [];
     for (var j = 0; j < parts.length; j++) {
       var part = parts[j];
       if (part === '') continue;
@@ -176,8 +178,9 @@
 
   // Context Constructor
   function Context(path, state, basepath) {
-    var origin = (hasWindow && window.location.origin) || 'http://localhost';
-    var resolvedPath = path;
+    var
+      origin = (hasWindow && window.location.origin) || 'http://localhost',
+      resolvedPath = path;
 
     /*
     Previous (without double slash guards):
@@ -191,8 +194,9 @@
 
     // The following IF was added in order to avoid double slash
     if (resolvedPath.indexOf('/') === 0 && basepath) {
-      var basepathWithSlash = basepath.charAt(basepath.length - 1) === '/' ? basepath : basepath + '/';
-      var hasBasepath = resolvedPath === basepath || resolvedPath.indexOf(basepathWithSlash) === 0;
+      var
+        basepathWithSlash = basepath.charAt(basepath.length - 1) === '/' ? basepath : basepath + '/',
+        hasBasepath = resolvedPath === basepath || resolvedPath.indexOf(basepathWithSlash) === 0;
 
       if (!hasBasepath) {
         var cleanBase = basepath.charAt(basepath.length - 1) === '/' ? basepath.slice(0, -1) : basepath;
@@ -242,12 +246,14 @@
     // Single occurrences return a plain string.
     this.query = {};
     if (url.search) {
-      var search = url.search.substring(1);
-      var pairs = search.split('&');
+      var
+        search = url.search.substring(1),
+        pairs = search.split('&');
       for (var i = 0; i < pairs.length; i++) {
-        var pair = pairs[i].split('=');
-        var key = decodeURIComponent(pair[0].replace(/\+/g, ' '));
-        var value = pair[1] !== undefined ? decodeURIComponent(pair[1].replace(/\+/g, ' ')) : '';
+        var
+          pair = pairs[i].split('='),
+          key = decodeURIComponent(pair[0].replace(/\+/g, ' ')),
+          value = pair[1] !== undefined ? decodeURIComponent(pair[1].replace(/\+/g, ' ')) : '';
         if (key) {
           if (this.query[key] !== undefined) {
             this.query[key] = [].concat(this.query[key], value);
@@ -272,10 +278,11 @@
   };
 
   // IMPORTANT: Functions that depends each other STARTS HERE
-  var routes = new Map();
-  var basepath = '';
-  var running = false;
-  var errorListeners = [];
+  var
+    routes = new Map(),
+    basepath = '',
+    running = false,
+    errorListeners = [];
 
   // Strict ES5-compatible router signature
   var router = {};
@@ -313,14 +320,15 @@
   // Synchronous sequential middleware dispatch. Execution is synchronous
   // unless the consumer manually defers calling 'next()'.
   function dispatch(ctx, callback) {
-    var matches = [];
-
-    var iterator = routes.entries();
-    var entry;
+    var
+      matches = [],
+      iterator = routes.entries(),
+      entry;
     while (!(entry = iterator.next()).done) {
-      var pattern = entry.value[0];
-      var route = entry.value[1];
-      var m = route.regexp.exec(ctx.pathname);
+      var
+        pattern = entry.value[0],
+        route = entry.value[1],
+        m = route.regexp.exec(ctx.pathname);
 
       if (m) {
         var params = {};
@@ -340,8 +348,9 @@
     matches.sort(function (a, b) {
       var len = Math.max(a.score.length, b.score.length);
       for (var i = 0; i < len; i++) {
-        var scoreA = a.score[i] !== undefined ? a.score[i] : -1;
-        var scoreB = b.score[i] !== undefined ? b.score[i] : -1;
+        var
+          scoreA = a.score[i] !== undefined ? a.score[i] : -1,
+          scoreB = b.score[i] !== undefined ? b.score[i] : -1;
         if (scoreA !== scoreB) {
           return scoreB - scoreA;
         }
@@ -349,8 +358,9 @@
       return 0;
     });
 
-    var currentMatchIndex = 0;
-    var currentCallbackIndex = 0;
+    var
+      currentMatchIndex = 0,
+      currentCallbackIndex = 0;
 
     function next() {
       if (currentMatchIndex >= matches.length) {
@@ -358,8 +368,9 @@
         return;
       }
 
-      var match = matches[currentMatchIndex];
-      var callbacks = match.callbacks;
+      var
+        match = matches[currentMatchIndex],
+        callbacks = match.callbacks;
 
       if (currentCallbackIndex >= callbacks.length) {
         currentMatchIndex++;

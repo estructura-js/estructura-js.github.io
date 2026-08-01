@@ -17,8 +17,6 @@
     throw new Error('"_http" extension required before "_components".');
   }
 
-  var _components = _e.instance('components');
-
   /** @type {number} Maximum limit of memory cache entries before eviction */
   var MAX_CACHE_ENTRIES = 100;
 
@@ -29,31 +27,36 @@
       autoScan: false
   };
 
-  var registeredOrders = {};
-  var instances = {};
-  var resourceCache = {};
-  var componentStates = {};
-  var globalStateObservers = [];
+  var
+    _components = _e.instance('components'),
+    registeredOrders = {},
+    instances = {},
+    resourceCache = {},
+    componentStates = {},
+    globalStateObservers = [],
 
-  var appliedCSS = {};
-  var appliedJS = {};
+    appliedCSS = {},
+    appliedJS = {},
 
-  var parsedOrderCache = {};
-  var parsedOrderCacheKeys = [];
-  var resourceCacheKeys = [];
+    parsedOrderCache = {},
+    parsedOrderCacheKeys = [],
+    resourceCacheKeys = [];
 
   // Control structures for collision resolution and event queueing
-  var componentCounters = {};
-  var eventQueues = {};
-  var MAX_QUEUE_SIZE = 50;
+  var
+    componentCounters = {},
+    eventQueues = {},
+    MAX_QUEUE_SIZE = 50;
 
   // Internal registry to capture execution errors from dynamic scripts
-  var executionErrors = {};
+  var
+    executionErrors = {};
 
   // Centralized MutationObserver system
-  var globalObserver = null;
-  var observedInstances = [];
-  var randomErrorsId = '_e_components_' + (new Date()).getTime();
+  var
+    globalObserver = null,
+    observedInstances = [],
+    randomErrorsId = '_e_components_' + (new Date()).getTime();
 
   // Register global execution error handler for injected components
   if (typeof window !== 'undefined') {
@@ -134,8 +137,10 @@
   main.scan = function(root) {
       var searchRoot = root || document.body;
       if (!searchRoot) return;
-      var roots = searchRoot.querySelectorAll('[data-e-components]');
-      var len = roots.length;
+
+      var
+        roots = searchRoot.querySelectorAll('[data-e-components]'),
+        len = roots.length;
       for (var i = 0; i < len; i++) {
           main(roots[i]);
       }
@@ -207,9 +212,11 @@
       }
   };
 
-  main._notifyStateChange = function(id, state) {
-      var observers = globalStateObservers.slice(0); // Snapshot to avoid index shifting on concurrent unregistration
-      var len = observers.length;
+  main._notifyStateChange = function (id, state) {
+      // Snapshot to avoid index shifting on concurrent unregistration
+      var
+        observers = globalStateObservers.slice(0),
+        len = observers.length;
       for (var i = 0; i < len; i++) {
           try {
               observers[i](id, state);
@@ -379,18 +386,21 @@
           return parsedOrderCache[orderVal];
       }
 
-      var registered = registeredOrders[orderVal];
-      var resolved = registered ? registered : orderVal;
+      var
+        registered = registeredOrders[orderVal],
+        resolved = registered ? registered : orderVal,
 
-      var steps = resolved.split(',');
-      var parsed = [];
-      var sLen = steps.length;
+        steps = resolved.split(','),
+        parsed = [],
+        sLen = steps.length;
+
       for (var i = 0; i < sLen; i++) {
           var step = steps[i].trim();
           if (step) {
-              var parallelGroup = step.split('+');
-              var parsedGroup = [];
-              var pLen = parallelGroup.length;
+              var
+                parallelGroup = step.split('+'),
+                parsedGroup = [],
+                pLen = parallelGroup.length;
               for (var j = 0; j < pLen; j++) {
                   var item = parallelGroup[j].trim();
                   if (item) {
@@ -416,8 +426,9 @@
     * @param {Function} callback - Callback function.
     */
   function fetchAndApplyResource(type, url, timeout, element, componentId, callback) {
-      var cacheKey = type + ':' + url;
-      var validTypes = ['css', 'html', 'js'];
+      var
+        cacheKey = type + ':' + url,
+        validTypes = ['css', 'html', 'js'];
 
       if (validTypes.indexOf(type) === -1) {
           callback(new Error('_components: Unknown resource type: "' + type + '" for URL: ' + url));
@@ -496,8 +507,9 @@
                       }
                       callback(err);
 
-                      var list = cacheEntry.callbacks;
-                      var len = list.length;
+                      var
+                        list = cacheEntry.callbacks,
+                        len = list.length;
                       cacheEntry.callbacks = [];
                       for (var i = 0; i < len; i++) {
                           try {
@@ -519,8 +531,9 @@
                       }
                       callback(err);
 
-                      var list = cacheEntry.callbacks;
-                      var len = list.length;
+                      var
+                        list = cacheEntry.callbacks,
+                        len = list.length;
                       cacheEntry.callbacks = [];
                       for (var i = 0; i < len; i++) {
                           try {
@@ -537,8 +550,10 @@
               cacheEntry.error = err;
 
               callback(err);
-              var list = cacheEntry.callbacks;
-              var len = list.length;
+
+              var
+                list = cacheEntry.callbacks,
+                len = list.length;
               cacheEntry.callbacks = [];
               for (var i = 0; i < len; i++) {
                   try {
@@ -574,8 +589,9 @@
               }
               callback(null);
           } else if (type === 'js') {
-              var script = document.createElement('script');
-              var wrappedData = data;
+              var
+                script = document.createElement('script'),
+                wrappedData = data;
 
               // Wrap JS code in a try-catch block while maintaining scope compatibility
               if (componentId) {
@@ -593,8 +609,9 @@
               }
 
               if (typeof Blob !== 'undefined' && typeof URL !== 'undefined' && typeof URL.createObjectURL === 'function') {
-                  var blob = new Blob([wrappedData], { type: 'application/javascript' });
-                  var blobUrl = URL.createObjectURL(blob);
+                  var
+                    blob = new Blob([wrappedData], { type: 'application/javascript' }),
+                    blobUrl = URL.createObjectURL(blob);
 
                   script.src = blobUrl;
 
@@ -663,8 +680,9 @@
   function isIdInParsedOrder(parsedOrder, id) {
       var sLen = parsedOrder.length;
       for (var i = 0; i < sLen; i++) {
-          var group = parsedOrder[i];
-          var gLen = group.length;
+          var
+            group = parsedOrder[i],
+            gLen = group.length;
           for (var j = 0; j < gLen; j++) {
               if (group[j] === id) {
                   return true;
@@ -680,16 +698,18 @@
           return null;
       }
 
-      var depIds = requiredStr.split(/[\s,]+/);
-      var pendingSet = {};
-      var hasActiveDeps = false;
-      var len = depIds.length;
+      var
+        depIds = requiredStr.split(/[\s,]+/),
+        pendingSet = {},
+        hasActiveDeps = false,
+        len = depIds.length;
 
       for (var i = 0; i < len; i++) {
           var cleanId = depIds[i].trim();
           if (cleanId) {
-              var existsGlobally = instances[cleanId] || componentStates[cleanId];
-              var existsInCoordinator = false;
+              var
+                existsGlobally = instances[cleanId] || componentStates[cleanId],
+                existsInCoordinator = false;
 
               if (parentCoordinator && parentCoordinator.options && parentCoordinator.options.order) {
                   var parsedOrder = parseOrderString(parentCoordinator.options.order);
@@ -768,11 +788,12 @@
       }
   };
   EventEmitter.prototype.once = function(event, callback) {
-      var self = this;
-      var wrapper = function(data) {
-          self.off(event, wrapper);
-          callback(data);
-      };
+      var
+        self = this,
+        wrapper = function (data) {
+            self.off(event, wrapper);
+            callback(data);
+        };
       wrapper._isOnce = true;
       wrapper._originalCallback = callback;
       this.on(event, wrapper);
@@ -780,8 +801,9 @@
   EventEmitter.prototype.emit = function(event, data) {
       var list = this.listeners[event];
       if (list) {
-          var snapshot = list.slice(0);
-          var len = snapshot.length;
+          var
+            snapshot = list.slice(0),
+            len = snapshot.length;
           for (var i = 0; i < len; i++) {
               snapshot[i](data);
           }
@@ -853,8 +875,9 @@
       if (!target) return;
 
       globalObserver = new MutationObserver(function() {
-          var snapshot = observedInstances.slice(0);
-          var len = snapshot.length;
+          var
+            snapshot = observedInstances.slice(0),
+            len = snapshot.length;
           for (var i = 0; i < len; i++) {
               var item = snapshot[i];
               if (item && item.element) {
@@ -906,13 +929,12 @@
   // --- COMPONENT INSTANTIATION ---
 
   function createComponentInstance(element, config, parentCoordinator) {
-      var options = resolveConfig(element, config);
-      var id = options.id;
-      var componentName = options.component;
-
-      var finalId = resolveUniqueId(id);
-
-      var instance = {
+      var
+        options = resolveConfig(element, config),
+        id = options.id,
+        componentName = options.component,
+        finalId = resolveUniqueId(id),
+      instance = {
           id: finalId,
           element: element,
           options: options,
@@ -1016,8 +1038,9 @@
           }
           resolvedSrc = normalizeOrigin(resolvedSrc);
 
-          var steps = parseOrderString(options.componentOrder);
-          var currentStep = 0;
+          var
+            steps = parseOrderString(options.componentOrder),
+            currentStep = 0;
 
           function runStep() {
               if (currentStep >= steps.length) {
@@ -1031,11 +1054,12 @@
                   return;
               }
 
-              var group = steps[currentStep];
-              var count = group.length;
-              var finished = 0;
-              var failed = false;
-              var stepError = null;
+              var
+                group = steps[currentStep],
+                count = group.length,
+                finished = 0,
+                failed = false,
+                stepError = null;
 
               function next(err, resourceType, resolvedUrl) {
                   finished++;
@@ -1058,9 +1082,10 @@
               }
 
               for (var i = 0; i < count; i++) {
-                  var type = group[i].toLowerCase();
-                  var url = resolvedSrc + type;
-                  var timeoutValue = options.timeout ? parseInt(options.timeout, 10) : globalConfig.timeout;
+                  var
+                    type = group[i].toLowerCase(),
+                    url = resolvedSrc + type,
+                    timeoutValue = options.timeout ? parseInt(options.timeout, 10) : globalConfig.timeout;
 
                   (function(t, u) {
                       fetchAndApplyResource(t, u, timeoutValue, element, finalId, function(err) {
@@ -1075,22 +1100,23 @@
                   componentStates[finalId] = 'loading-fallback';
                   main._notifyStateChange(finalId, 'loading-fallback');
 
-                  var inheritedListeners = instance.emitter ? instance.emitter.listeners : null;
-                  var savedEventQueue = eventQueues[finalId] ? eventQueues[finalId].slice(0) : null;
+                  var
+                    inheritedListeners = instance.emitter ? instance.emitter.listeners : null,
+                    savedEventQueue = eventQueues[finalId] ? eventQueues[finalId].slice(0) : null;
 
                   removeObserver(instance);
                   main._unregisterInstance(finalId);
 
-                  var resolvedFallbackSrc = options.fallbackSrc || findNearestFallbackOrigin(element);
-                  var resolvedFallbackOrder = options.fallbackOrder || findNearestFallbackOrder(element) || 'css,html,js';
-
-                  var fallbackConfig = {
+                  var
+                    resolvedFallbackSrc = options.fallbackSrc || findNearestFallbackOrigin(element),
+                    resolvedFallbackOrder = options.fallbackOrder || findNearestFallbackOrder(element) || 'css,html,js',
+                    fallbackConfig = {
                       component: options.fallback,
                       id: finalId,
                       componentOrder: resolvedFallbackOrder,
                       src: resolvedFallbackSrc || null
-                  };
-                  var fallbackInst = createComponentInstance(element, fallbackConfig, parentCoordinator);
+                    },
+                    fallbackInst = createComponentInstance(element, fallbackConfig, parentCoordinator);
 
                   if (savedEventQueue && savedEventQueue.length > 0) {
                       eventQueues[finalId] = savedEventQueue;
@@ -1135,8 +1161,9 @@
               if (originalPlaceholder) {
                   element.innerHTML = '';
 
-                  var attrsToRemove = [];
-                  var currentAttrs = element.attributes;
+                  var
+                    attrsToRemove = [],
+                    currentAttrs = element.attributes;
                   for (var idx = 0; idx < currentAttrs.length; idx++) {
                       attrsToRemove.push(currentAttrs[idx].name);
                   }
@@ -1182,12 +1209,14 @@
   // --- COORDINATOR INSTANTIATION ---
 
   function scanDirectSubcoordinators(root) {
-      var allSubCoords = root.querySelectorAll('[data-e-components]');
-      var direct = [];
-      var len = allSubCoords.length;
+      var
+        allSubCoords = root.querySelectorAll('[data-e-components]'),
+        direct = [],
+        len = allSubCoords.length;
       for (var i = 0; i < len; i++) {
-          var el = allSubCoords[i];
-          var current = el.parentElement;
+          var
+            el = allSubCoords[i],
+            current = el.parentElement;
           while (current && current !== root) {
               if (current.hasAttribute('data-e-components')) {
                   break;
@@ -1202,14 +1231,15 @@
   }
 
   function createCoordinatorInstance(element, config) {
-      var options = resolveConfig(element, config);
-      var coordinatorId = options.components || null;
-      var finalId = coordinatorId ? resolveUniqueId(coordinatorId) : null;
+      var
+        options = resolveConfig(element, config),
+        coordinatorId = options.components || null,
+        finalId = coordinatorId ? resolveUniqueId(coordinatorId) : null,
 
-      var isStarting = false;
-      var startCallbacks = [];
+        isStarting = false,
+        startCallbacks = [],
 
-      var instance = {
+      instance = {
           id: finalId,
           element: element,
           options: options,
@@ -1259,12 +1289,14 @@
               }
 
               function scanAndInitSubcoordinators(root, done) {
-                  var subCoords = scanDirectSubcoordinators(root);
-                  var total = subCoords.length;
+                  var
+                    subCoords = scanDirectSubcoordinators(root),
+                    total = subCoords.length;
                   if (total === 0) return done();
 
-                  var initialized = 0;
-                  var criticalFailed = null;
+                  var
+                    initialized = 0,
+                    criticalFailed = null;
 
                   for (var i = 0; i < total; i++) {
                       var coordinatorInst = createCoordinatorInstance(subCoords[i], null);
@@ -1284,12 +1316,14 @@
               }
 
               function scanDirectChildren() {
-                  var allDescendants = element.querySelectorAll('[data-e-component]');
-                  var direct = [];
-                  var len = allDescendants.length;
+                  var
+                    allDescendants = element.querySelectorAll('[data-e-component]'),
+                    direct = [],
+                    len = allDescendants.length;
                   for (var i = 0; i < len; i++) {
-                      var el = allDescendants[i];
-                      var current = el.parentElement;
+                      var
+                        el = allDescendants[i],
+                        current = el.parentElement;
                       while (current && current !== element) {
                           if (current.hasAttribute('data-e-components')) {
                               break;
@@ -1303,9 +1337,10 @@
                   return direct;
               }
 
-              var directChildrenNodes = scanDirectChildren();
-              var orderSteps = parseOrderString(options.order);
-              var currentStep = 0;
+              var
+                directChildrenNodes = scanDirectChildren(),
+                orderSteps = parseOrderString(options.order),
+                currentStep = 0;
 
               function runCoordinatorStep() {
                   if (currentStep >= orderSteps.length) {
@@ -1313,17 +1348,18 @@
                       return;
                   }
 
-                  var group = orderSteps[currentStep];
-                  var count = group.length;
-                  var finished = 0;
-                  var criticalFailed = false;
+                  var
+                    group = orderSteps[currentStep],
+                    count = group.length,
+                    finished = 0,
+                    criticalFailed = false;
 
                   function checkProgress(childId, success, isCritical) {
                       finished++;
                       if (!success) {
-                          var childInst = instances[childId];
-
-                          var isRequired = false;
+                          var
+                            childInst = instances[childId],
+                            isRequired = false;
                           if (isCritical) {
                               isRequired = true;
                           } else if (childInst && childInst.options.required !== null && childInst.options.required !== undefined) {
@@ -1349,9 +1385,10 @@
                   }
 
                   for (var i = 0; i < count; i++) {
-                      var childName = group[i];
-                      var matchedNode = null;
-                      var nodesLen = directChildrenNodes.length;
+                      var
+                        childName = group[i],
+                        matchedNode = null,
+                        nodesLen = directChildrenNodes.length;
 
                       for (var j = 0; j < nodesLen; j++) {
                           if (directChildrenNodes[j].getAttribute('data-e-component') === childName) {
@@ -1365,8 +1402,9 @@
                           continue;
                       }
 
-                      var childId = matchedNode.getAttribute('data-e-component-id') || childName;
-                      var childInst = instances[childId] || createComponentInstance(matchedNode, null, instance);
+                      var
+                        childId = matchedNode.getAttribute('data-e-component-id') || childName,
+                        childInst = instances[childId] || createComponentInstance(matchedNode, null, instance);
 
                       (function(cId, cInst) {
                           cInst.start(function() {
@@ -1398,9 +1436,10 @@
 
   function initialize(element, config) {
       if (!element) return;
-      var options = resolveConfig(element, config);
-      var isCoordinator = !!options.components;
-      var isComponent = !!options.component;
+      var
+        options = resolveConfig(element, config),
+        isCoordinator = !!options.components,
+        isComponent = !!options.component;
 
       if (isComponent) {
           var compInstance = createComponentInstance(element, config);

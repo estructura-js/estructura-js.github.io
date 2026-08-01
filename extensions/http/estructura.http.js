@@ -27,12 +27,13 @@
       throw new Error('Options.url is an empty String.');
     }
 
-    var xhr = new XMLHttpRequest();
-    var method = options.method || 'GET';
-    var url = options.url;
-    var timeout = options.timeout || 0;
-    var headers = options.headers || {};
-    var data = options.data !== undefined ? options.data : null;
+    var
+      xhr = new XMLHttpRequest(),
+      method = options.method || 'GET',
+      url = options.url,
+      timeout = options.timeout || 0,
+      headers = options.headers || {},
+      data = options.data !== undefined ? options.data : null;
 
     // Observability check: Warning when mixing callbacks
     if (options.onReadyStateChange && (options.onSuccess || options.onError || options.onHeadersReceived)) {
