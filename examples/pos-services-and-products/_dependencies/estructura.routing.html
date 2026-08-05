@@ -1,0 +1,201 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+	<title>Routing</title>
+
+	<link rel="icon" href="../../estructura.icon.png">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="Gestiona la navegación y el enrutamiento en el cliente para aplicaciones de una sola página (SPA). Ofrece un control completo sobre el historial del navegador mediante la API de History, soporte para parámetros dinámicos y opcionales, ordenación de rutas basada en especificidad, middleware en cadena síncrono/asíncrono, desestructuración automática de parámetros de consulta (query strings) y control robusto de errores.">
+	<meta name="author" content="OKZGN">
+	<meta name="theme-color" content="#ffffff">
+
+	<link href="../../estructura.styles.css" rel="stylesheet" />
+	<script src="https://cdn.jsdelivr.net/npm/estructura-js"></script>
+	<script src="../dom/estructura.dom.js"></script>
+	<script src="../events/estructura.events.js"></script>
+	<script src="../../main.js"></script>
+	<script src="estructura.routing.js"></script>
+	<script>
+		document.addEventListener('DOMContentLoaded', function(){
+			console.log('Estructura Routing ready.');
+
+			var test_node = document.getElementById('test_node');
+
+			_routing(function(ctx, next){
+				console.info('Routing test:', ctx.path);
+				test_node.textContent = ctx.path;
+			});
+
+			_routing('/test/:id', function(ctx, next){
+				console.info('Routing test param:', ctx.params.id);
+				test_node.textContent = '/test/id: ' + ctx.params.id;
+			});
+
+			_routing.base(window.location.pathname);
+			_routing.start({
+				click: true,
+				popstate: true,
+				dispatch: true
+			});
+
+			var test_link = document.getElementById('test_link');
+			test_link.addEventListener('click', function(e){
+			  test_link.href = './test/' + Math.round(Math.random() * 9999);
+			});
+		});
+	</script>
+</head>
+
+<body>
+	<header class="center-y padding">
+		<h1 class="extension center-y">
+			<img id="logo" src="../../estructura.logo.png" alt="Estructura, JavaScript Framework">
+			<span id="test"><a id="test_link" href="#">Routing <b id="test_node"></b></a></span>
+		</h1>
+	</header>
+
+	<nav class="margin-y">
+		<section class="silver">
+			<h2 id="index" class="center-x">Menú</h2>
+			<div class="padding">
+				<ul class="lines center-y">
+					<li class="back"><a data-e-routing-excluded href="../../index.html#extensions">Atrás</a></li>
+					<li><a data-e-routing-excluded href="#description">Descripción</a></li>
+					<li><a data-e-routing-excluded href="#docs">Documentación</a></li>
+				</ul>
+			</div>
+		</section>
+	</nav>
+
+	<main>
+		<h2 class="title">Routing</h2>
+		<section class="margin-y">
+			<h2 id="description">Descripción</h2>
+			<div class="padding">Gestiona la navegación y el enrutamiento en el cliente para aplicaciones de una sola página (SPA). Ofrece un control completo sobre el historial del navegador mediante la API de History, soporte para parámetros dinámicos y opcionales, ordenación de rutas basada en especificidad, middleware en cadena síncrono/asíncrono, desestructuración automática de parámetros de consulta (query strings) y control robusto de errores.</div>
+			<p class="padding-y">
+			    <b>Librería:</b> <a data-e-routing-excluded target="_blank" href="estructura.routing.js">estructura.routing.js</a></div>
+			</p>
+			<p class="padding-y">
+				<b>Compatibilidad:</b> <a target="_blank" href="https://okzgn.com/articles/why-not-build-frontend-frameworks-on-raw-html-css-or-js/#routing---navigation">ES6+</a>
+			</p>
+
+		</section>
+
+		<section class="margin-y">
+			<h2 id="docs">Documentación</h2>
+			<div class="padding">
+				<h3>1. Inicialización y Ciclo de Vida Global</h3>
+				<p>El sistema de enrutamiento se gestiona directamente a través de la instancia global única <code>_routing</code>, la cual expone todos los métodos de configuración y control de ciclo de vida.</p>
+				<br>
+				<ul>
+					<li><b><code>_routing.start(options?)</code></b>: Activa el enrutador y comienza a escuchar eventos en la ventana (<code>window</code>).
+						<br><br><b>Opciones de Configuración:</b>
+						<ul>
+							<li><code>click</code> (<code>Boolean</code>): Intercepta automáticamente clics en enlaces locales de tipo ancla (<code>&lt;a&gt;</code>) evitando la recarga de página (por defecto, <code>true</code>).</li>
+							<li><code>popstate</code> (<code>Boolean</code>): Escucha los cambios de historial cuando el usuario retrocede o avanza en el navegador (por defecto, <code>true</code>).</li>
+							<li><code>dispatch</code> (<code>Boolean</code>): Ejecuta de forma inmediata el análisis y correspondencia de la ruta de la dirección actual al arrancar (por defecto, <code>true</code>).</li>
+						</ul>
+					</li>
+					<li><br><b><code>_routing.stop()</code></b>: Detiene el enrutador y elimina todos los escuchadores de eventos globales asociados (clics y <code>popstate</code>).</li>
+					<li><br><b><code>_routing.base(path?)</code></b>: Obtiene o establece la ruta base (prefijo) para todo el sistema de enrutamiento (ej. <code>/app</code>). Para establecerla se debe pasar un argumento de tipo string.</li>
+				</ul>
+				<br>
+				<h3>2. Registro de Rutas y Middlewares</h3>
+				<p>El enrutador admite la declaración de rutas de manera secuencial invocando directamente la función global <code>_routing</code>. Permite encadenar múltiples controladores (middlewares) utilizando una devolución de llamada (<code>next</code>).</p>
+				<br>
+				<p><b>Sintaxis de Registro:</b></p>
+<pre><code>// Rutas con controladores múltiples
+_routing('/perfil', authMiddleware, function(ctx) {
+	console.log('Ruta de perfil cargada');
+});
+
+// Registrar un middleware global para todas las rutas
+_routing(function(ctx, next) {
+	console.log('Log global para:', ctx.pathname);
+	next();
+});
+</code></pre>
+				<br>
+				<h3>3. Parámetros Dinámicos y Coincidencias</h3>
+				<p>El motor de enrutamiento traduce los patrones declarados a expresiones regulares, aislando y asignando parámetros estructurados en el contexto.</p>
+				<br>
+				<ul>
+					<li><b>Parámetros Requeridos (<code>:param</code>)</b>: Captura cualquier segmento de texto ubicado entre barras diagonales.
+						<pre><code>_routing('/usuario/:id', function(ctx) { console.log(ctx.params.id); });</code></pre>
+					</li>
+					<li><br><b>Parámetros Opcionales (<code>:param?</code>)</b>: Permite que el segmento final sea omitido en la ruta de navegación.
+						<pre><code>_routing('/blog/:categoria?', function(ctx) { /* ... */ });</code></pre>
+					</li>
+					<li><br><b>Comodín Global (<code>*</code>)</b>: Captura cualquier subruta posterior y lo asigna en el parámetro <code>ctx.params.wildcard</code>.
+						<pre><code>_routing('/archivos/*', function(ctx) { /* ... */ });</code></pre>
+					</li>
+				</ul>
+				<br>
+				<h3>4. El Objeto de Contexto (<code>Context</code>)</h3>
+				<p>Cada controlador registrado recibe como primer argumento un objeto de contexto que contiene toda la información de la transición actual.</p>
+				<br>
+				<p><b>Propiedades del Contexto:</b></p>
+				<ul>
+					<li><code>ctx.canonicalPath</code> (<code>String</code>): La ruta de navegación completa incluyendo la ruta base asignada, parámetros de búsqueda y fragmentos (hash).</li>
+					<li><br><code>ctx.path</code> (<code>String</code>): Ruta limpia de navegación sin el prefijo de la ruta base (incluye búsqueda y hash).</li>
+					<li><br><code>ctx.pathname</code> (<code>String</code>): Segmento de ruta pura sin parámetros de búsqueda, hash, ni barras diagonales redundantes al final.</li>
+					<li><br><code>ctx.querystring</code> (<code>String</code>): Cadena de texto de consulta limpia sin el símbolo de interrogación (<code>?</code>).</li>
+					<li><br><code>ctx.state</code> (<code>Object</code>): Copia profunda e independiente del objeto de estado asociado a la entrada del historial de navegación.</li>
+					<li><br><code>ctx.params</code> (<code>Object</code>): Mapa de variables dinámicas extraídas del patrón de la ruta actual (ej. <code>{ id: "42" }</code>).</li>
+					<li><br><code>ctx.query</code> (<code>Object</code>): Parámetros de consulta desestructurados automáticamente. Admite la acumulación de múltiples valores repetidos en forma de arreglos (ej. <code>?filtro=a&filtro=b</code> se convierte en <code>{ filtro: ["a", "b"] }</code>).</li>
+					<li><br><code>ctx.hash</code> (<code>String</code>): El segmento de ancla de la URL omitiendo el carácter inicial (<code>#</code>).</li>
+					<li><br><code>ctx.routePath</code> (<code>String</code>): El patrón original registrado que coincidió con la dirección actual.</li>
+				</ul>
+				<br>
+				<p><b>Métodos del Contexto:</b></p>
+				<ul>
+					<li><code>ctx.pushState()</code>: Escribe el estado actual y la ruta en el historial del navegador.</li>
+					<li><br><code>ctx.save()</code>: Reemplaza la entrada actual de navegación en el historial con el estado modificado.</li>
+				</ul>
+				<br>
+				<h3>5. Navegación Programática y Redirecciones</h3>
+				<p>Permite disparar cambios en la navegación desde código, controlando la actualización del historial y la ejecución de callbacks.</p>
+				<br>
+				<ul>
+					<li><b><code>_routing.show(path, state?, dispatch?, push?)</code></b>: Navega a la ruta indicada creando un nuevo registro en el historial.</li>
+					<li><br><b><code>_routing.replace(path, state?, dispatch?, replace?)</code></b>: Navega a la ruta indicada sobrescribiendo el registro del historial de navegación actual.</li>
+					<li><br><b><code>_routing.redirect(from, to)</code></b> o <b><code>_routing.redirect(to)</code></b>: Configura una regla de redirección o ejecuta una redirección inmediata de forma asíncrona mediante microtareas.
+<pre><code>// Redirección programada
+_routing.redirect('/inicio', '/');
+
+// Redirección inmediata dentro de un controlador
+_routing('/obsoleto', function(ctx) {
+	_routing.redirect('/');
+});
+</code></pre>
+					</li>
+				</ul>
+				<br>
+				<h3>6. Control de Errores y Desvinculación</h3>
+				<p>Proporciona herramientas de control para administrar fallas durante la ejecución de los controladores y limpiar registros existentes de memoria.</p>
+				<br>
+				<ul>
+					<li><b><code>_routing.onError(callback?)</code></b>: Registra un manejador global que intercepta errores lanzados durante la ejecución de la cadena de controladores de rutas. Si se invoca sin argumentos, devuelve una copia superficial del arreglo de escuchadores de errores registrados.</li>
+					<li><br><b><code>_routing.offError(callback?)</code></b>: Desvincula un manejador de errores específico o vacía todos los registros de error existentes si se omite el argumento.</li>
+					<li><br><b><code>_routing.off(path?, callback?)</code></b>: Desvincula de forma granular un callback de una ruta, borra un patrón completo, o limpia la colección de rutas registradas si se invoca sin argumentos.</li>
+				</ul>
+				<br>
+				<h3>7. Características Técnicas</h3>
+				<div class="features">
+					<p><strong>Resolución por Especificidad Dinámica:</strong> Para prevenir conflictos de coincidencia entre patrones similares, el motor evalúa dinámicamente cada ruta registrando un puntaje de prioridad. Segmentos estáticos asumen mayor prioridad que rutas con parámetros variables o comodines globales.</p>
+					<br><p><strong>Clonación Defensiva de Estado:</strong> Toda transición de datos a través del historial de navegación ejecuta un algoritmo recursivo de clonación profunda de bajo nivel. Protege referencias y mutaciones accidentales en estructuras avanzadas (como <code>Map</code>, <code>Set</code>, <code>ArrayBuffer</code>, o vistas de datos tipados).</p>
+					<br><p><strong>Filtrado de Interceptación Seguro:</strong> El analizador global de clics de anclas filtra de manera rigurosa eventos no estándar. <b>Evita interferir enlaces con el atributo <code>data-e-routing-excluded</code>, enlaces externos, descargas forzadas, teclas modificadoras del sistema (como Ctrl o Command), clics secundarios o protocolos nativos como <code>mailto:</code> o <code>tel:</code></b>.</p>
+					<br><p><strong>Ejecución Segura en Microtareas:</strong> La resolución de redirecciones se delega a microtareas del bucle de eventos utilizando de forma prioritaria <code>queueMicrotask</code> o <code>MutationObserver</code>, aislando los ciclos de navegación de la pila de llamadas principal para evitar bloqueos del motor de renderizado.</p>
+				</div>
+			</div>
+		</section>
+	</main>
+
+	<footer class="center-y padding">
+		<p>&copy; 2026 <a href="https://okzgn.com">OKZGN</a></p>
+	</footer>
+</body>
+</html>

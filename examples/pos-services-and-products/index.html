@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html spellcheck="false" lang="es">
+
+<head>
+	<meta charset="UTF-8">
+
+	<title>Punto de Venta de Servicios y Productos</title>
+
+	<link rel="icon" href="icon.png">
+	<link rel="apple-touch-icon" href="icon.png">
+	<link rel="canonical" href="https://estructura.okzgn.com/examples/pos-services-and-products/">
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="Punto de Venta de Servicios y Productos.">
+	<meta name="robots" content="index, follow, max-image-preview:large">
+	<meta name="author" content="OKZGN">
+
+	<meta name="theme-color" content="#004e9b" media="(prefers-color-scheme: light)">
+	<meta name="theme-color" content="#000d1a" media="(prefers-color-scheme: dark)">
+
+	<meta name="format-detection" content="telephone=no">
+	<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self'; child-src 'self';">
+
+	<meta property="og:title" content="Punto de Venta de Servicios y Productos">
+	<meta property="og:description" content="Punto de Venta de Servicios y Productos en línea.">
+	<meta property="og:image" content="https://estructura.okzgn.com/examples/pos-services-and-products/icon.png">
+	<meta property="og:url" content="https://estructura.okzgn.com/examples/pos-services-and-products/">
+	<meta property="og:site_name" content="Punto de Venta de Servicios y Productos">
+	<meta property="og:type" content="website">
+	<meta property="og:locale" content="es_EC">
+
+	<meta name="twitter:card" content="summary_large_image">
+	<meta name="twitter:title" content="Punto de Venta de Servicios y Productos">
+	<meta name="twitter:description" content="Punto de Venta de Servicios y Productos en línea.">
+	<meta name="twitter:image" content="https://estructura.okzgn.com/examples/pos-services-and-products/icon.png">
+
+	<link rel="preload" href="icon.png" as="image">
+
+	<link rel="preload" href="inter_variable.woff2" as="font" type="font/woff2" crossorigin>
+	<link rel="preload" href="pos-services-and-products.css" as="style">
+	<link rel="stylesheet" href="pos-services-and-products.css">
+	<link rel="stylesheet" href="pos-services-and-products.app.css">
+
+	<link rel="preload" href="_dependencies/estructura.umd.js" as="script">
+	<script src="_dependencies/estructura.umd.js"></script>
+	<script src="_dependencies/estructura.events.js"></script>
+	<script src="_dependencies/estructura.dom.js"></script>
+	<script src="_dependencies/estructura.http.js"></script>
+	<script src="_dependencies/estructura.routing.js"></script>
+	<script src="_dependencies/estructura.handlers.js"></script>
+	<script src="pos-services-and-products.handlers.commons.js" defer></script>
+	<script src="pos-services-and-products.app.js" defer></script>
+
+	<script type="application/ld+json">
+	{
+		"@context": "https://schema.org",
+		"@type": "ProfessionalService",
+		"name": "Punto de Venta de Servicios y Productos",
+		"alternateName": "PVSP",
+		"url": "https://estructura.okzgn.com/examples/pos-services-and-products/",
+		"logo": "https://estructura.okzgn.com/examples/pos-services-and-products/icon.png",
+		"image": "https://estructura.okzgn.com/examples/pos-services-and-products/icon.png",
+		"description": "Punto de Venta de Servicios y Productos en línea.",
+		"founder": {
+			"@type": "Person",
+			"name": "Elias Francisco Alvarado Soshina",
+			"jobTitle": "Applied AI, Platform & Software Developer"
+		},
+		"contactPoint": {
+			"@type": "ContactPoint",
+			"email": "hello@okzgn.com",
+			"telephone": "+593979522180",
+			"contactType": "Customer Support",
+			"availableLanguage": ["English", "Spanish", "Russian"]
+		}
+	}
+	</script>
+</head>
+
+<body>
+	<header>
+		<h1><img src="icon.png" alt="Icono del Punto de Venta de Servicios y Productos" fetchpriority="high"><span>Punto de Venta de Servicios y Productos</span></h1>
+	</header>
+
+	<main class="app-shell">
+		<aside class="app-sidebar">
+			<nav aria-label="Secciones de la aplicación">
+				<h2 class="app-sidebar-title">Secciones</h2>
+				<ul class="app-navigation">
+					<li><a href="#facturacion" data-pvsp-section-link data-pvsp-section="facturacion" data-e-handler="selectSection" data-e-handler-id="section-facturacion" data-e-handler-event="click" aria-current="page">Facturación</a></li>
+					<li><a href="#usuarios" data-pvsp-section-link data-pvsp-section="usuarios" data-e-handler="selectSection" data-e-handler-id="section-usuarios" data-e-handler-event="click">Usuarios</a></li>
+					<li><a href="#ingresos" data-pvsp-section-link data-pvsp-section="ingresos" data-e-handler="selectSection" data-e-handler-id="section-ingresos" data-e-handler-event="click">Ingresos</a></li>
+					<li><a href="#gastos" data-pvsp-section-link data-pvsp-section="gastos" data-e-handler="selectSection" data-e-handler-id="section-gastos" data-e-handler-event="click">Gastos</a></li>
+					<li><a href="#abonos" data-pvsp-section-link data-pvsp-section="abonos" data-e-handler="selectSection" data-e-handler-id="section-abonos" data-e-handler-event="click">Abonos</a></li>
+					<li><a href="#pagos-usuarios" data-pvsp-section-link data-pvsp-section="pagos-usuarios" data-e-handler="selectSection" data-e-handler-id="section-pagos-usuarios" data-e-handler-event="click">Pagos a usuarios</a></li>
+					<li><a href="#productos-servicios" data-pvsp-section-link data-pvsp-section="productos-servicios" data-e-handler="selectSection" data-e-handler-id="section-productos-servicios" data-e-handler-event="click">Productos y servicios</a></li>
+					<li><a href="#configuracion" data-pvsp-section-link data-pvsp-section="configuracion" data-e-handler="selectSection" data-e-handler-id="section-configuracion" data-e-handler-event="click">Configuración</a></li>
+				</ul>
+			</nav>
+		</aside>
+
+		<section class="app-content" data-pvsp-active-section="facturacion" aria-labelledby="app-content-title">
+			<header class="app-content-header">
+				<h2 id="app-content-title" class="app-content-title">Facturación</h2>
+				<div class="app-toolbar-search" role="search">
+					<label for="app-search">Buscar</label>
+					<input id="app-search" type="search" name="search" autocomplete="off" placeholder="Buscar en facturación">
+				</div>
+				<div class="app-toolbar-actions" aria-label="Opciones de la sección">
+					<button type="button" data-pvsp-action="new">Nuevo</button>
+					<button type="button" data-pvsp-action="filter">Filtrar</button>
+					<button type="button" data-pvsp-action="export">Exportar</button>
+					<button type="button" data-pvsp-action="more" aria-label="Más opciones">Más</button>
+				</div>
+			</header>
+			<div class="app-content-body">
+				<section class="app-view" data-pvsp-view="workspace" data-hidden="no" aria-label="Registros de la sección">
+					<div class="app-table-wrapper">
+						<table class="app-data-table app-table-header" aria-hidden="true">
+							<caption class="visually-hidden">Registros de la sección seleccionada</caption>
+							<thead>
+								<tr>
+									<th scope="col" data-pvsp-column="1">Columna 1</th>
+									<th scope="col" data-pvsp-column="2">Columna 2</th>
+									<th scope="col" data-pvsp-column="3">Columna 3</th>
+									<th scope="col" data-pvsp-column="4">Columna 4</th>
+									<th scope="col" data-pvsp-column="5">Columna 5</th>
+									<th scope="col" data-pvsp-column="6">Columna 6</th>
+									<th scope="col" data-pvsp-column="7">Columna 7</th>
+									<th scope="col" data-pvsp-column="8">Columna 8</th>
+								</tr>
+							</thead>
+						</table>
+						<div class="app-table-scroll">
+						<table class="app-data-table" data-pvsp-table>
+							<tbody>
+								<tr data-pvsp-row="1"><td data-pvsp-cell="1">--</td><td data-pvsp-cell="2">--</td><td data-pvsp-cell="3">--</td><td data-pvsp-cell="4">--</td><td data-pvsp-cell="5">--</td><td data-pvsp-cell="6">--</td><td data-pvsp-cell="7">--</td><td data-pvsp-cell="8">--</td></tr>
+								<tr data-pvsp-row="2"><td data-pvsp-cell="1">--</td><td data-pvsp-cell="2">--</td><td data-pvsp-cell="3">--</td><td data-pvsp-cell="4">--</td><td data-pvsp-cell="5">--</td><td data-pvsp-cell="6">--</td><td data-pvsp-cell="7">--</td><td data-pvsp-cell="8">--</td></tr>
+								<tr data-pvsp-row="3"><td data-pvsp-cell="1">--</td><td data-pvsp-cell="2">--</td><td data-pvsp-cell="3">--</td><td data-pvsp-cell="4">--</td><td data-pvsp-cell="5">--</td><td data-pvsp-cell="6">--</td><td data-pvsp-cell="7">--</td><td data-pvsp-cell="8">--</td></tr>
+								<tr data-pvsp-row="4"><td data-pvsp-cell="1">--</td><td data-pvsp-cell="2">--</td><td data-pvsp-cell="3">--</td><td data-pvsp-cell="4">--</td><td data-pvsp-cell="5">--</td><td data-pvsp-cell="6">--</td><td data-pvsp-cell="7">--</td><td data-pvsp-cell="8">--</td></tr>
+								<tr data-pvsp-row="5"><td data-pvsp-cell="1">--</td><td data-pvsp-cell="2">--</td><td data-pvsp-cell="3">--</td><td data-pvsp-cell="4">--</td><td data-pvsp-cell="5">--</td><td data-pvsp-cell="6">--</td><td data-pvsp-cell="7">--</td><td data-pvsp-cell="8">--</td></tr>
+								<tr data-pvsp-row="6"><td data-pvsp-cell="1">--</td><td data-pvsp-cell="2">--</td><td data-pvsp-cell="3">--</td><td data-pvsp-cell="4">--</td><td data-pvsp-cell="5">--</td><td data-pvsp-cell="6">--</td><td data-pvsp-cell="7">--</td><td data-pvsp-cell="8">--</td></tr>
+								<tr data-pvsp-row="7"><td data-pvsp-cell="1">--</td><td data-pvsp-cell="2">--</td><td data-pvsp-cell="3">--</td><td data-pvsp-cell="4">--</td><td data-pvsp-cell="5">--</td><td data-pvsp-cell="6">--</td><td data-pvsp-cell="7">--</td><td data-pvsp-cell="8">--</td></tr>
+								<tr data-pvsp-row="8"><td data-pvsp-cell="1">--</td><td data-pvsp-cell="2">--</td><td data-pvsp-cell="3">--</td><td data-pvsp-cell="4">--</td><td data-pvsp-cell="5">--</td><td data-pvsp-cell="6">--</td><td data-pvsp-cell="7">--</td><td data-pvsp-cell="8">--</td></tr>
+								<tr data-pvsp-row="9"><td data-pvsp-cell="1">--</td><td data-pvsp-cell="2">--</td><td data-pvsp-cell="3">--</td><td data-pvsp-cell="4">--</td><td data-pvsp-cell="5">--</td><td data-pvsp-cell="6">--</td><td data-pvsp-cell="7">--</td><td data-pvsp-cell="8">--</td></tr>
+								<tr data-pvsp-row="10"><td data-pvsp-cell="1">--</td><td data-pvsp-cell="2">--</td><td data-pvsp-cell="3">--</td><td data-pvsp-cell="4">--</td><td data-pvsp-cell="5">--</td><td data-pvsp-cell="6">--</td><td data-pvsp-cell="7">--</td><td data-pvsp-cell="8">--</td></tr>
+								<tr data-pvsp-row="11"><td data-pvsp-cell="1">--</td><td data-pvsp-cell="2">--</td><td data-pvsp-cell="3">--</td><td data-pvsp-cell="4">--</td><td data-pvsp-cell="5">--</td><td data-pvsp-cell="6">--</td><td data-pvsp-cell="7">--</td><td data-pvsp-cell="8">--</td></tr>
+								<tr data-pvsp-row="12"><td data-pvsp-cell="1">--</td><td data-pvsp-cell="2">--</td><td data-pvsp-cell="3">--</td><td data-pvsp-cell="4">--</td><td data-pvsp-cell="5">--</td><td data-pvsp-cell="6">--</td><td data-pvsp-cell="7">--</td><td data-pvsp-cell="8">--</td></tr>
+								<tr data-pvsp-row="13"><td data-pvsp-cell="1">--</td><td data-pvsp-cell="2">--</td><td data-pvsp-cell="3">--</td><td data-pvsp-cell="4">--</td><td data-pvsp-cell="5">--</td><td data-pvsp-cell="6">--</td><td data-pvsp-cell="7">--</td><td data-pvsp-cell="8">--</td></tr>
+								<tr data-pvsp-row="14"><td data-pvsp-cell="1">--</td><td data-pvsp-cell="2">--</td><td data-pvsp-cell="3">--</td><td data-pvsp-cell="4">--</td><td data-pvsp-cell="5">--</td><td data-pvsp-cell="6">--</td><td data-pvsp-cell="7">--</td><td data-pvsp-cell="8">--</td></tr>
+								<tr data-pvsp-row="15"><td data-pvsp-cell="1">--</td><td data-pvsp-cell="2">--</td><td data-pvsp-cell="3">--</td><td data-pvsp-cell="4">--</td><td data-pvsp-cell="5">--</td><td data-pvsp-cell="6">--</td><td data-pvsp-cell="7">--</td><td data-pvsp-cell="8">--</td></tr>
+								<tr data-pvsp-row="16"><td data-pvsp-cell="1">--</td><td data-pvsp-cell="2">--</td><td data-pvsp-cell="3">--</td><td data-pvsp-cell="4">--</td><td data-pvsp-cell="5">--</td><td data-pvsp-cell="6">--</td><td data-pvsp-cell="7">--</td><td data-pvsp-cell="8">--</td></tr>
+								<tr data-pvsp-row="17"><td data-pvsp-cell="1">--</td><td data-pvsp-cell="2">--</td><td data-pvsp-cell="3">--</td><td data-pvsp-cell="4">--</td><td data-pvsp-cell="5">--</td><td data-pvsp-cell="6">--</td><td data-pvsp-cell="7">--</td><td data-pvsp-cell="8">--</td></tr>
+								<tr data-pvsp-row="18"><td data-pvsp-cell="1">--</td><td data-pvsp-cell="2">--</td><td data-pvsp-cell="3">--</td><td data-pvsp-cell="4">--</td><td data-pvsp-cell="5">--</td><td data-pvsp-cell="6">--</td><td data-pvsp-cell="7">--</td><td data-pvsp-cell="8">--</td></tr>
+								<tr data-pvsp-row="19"><td data-pvsp-cell="1">--</td><td data-pvsp-cell="2">--</td><td data-pvsp-cell="3">--</td><td data-pvsp-cell="4">--</td><td data-pvsp-cell="5">--</td><td data-pvsp-cell="6">--</td><td data-pvsp-cell="7">--</td><td data-pvsp-cell="8">--</td></tr>
+								<tr data-pvsp-row="20"><td data-pvsp-cell="1">--</td><td data-pvsp-cell="2">--</td><td data-pvsp-cell="3">--</td><td data-pvsp-cell="4">--</td><td data-pvsp-cell="5">--</td><td data-pvsp-cell="6">--</td><td data-pvsp-cell="7">--</td><td data-pvsp-cell="8">--</td></tr>
+							</tbody>
+						</table>
+						</div>
+					</div>
+				</section>
+
+				<section class="app-lower-panel" aria-label="Detalle y resumen">
+					<article class="app-selection-detail app-accordion">
+						<button
+							class="app-accordion-toggle"
+							data-e-handler="accordion"
+							data-e-handler-id="selection-detail-toggle"
+							data-e-handler-event="click"
+							data-e-handler-data="#selection-detail-content"
+							data-pvsp-accordion-toggle
+							data-selected="no"
+							type="button">Detalle de selección</button>
+						<div id="selection-detail-content" class="app-accordion-content" data-pvsp-accordion-content data-hidden="no">
+							<p>Selecciona una fila para visualizar sus detalles.</p>
+						</div>
+					</article>
+					<aside class="app-summary app-accordion">
+						<button
+							class="app-accordion-toggle"
+							data-e-handler="accordion"
+							data-e-handler-id="summary-toggle"
+							data-e-handler-event="click"
+							data-e-handler-data="#summary-content"
+							data-pvsp-accordion-toggle
+							data-selected="no"
+							type="button">Resumen</button>
+						<div id="summary-content" class="app-accordion-content" data-pvsp-accordion-content data-hidden="no">
+							<dl class="app-summary-list">
+								<div><dt>Registros</dt><dd>0</dd></div>
+								<div><dt>Total</dt><dd>0,00</dd></div>
+								<div><dt>Ingresos</dt><dd>0,00</dd></div>
+								<div><dt>Gastos</dt><dd>0,00</dd></div>
+							</dl>
+						</div>
+					</aside>
+				</section>
+			</div>
+		</section>
+	</main>
+
+	<footer>
+	    <span>&copy; 2026 <a href="https://okzgn.com">OKZGN</a></span>
+	</footer>
+</body>
+</html>

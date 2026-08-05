@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html spellcheck="false" lang="es">
+
+<head>
+	<meta charset="UTF-8">
+
+	<title>Tiques Tarifarios Horarios</title>
+
+	<link rel="icon" href="icon.png">
+	<link rel="apple-touch-icon" href="icon.png">
+	<link rel="canonical" href="https://estructura.okzgn.com/examples/auth-multiuser-interface/">
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="Gestor de Tiques Tarifarios Horarios.">
+	<meta name="robots" content="index, follow, max-image-preview:large">
+	<meta name="author" content="OKZGN">
+
+	<meta name="theme-color" content="#004e9b" media="(prefers-color-scheme: light)">
+	<meta name="theme-color" content="#000d1a" media="(prefers-color-scheme: dark)">
+
+	<meta name="format-detection" content="telephone=no">
+	<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self'; child-src 'self';">
+
+	<meta property="og:title" content="Tiques Tarifarios Horarios">
+	<meta property="og:description" content="Gestor de Tiques Tarifarios Horarios en línea.">
+	<meta property="og:image" content="https://estructura.okzgn.com/examples/auth-multiuser-interface/icon.png">
+	<meta property="og:url" content="https://estructura.okzgn.com/examples/auth-multiuser-interface/">
+	<meta property="og:site_name" content="TTO">
+	<meta property="og:type" content="website">
+	<meta property="og:locale" content="es_EC">
+
+	<meta name="twitter:card" content="summary_large_image">
+	<meta name="twitter:title" content="Tiques Tarifarios Horarios">
+	<meta name="twitter:description" content="Gestor de Tiques Tarifarios Horarios en línea.">
+	<meta name="twitter:image" content="https://estructura.okzgn.com/examples/auth-multiuser-interface/icon.png">
+
+	<link rel="preload" href="icon.png" as="image">
+
+	<link rel="preload" href="inter_variable.woff2" as="font" type="font/woff2" crossorigin>
+	<link rel="preload" href="estructura.extensions.using.example.style.css" as="style">
+	<link rel="stylesheet" href="estructura.extensions.using.example.style.css">
+
+	<link rel="preload" href="../../estructura.umd.js" as="script">
+	<script src="../../estructura.umd.js"></script>
+	<script src="../../extensions/events/estructura.events.js"></script>
+	<script src="../../extensions/dom/estructura.dom.js"></script>
+	<script src="../../extensions/http/estructura.http.js"></script>
+	<script src="../../extensions/routing/estructura.routing.js"></script>
+	<script src="../../extensions/handlers/estructura.handlers.js"></script>
+	<script src="estructura.extensions.using.example.handlers.commons.js" defer></script>
+	<script src="estructura.extensions.using.example.app.bundle.js" defer></script>
+
+	<script type="application/ld+json">
+	{
+		"@context": "https://schema.org",
+		"@type": "ProfessionalService",
+		"name": "Tiques Tarifarios Horarios",
+		"alternateName": "TTO",
+		"url": "https://estructura.okzgn.com/examples/auth-multiuser-interface/",
+		"logo": "https://estructura.okzgn.com/examples/auth-multiuser-interface/icon.png",
+		"image": "https://estructura.okzgn.com/examples/auth-multiuser-interface/icon.png",
+		"description": "Gestor de Tiques Tarifarios Horarios en línea.",
+		"founder": {
+			"@type": "Person",
+			"name": "Elias Francisco Alvarado Soshina",
+			"jobTitle": "Applied AI, Platform & Software Developer"
+		},
+		"contactPoint": {
+			"@type": "ContactPoint",
+			"email": "hello@okzgn.com",
+			"telephone": "+593979522180",
+			"contactType": "Customer Support",
+			"availableLanguage": ["English", "Spanish", "Russian"]
+		}
+	}
+	</script>
+</head>
+
+<body>
+	<header>
+		<h1><img src="icon.png" alt="Icon" fetchpriority="high"><span>Tiques Tarifarios Horarios</span></h1>
+	</header>
+
+	<main data-e-handler="routes" data-e-handler-id="routesContainer" data-e-handler-start="routesStart" data-e-handler-end-start>
+    	<div data-e-handler="route" data-e-handler-id="notSignedIn" data-e-handler-route="/" data-e-handler-end-start="signedInCheck" data-e-signed-in-check-connect="notification.signedIn-message, textFromObject.signedIn-username" data-e-signed-in-check-error="notification.signin-notif" data-e-current-route>
+    		<section>
+    			<form
+         			data-e-handler="forms"
+         			data-e-handler-id="signup-form"
+         			data-e-handler-event="submit"
+         			data-e-handler-data="/auth/signup"
+
+         			data-e-forms-connect="formsResponse.signup-form"
+
+         			data-e-forms-response-error="notification.signup-notif"
+         			data-e-forms-response-success="notification.signup-form"
+    			>
+     			<fieldset>
+     			    <legend data-selected="no" data-e-handler="selectiveAccordion" data-e-handler-id="signup-header" data-e-handler-event="click" data-e-handler-data="#signup">Registro</legend>
+
+        				<div id="signup" data-box data-hidden>
+                            <div data-e-handler="notification" data-e-handler-id="signup-notif" data-hidden>Loading...</div>
+
+            				<div>
+            				    <strong>Tipo</strong>
+                				<label data-flex-childs-center>
+                				    <input type="radio" name="type" value="admin">
+                				    <b>Administrador</b>
+                				</label>
+                				<label data-flex-childs-center>
+                				    <input type="radio" name="type" value="operator" checked>
+                				    <b>Operador</b>
+                				</label>
+            				</div>
+
+            				<label data-flex-column>
+            				    <strong>Usuario</strong>
+         			        <input type="text" name="user" autocomplete="off">
+            				</label>
+
+            				<label data-flex-column>
+            				    <strong>Contraseña</strong>
+         			        <input type="password" name="password" autocomplete="off">
+            				</label>
+
+            				<label data-flex-column>
+            				    <strong>Espacio de trabajo</strong>
+         			        <input type="text" name="workspace">
+            				</label>
+
+            				<button type="submit">Registrar</button>
+        				</div>
+     			</fieldset>
+    			</form>
+    		</section>
+
+    	    <section>
+    			<form
+         			data-e-handler="forms"
+         			data-e-handler-id="signin-form"
+         			data-e-handler-event="submit"
+         			data-e-handler-data="/auth/signin"
+
+         			data-e-forms-connect="formsResponse.signin-form"
+
+         			data-e-forms-response-error="notification.signin-notif"
+         			data-e-forms-response-success="signedInSession, signedInCheck.notSignedIn"
+    			>
+         			<fieldset>
+         			    <legend data-e-handler="selectiveAccordion" data-e-handler-id="signin-header" data-e-handler-event="click" data-e-handler-data="#signin">Ingreso</legend>
+
+        				<div id="signin" data-box data-hidden="no">
+                            <div data-e-handler="notification" data-e-handler-id="signin-notif" data-hidden>Loading...</div>
+            				<label data-flex-column>
+            				    <strong>Usuario</strong>
+         			        <input type="text" name="user" autocomplete="on">
+            				</label>
+
+            				<label data-flex-column>
+            				    <strong>Contraseña</strong>
+         			        <input type="password" name="password" autocomplete="current-password">
+            				</label>
+
+            				<label data-flex-column>
+            				    <strong>Espacio de trabajo</strong>
+         			            <input type="text" name="workspace">
+            				</label>
+
+            				<button type="submit">Ingresar</button>
+        				</div>
+         			</fieldset>
+    			</form>
+    		</section>
+    	</div>
+
+        <div data-e-handler="route" data-e-handler-id="signedIn" data-e-handler-route="/account" data-e-hidden-route data-e-handler-ignore>
+            <section data-e-handler="checkConnection" data-e-check-connection-connect="notification.signedIn-message" data-e-handler-id="signedIn-connChecker" data-e-handler-start>
+                <div data-e-handler="notification" data-e-handler-id="signedIn-message" data-e-notification-success="temporalShow">Signed in component.</div>
+                <div id="app">
+                    <div class="left-side">
+                        <div class="options">
+                            <div>
+                                <input type="text" autocomplete="off" name="ticket-value" data-e-handler="ticket" data-e-handler-id="ticketValue" data-e-handler-start>
+                                <button data-e-handler="createNewTicket" data-e-handler-id="ticket-btn" data-e-handler-event="click" data-e-create-new-ticket-connect="generateNewTicket.ticket-generator">Crear tique</button>
+                                <button data-e-handler="updateNewTicket" data-e-handler-id="update-ticket-btn" data-e-handler-event="click" data-e-update-new-ticket-connect="updateExistentTicket.ticket-generator">Actualizar tique</button>
+                            </div>
+                            <button data-e-handler="signout" data-e-handler-id="signout-btn" data-e-handler-event="click" data-e-signout-route="/">Salir</button>
+                        </div>
+                        <ol
+                            class="content tickets-list"
+                            data-e-handler="generateNewTicket, updateExistentTicket"
+                            data-e-handler-id="ticket-generator"
+
+                            data-e-generate-new-ticket-success="ticket.ticketValue, generateExistentTicket"
+                            data-e-generate-new-ticket-error="notification.signedIn-message"
+
+                            data-e-update-existent-ticket-success="ticket.ticketValue"
+                            data-e-update-existent-ticket-error="notification.signedIn-message"
+
+                            data-e-handler-start="getTickets"
+
+                            data-e-get-tickets-success="listFromObjectsArray"
+                            data-e-get-tickets-error="notification.signedIn-message"
+
+                            data-e-list-from-objects-array-fields="n, id, cost, start, end, note"
+                            data-e-list-from-objects-array-success="generateExistentTicket"
+                        >
+
+                        </ol>
+                    </div>
+                    <aside class="right-side">
+                        <div class="options">
+                            <b data-e-handler="textFromObject" data-e-handler-id="signedIn-username" data-e-handler-field="user"></b>
+                            <button data-e-handler-id="report-btn" data-e-handler-event="click">Reporte</button>
+                            <button data-e-handler-id="pendings-btn" data-e-handler-event="click">Pendientes</button>
+                        </div>
+                        <div class="content">
+                            <iframe title="Vista de salida" src="about:blank"></iframe>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+        </div>
+	</main>
+
+	<footer>
+	    <span>&copy; 2026 <a href="https://okzgn.com">OKZGN</a></span>
+	</footer>
+</body>
+</html>
