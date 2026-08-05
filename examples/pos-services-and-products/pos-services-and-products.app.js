@@ -11,6 +11,9 @@
         content = document.querySelector('.app-content'),
         search = document.getElementById('app-search'),
         selectedLabel = this.liveElement.textContent.replace(/^\s+|\s+$/g, ''),
+        selectedView = selected === 'configuracion' ? 'configuracion' : 'workspace',
+        workspaceRegions = document.querySelectorAll('[data-pvsp-workspace-region]'),
+        workspaceToolbar = document.querySelectorAll('[data-pvsp-workspace-toolbar]'),
         i,
         link,
         isSelected;
@@ -48,7 +51,25 @@
       }
 
       for (i = 0; i < views.length; i++) {
-        views[i].setAttribute('data-hidden', 'no');
+        if (views[i].getAttribute('data-pvsp-view') === selectedView) {
+          views[i].setAttribute('data-hidden', 'no');
+        }
+        else {
+          views[i].setAttribute('data-hidden', '');
+        }
+      }
+
+      for (i = 0; i < workspaceRegions.length; i++) {
+        workspaceRegions[i].setAttribute('data-hidden', selectedView === 'workspace' ? 'no' : '');
+      }
+
+      for (i = 0; i < workspaceToolbar.length; i++) {
+        if (selectedView === 'workspace') {
+          workspaceToolbar[i].removeAttribute('data-hidden');
+        }
+        else {
+          workspaceToolbar[i].setAttribute('data-hidden', '');
+        }
       }
     }
   };

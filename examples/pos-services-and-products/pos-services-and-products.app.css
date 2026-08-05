@@ -108,6 +108,11 @@
     gap: var(--half-space);
 }
 
+.app-toolbar-search[data-hidden],
+.app-toolbar-actions[data-hidden] {
+    display: none;
+}
+
 .app-toolbar-actions button {
     margin: 0;
 }
@@ -151,7 +156,12 @@
     white-space: nowrap;
 }
 
+.app-data-table td {
+    padding-left: var(--space);
+}
+
 .app-data-table th {
+    padding-left: var(--space);
     background: var(--color7);
     font-weight: bold;
 }
@@ -167,6 +177,14 @@
     flex: 0 0 auto;
     gap: var(--space);
     margin: var(--space) 0 0 0;
+}
+
+.app-lower-panel[data-hidden] {
+    display: none;
+}
+
+.app-lower-panel[data-hidden="no"] {
+    display: flex;
 }
 
 .app-selection-detail,
@@ -193,6 +211,7 @@
 .app-accordion-toggle {
     display: block;
     width: 100%;
+    padding-left: var(--space);
     border-radius: 0;
     text-align: left;
 }
@@ -275,7 +294,6 @@
     flex-flow: column;
     flex: 1 1 auto;
     min-height: 0;
-    padding: var(--space);
     overflow: hidden;
 }
 
@@ -285,6 +303,64 @@
     flex: 1 1 auto;
     min-height: 0;
     margin: 0;
+}
+
+.app-view[data-hidden] {
+    display: none;
+}
+
+.app-view[data-hidden="no"] {
+    display: flex;
+}
+
+.app-config-view[data-hidden="no"] {
+    display: flex;
+    flex-flow: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding: var(--space);
+    margin: 0;
+}
+
+.app-config-view[data-hidden] {
+    display: none;
+}
+
+.app-config-view[data-hidden="no"] {
+    display: flex;
+}
+
+.app-config-view h3 {
+    margin-bottom: var(--half-space);
+}
+
+.app-divider {
+    width: 100%;
+    height: 1px;
+    margin: var(--space) 0;
+    background: var(--color7);
+}
+
+.app-config-fields {
+    display: flex;
+    flex-flow: column;
+    gap: var(--space);
+    max-width: 42rem;
+}
+
+.app-config-fields label {
+    display: flex;
+    flex-flow: column;
+    gap: var(--half-space);
+}
+
+.app-config-fields input {
+    width: 100%;
+    padding: var(--half-space);
+    border: var(--border-input) solid var(--color4);
+    border-radius: var(--radius);
+    background: var(--color5);
 }
 
 @media screen and (max-width: 760px) {
@@ -297,7 +373,6 @@
         flex-basis: auto;
         height: auto;
         width: 100%;
-        padding: var(--half-space);
     }
 
     .app-sidebar-title {

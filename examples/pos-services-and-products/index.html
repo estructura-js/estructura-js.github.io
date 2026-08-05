@@ -102,11 +102,11 @@
 		<section class="app-content" data-pvsp-active-section="facturacion" aria-labelledby="app-content-title">
 			<header class="app-content-header">
 				<h2 id="app-content-title" class="app-content-title">Facturación</h2>
-				<div class="app-toolbar-search" role="search">
+				<div class="app-toolbar-search" role="search" data-pvsp-workspace-toolbar>
 					<label for="app-search">Buscar</label>
 					<input id="app-search" type="search" name="search" autocomplete="off" placeholder="Buscar en facturación">
 				</div>
-				<div class="app-toolbar-actions" aria-label="Opciones de la sección">
+				<div class="app-toolbar-actions" aria-label="Opciones de la sección" data-pvsp-workspace-toolbar>
 					<button type="button" data-pvsp-action="new">Nuevo</button>
 					<button type="button" data-pvsp-action="filter">Filtrar</button>
 					<button type="button" data-pvsp-action="export">Exportar</button>
@@ -114,7 +114,7 @@
 				</div>
 			</header>
 			<div class="app-content-body">
-				<section class="app-view" data-pvsp-view="workspace" data-hidden="no" aria-label="Registros de la sección">
+				<section class="app-view" data-pvsp-view="workspace" data-pvsp-workspace-region data-hidden="no" aria-label="Registros de la sección">
 					<div class="app-table-wrapper">
 						<table class="app-data-table app-table-header" aria-hidden="true">
 							<caption class="visually-hidden">Registros de la sección seleccionada</caption>
@@ -160,7 +160,7 @@
 					</div>
 				</section>
 
-				<section class="app-lower-panel" aria-label="Detalle y resumen">
+				<section class="app-lower-panel" data-pvsp-workspace-region data-hidden="no" aria-label="Detalle y resumen">
 					<article class="app-selection-detail app-accordion">
 						<button
 							class="app-accordion-toggle"
@@ -194,6 +194,37 @@
 							</dl>
 						</div>
 					</aside>
+				</section>
+
+				<section class="app-config-view" data-pvsp-view="configuracion" data-hidden aria-labelledby="configuration-title">
+					<p>Define las opciones globales del punto de venta.</p>
+					<hr class="app-divider">
+					<div class="app-config-fields">
+						<label>
+							<strong>Nombre comercial</strong>
+							<input type="text" name="business-name" placeholder="Nombre del negocio">
+						</label>
+						<label>
+							<strong>Identificación fiscal</strong>
+							<input type="text" name="tax-id" placeholder="Identificación fiscal">
+						</label>
+						<label>
+							<strong>Moneda</strong>
+							<input type="text" name="currency" placeholder="USD">
+						</label>
+						<label>
+							<strong>Tasa de impuesto</strong>
+							<input type="number" name="tax-rate" min="0" step="0.01" placeholder="0.00">
+						</label>
+						<label>
+							<strong>Correo de contacto</strong>
+							<input type="email" name="contact-email" placeholder="correo@ejemplo.com">
+						</label>
+						<label>
+							<strong>Teléfono de contacto</strong>
+							<input type="tel" name="contact-phone" placeholder="Teléfono">
+						</label>
+					</div>
 				</section>
 			</div>
 		</section>
