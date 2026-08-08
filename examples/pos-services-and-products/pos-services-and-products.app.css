@@ -212,7 +212,6 @@
     display: block;
     width: 100%;
     padding-left: var(--space);
-    border-radius: 0;
     text-align: left;
 }
 

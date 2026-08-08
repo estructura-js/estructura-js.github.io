@@ -1,0 +1,284 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+	<title>SQLITE FRONTEND</title>
+
+	<link rel="icon" href="../../estructura.icon.png">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="Motor de base de datos relacional cliente (client-side) asíncrono y no bloqueante basado en SQLite compilado a WebAssembly (WASM). Ejecuta las operaciones en un hilo secundario (Web Worker) para mantener la interfaz de usuario fluida, ofreciendo almacenamiento persistente mediante el sistema de archivos privado del origen (OPFS) con conmutación automática a memoria y soporte para interfaz fluida basada en Promesas o Callbacks.">
+	<meta name="author" content="OKZGN">
+	<meta name="theme-color" content="#ffffff">
+
+	<link href="../../estructura.styles.css" rel="stylesheet" />
+	<script src="https://cdn.jsdelivr.net/npm/estructura-js"></script>
+	<script src="../dom/estructura.dom.js"></script>
+	<script src="../events/estructura.events.js"></script>
+	 <script src="estructura.sqlite.frontend.js"></script>
+	<script src="../../main.js"></script>
+	<script>
+		document.addEventListener('DOMContentLoaded', function(){
+			console.log('Estructura SQLITE FRONTEND ready.');
+
+			_sqlite_frontend('PRAGMA database_list;')
+            .sql(function (result) {
+              console.log('Result 1:', result);
+            });
+
+            _sqlite_frontend('SELECT name FROM sqlite_master WHERE type=' + "'table'")
+            .sql(function (result) {
+              console.log('Result 2:', result);
+            });
+
+            _sqlite_frontend({ name: 'fecha', type: 'INTEGER' })
+            .column(function (result) {
+              console.log('Result 3:', result);
+            });
+
+            _sqlite_frontend({ fecha: Date.now() })
+            .row(function (result) {
+              console.log('Result 4:', result);
+            });
+
+            _sqlite_frontend({ '*': true })
+            .get(function (result) {
+              console.log('Result 5:', result);
+            });
+
+            _sqlite_frontend({ 'fecha': { set: Math.round(Math.random() * 9999), query: Math.round(Math.random() * 53) } })
+            .set(function (result) {
+              console.log('Result 6:', result);
+            });
+
+            _sqlite_frontend({ 'fecha': Math.round(Math.random() * 53) })
+            .del(function (result) {
+              console.log('Result 7:', result);
+            });
+
+            _sqlite_frontend('db.' + Math.round(Math.random() * 9999) + '.sqlite')
+            .save(function (result) {
+              console.log('Result 8:', result);
+              if (!result || !result.save){ return; }
+
+              var
+                blob = URL.createObjectURL(result.save.data),
+                a = document.createElement('a');
+
+              a.href = blob;
+              a.download = result.save.name;
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              URL.revokeObjectURL(blob);
+            });
+		});
+	</script>
+</head>
+
+<body>
+	<header class="center-y padding">
+		<h1 class="extension center-y">
+			<img id="logo" src="../../estructura.logo.png" alt="Estructura, JavaScript Framework">
+			<span id="test">Console test</span>
+		</h1>
+	</header>
+
+	<nav class="margin-y">
+		<section class="silver">
+			<h2 id="index" class="center-x">Menú</h2>
+			<div class="padding">
+				<ul class="lines center-y">
+					<li class="back"><a href="../../index.html#extensions">Atrás</a></li>
+					<li><a href="#description">Descripción</a></li>
+					<li><a href="#docs">Documentación</a></li>
+				</ul>
+			</div>
+		</section>
+	</nav>
+
+	<main>
+		<h2 class="title">SQLite Frontend</h2>
+		<section class="margin-y">
+			<h2 id="description">Descripción</h2>
+			<div class="padding">Motor de base de datos relacional cliente (client-side) asíncrono y no bloqueante basado en SQLite compilado a WebAssembly (WASM). Ejecuta las operaciones en un hilo secundario (Web Worker) para mantener la interfaz de usuario fluida, ofreciendo almacenamiento persistente mediante el sistema de archivos privado del origen (OPFS) con conmutación automática a memoria y soporte para interfaz fluida basada en Promesas o Callbacks.</div>
+			<p class="padding-y">
+				<b>Librería:</b> <a target="_blank" href="estructura.sqlite.frontend.js">estructura.sqlite.frontend.js</a>, <a target="_blank" href="estructura.sqlite.frontend.wasm.worker.js">estructura.sqlite.frontend.wasm.worker.js</a> (linked to <a target="_blank" href="./_dependencies/_sqlite/index.mjs">./_dependencies/_sqlite/index.mjs</a>, a self hosted <a target="_blank" href="https://github.com/sqlite/sqlite-wasm">SQLite WASM [Official]</a>)
+			</p>
+			<p class="padding-y">
+				<b>Compatibilidad:</b> <a target="_blank" href="https://okzgn.com/articles/why-not-build-frontend-frameworks-on-raw-html-css-or-js/">ES6+ / WebAssembly / Web Workers / OPFS</a>
+			</p>
+		</section>
+
+		<section class="margin-y">
+			<h2 id="docs">Documentación</h2>
+			<div class="padding">
+				<h3>1. Arquitectura y Modelo de Ejecución Asíncrona</h3>
+				<p>La librería expone la instancia global <code>_sqlite_frontend</code>. Todas las operaciones se delegan de forma transparente a un Web Worker WebAssembly (<code>estructura.sqlite.frontend.wasm.worker.js</code>).</p>
+				<br>
+				<p><b>Modelo Dual (Promesas y Callbacks):</b></p>
+				<p>Cada método de ejecución admite una función de retorno (callback) como primer argumento opcional. Si se omite el callback, la llamada retorna síncronamente una <code>Promise</code> compatible con <code>async/await</code>.</p>
+				<br>
+				<pre><code>// 1. Uso mediante Promesas (async/await)
+try {
+	var resultado = await _sqlite_frontend('SELECT * FROM usuarios').sql();
+	console.log('Datos:', resultado.sql.result);
+} catch (error) {
+	console.error('Error SQL:', error.message);
+}
+
+// 2. Uso mediante Callback tradicional
+_sqlite_frontend('SELECT * FROM usuarios').sql(function(respuesta) {
+	if (respuesta.error) {
+		console.error('Error:', respuesta.error);
+		return;
+	}
+	console.log('Resultado:', respuesta.sql.result);
+});</code></pre>
+				<br>
+
+				<h3>2. Métodos para Cadenas (<code>String</code>)</h3>
+				<p>Permiten ejecutar sentencias SQL directas, administrar bases de datos, tablas o exportar archivos.</p>
+				<br>
+
+				<h4><code>.sql(callback?, timeout?)</code>:</h4>
+				<p>Ejecuta una consulta SQL cruda (raw SQL) en la base de datos activa.</p>
+
+	<pre><code>_sqlite_frontend('PRAGMA database_list;').sql(function(res) {
+	console.log('Bases de datos activas:', res);
+});
+
+_sqlite_frontend("SELECT name FROM sqlite_master WHERE type='table'").sql(function(res) {
+	console.log('Tablas en la BD:', res);
+});</code></pre>
+				<br>
+
+				<h4><code>.db(name)</code>:</h4>
+				<p>Establece o conmuta la base de datos de trabajo activa.</p>
+
+	<pre><code>_sqlite_frontend('mi_base_datos.db').db();</code></pre>
+				<br>
+
+				<h4><code>.table(name)</code>:</h4>
+				<p>Selecciona o crea implícitamente la tabla sobre la cual operarán los métodos estructurados.</p>
+
+	<pre><code>_sqlite_frontend('usuarios').table();</code></pre>
+				<br>
+
+				<h4><code>.save(filename)</code>:</h4>
+				<p>Exporta y descarga el estado binario de la base de datos activa como una instancia <code>Blob</code> de tipo <code>application/x-sqlite3</code>.</p>
+
+	<pre><code>_sqlite_frontend('respaldo.sqlite').save(function(res) {
+	var blob = URL.createObjectURL(res.save.data);
+	var a = document.createElement('a');
+	a.href = blob;
+	a.download = res.save.name;
+	a.click();
+	URL.revokeObjectURL(blob);
+});</code></pre>
+				<br>
+
+				<h3>3. Métodos para Objetos (<code>Object</code>)</h3>
+				<p>Proporcionan una capa fluida de abstracción (ORM/Query Builder) para manipular estructuras y datos sin escribir SQL manual.</p>
+				<br>
+
+				<h4><code>.column(definition)</code>:</h4>
+				<p>Define o añade una nueva columna a la tabla activa.</p>
+
+	<pre><code>_sqlite_frontend({ name: 'fecha', type: 'INTEGER' }).column(function(res) {
+	console.log('Columna creada/verificada:', res);
+});</code></pre>
+				<br>
+
+				<h4><code>.row(data)</code>:</h4>
+				<p>Inserta un nuevo registro (fila) en la tabla activa con auto-incremento de ID.</p>
+
+	<pre><code>_sqlite_frontend({ fecha: Date.now() }).row(function(res) {
+	console.log('ID asignado al registro:', res.row.id);
+});</code></pre>
+				<br>
+
+				<h4><code>.get(query)</code>:</h4>
+				<p>Consulta registros de la tabla activa. Soporta selección de columnas, filtros <code>where</code>, cláusulas <code>limit</code> y agregaciones <code>count</code>.</p>
+
+	<pre><code>// Obtener todas las columnas y registros
+_sqlite_frontend({ '*': true }).get(function(res) {
+	console.log('Registros:', res['*'].result);
+});
+
+// Consulta con filtro 'where'
+_sqlite_frontend({
+	'fecha': {
+		where: { id: 1 }
+	}
+}).get(function(res) {
+	console.log('Fecha obtenida:', res.fecha.result);
+});</code></pre>
+				<br>
+
+				<h4><code>.set(data)</code>:</h4>
+				<p>Actualiza registros en la tabla activa según las condiciones provistas.</p>
+
+	<pre><code>_sqlite_frontend({
+	'fecha': {
+		set: Date.now(),
+		query: { where: { id: 1 } }
+	}
+}).set(function(res) {
+	console.log('Filas modificadas:', res);
+});</code></pre>
+				<br>
+
+				<h4><code>.del(query)</code>:</h4>
+				<p>Elimina registros que coincidan con la condición dada o ID implícito.</p>
+
+	<pre><code>_sqlite_frontend({ 'fecha': 53 }).del(function(res) {
+	console.log('Registros eliminados:', res);
+});</code></pre>
+				<br>
+
+				<h3>4. Flujo Completo de Ejemplo</h3>
+				<p>Integración de definición de esquema, inserción, consulta, actualización y exportación:</p>
+
+	<pre><code>document.addEventListener('DOMContentLoaded', async function () {
+	// 1. Crear columna
+	await _sqlite_frontend({ name: 'fecha', type: 'INTEGER' }).column();
+
+	// 2. Insertar registro
+	var insercion = await _sqlite_frontend({ fecha: Date.now() }).row();
+	console.log('Fila agregada:', insercion.row.id);
+
+	// 3. Consultar registros
+	var datos = await _sqlite_frontend({ '*': true }).get();
+	console.log('Resultado de lectura:', datos['*'].result);
+
+	// 4. Actualizar registro
+	await _sqlite_frontend({
+		'fecha': { set: 9999, query: { where: { _auto_id: insercion.row.id } } }
+	}).set();
+
+	// 5. Eliminar registro por ID de registro
+	await _sqlite_frontend({ 'fecha': 0 }).del();
+});</code></pre>
+				<br>
+
+				<h3>5. Características Técnicas</h3>
+				<div class="features">
+					<p><strong>Ejecución No Bloqueante (Web Worker):</strong> Desplaza todo el procesamiento de base de datos, consultas e I/O a un hilo secundario mediante Web Workers, garantizando 60 FPS constantes en la interfaz principal del navegador.</p>
+					<br>
+					<p><strong>Persistencia Inteligente (OPFS con Fallback):</strong> Detecta e inicializa automáticamente el sistema de archivos privado del origen (Origin Private File System / <code>OpfsDb</code>) para almacenamiento de alto rendimiento en disco. Si el navegador no soporte OPFS, conmuta de forma transparente a SQLite en memoria (<code>DB</code>).</p>
+					<br>
+					<p><strong>Cola de Pre-inicialización (Prestart Queue):</strong> Captura y encola automáticamente cualquier transacción o consulta emitida antes de que el motor WebAssembly haya completado su carga inicial, despachándolas en orden estricto una vez listo el entorno.</p>
+					<br>
+					<p><strong>Sanitización y Parametrización Integrada:</strong> Limpia y valida dinámicamente nombres de bases de datos, tablas y columnas, aplicando sentencias preparadas parametrizadas (<code>bind</code>) en las operaciones de escritura y lectura para proteger contra inyecciones SQL.</p>
+				</div>
+			</div>
+		</section>
+	</main>
+
+	<footer class="center-y padding">
+		<p>&copy; 2026 <a href="https://okzgn.com">OKZGN</a></p>
+	</footer>
+</body>
+</html>
