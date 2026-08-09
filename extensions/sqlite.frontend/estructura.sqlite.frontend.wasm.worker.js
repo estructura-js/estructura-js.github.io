@@ -11,6 +11,8 @@ const countSupportedQueries = ['SELECT'];
 const limitSupportedQueries = ['SELECT'];
 const whereSupportedQueries = ['SELECT', 'UPDATE', 'DELETE'];
 
+let currentDb = cleanName('', 'db');
+let currentTable = cleanName('', 'table');
 let startError = '';
 let sqlite;
 
@@ -41,7 +43,12 @@ self.onmessage = function(e){
 
   sqlite_execution: {
     try {
-      data.db = cleanName(data.db, 'db');
+      if (data.db) {
+        currentDb = cleanName(data.db, 'db');
+      }
+
+      data.db = currentDb;
+
       if (data.db) {
         response.db = Object.create(null);
         try {
@@ -108,7 +115,12 @@ self.onmessage = function(e){
         break sqlite_execution;
       }
 
-      data.table = cleanName(data.table, 'table');
+      if (data.table) {
+        currentTable = cleanName(data.table, 'table');
+      }
+
+      data.table = currentTable;
+
       if (data.table) {
         response.table = Object.create(null);
         try {

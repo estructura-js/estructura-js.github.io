@@ -37,9 +37,19 @@
               console.log('Result 3:', result);
             });
 
-            _sqlite_frontend({ fecha: Date.now() })
+            _sqlite_frontend({ fecha: Date.now() + 1 })
             .row(function (result) {
-              console.log('Result 4:', result);
+              console.log('Result 4a:', result);
+            });
+
+            _sqlite_frontend({ fecha: Date.now() + 2 })
+            .row(function (result) {
+              console.log('Result 4b:', result);
+            });
+
+            _sqlite_frontend({ fecha: Date.now() + 3 })
+            .row(function (result) {
+              console.log('Result 4c:', result);
             });
 
             _sqlite_frontend({ '*': true })
