@@ -144,6 +144,8 @@ button:hover, button:focus, button:active {
 header {
 	background: var(--color1);
 	color: var(--color6);
+	padding: 0.25rem;
+	height: 3.5rem;
 }
 h1 span { font-size: 1.25rem; }
 h1 img {
@@ -169,11 +171,9 @@ footer {
 	padding: 0 var(--space);
 	text-align: center;
 	font-weight: bold;
+	height: 3rem;
 }
 footer a { text-decoration: underline; }
-header, footer {
-    height: 3rem;
-}
 @media (prefers-color-scheme: dark) {
     :root {
         --color3: rgba(255, 255, 255, 0.05);

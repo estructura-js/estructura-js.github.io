@@ -191,14 +191,6 @@ h2:not(.title) {
     padding: var(--width-base-0-5) var(--width-base);
 }
 
-/*header {
-    border-bottom: var(--borders-default-width) solid var(--main-color);
-}
-
-footer {
-    border-top: var(--borders-default-width) solid var(--main-color);
-}*/
-
 section, h2:not(.title) {
     border-radius: var(--width-base-0-5);
     border: var(--borders-default-width) solid var(--headers-bg-color);
