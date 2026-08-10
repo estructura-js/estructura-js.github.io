@@ -298,7 +298,7 @@ try {
                         <b>Nota de compatibilidad:</b> Las cláusulas <code>count</code> y <code>limit</code> son de uso exclusivo para operaciones de lectura mediante <code>.get()</code>. Si se incluyen en operaciones de modificación (<code>.set()</code>) o eliminación (<code>.del()</code>), el motor devolverá un mensaje de error especificando que la cláusula no está soportada.
                     </p>
                     <br>
-                    <p><b>Nota sobre IDs numéricos:</b> Al realizar búsquedas por ID numérico directo (ejemplo: <code>{ '*': 1 }</code>), la consulta opera sobre la columna primaria autogenerada <code>_auto_id</code>. Se aceptan valores numéricos enteros comprendidos entre <code>1</code> y <code>99999999999</code>.</p>
+                    <p><b>Nota sobre IDs numéricos:</b> Al realizar búsquedas por ID numérico directo (ejemplo: <code>{ '*': 1 }</code>), la consulta opera sobre la columna primaria autogenerada <code>_auto_id</code>. Se aceptan valores numéricos enteros comprendidos entre <code>1</code> y <code>Number.MAX_SAFE_INTEGER</code>.</p>
 					<br>
 
 					<h4><code>.set(callback?, timeout?)</code>:</h4>
@@ -325,7 +325,7 @@ _sqlite_frontend({
 						<b>Advertencia de Actualización Global:</b> Si se define una columna únicamente con el valor a modificar sin especificar la propiedad <code>query</code> (por ejemplo: <code>{ 'estado': 'activo' }</code>), la consulta se ejecutará como una actualización global sin cláusula <code>WHERE</code>, aplicando el nuevo valor a <b>todas las filas</b> de la tabla activa.
 					</p>
 					<br>
-                    <p><b>Nota sobre IDs numéricos:</b> Al realizar actualizaciones por ID numérico directo (ejemplo: <code>{ '*': 1 }</code>), la consulta opera sobre la columna primaria autogenerada <code>_auto_id</code>. Se aceptan valores numéricos enteros comprendidos entre <code>1</code> y <code>99999999999</code>.</p>
+                    <p><b>Nota sobre IDs numéricos:</b> Al realizar actualizaciones por ID numérico directo (ejemplo: <code>{ '*': 1 }</code>), la consulta opera sobre la columna primaria autogenerada <code>_auto_id</code>. Se aceptan valores numéricos enteros comprendidos entre <code>1</code> y <code>Number.MAX_SAFE_INTEGER</code>.</p>
                     <br>
 
 					<h4><code>.del(callback?, timeout?)</code>:</h4>
@@ -351,7 +351,7 @@ _sqlite_frontend({
 						<b>Advertencia de Borrado Masivo:</b> Al pasar una evaluación general con un valor verdadero (por ejemplo: <code>{ '*': true }</code>) sin especificar una condición <code>where</code> o un ID directo, la consulta ejecutará un borrado global en la tabla activa, <b>eliminando la totalidad de los registros</b>.
 					</p>
 					<br>
-                    <p><b>Nota sobre IDs numéricos:</b> Al realizar eliminaciones por ID numérico directo (ejemplo: <code>{ '*': 1 }</code>), la consulta opera sobre la columna primaria autogenerada <code>_auto_id</code>. Se aceptan valores numéricos enteros comprendidos entre <code>1</code> y <code>99999999999</code>.</p>
+                    <p><b>Nota sobre IDs numéricos:</b> Al realizar eliminaciones por ID numérico directo (ejemplo: <code>{ '*': 1 }</code>), la consulta opera sobre la columna primaria autogenerada <code>_auto_id</code>. Se aceptan valores numéricos enteros comprendidos entre <code>1</code> y <code>Number.MAX_SAFE_INTEGER</code>.</p>
                     <br>
 
 					<h3>5. Flujo Completo de Ejemplo</h3>

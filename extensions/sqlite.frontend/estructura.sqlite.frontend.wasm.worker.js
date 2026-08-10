@@ -3,7 +3,7 @@ import sqlite3InitModule from './_dependencies/_sqlite/index.mjs';
 const dbs = {};
 const _supported_queries = ['SELECT', 'UPDATE', 'DELETE'];
 const _auto_id_varName = '_auto_id';
-const _auto_id_limit = 99999999999;
+const _auto_id_limit = Number.MAX_SAFE_INTEGER;
 const _columns_separator = /\s*\,+\s*/;
 const allColumnsSupportedQueries = ['SELECT'];
 const columnsTransformSupportedQueries = ['UPDATE'];
