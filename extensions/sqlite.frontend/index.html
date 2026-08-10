@@ -170,12 +170,12 @@ _sqlite_frontend('SELECT * FROM usuarios').sql(function(respuesta) {
 	}
 
 	// 2. Error granular a nivel de columna
-	if (res.columna_inexistente.error) {
-		console.warn('Error en la columna:', res.columna_inexistente.error);
+	if (res.get.columna_inexistente.error) {
+		console.warn('Error en la columna:', res.get.columna_inexistente.error);
 		return;
 	}
 
-	console.log('Resultados:', res.columna_inexistente.result);
+	console.log('Resultados:', res.get.columna_inexistente.result);
 });</code></pre>
 					<br>
 
@@ -247,7 +247,7 @@ _sqlite_frontend('usuarios').table();</code></pre>
 
 		<pre><code>// 1. Obtener todas las columnas y registros
 _sqlite_frontend({ '*': true }).get(function(res) {
-	console.log('Registros:', res['*'].result);
+	console.log('Registros:', res.get['*'].result);
 });
 
 // 2. Consulta filtrada por _auto_id
@@ -256,12 +256,12 @@ _sqlite_frontend({
 		where: { _auto_id: 1 }
 	}
 }).get(function(res) {
-	console.log('Fecha obtenida:', res.fecha.result);
+	console.log('Fecha obtenida:', res.get.fecha.result);
 });
 
 // 3. Atajo directo por ID numérico (_auto_id = 1)
 _sqlite_frontend({ '*': 1 }).get(function(res) {
-	console.log('Registro #1:', res['*'].result);
+	console.log('Registro #1:', res.get['*'].result);
 });
 
 // 4. Consulta avanzada con operadores relacionales y límite
@@ -274,7 +274,7 @@ _sqlite_frontend({
 		limit: 10
 	}
 }).get(function(res) {
-	console.log('Resultados filtrados:', res.fecha.result);
+	console.log('Resultados filtrados:', res.get.fecha.result);
 });</code></pre>
                     <br>
                     <p><b>Operadores soportados en cláusulas WHERE:</b></p>
@@ -305,8 +305,6 @@ _sqlite_frontend({
 _sqlite_frontend({
 	'fecha': { set: 9999, query: 1 }
 }).set(function(res) {
-	console.log('Fila #1 actualizada:', res);
-
 	console.log('Filas modificadas:', res.set.fecha.result);
 });</code></pre>
 					<br>
