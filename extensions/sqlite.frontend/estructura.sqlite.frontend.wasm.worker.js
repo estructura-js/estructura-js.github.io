@@ -247,7 +247,7 @@ function cleanName(str, type, _default){
     case 'db': return str.replace(/[^a-zA-Z0-9_\.]/g, '') || (typeof _default !== 'undefined' ? _default : '_default_db');
     case 'table': return str.replace(/[^a-zA-Z0-9_]/g, '') || (typeof _default !== 'undefined' ? _default : '_default_table');
     case 'columnName': return str.replace(/[^a-zA-Z0-9_]/g, '') || (typeof _default !== 'undefined' ? _default : '_default_column');
-    case 'columnType': return str.toUpperCase().replace(/[^A-Z\(\)\,0-9]/g, '') || (typeof _default !== 'undefined' ? _default : 'TEXT');
+    case 'columnType': return str.toUpperCase().replace(/[^A-Z\(\)\,0-9\s]/g, '') || (typeof _default !== 'undefined' ? _default : 'TEXT');
   }
   return str.replace(/[^a-zA-Z0-9]/g, '');
 }

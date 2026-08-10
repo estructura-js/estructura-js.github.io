@@ -148,8 +148,35 @@ _sqlite_frontend('SELECT * FROM usuarios').sql(function(respuesta) {
 	console.log('Resultado:', respuesta.sql.result);
 });</code></pre>
 					<br>
+					<h3>2. Detección y Control de Errores</h3>
+					<p>El sistema captura y aísla los errores tanto a nivel de inicialización del motor como durante la ejecución de consultas SQL o del Query Builder:</p>
+					<br>
+					<ul>
+						<li><b>En modo Promesas (async/await):</b> Si ocurre un error en la base de datos o en la consulta, la promesa se <b>rechaza automáticamente</b>. El objeto capturado en el <code>catch</code> es una instancia estándar de <code>Error</code> con el mensaje devuelto por SQLite.<br><br></li>
+						<li><b>En modo Callbacks:</b> La función de retorno siempre se ejecuta pasando el objeto de respuesta. Si ocurrió una falla general, el campo <code>respuesta.error</code> contendrá el mensaje del error.<br><br></li>
+						<li><b>Errores granulares en Query Builder:</b> Cuando se consultan o actualizan múltiples columnas en una sola llamada, un error en una columna no destruye la respuesta completa; la falla se aísla en la propiedad <code>respuesta[nombre_columna].error</code>.</li>
+					</ul>
+					<br>
+					<p><b>Ejemplo de captura granular en Callbacks:</b></p>
 
-					<h3>2. Métodos para Cadenas (<code>String</code>)</h3>
+							<pre><code>_sqlite_frontend({ 'columna_inexistente': true }).get(function(res) {
+	// 1. Error a nivel de respuesta global
+	if (res.error) {
+		console.error('Error general:', res.error);
+		return;
+	}
+
+	// 2. Error granular a nivel de columna
+	if (res.columna_inexistente.error) {
+		console.warn('Error en la columna:', res.columna_inexistente.error);
+		return;
+	}
+
+	console.log('Resultados:', res.columna_inexistente.result);
+});</code></pre>
+					<br>
+
+					<h3>3. Métodos para Cadenas (<code>String</code>)</h3>
 					<p>Permiten ejecutar sentencias SQL directas, administrar bases de datos, tablas o exportar archivos.</p>
 					<br>
 
@@ -165,19 +192,21 @@ _sqlite_frontend("SELECT name FROM sqlite_master WHERE type='table'").sql(functi
 });</code></pre>
 					<br>
 
-					<h4><code>.db(name)</code>:</h4>
-					<p>Establece o inicializa la base de datos de trabajo activa (por defecto <code>_default_db</code>).</p>
+					<h4><code>.db(callback?, timeout?)</code>:</h4>
+					<p>Configura y selecciona la <b>base de datos de trabajo activa</b> (por defecto <code>_default_db</code>). Una vez ejecutado, todas las consultas y operaciones posteriores se dirigirán a esta base de datos hasta que se especifique una diferente.</p>
 
-		<pre><code>_sqlite_frontend('mi_base_datos.db').db();</code></pre>
+					<pre><code>// Seleccionar 'mi_base_datos.db' como el contexto de trabajo activo
+_sqlite_frontend('mi_base_datos.db').db();</code></pre>
 					<br>
 
-					<h4><code>.table(name)</code>:</h4>
-					<p>Selecciona o crea implícitamente la tabla sobre la cual operarán los métodos estructurados (por defecto <code>_default_table</code> con la clave primaria autogenerada <code>_auto_id</code>).</p>
+					<h4><code>.table(callback?, timeout?)</code>:</h4>
+					<p>Configura y selecciona la <b>tabla de trabajo activa</b> sobre la cual operarán los métodos estructurados (<code>.column()</code>, <code>.row()</code>, <code>.get()</code>, <code>.set()</code>, <code>.del()</code>). Si la tabla no existe en la base de datos activa, se crea automáticamente incluyendo la clave primaria autogenerada <code>_auto_id</code> (por defecto opera sobre <code>_default_table</code>).</p>
 
-		<pre><code>_sqlite_frontend('usuarios').table();</code></pre>
+					<pre><code>// Seleccionar 'usuarios' como la tabla activa para las operaciones siguientes
+_sqlite_frontend('usuarios').table();</code></pre>
 					<br>
 
-					<h4><code>.save(filename)</code>:</h4>
+					<h4><code>.save(callback?, timeout?)</code>:</h4>
 					<p>Exporta y descarga el estado binario de la base de datos activa como una instancia <code>Blob</code> de tipo <code>application/x-sqlite3</code>.</p>
 
 		<pre><code>_sqlite_frontend('respaldo.sqlite').save(function(res) {
@@ -190,11 +219,11 @@ _sqlite_frontend("SELECT name FROM sqlite_master WHERE type='table'").sql(functi
 });</code></pre>
 					<br>
 
-					<h3>3. Métodos para Objetos (<code>Object</code>)</h3>
+					<h3>4. Métodos para Objetos (<code>Object</code>)</h3>
 					<p>Proporcionan una capa fluida de abstracción (Query Builder) para manipular estructuras y datos sin escribir SQL manual.</p>
 					<br>
 
-					<h4><code>.column(definition)</code>:</h4>
+					<h4><code>.column(callback?, timeout?)</code>:</h4>
 					<p>Define o añade una nueva columna a la tabla activa.</p>
 
 		<pre><code>_sqlite_frontend({ name: 'fecha', type: 'INTEGER' }).column(function(res) {
@@ -202,7 +231,7 @@ _sqlite_frontend("SELECT name FROM sqlite_master WHERE type='table'").sql(functi
 });</code></pre>
 					<br>
 
-					<h4><code>.row(data)</code>:</h4>
+					<h4><code>.row(callback?, timeout?)</code>:</h4>
 					<p>Inserta un nuevo registro (fila) en la tabla activa asignándole un identificador numérico autoincrementable (<code>_auto_id</code>).</p>
 
 		<pre><code>_sqlite_frontend({ fecha: Date.now() }).row(function(res) {
@@ -210,7 +239,7 @@ _sqlite_frontend("SELECT name FROM sqlite_master WHERE type='table'").sql(functi
 });</code></pre>
 					<br>
 
-					<h4><code>.get(query)</code>:</h4>
+					<h4><code>.get(callback?, timeout?)</code>:</h4>
 					<p>Consulta registros de la tabla activa. Soporta selección de columnas, atajos por ID numérico, cláusulas <code>where</code> avanzadas (con operadores como <code>LIKE</code>, <code>IN</code>, <code>&gt;=</code>, <code>IS NULL</code>), límites de resultados (<code>limit</code>) y agregaciones (<code>count</code>).</p>
 
 		<pre><code>// 1. Obtener todas las columnas y registros
@@ -246,8 +275,8 @@ _sqlite_frontend({
 });</code></pre>
 					<br>
 
-					<h4><code>.set(data)</code>:</h4>
-					<p>Actualiza registros en la tabla activa según las condiciones provistas. El parámetro <code>query</code> acepta un objeto con cláusula <code>where</code> o un número directo referente al <code>_auto_id</code>.</p>
+					<h4><code>.set(callback?, timeout?)</code>:</h4>
+					<p>Actualiza registros en la tabla activa según las condiciones provistas. El parámetro <code>query</code> acepta un objeto con cláusula <code>where</code> o un número directo referente al <code>_auto_id</code>. Devuelve el número de filas modificadas en el campo <code>result</code> de cada columna procesada.</p>
 
 		<pre><code>// 1. Actualización mediante objeto de consulta 'where'
 _sqlite_frontend({
@@ -264,15 +293,19 @@ _sqlite_frontend({
 	'fecha': { set: 9999, query: 1 }
 }).set(function(res) {
 	console.log('Fila #1 actualizada:', res);
+
+	console.log('Filas modificadas:', res.set.fecha.result);
 });</code></pre>
 					<br>
 
-					<h4><code>.del(query)</code>:</h4>
+					<h4><code>.del(callback?, timeout?)</code>:</h4>
 					<p>Elimina registros que coincidan con la condición dada o con un valor de identificador numérico implícito (<code>_auto_id</code>).</p>
 
 		<pre><code>// 1. Eliminar registro especificando el _auto_id directo (ej. registro #1)
 _sqlite_frontend({ 'fecha': 1 }).del(function(res) {
 	console.log('Registros eliminados:', res);
+
+	console.log('Filas eliminadas:', res.del.fecha.result);
 });
 
 // 2. Eliminar registros mediante condición 'where'
@@ -280,10 +313,12 @@ _sqlite_frontend({
 	'*': { where: { fecha: 0 } }
 }).del(function(res) {
 	console.log('Registros eliminados:', res);
+
+	console.log('Filas eliminadas:', res.del['*'].result);
 });</code></pre>
 					<br>
 
-					<h3>4. Flujo Completo de Ejemplo</h3>
+					<h3>5. Flujo Completo de Ejemplo</h3>
 					<p>Integración de definición de esquema, inserción, consulta, actualización y exportación:</p>
 
 		<pre><code>document.addEventListener('DOMContentLoaded', async function () {
@@ -310,7 +345,7 @@ _sqlite_frontend({
 });</code></pre>
 					<br>
 
-					<h3>5. Características Técnicas</h3>
+					<h3>6. Características Técnicas</h3>
 					<div class="features">
 						<p><strong>Ejecución No Bloqueante (Web Worker):</strong> Desplaza todo el procesamiento de base de datos, consultas e I/O a un hilo secundario mediante Web Workers, sin interferir en la interfaz principal del navegador.</p>
 						<br>
@@ -320,6 +355,72 @@ _sqlite_frontend({
 						<br>
 						<p><strong>Sanitización y Parametrización Integrada:</strong> Limpia y valida dinámicamente nombres de bases de datos, tablas y columnas, aplicando sentencias preparadas parametrizadas (<code>bind</code>) en las operaciones de escritura y lectura para proteger contra inyecciones SQL.</p>
 					</div>
+
+					<br>
+					<h3>7. Requisitos del Servidor y Cabeceras HTTP (OPFS / WASM)</h3>
+					<p>Para habilitar el acceso persistente al disco mediante <b>OPFS</b> (Origin Private File System) y permitir la compilación del módulo <b>SQLite WebAssembly</b>, el servidor web debe servir la aplicación con un entorno de aislamiento de origen (<i>Cross-Origin Isolation</i>) y con permisos para eval de WebAssembly en la política de seguridad (CSP).</p>
+					<br>
+					<p><b>Cabeceras requeridas:</b></p>
+					<ul>
+						<li><code>Cross-Origin-Opener-Policy:  same-origin</code> (Habilita el aislamiento de origen COOP).</li>
+						<li><code>Cross-Origin-Embedder-Policy: require-corp</code> (Permite recursos de origen cruzado protegidos COEP).</li>
+						<li><code>Cross-Origin-Resource-Policy: same-origin</code> (Protección CORP).</li>
+						<li><code>Content-Security-Policy: ... 'wasm-unsafe-eval'</code> (Permite la compilación ejecutable de la base de datos WASM).</li>
+					</ul>
+					<br>
+					<p><b>Ejemplo de Middleware en Node.js (Express / Custom Server):</b></p>
+
+							<pre><code>module.exports = function customMiddleware(req, res, next) {
+  // 1. Cabeceras de aislamiento de origen para OPFS
+  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+  res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
+  res.setHeader('Cross-Origin-Resource-Policy', 'same-origin');
+
+  // 2. Permitir compilación de SQLite WASM en la política de seguridad (CSP)
+  let csp = res.get('Content-Security-Policy');
+
+  if (!csp) {
+    res.setHeader('Content-Security-Policy', "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'");
+  }
+  else if (!csp.includes('wasm-unsafe-eval')) {
+    if (csp.includes('script-src')) {
+      csp = csp.replace(/script-src([^;]*)/, "script-src$1 'wasm-unsafe-eval'");
+    }
+    else {
+      csp += "; script-src 'self' 'wasm-unsafe-eval'";
+    }
+
+    res.setHeader('Content-Security-Policy', csp);
+  }
+
+  next();
+};</code></pre>
+
+                    <br>
+					<h3>8. Manejo de Respuestas Tardías o Huérfanas (<code>unhandledResponse</code>)</h3>
+					<p>En operaciones asíncronas donde se especifica un límite de tiempo de espera (<i>timeout</i>), es posible que una consulta en la base de datos tarde más del tiempo concedido. En estos casos, la promesa en el hilo principal se rechaza y se descarta de la cola interna de seguimiento.</p>
+					<br>
+					<p>Sin embargo, dado que el Web Worker continúa procesando la consulta en segundo plano hasta su culminación, el resultado final terminará llegando al hilo principal. Para evitar que estas respuestas queden en el olvido o se descarten en silencio, la librería permite definir un manejador global denominado <code>unhandledResponse</code>.</p>
+					<br>
+					<p><b>Caso de uso:</b> Permite registrar, auditar o recuperar los resultados de operaciones cuyos límites de tiempo locales expiraron en la interfaz, pero cuya ejecución fue exitosa en el motor SQLite.</p>
+					<br>
+					<p><b>Ejemplo de configuración:</b></p>
+
+		<pre><code>// Definir el recolector global para respuestas fuera de tiempo
+_sqlite_frontend.unhandledResponse = function (respuesta) {
+	console.warn('Respuesta recibida tras expiración de tiempo (ID ' + respuesta.id + '):', respuesta);
+
+	// Ejemplo: Si la consulta que expiró era una actualización, podemos verificar su resultado
+	if (respuesta.set) {
+		console.log('La actualización tardía se completó con éxito en segundo plano.');
+	}
+};
+
+// Ejemplo: Ejecutar una consulta con un timeout muy estricto de 1ms
+_sqlite_frontend({ '*': true }).get(null, 1).catch(function(error) {
+	console.error('El cliente expiró por timeout:', error.message);
+	// Si el Worker responde un momento después, 'unhandledResponse' capturará el resultado.
+});</code></pre>
 				</div>
 			</section>
 		</main>
