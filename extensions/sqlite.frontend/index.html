@@ -115,10 +115,13 @@
 				<h2 id="description">Descripción</h2>
 				<div class="padding">Motor de base de datos relacional cliente (client-side) asíncrono y no bloqueante basado en SQLite compilado a WebAssembly (WASM). Ejecuta las operaciones en un hilo secundario (Web Worker) para mantener la interfaz de usuario fluida, ofreciendo almacenamiento persistente mediante el sistema de archivos privado del origen (OPFS) con conmutación automática a memoria y soporte para interfaz fluida basada en Promesas o Callbacks.</div>
 				<p class="padding-y">
-					<b>Librería:</b> <a target="_blank" href="estructura.sqlite.frontend.js">estructura.sqlite.frontend.js</a>, <a target="_blank" href="estructura.sqlite.frontend.wasm.worker.js">estructura.sqlite.frontend.wasm.worker.js</a> (vinculado a <a target="_blank" href="./_dependencies/_sqlite/index.mjs">./_dependencies/_sqlite/index.mjs</a> del directorio "_sqlite" <code>self hosted</code> de <a target="_blank" href="https://github.com/sqlite/sqlite-wasm">SQLite WASM [Official]</a>)
+					<b>Librería:</b> <a target="_blank" href="estructura.sqlite.frontend.js">estructura.sqlite.frontend.js</a>
 				</p>
 				<p class="padding-y">
-					<b>Compatibilidad:</b> <a target="_blank" href="https://okzgn.com/articles/why-not-build-frontend-frameworks-on-raw-html-css-or-js/">ES6+ / WebAssembly / Web Workers / OPFS</a>
+					<b>Compatibilidad:</b> <a target="_blank" href="#">ES6+ / WebAssembly / Web Workers / OPFS</a>
+				</p>
+				<p class="padding-y">
+					<b>Dependencias obligatorias:</b> <a target="_blank" href="estructura.sqlite.frontend.wasm.worker.js">estructura.sqlite.frontend.wasm.worker.js</a> (vinculado a <a target="_blank" href="./_dependencies/_sqlite/index.mjs">./_dependencies/_sqlite/index.mjs</a> del directorio "_sqlite" <code>self hosted</code> de <a target="_blank" href="https://github.com/sqlite/sqlite-wasm">SQLite WASM [Official]</a>)
 				</p>
 			</section>
 
@@ -152,7 +155,7 @@ _sqlite_frontend('SELECT * FROM usuarios').sql(function(respuesta) {
 					<p>El sistema captura y aísla los errores tanto a nivel de inicialización del motor como durante la ejecución de consultas SQL o del Query Builder:</p>
 					<br>
 					<ul>
-						<li><b>En modo Promesas (async/await):</b> Si ocurre un error en la base de datos o en la consulta, la promesa se <b>rechaza automáticamente</b>. El objeto capturado en el <code>catch</code> es una instancia estándar de <code>Error</code> con el mensaje devuelto por SQLite.<br><br></li>
+					    <li><b>En modo Promesas (async/await):</b> Si ocurre un error general en la base de datos o en la consulta SQL, la promesa se <b>rechaza automáticamente</b>. Sin embargo, al utilizar el Query Builder (<code>.get()</code>, <code>.set()</code>, etc.), si ocurre un error en una columna específica dentro de una consulta múltiple, la promesa se <b>resolverá exitosamente</b> y el mensaje de error se alojará en <code>respuesta[nombre_columna].error</code>.<br><br></li>
 						<li><b>En modo Callbacks:</b> La función de retorno siempre se ejecuta pasando el objeto de respuesta. Si ocurrió una falla general, el campo <code>respuesta.error</code> contendrá el mensaje del error.<br><br></li>
 						<li><b>Errores granulares en Query Builder:</b> Cuando se consultan o actualizan múltiples columnas en una sola llamada, un error en una columna no destruye la respuesta completa; la falla se aísla en la propiedad <code>respuesta[nombre_columna].error</code>.</li>
 					</ul>
@@ -193,14 +196,14 @@ _sqlite_frontend("SELECT name FROM sqlite_master WHERE type='table'").sql(functi
 					<br>
 
 					<h4><code>.db(callback?, timeout?)</code>:</h4>
-					<p>Configura y selecciona la <b>base de datos de trabajo activa</b> (por defecto <code>_default_db</code>). Una vez ejecutado, todas las consultas y operaciones posteriores se dirigirán a esta base de datos hasta que se especifique una diferente.</p>
+					<p>Configura y selecciona la <b>base de datos de trabajo activa</b>. Si no se especifica un nombre de base de datos, el motor utilizará automáticamente la base de datos por defecto <code>_default_db</code>. Una vez ejecutado, todas las consultas posteriores se dirigirán a esta base de datos.</p>
 
 					<pre><code>// Seleccionar 'mi_base_datos.db' como el contexto de trabajo activo
 _sqlite_frontend('mi_base_datos.db').db();</code></pre>
 					<br>
 
 					<h4><code>.table(callback?, timeout?)</code>:</h4>
-					<p>Configura y selecciona la <b>tabla de trabajo activa</b> sobre la cual operarán los métodos estructurados (<code>.column()</code>, <code>.row()</code>, <code>.get()</code>, <code>.set()</code>, <code>.del()</code>). Si la tabla no existe en la base de datos activa, se crea automáticamente incluyendo la clave primaria autogenerada <code>_auto_id</code> (por defecto opera sobre <code>_default_table</code>).</p>
+					<p>Configura y selecciona la <b>tabla de trabajo activa</b> sobre la cual operarán los métodos estructurados (<code>.column()</code>, <code>.row()</code>, <code>.get()</code>, <code>.set()</code>, <code>.del()</code>). Si no se especifica un nombre, operará por defecto sobre <code>_default_table</code>. Si la tabla no existe en la base de datos activa, se crea automáticamente incluyendo la clave primaria autogenerada <code>_auto_id</code>.</p>
 
 					<pre><code>// Seleccionar 'usuarios' como la tabla activa para las operaciones siguientes
 _sqlite_frontend('usuarios').table();</code></pre>
@@ -273,6 +276,16 @@ _sqlite_frontend({
 }).get(function(res) {
 	console.log('Resultados filtrados:', res.fecha.result);
 });</code></pre>
+                    <br>
+                    <p><b>Operadores soportados en cláusulas WHERE:</b></p>
+                    <ul>
+                    <li><b>Comparación:</b> <code>=</code>, <code>==</code>, <code>!=</code>, <code>&lt;&gt;</code>, <code>&gt;</code>, <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;=</code></li>
+                    <li><b>Búsqueda y Rangos:</b> <code>LIKE</code>, <code>NOT LIKE</code>, <code>GLOB</code>, <code>NOT GLOB</code>, <code>BETWEEN</code>, <code>NOT BETWEEN</code></li>
+                    <li><b>Conjuntos y Nulos:</b> <code>IN</code>, <code>NOT IN</code>, <code>IS</code>, <code>IS NOT</code>, <code>IS DISTINCT FROM</code>, <code>IS NOT DISTINCT FROM</code></li>
+                    <li><b>Lógicos y Bits:</b> <code>AND</code>, <code>OR</code>, <code>NOT</code>, <code>EXISTS</code>, <code>NOT EXISTS</code>, <code>&amp;</code>, <code>|</code>, <code>&lt;&lt;</code>, <code>&gt;&gt;</code>, <code>~</code>, <code>||</code></li>
+                    </ul>
+                    <br>
+                    <p><b>Nota sobre IDs numéricos:</b> Al realizar búsquedas por ID numérico directo (ejemplo: <code>{ '*': 1 }</code>), la consulta opera sobre la columna primaria autogenerada <code>_auto_id</code>. Se aceptan valores numéricos enteros comprendidos entre <code>1</code> y <code>99999999999</code>.</p>
 					<br>
 
 					<h4><code>.set(callback?, timeout?)</code>:</h4>
@@ -298,6 +311,8 @@ _sqlite_frontend({
 });</code></pre>
 					<br>
 
+                    <p><b>Nota sobre IDs numéricos:</b> Al realizar actualizaciones por ID numérico directo (ejemplo: <code>{ '*': 1 }</code>), la consulta opera sobre la columna primaria autogenerada <code>_auto_id</code>. Se aceptan valores numéricos enteros comprendidos entre <code>1</code> y <code>99999999999</code>.</p>
+
 					<h4><code>.del(callback?, timeout?)</code>:</h4>
 					<p>Elimina registros que coincidan con la condición dada o con un valor de identificador numérico implícito (<code>_auto_id</code>).</p>
 
@@ -317,6 +332,8 @@ _sqlite_frontend({
 	console.log('Filas eliminadas:', res.del['*'].result);
 });</code></pre>
 					<br>
+
+                    <p><b>Nota sobre IDs numéricos:</b> Al realizar eliminaciones por ID numérico directo (ejemplo: <code>{ '*': 1 }</code>), la consulta opera sobre la columna primaria autogenerada <code>_auto_id</code>. Se aceptan valores numéricos enteros comprendidos entre <code>1</code> y <code>99999999999</code>.</p>
 
 					<h3>5. Flujo Completo de Ejemplo</h3>
 					<p>Integración de definición de esquema, inserción, consulta, actualización y exportación:</p>
@@ -344,8 +361,33 @@ _sqlite_frontend({
 	console.log('Registro eliminado con éxito.');
 });</code></pre>
 					<br>
+<h3>6. Manejo de Respuestas Tardías o Huérfanas (<code>unhandledResponse</code>)</h3>
+<p>En operaciones asíncronas donde se especifica un límite de tiempo de espera (<i>timeout</i>), es posible que una consulta en la base de datos tarde más del tiempo concedido. En estos casos, la promesa en el hilo principal se rechaza y se descarta de la cola interna de seguimiento.</p>
+<br>
+<p>Sin embargo, dado que el Web Worker continúa procesando la consulta en segundo plano hasta su culminación, el resultado final terminará llegando al hilo principal. Para evitar que estas respuestas queden en el olvido o se descarten en silencio, la librería permite definir un manejador global denominado <code>unhandledResponse</code>.</p>
+<br>
+<p><b>Caso de uso:</b> Permite registrar, auditar o recuperar los resultados de operaciones cuyos límites de tiempo locales expiraron en la interfaz, pero cuya ejecución fue exitosa en el motor SQLite.</p>
+<br>
+<p><b>Ejemplo de configuración:</b></p>
 
-					<h3>6. Características Técnicas</h3>
+<pre><code>// Definir el recolector global para respuestas fuera de tiempo
+_sqlite_frontend.unhandledResponse = function (respuesta) {
+console.warn('Respuesta recibida tras expiración de tiempo (ID ' + respuesta.id + '):', respuesta);
+
+// Ejemplo: Si la consulta que expiró era una actualización, podemos verificar su resultado
+if (respuesta.set) {
+console.log('La actualización tardía se completó con éxito en segundo plano.');
+}
+};
+
+// Ejemplo: Ejecutar una consulta con un timeout muy estricto de 1ms
+_sqlite_frontend({ '*': true }).get(null, 1).catch(function(error) {
+console.error('El cliente expiró por timeout:', error.message);
+// Si el Worker responde un momento después, 'unhandledResponse' capturará el resultado.
+});</code></pre>
+                    <br>
+
+					<h3>7. Características Técnicas</h3>
 					<div class="features">
 						<p><strong>Ejecución No Bloqueante (Web Worker):</strong> Desplaza todo el procesamiento de base de datos, consultas e I/O a un hilo secundario mediante Web Workers, sin interferir en la interfaz principal del navegador.</p>
 						<br>
@@ -353,11 +395,11 @@ _sqlite_frontend({
 						<br>
 						<p><strong>Cola de Pre-inicialización (Prestart Queue):</strong> Captura y encola automáticamente cualquier transacción o consulta emitida antes de que el motor WebAssembly haya completado su carga inicial, despachándolas en orden estricto una vez listo el entorno.</p>
 						<br>
-						<p><strong>Sanitización y Parametrización Integrada:</strong> Limpia y valida dinámicamente nombres de bases de datos, tablas y columnas, aplicando sentencias preparadas parametrizadas (<code>bind</code>) en las operaciones de escritura y lectura para proteger contra inyecciones SQL.</p>
+						<p><strong>Sanitización y Parametrización Integrada:</strong> Limpia y valida dinámicamente nombres de bases de datos (conserva únicamente <code>[a-zA-Z0-9_.]</code>), tablas y columnas (conserva únicamente <code>[a-zA-Z0-9_]</code>), eliminando automáticamente espacios y caracteres especiales no permitidos. Además, aplica sentencias preparadas parametrizadas (<code>bind</code>) en las operaciones de escritura y lectura para proteger contra inyecciones SQL.</p>
 					</div>
 
 					<br>
-					<h3>7. Requisitos del Servidor y Cabeceras HTTP (OPFS / WASM)</h3>
+					<h3>8. Requisitos del Servidor y Cabeceras HTTP (OPFS / WASM)</h3>
 					<p>Para habilitar el acceso persistente al disco mediante <b>OPFS</b> (Origin Private File System) y permitir la compilación del módulo <b>SQLite WebAssembly</b>, el servidor web debe servir la aplicación con un entorno de aislamiento de origen (<i>Cross-Origin Isolation</i>) y con permisos para eval de WebAssembly en la política de seguridad (CSP).</p>
 					<br>
 					<p><b>Cabeceras requeridas:</b></p>
@@ -395,32 +437,6 @@ _sqlite_frontend({
 
   next();
 };</code></pre>
-
-                    <br>
-					<h3>8. Manejo de Respuestas Tardías o Huérfanas (<code>unhandledResponse</code>)</h3>
-					<p>En operaciones asíncronas donde se especifica un límite de tiempo de espera (<i>timeout</i>), es posible que una consulta en la base de datos tarde más del tiempo concedido. En estos casos, la promesa en el hilo principal se rechaza y se descarta de la cola interna de seguimiento.</p>
-					<br>
-					<p>Sin embargo, dado que el Web Worker continúa procesando la consulta en segundo plano hasta su culminación, el resultado final terminará llegando al hilo principal. Para evitar que estas respuestas queden en el olvido o se descarten en silencio, la librería permite definir un manejador global denominado <code>unhandledResponse</code>.</p>
-					<br>
-					<p><b>Caso de uso:</b> Permite registrar, auditar o recuperar los resultados de operaciones cuyos límites de tiempo locales expiraron en la interfaz, pero cuya ejecución fue exitosa en el motor SQLite.</p>
-					<br>
-					<p><b>Ejemplo de configuración:</b></p>
-
-		<pre><code>// Definir el recolector global para respuestas fuera de tiempo
-_sqlite_frontend.unhandledResponse = function (respuesta) {
-	console.warn('Respuesta recibida tras expiración de tiempo (ID ' + respuesta.id + '):', respuesta);
-
-	// Ejemplo: Si la consulta que expiró era una actualización, podemos verificar su resultado
-	if (respuesta.set) {
-		console.log('La actualización tardía se completó con éxito en segundo plano.');
-	}
-};
-
-// Ejemplo: Ejecutar una consulta con un timeout muy estricto de 1ms
-_sqlite_frontend({ '*': true }).get(null, 1).catch(function(error) {
-	console.error('El cliente expiró por timeout:', error.message);
-	// Si el Worker responde un momento después, 'unhandledResponse' capturará el resultado.
-});</code></pre>
 				</div>
 			</section>
 		</main>
