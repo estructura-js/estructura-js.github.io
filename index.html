@@ -73,7 +73,7 @@
 			<div class="padding">
 				<ul class="lines center-y">
 					<li><a href="#description">Descripción</a></li>
-					<li><a href="#examples">Ejemplos</a></li>
+					<li><a href="#get_started">Cómo utilizar</a></li>
 					<li><a href="#docs">Documentación</a></li>
 					<li><a href="#extensions">Extensiones</a></li>
 				</ul>
@@ -84,16 +84,34 @@
 	<main>
 		<section class="margin-y">
 			<h2 id="description">Descripción</h2>
-			<div class="padding center-y">
-				<p><strong>Estructura es un framework de JavaScript ligero y sin dependencias que te permite asignar funciones que se vincularán automáticamente a tipos de datos personalizados o extendidos, basándose en uno o múltiples argumentos.</strong></p>
-				<p id="estructura_description" class="collapsed">Diseñado para ofrecer una base sólida al programar en JavaScript, superando sus conocidas peculiaridades nativas en el manejo de tipos («type quirks»). Es una solución de tiempo de ejecución («runtime») ligera, sin dependencias, sin TypeScript, sin verbosidad ni las limitaciones de la verificación de tipos en tiempo de compilación («compile-time»). Proporciona la capacidad de identificar claramente cualquier tipo de dato, crear cualquier tipo de dato personalizado, organizarlos y utilizarlos con la garantía de que el despachador («dispatcher») siempre vinculará las funciones especificadas a sus tipos correspondientes o predefinidos. Fue construido con una optimización máxima, ofrece flexibilidad, y fue diseñado teniendo en cuenta una compatibilidad casi universal (ES3+ [1999]).</p>
-				<p><a class="collapsed-links" data-read-more="Leer más" data-read-less="Leer menos" href="#estructura_description">Leer más</a></p>
-			</div>
+
+				<p class="padding"><strong>Estructura es un framework de JavaScript ligero y sin dependencias que te permite asignar funciones que se vincularán automáticamente a tipos de datos personalizados o extendidos, basándose en uno o múltiples argumentos.</strong></p>
+
+				<div class="padding">
+				    <p id="estructura_description" class="collapsed">Diseñado para ofrecer una base sólida al programar en JavaScript, superando sus conocidas peculiaridades nativas en el manejo de tipos («type quirks»). Es una solución de tiempo de ejecución («runtime») ligera, sin dependencias, sin TypeScript, sin verbosidad ni las limitaciones de la verificación de tipos en tiempo de compilación («compile-time»). Proporciona la capacidad de identificar claramente cualquier tipo de dato, crear cualquier tipo de dato personalizado, organizarlos y utilizarlos con la garantía de que el despachador («dispatcher») siempre vinculará las funciones especificadas a sus tipos correspondientes o predefinidos. Fue construido con una optimización máxima, ofrece flexibilidad, y fue diseñado teniendo en cuenta una compatibilidad casi universal (ES3+ [1999]).</p>
+					<a class="collapsed-links" data-read-more="+ Leer más" data-read-less="— Leer menos" href="#estructura_description">+ Leer más</a>
+				</div>
 		</section>
 
 		<section class="margin-y">
-			<h2 id="examples">Ejemplos</h2>
+			<h2 id="get_started">Cómo utilizar</h2>
+
 			<div class="padding">
+                <strong>Importación:</strong><br>
+    			<ul class="lines">
+        			<li><a class="collapsed-links" href="#umd">UMD</a><br>
+        			    <pre class="entirely" id="umd"><code>  &lt;!-- UMD / CDN: Unpkg --&gt;
+&lt;script src="https://unpkg.com/estructura-js"&gt;&lt;/script&gt;</code></pre></li>
+        			<li><a class="collapsed-links" href="#esm">ESM</a><br>
+        			    <pre class="entirely collapsed" id="esm"><code>  &lt;!-- ESM / CDN: Unpkg --&gt;
+&lt;script type="module"&gt;
+    import _e from 'https://unpkg.com/estructura-js';
+&lt;/script&gt;</code></pre></li>
+
+    			</ul>
+			</div>
+			<div class="padding">
+			    <strong>Ejemplos:</strong>
 				<ul class="lines">
 					<li><strong>Código:</strong> <a href="https://github.com/okzgn/estructura#guía-de-inicio-rápido">Guía de inicio rápido</a> — (Estructura)</li>
 					<li><strong>Código:</strong> <a href="https://github.com/okzgn/estructura#_efnassignments">Registrar asignaciones de funciones/métodos para tipos o subtipos</a> — (Estructura)</li>
@@ -120,37 +138,82 @@
 
 		<section class="margin-y">
 			<h2 id="extensions">Extensiones</h2>
-			<p class="padding">Las siguientes extensiones oficiales forman un ecosistema modular que cubre todo el desarrollo fundamental del frontend/cliente: HTTP, enrutamiento SPA, reactividad, control del DOM, eventos y componentes declarativos o asíncronos. Unificadas sobre el núcleo de despacho múltiple, ofrecen un stack completo, ligero y sin dependencias para construir aplicaciones complejas de extremo a extremo, desde prototipos pequeños hasta sistemas de mayor escala.</p>
+
 			<div class="padding">
-			    <strong>Extensiones/librerías y documentaciones disponibles:</strong>
-				<ul class="lines">
-					<li><a href="extensions/http/">HTTP</a> — (RC1, ES3/ES5+, AGPL v3)</li>
+                <p id="estructura_extensions" class="collapsed">Las siguientes extensiones oficiales forman un ecosistema modular que cubre todo el desarrollo fundamental del frontend/cliente: HTTP, enrutamiento SPA, reactividad, control del DOM, eventos y componentes declarativos o asíncronos. Unificadas sobre el núcleo de despacho múltiple, ofrecen un stack completo, ligero y sin dependencias para construir aplicaciones complejas de extremo a extremo, desde prototipos pequeños hasta sistemas de mayor escala.</p>
 
-					<li><a href="extensions/dom/">DOM</a> — (RC1, ES5+, AGPL v3)</li>
-
-					<li><a href="extensions/events/">Events</a> — (RC1, ES5/ES6+, AGPL v3)</li>
-					<li><a href="extensions/components/">Components</a> — (RC2, ES5/ES6+, AGPL v3)</li>
-					<li><a href="extensions/handlers/">Handlers</a> — (RC2, ES5/ES6+, AGPL v3)</li>
-
-					<li><a href="extensions/reactive/">Reactive</a> — (RC1, ES6+, AGPL v3)</li>
-					<li><a href="extensions/routing/">Routing</a> — (RC1, ES6+, AGPL v3)</li>
-
-					<li><a href="extensions/sqlite.frontend/">SQLite Frontend</a> — (RC1, ES6+ / WebAssembly / Web Workers / OPFS, AGPL v3)</li>
-				</ul>
+			    <a class="collapsed-links" data-read-more="+ Leer más" data-read-less="— Leer menos" href="#estructura_extensions">+ Leer más</a>
 			</div>
+
 			<div class="padding">
 			    <strong>Para usar las extensiones, importar primero Estructura (framework principal):</strong>
-				<pre><code>&lt;!-- CDN: Unpkg --&gt;
-&lt;script src="https://unpkg.com/estructura-js"&gt;&lt;/script&gt;
-&lt;!-- CDN: JSDelivr --&gt;
-&lt;script src="https://cdn.jsdelivr.net/npm/estructura-js"&gt;&lt;/script&gt;
-&lt;!-- CDN: Estructura --&gt;
-&lt;script src="https://estructura.okzgn.com/estructura.umd.js"&gt;&lt;/script&gt;</code></pre>
+
+				<ul class="lines">
+				<li><a class="collapsed-links" href="#cdn_unpkg">CDN: Unpkg</a><br>
+				    <pre class="entirely" id="cdn_unpkg"><code>	&lt;!-- CDN: Unpkg --&gt;
+&lt;script src="https://unpkg.com/estructura-js"&gt;&lt;/script&gt;</code></pre></li>
+				<li><a class="collapsed-links" href="#cdn_jsdelivr">CDN: JSDelivr</a><br>
+				    <pre class="entirely collapsed" id="cdn_jsdelivr"><code>	&lt;!-- CDN: JSDelivr --&gt;
+&lt;script src="https://cdn.jsdelivr.net/npm/estructura-js"&gt;&lt;/script&gt;</code></pre></li>
+				<li><a class="collapsed-links" href="#cdn_estructura">CDN: Estructura</a><br>
+				    <pre class="entirely collapsed" id="cdn_estructura"><code>	&lt;!-- CDN: Estructura --&gt;
+&lt;script src="https://estructura.okzgn.com/estructura.umd.js"&gt;&lt;/script&gt;</code></pre></li>
+				</ul>
 			</div>
+
 			<div class="padding">
-			    <strong>Vincular reemplazando «extensión» por el nombre de la extensión/librería correspondiente (en minúsculas).</strong>
-				<pre><code>&lt;!-- CDN: Estructura --&gt;
-&lt;script src="https://estructura.okzgn.com/extensions/extensión/estructura.extensión.js"&gt;&lt;/script&gt;</code></pre>
+			    <strong>Extensiones/librerías y documentaciones disponibles:</strong>
+				<ul class="separated">
+					<li><a class="collapsed-links" data-read-more="+ HTTP" data-read-less="— HTTP" href="#ext_http">+ HTTP</a> — <a href="extensions/http/">Documentación</a> — (RC1, ES3/ES5+, AGPL v3, UMD)
+					<pre class="entirely collapsed" id="ext_http"><code>&lt;!-- CDN: Estructura / HTTP --&gt;
+&lt;script src="https://estructura.okzgn.com/extensions/http/estructura.http.js"&gt;&lt;/script&gt;</code></pre>
+					</li>
+
+					<li><a class="collapsed-links" data-read-more="+ DOM" data-read-less="— DOM" href="#ext_dom">+ DOM</a> — <a href="extensions/dom/">Documentación</a> — (RC1, ES5+, AGPL v3, UMD)
+					<pre class="entirely collapsed" id="ext_dom"><code>&lt;!-- CDN: Estructura / DOM --&gt;
+&lt;script src="https://estructura.okzgn.com/extensions/dom/estructura.dom.js"&gt;&lt;/script&gt;</code></pre>
+					</li>
+
+					<li><a class="collapsed-links" data-read-more="+ Events" data-read-less="— Events" href="#ext_events">+ Events</a> — <a href="extensions/events/">Documentación</a> — (RC1, ES5/ES6+, AGPL v3, UMD)
+					<pre class="entirely collapsed" id="ext_events"><code>&lt;!-- CDN: Estructura / Events --&gt;
+&lt;script src="https://estructura.okzgn.com/extensions/events/estructura.events.js"&gt;&lt;/script&gt;</code></pre>
+					</li>
+
+					<li><a class="collapsed-links" data-read-more="+ Components" data-read-less="— Components" href="#ext_components">+ Components</a> — <a href="extensions/components/">Documentación</a> — (RC2, ES5/ES6+, AGPL v3, UMD)
+					<pre class="entirely collapsed" id="ext_components"><code>&lt;!-- CDN: Estructura / Components --&gt;
+
+&lt;!-- DEPENDENCY: Estructura / HTTP --&gt;
+&lt;script src="https://estructura.okzgn.com/extensions/http/estructura.http.js"&gt;&lt;/script&gt;
+
+&lt;!-- EXTENSION: Estructura / Components --&gt;
+&lt;script src="https://estructura.okzgn.com/extensions/components/estructura.components.js"&gt;&lt;/script&gt;</code></pre>
+					</li>
+
+					<li><a class="collapsed-links" data-read-more="+ Handlers" data-read-less="— Handlers" href="#ext_handlers">+ Handlers</a> — <a href="extensions/handlers/">Documentación</a> — (RC2, ES5/ES6+, AGPL v3, UMD)
+					<pre class="entirely collapsed" id="ext_handlers"><code>&lt;!-- CDN: Estructura / Handlers --&gt;
+
+&lt;!-- DEPENDENCY: Estructura / Events --&gt;
+&lt;script src="https://estructura.okzgn.com/extensions/events/estructura.events.js"&gt;&lt;/script&gt;
+
+&lt;!-- EXTENSION: Estructura / Handlers --&gt;
+&lt;script src="https://estructura.okzgn.com/extensions/handlers/estructura.handlers.js"&gt;&lt;/script&gt;</code></pre>
+					</li>
+
+					<li><a class="collapsed-links" data-read-more="+ Reactive" data-read-less="— Reactive" href="#ext_reactive">+ Reactive</a> — <a href="extensions/reactive/">Documentación</a> — (RC1, ES6+, AGPL v3, UMD)
+					<pre class="entirely collapsed" id="ext_reactive"><code>&lt;!-- CDN: Estructura / Reactive --&gt;
+&lt;script src="https://estructura.okzgn.com/extensions/reactive/estructura.reactive.js"&gt;&lt;/script&gt;</code></pre>
+					</li>
+
+					<li><a class="collapsed-links" data-read-more="+ Routing" data-read-less="— Routing" href="#ext_routing">+ Routing</a> — <a href="extensions/routing/">Documentación</a> — (RC1, ES6+, AGPL v3, UMD)
+					<pre class="entirely collapsed" id="ext_routing"><code>&lt;!-- CDN: Estructura / Routing --&gt;
+&lt;script src="https://estructura.okzgn.com/extensions/routing/estructura.routing.js"&gt;&lt;/script&gt;</code></pre>
+					</li>
+
+					<li><a class="collapsed-links" data-read-more="+ SQLite Frontend" data-read-less="— SQLite Frontend" href="#ext_sqlite_frontend">+ SQLite Frontend</a> — <a href="extensions/sqlite.frontend/">Documentación</a> — (RC1, ES6+ / WebAssembly / Web Workers / OPFS, AGPL v3, UMD)
+					<pre class="entirely collapsed" id="ext_sqlite_frontend"><code>&lt;!-- CDN: Estructura / SQLite Frontend --&gt;
+&lt;script src="https://estructura.okzgn.com/extensions/sqlite.frontend/estructura.sqlite.frontend.js"&gt;&lt;/script&gt;</code></pre>
+					</li>
+				</ul>
 			</div>
 		</section>
 	</main>

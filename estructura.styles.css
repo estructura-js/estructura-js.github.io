@@ -139,6 +139,10 @@ ul { list-style: none; }
     text-overflow: ellipsis;
     width: 100%;
 }
+.entirely.collapsed { display: none !important; }
+.separated li {
+    margin-top: var(--width-base);
+}
 .lines {
     padding-left: var(--width-base-2);
 }

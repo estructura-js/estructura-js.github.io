@@ -46,15 +46,17 @@ _events(document).ready(function () {
 
         target = _dom('>' + element.getAttribute('href')),
         _element = _dom(element),
-        _class = target.get('className')[0];
+        _target_class = /[\b\s]*collapsed[\b\s]*/g,
+        _class = target.get('className')[0],
+        _original_class = _class.replace(_target_class, '');
 
-      if (_class.length) {
-        target.set('className', '');
+      if (_target_class.test(_class)) {
+        target.set('className', _original_class);
         _element.set('textContent', element.dataset.readLess);
         return;
       }
 
-      target.set('className', 'collapsed');
+      target.set('className', _original_class + ' collapsed');
       _element.set('textContent', element.dataset.readMore);
     });
   });
