@@ -275,7 +275,16 @@ _sqlite_frontend({
 	}
 }).get(function(res) {
 	console.log('Resultados filtrados:', res.get.fecha.result);
-});</code></pre>
+});
+
+// 5. Lanza un reject con Error('SQLite request timeout.') si supera los 2000ms
+try {
+  var datos = await _sqlite_frontend({ '*': true }).get(null, 2000);
+  console.log(datos.get['*'].result);
+} catch (err) {
+  console.error('Consulta cancelada por tiempo:', err.message);
+}
+</code></pre>
                     <br>
                     <p><b>Operadores soportados en cláusulas WHERE:</b></p>
                     <ul>
@@ -284,6 +293,10 @@ _sqlite_frontend({
                     <li><b>Conjuntos y Nulos:</b> <code>IN</code>, <code>NOT IN</code>, <code>IS</code>, <code>IS NOT</code>, <code>IS DISTINCT FROM</code>, <code>IS NOT DISTINCT FROM</code></li>
                     <li><b>Lógicos y Bits:</b> <code>AND</code>, <code>OR</code>, <code>NOT</code>, <code>EXISTS</code>, <code>NOT EXISTS</code>, <code>&amp;</code>, <code>|</code>, <code>&lt;&lt;</code>, <code>&gt;&gt;</code>, <code>~</code>, <code>||</code></li>
                     </ul>
+                    <br>
+                    <p>
+                        <b>Nota de compatibilidad:</b> Las cláusulas <code>count</code> y <code>limit</code> son de uso exclusivo para operaciones de lectura mediante <code>.get()</code>. Si se incluyen en operaciones de modificación (<code>.set()</code>) o eliminación (<code>.del()</code>), el motor devolverá un mensaje de error especificando que la cláusula no está soportada.
+                    </p>
                     <br>
                     <p><b>Nota sobre IDs numéricos:</b> Al realizar búsquedas por ID numérico directo (ejemplo: <code>{ '*': 1 }</code>), la consulta opera sobre la columna primaria autogenerada <code>_auto_id</code>. Se aceptan valores numéricos enteros comprendidos entre <code>1</code> y <code>99999999999</code>.</p>
 					<br>
@@ -308,8 +321,12 @@ _sqlite_frontend({
 	console.log('Filas modificadas:', res.set.fecha.result);
 });</code></pre>
 					<br>
-
+					<p>
+						<b>Advertencia de Actualización Global:</b> Si se define una columna únicamente con el valor a modificar sin especificar la propiedad <code>query</code> (por ejemplo: <code>{ 'estado': 'activo' }</code>), la consulta se ejecutará como una actualización global sin cláusula <code>WHERE</code>, aplicando el nuevo valor a <b>todas las filas</b> de la tabla activa.
+					</p>
+					<br>
                     <p><b>Nota sobre IDs numéricos:</b> Al realizar actualizaciones por ID numérico directo (ejemplo: <code>{ '*': 1 }</code>), la consulta opera sobre la columna primaria autogenerada <code>_auto_id</code>. Se aceptan valores numéricos enteros comprendidos entre <code>1</code> y <code>99999999999</code>.</p>
+                    <br>
 
 					<h4><code>.del(callback?, timeout?)</code>:</h4>
 					<p>Elimina registros que coincidan con la condición dada o con un valor de identificador numérico implícito (<code>_auto_id</code>).</p>
@@ -330,8 +347,12 @@ _sqlite_frontend({
 	console.log('Filas eliminadas:', res.del['*'].result);
 });</code></pre>
 					<br>
-
+					<p>
+						<b>Advertencia de Borrado Masivo:</b> Al pasar una evaluación general con un valor verdadero (por ejemplo: <code>{ '*': true }</code>) sin especificar una condición <code>where</code> o un ID directo, la consulta ejecutará un borrado global en la tabla activa, <b>eliminando la totalidad de los registros</b>.
+					</p>
+					<br>
                     <p><b>Nota sobre IDs numéricos:</b> Al realizar eliminaciones por ID numérico directo (ejemplo: <code>{ '*': 1 }</code>), la consulta opera sobre la columna primaria autogenerada <code>_auto_id</code>. Se aceptan valores numéricos enteros comprendidos entre <code>1</code> y <code>99999999999</code>.</p>
+                    <br>
 
 					<h3>5. Flujo Completo de Ejemplo</h3>
 					<p>Integración de definición de esquema, inserción, consulta, actualización y exportación:</p>
@@ -347,7 +368,7 @@ _sqlite_frontend({
 
 	// 3. Consultar todos los registros
 	var datos = await _sqlite_frontend({ '*': true }).get();
-	console.log('Resultado de lectura:', datos['*'].result);
+	console.log('Resultado de lectura:', datos.get['*'].result);
 
 	// 4. Actualizar el registro recién insertado
 	await _sqlite_frontend({
