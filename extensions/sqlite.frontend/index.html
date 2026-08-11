@@ -121,7 +121,7 @@
 					<b>Compatibilidad:</b> <a target="_blank" href="#">ES6+ / WebAssembly / Web Workers / OPFS</a>
 				</p>
 				<p class="padding-y">
-					<b>Dependencias internas obligatorias:</b> <a target="_blank" href="estructura.sqlite.frontend.wasm.worker.js">estructura.sqlite.frontend.wasm.worker.js</a> (vinculado a <a target="_blank" href="./_dependencies/_sqlite/index.mjs">./_dependencies/_sqlite/index.mjs</a> del directorio "_sqlite" <code>self hosted</code> de <a target="_blank" href="https://github.com/sqlite/sqlite-wasm">SQLite WASM v3.53.0-build1 [Official]</a>). Al vincular la librería principal (<code>estructura.sqlite.frontend.js</code>) mediante CDN, no es necesario importar estas dependencias, únicamente es necesario vía <code>self hosted</code>.
+					<b>Dependencias internas obligatorias:</b> <a target="_blank" href="estructura.sqlite.frontend.wasm.worker.js">estructura.sqlite.frontend.wasm.worker.js</a> (vinculado a "<a target="_blank" href="./_dependencies/_sqlite/index.mjs">./_dependencies/_sqlite/index.mjs</a>" del directorio "_sqlite" <code>self hosted</code> de <a target="_blank" href="https://github.com/sqlite/sqlite-wasm">SQLite WASM v3.53.0-build1 [Official]</a>). Al vincular la librería principal (<code>estructura.sqlite.frontend.js</code>) mediante CDN, no es necesario importar estas dependencias, únicamente es necesario vía <code>self hosted</code>.
 				</p>
 				<div class="padding-y">
 					<b>Importación:</b><pre><code>&lt;!-- CDN: Estructura / SQLite Frontend --&gt;
@@ -436,28 +436,13 @@ console.error('El cliente expiró por timeout:', error.message);
 					<br>
 					<p><b>Ejemplo de Middleware en Node.js (Express / Custom Server):</b></p>
 
-							<pre><code>module.exports = function customMiddleware(req, res, next) {
-  // 1. Cabeceras de aislamiento de origen para OPFS
+							<pre><code>
+module.exports = function customMiddleware (req, res, next) {
+  // Cabeceras de aislamiento de origen para OPFS
   res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
   res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
   res.setHeader('Cross-Origin-Resource-Policy', 'same-origin');
 
-  // 2. Permitir compilación de SQLite WASM en la política de seguridad (CSP)
-  let csp = res.get('Content-Security-Policy');
-
-  if (!csp) {
-    res.setHeader('Content-Security-Policy', "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'");
-  }
-  else if (!csp.includes('wasm-unsafe-eval')) {
-    if (csp.includes('script-src')) {
-      csp = csp.replace(/script-src([^;]*)/, "script-src$1 'wasm-unsafe-eval'");
-    }
-    else {
-      csp += "; script-src 'self' 'wasm-unsafe-eval'";
-    }
-
-    res.setHeader('Content-Security-Policy', csp);
-  }
 
   next();
 };</code></pre>
