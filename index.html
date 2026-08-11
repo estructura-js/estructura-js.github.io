@@ -98,11 +98,11 @@
 
 			<div class="padding">
                 <strong>Importación:</strong><br>
-    			<ul class="lines">
-        			<li><a class="collapsed-links" href="#umd">UMD</a><br>
+    			<ul class="separated">
+        			<li><b><a class="collapsed-links" data-read-more="+ UMD" data-read-less="— UMD" href="#umd">— UMD</a></b><br>
         			    <pre class="entirely" id="umd"><code>  &lt;!-- UMD / CDN: Unpkg --&gt;
 &lt;script src="https://unpkg.com/estructura-js"&gt;&lt;/script&gt;</code></pre></li>
-        			<li><a class="collapsed-links" href="#esm">ESM</a><br>
+        			<li><b><a class="collapsed-links" data-read-more="+ ESM" data-read-less="— ESM" href="#esm">+ ESM</a></b><br>
         			    <pre class="entirely collapsed" id="esm"><code>  &lt;!-- ESM / CDN: Unpkg --&gt;
 &lt;script type="module"&gt;
     import _e from 'https://unpkg.com/estructura-js';
@@ -148,15 +148,15 @@
 			<div class="padding">
 			    <strong>Para usar las extensiones, importar primero Estructura (framework principal):</strong>
 
-				<ul class="lines">
-				<li><a class="collapsed-links" href="#cdn_unpkg">CDN: Unpkg</a><br>
-				    <pre class="entirely" id="cdn_unpkg"><code>	&lt;!-- CDN: Unpkg --&gt;
+				<ul class="separated">
+				<li><b><a class="collapsed-links" data-read-more="+ CDN: Unpkg" data-read-less="— CDN: Unpkg" href="#cdn_unpkg">— CDN: Unpkg</a></b><br>
+				    <pre class="entirely" id="cdn_unpkg"><code>&lt;!-- CDN: Unpkg --&gt;
 &lt;script src="https://unpkg.com/estructura-js"&gt;&lt;/script&gt;</code></pre></li>
-				<li><a class="collapsed-links" href="#cdn_jsdelivr">CDN: JSDelivr</a><br>
-				    <pre class="entirely collapsed" id="cdn_jsdelivr"><code>	&lt;!-- CDN: JSDelivr --&gt;
+				<li><b><a class="collapsed-links" data-read-more="+ CDN: JSDelivr" data-read-less="— CDN: JSDelivr" href="#cdn_jsdelivr">+ CDN: JSDelivr</a></b><br>
+				    <pre class="entirely collapsed" id="cdn_jsdelivr"><code>&lt;!-- CDN: JSDelivr --&gt;
 &lt;script src="https://cdn.jsdelivr.net/npm/estructura-js"&gt;&lt;/script&gt;</code></pre></li>
-				<li><a class="collapsed-links" href="#cdn_estructura">CDN: Estructura</a><br>
-				    <pre class="entirely collapsed" id="cdn_estructura"><code>	&lt;!-- CDN: Estructura --&gt;
+				<li><b><a class="collapsed-links" data-read-more="+ CDN: Estructura" data-read-less="— CDN: Estructura" href="#cdn_estructura">+ CDN: Estructura</a></b><br>
+				    <pre class="entirely collapsed" id="cdn_estructura"><code>&lt;!-- CDN: Estructura --&gt;
 &lt;script src="https://estructura.okzgn.com/estructura.umd.js"&gt;&lt;/script&gt;</code></pre></li>
 				</ul>
 			</div>
@@ -164,22 +164,22 @@
 			<div class="padding">
 			    <strong>Extensiones/librerías y documentaciones disponibles:</strong>
 				<ul class="separated">
-					<li><a class="collapsed-links" data-read-more="+ HTTP" data-read-less="— HTTP" href="#ext_http">+ HTTP</a> — <a href="extensions/http/">Documentación</a> — (RC1, ES3/ES5+, AGPL v3, UMD)
+					<li><b><a class="collapsed-links" data-read-more="+ HTTP" data-read-less="— HTTP" href="#ext_http">+ HTTP</a></b> — <a href="extensions/http/">Documentación</a> — (RC1, ES3/ES5+, AGPL v3, UMD)
 					<pre class="entirely collapsed" id="ext_http"><code>&lt;!-- CDN: Estructura / HTTP --&gt;
 &lt;script src="https://estructura.okzgn.com/extensions/http/estructura.http.js"&gt;&lt;/script&gt;</code></pre>
 					</li>
 
-					<li><a class="collapsed-links" data-read-more="+ DOM" data-read-less="— DOM" href="#ext_dom">+ DOM</a> — <a href="extensions/dom/">Documentación</a> — (RC1, ES5+, AGPL v3, UMD)
+					<li><b><a class="collapsed-links" data-read-more="+ DOM" data-read-less="— DOM" href="#ext_dom">+ DOM</a></b> — <a href="extensions/dom/">Documentación</a> — (RC1, ES5+, AGPL v3, UMD)
 					<pre class="entirely collapsed" id="ext_dom"><code>&lt;!-- CDN: Estructura / DOM --&gt;
 &lt;script src="https://estructura.okzgn.com/extensions/dom/estructura.dom.js"&gt;&lt;/script&gt;</code></pre>
 					</li>
 
-					<li><a class="collapsed-links" data-read-more="+ Events" data-read-less="— Events" href="#ext_events">+ Events</a> — <a href="extensions/events/">Documentación</a> — (RC1, ES5/ES6+, AGPL v3, UMD)
+					<li><b><a class="collapsed-links" data-read-more="+ Events" data-read-less="— Events" href="#ext_events">+ Events</a></b> — <a href="extensions/events/">Documentación</a> — (RC1, ES5/ES6+, AGPL v3, UMD)
 					<pre class="entirely collapsed" id="ext_events"><code>&lt;!-- CDN: Estructura / Events --&gt;
 &lt;script src="https://estructura.okzgn.com/extensions/events/estructura.events.js"&gt;&lt;/script&gt;</code></pre>
 					</li>
 
-					<li><a class="collapsed-links" data-read-more="+ Components" data-read-less="— Components" href="#ext_components">+ Components</a> — <a href="extensions/components/">Documentación</a> — (RC2, ES5/ES6+, AGPL v3, UMD, Dep.: HTTP)
+					<li><b><a class="collapsed-links" data-read-more="+ Components" data-read-less="— Components" href="#ext_components">+ Components</a></b> — <a href="extensions/components/">Documentación</a> — (RC2, ES5/ES6+, AGPL v3, UMD, Dep.: HTTP)
 					<pre class="entirely collapsed" id="ext_components"><code>&lt;!-- CDN: Estructura / Components --&gt;
 
 &lt;!-- DEPENDENCY: Estructura / HTTP --&gt;
@@ -189,7 +189,7 @@
 &lt;script src="https://estructura.okzgn.com/extensions/components/estructura.components.js"&gt;&lt;/script&gt;</code></pre>
 					</li>
 
-					<li><a class="collapsed-links" data-read-more="+ Handlers" data-read-less="— Handlers" href="#ext_handlers">+ Handlers</a> — <a href="extensions/handlers/">Documentación</a> — (RC2, ES5/ES6+, AGPL v3, UMD, Dep.: Events)
+					<li><b><a class="collapsed-links" data-read-more="+ Handlers" data-read-less="— Handlers" href="#ext_handlers">+ Handlers</a></b> — <a href="extensions/handlers/">Documentación</a> — (RC2, ES5/ES6+, AGPL v3, UMD, Dep.: Events)
 					<pre class="entirely collapsed" id="ext_handlers"><code>&lt;!-- CDN: Estructura / Handlers --&gt;
 
 &lt;!-- DEPENDENCY: Estructura / Events --&gt;
@@ -199,17 +199,17 @@
 &lt;script src="https://estructura.okzgn.com/extensions/handlers/estructura.handlers.js"&gt;&lt;/script&gt;</code></pre>
 					</li>
 
-					<li><a class="collapsed-links" data-read-more="+ Reactive" data-read-less="— Reactive" href="#ext_reactive">+ Reactive</a> — <a href="extensions/reactive/">Documentación</a> — (RC1, ES6+, AGPL v3, UMD)
+					<li><b><a class="collapsed-links" data-read-more="+ Reactive" data-read-less="— Reactive" href="#ext_reactive">+ Reactive</a></b> — <a href="extensions/reactive/">Documentación</a> — (RC1, ES6+, AGPL v3, UMD)
 					<pre class="entirely collapsed" id="ext_reactive"><code>&lt;!-- CDN: Estructura / Reactive --&gt;
 &lt;script src="https://estructura.okzgn.com/extensions/reactive/estructura.reactive.js"&gt;&lt;/script&gt;</code></pre>
 					</li>
 
-					<li><a class="collapsed-links" data-read-more="+ Routing" data-read-less="— Routing" href="#ext_routing">+ Routing</a> — <a href="extensions/routing/">Documentación</a> — (RC1, ES6+, AGPL v3, UMD)
+					<li><b><a class="collapsed-links" data-read-more="+ Routing" data-read-less="— Routing" href="#ext_routing">+ Routing</a></b> — <a href="extensions/routing/">Documentación</a> — (RC1, ES6+, AGPL v3, UMD)
 					<pre class="entirely collapsed" id="ext_routing"><code>&lt;!-- CDN: Estructura / Routing --&gt;
 &lt;script src="https://estructura.okzgn.com/extensions/routing/estructura.routing.js"&gt;&lt;/script&gt;</code></pre>
 					</li>
 
-					<li><a class="collapsed-links" data-read-more="+ SQLite Frontend" data-read-less="— SQLite Frontend" href="#ext_sqlite_frontend">+ SQLite Frontend</a> — <a href="extensions/sqlite.frontend/">Documentación</a> — (RC1, ES6+ / WebAssembly / Web Workers / OPFS, AGPL v3, UMD)
+					<li><b><a class="collapsed-links" data-read-more="+ SQLite Frontend" data-read-less="— SQLite Frontend" href="#ext_sqlite_frontend">+ SQLite Frontend</a></b> — <a href="extensions/sqlite.frontend/">Documentación</a> — (RC1, ES6+ / WebAssembly / Web Workers / OPFS, AGPL v3, UMD)
 					<pre class="entirely collapsed" id="ext_sqlite_frontend"><code>&lt;!-- CDN: Estructura / SQLite Frontend --&gt;
 &lt;script src="https://estructura.okzgn.com/extensions/sqlite.frontend/estructura.sqlite.frontend.js"&gt;&lt;/script&gt;</code></pre>
 					</li>
