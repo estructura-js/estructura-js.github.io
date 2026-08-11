@@ -62,4 +62,15 @@ _events(document).ready(function () {
       _element.set('textContent', element.dataset.readMore);
     });
   });
+
+  var pre_codes = _dom('>pre');
+  pre_codes.each(function (element) {
+    _events(element).on('click', function (event) {
+      event.preventDefault();
+      console.log('Copy:', element.textContent);
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(element.textContent);
+      }
+    });
+  });
 });

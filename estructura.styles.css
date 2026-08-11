@@ -20,6 +20,7 @@
     --width-base-0-125: calc(var(--width-base) * 0.125);
     --width-base-0-25: calc(var(--width-base) * 0.25);
     --width-base-0-5: calc(var(--width-base) * 0.5);
+    --width-base-0-75: calc(var(--width-base) * 0.75);
     --width-base-1-5: calc(var(--width-base) * 1.5);
     --width-base-2: calc(var(--width-base) * 2);
 
@@ -107,6 +108,20 @@ details p {
     margin-top: var(--width-base-0-5);
 }
 ul { list-style: none; }
+pre::after {
+    content: '(Clic para copiar)';
+    display: block;
+    padding: var(--width-base-0-5);
+    color: var(--white-color);
+    text-align: right;
+    margin: 0 var(--width-base);
+    border-radius: var(--width-base-0-5);
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    font-weight: bold;
+    font-size: 0.85rem;
+    background: var(--headers-color);
+}
 @media screen and (max-width: 640px){
 
 }
@@ -229,6 +244,18 @@ code {
     padding: var(--width-base-0-125) var(--width-base-0-25);
     font-family: Courier;
     display: inline-block;
+}
+pre {
+    display: flex;
+    flex-flow: column;
+    cursor: pointer;
+}
+
+pre code {
+    background: var(--links-color-hover-active-focus);
+    color: var(--white-color);
+    padding: var(--width-base);
+    cursor: copy;
 }
 
 #logo {
