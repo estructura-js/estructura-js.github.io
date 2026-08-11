@@ -44,19 +44,21 @@ _events(document).ready(function () {
       event.preventDefault();
       var
 
-        target = _dom('>' + element.getAttribute('href')),
+        target = _dom('>#' + element.getAttribute('aria-controls')),
         _element = _dom(element),
         _target_class = /[\b\s]*collapsed[\b\s]*/g,
-        _class = target.get('className')[0],
+        _class = target.get('className')[0] || '',
         _original_class = _class.replace(_target_class, '');
 
       if (_target_class.test(_class)) {
         target.set('className', _original_class);
+        _element.set('ariaExpanded', 'true');
         _element.set('textContent', element.dataset.readLess);
         return;
       }
 
       target.set('className', _original_class + ' collapsed');
+      _element.set('ariaExpanded', 'false');
       _element.set('textContent', element.dataset.readMore);
     });
   });

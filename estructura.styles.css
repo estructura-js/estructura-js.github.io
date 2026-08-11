@@ -86,17 +86,25 @@ body {
 	color: var(--text-color);
     padding: var(--width-base);
 }
-a {
+a, summary, button {
 	color: var(--links-color);
 	text-decoration: none;
+	cursor: pointer;
+	background: transparent;
 }
-a:hover, a:focus, a:active  {
+a:hover, a:focus, a:active,
+summary:hover, summary:focus, summary:active,
+button:hover, button:focus, button:active {
     color: var(--links-color-hover-active-focus);
 	background-color: var(--secondary-color);
 	outline: 0.125rem solid var(--links-color-hover-active-focus);
     outline-offset: 0.125rem;
 	text-decoration: underline;
     border-radius: var(--width-base-0-25);
+}
+button { font-weight: bold; }
+details p {
+    margin-top: var(--width-base-0-5);
 }
 ul { list-style: none; }
 @media screen and (max-width: 640px){
