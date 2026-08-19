@@ -73,7 +73,7 @@
 
 			<div class="padding-y">
 				<b>Importación:</b><pre><code>&lt;!-- CDN: Estructura / Reactive --&gt;
-&lt;script src="https://estructura.okzgn.com/extensions/reactive/estructura.reactive.js"&gt;&lt;/script&gt;</code><button class="copy">Copy</button></pre>
+&lt;script src="https://estructura.okzgn.com/extensions/reactive/estructura.reactive.js"&gt;&lt;/script&gt;</code><button class="copy">Copiar</button></pre>
 			</div>
 		</section>
 
@@ -90,7 +90,7 @@ var state = miReactivo.state();
 
 // Escribir propiedades en el estado
 state.miVariable = 'Hola Mundo';
-</code><button class="copy">Copy</button></pre>
+</code><button class="copy">Copiar</button></pre>
 				<br>
 				<h3>2. Configuración Avanzada</h3>
 				<p>El constructor acepta un segundo argumento opcional (<code>Object</code>) para configurar delimitadores personalizados de plantillas y procesadores dinámicos de nombres y expresiones.</p>
@@ -120,7 +120,7 @@ state.miVariable = 'Hola Mundo';
 		} catch(e){ return ''; }
 	}
 });
-</code><button class="copy">Copy</button></pre>
+</code><button class="copy">Copiar</button></pre>
 				<br>
 				<h3>3. Enlace de Datos (Templates) y Expresiones</h3>
 				<p>El compilador de la librería analiza el contenido sintáctico y clasifica las plantillas en dos categorías de manera automática:</p>
@@ -139,7 +139,7 @@ state.miVariable = 'Hola Mundo';
 
 &lt;!-- Atributos --&gt;
 &lt;div class="alerta {{tipo_alerta}}" id="{{id_registro}}"&gt;&lt;/div&gt;
-</code><button class="copy">Copy</button></pre>
+</code><button class="copy">Copiar</button></pre>
 				<br>
 				<h4>Enlace Bidireccional</h4>
 				<p>Sincroniza en tiempo real los cambios de entrada de la interfaz con el estado reactivo. Soporta atributos de entrada (<code>value</code>, <code>checked</code>) y nodos de texto dentro de elementos <code>&lt;textarea&gt;</code>. Para evitar colisiones de escritura, estos elementos solo admiten un único enlace directo a un identificador simple.</p>
@@ -151,7 +151,7 @@ state.miVariable = 'Hola Mundo';
 
 &lt;!-- Textarea --&gt;
 &lt;textarea&gt;{{miVariable}}&lt;/textarea&gt;
-</code><button class="copy">Copy</button></pre>
+</code><button class="copy">Copiar</button></pre>
 				<br>
 				<h3>4. Control del Ciclo de Vida</h3>
 				<p>La instancia reactiva expone métodos protegidos en el estado para activar, pausar o apagar la ejecución del motor.</p>
@@ -168,7 +168,7 @@ state.miVariable = 'Hola Mundo';
 				<p><b>Sintaxis:</b></p>
 <pre><code>state.event('createdVariable', function(name) {
 	console.log('Variable registrada:', name);
-});</code><button class="copy">Copy</button></pre>
+});</code><button class="copy">Copiar</button></pre>
 				<br>
 				<p><b>Eventos Soportados:</b></p>
 				<ul>

@@ -85,7 +85,7 @@
 				<p><b><code>.on(event?, fn?, config?)</code></b>: Vincula manejadores de eventos al objeto <code>target</code>.</p>
 				<br>
 				<p><b>Sintaxis:</b></p>
-				<pre><code>_events(document.querySelector('body')).on('event.namespace', function(){}, {})</code><button class="copy">Copy</button></pre>
+				<pre><code>_events(document.querySelector('body')).on('event.namespace', function(){}, {})</code><button class="copy">Copiar</button></pre>
 				<br>
 				<p><b>Argumentos:</b></p>
 				<p><b><code>event</code></b> (<code>String</code>):</p>
@@ -120,7 +120,7 @@ _events(target).on('click.miMenu', function(e) {
 
 // Eliminamos el evento
 _events(target).off('.miMenu');
-</code><button class="copy">Copy</button></pre>
+</code><button class="copy">Copiar</button></pre>
 				<br>
 				<h3>3. Eliminación de Eventos:</h3>
 				<p><b><code>.off(event?, config?)</code></b>: Elimina registros de eventos de forma granular usando namespaces o de forma masiva.</p>
@@ -141,9 +141,9 @@ _events(target).off('.miMenu');
 				<br>
 				<p><b>Ejemplos:</b></p>
 				<ul>
-					<li>Elimina solo el evento del namespace indicado:<br><pre><code>_events(target).off('click.miMenu')</code><button class="copy">Copy</button></pre></li>
-					<li><br>Pausa la ejecución de todos los eventos del tipo sin desvincularlos del DOM:<br><pre><code>_events(target).off('click', { pause: true })</code><button class="copy">Copy</button></pre></li>
-					<li><br>Elimina todos los eventos vinculados al nodo y libera la memoria:<br><pre><code>_events(target).off()</code><button class="copy">Copy</button></pre></li>
+					<li>Elimina solo el evento del namespace indicado:<br><pre><code>_events(target).off('click.miMenu')</code><button class="copy">Copiar</button></pre></li>
+					<li><br>Pausa la ejecución de todos los eventos del tipo sin desvincularlos del DOM:<br><pre><code>_events(target).off('click', { pause: true })</code><button class="copy">Copiar</button></pre></li>
+					<li><br>Elimina todos los eventos vinculados al nodo y libera la memoria:<br><pre><code>_events(target).off()</code><button class="copy">Copiar</button></pre></li>
 				</ul>
 				<br>
 				<h3>4. Namespaces (Utilidad para Identificar Registros de Eventos)</h3>
@@ -152,27 +152,27 @@ _events(target).off('.miMenu');
 _events(window).on('resize.analytics', fn2);
 
 // Eliminar solo analytics sin tocar layout:
-_events(window).off('resize.analytics');</code><button class="copy">Copy</button></pre>
+_events(window).off('resize.analytics');</code><button class="copy">Copiar</button></pre>
 				<br>
 				<h3>5. Ejecución Manual (Trigger)</h3>
 				<p>Es posible activar la ejecución de eventos registrados sin que ocurra el evento nativo del DOM. Al utilizar <code>.on()</code> como disparador, el primer argumento (<code>event</code>) acepta únicamente el nombre del evento, únicamente el namespace (comenzando con punto) o la combinación de ambos, omitiendo los argumentos posteriores.</p>
 				<br>
 				<p><b>Ejemplos:</b></p>
 				<p>Ejecuta solo los eventos del namespace registrado:</p>
-<pre><code>_events(target).on('.miEvento');</code><button class="copy">Copy</button></pre>
+<pre><code>_events(target).on('.miEvento');</code><button class="copy">Copiar</button></pre>
 				<br>
 				<p>Ejecuta todos los eventos del tipo registrados:</p>
-<pre><code>_events(target).on('click');</code><button class="copy">Copy</button></pre>
+<pre><code>_events(target).on('click');</code><button class="copy">Copiar</button></pre>
 				<br>
 				<p>Ejecuta todos los eventos registrados:</p>
-<pre><code>_events(target).on();</code><button class="copy">Copy</button></pre>
+<pre><code>_events(target).on();</code><button class="copy">Copiar</button></pre>
 				<br>
 				<h3>6. Eventos Especiales</h3>
 				<p>Están incluidos wrappers optimizados para eventos de ciclo de vida:</p>
 				<br>
 				<ul>
-					<li>Al terminar de cargar toda la página: <pre><code>_events(window).load(fn)</code><button class="copy">Copy</button></pre></li>
-					<li><br>Al terminar de cargar el DOM de la página: <pre><code>_events(document).ready(fn)</code><button class="copy">Copy</button></pre></li>
+					<li>Al terminar de cargar toda la página: <pre><code>_events(window).load(fn)</code><button class="copy">Copiar</button></pre></li>
+					<li><br>Al terminar de cargar el DOM de la página: <pre><code>_events(document).ready(fn)</code><button class="copy">Copiar</button></pre></li>
 				</ul>
 				<br>
 				<h3>7. Consideraciones Técnicas</h3>

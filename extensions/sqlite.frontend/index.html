@@ -125,7 +125,7 @@
 				</p>
 				<div class="padding-y">
 					<b>Importación:</b><pre><code>&lt;!-- CDN: Estructura / SQLite Frontend --&gt;
-&lt;script src="https://estructura.okzgn.com/extensions/sqlite.frontend/estructura.sqlite.frontend.js"&gt;&lt;/script&gt;</code><button class="copy">Copy</button></pre>
+&lt;script src="https://estructura.okzgn.com/extensions/sqlite.frontend/estructura.sqlite.frontend.js"&gt;&lt;/script&gt;</code><button class="copy">Copiar</button></pre>
 				</div>
 			</section>
 
@@ -153,7 +153,7 @@ _sqlite_frontend('SELECT * FROM usuarios').sql(function(respuesta) {
 		return;
 	}
 	console.log('Resultado:', respuesta.sql.result);
-});</code><button class="copy">Copy</button></pre>
+});</code><button class="copy">Copiar</button></pre>
 					<br>
 					<h3>2. Detección y Control de Errores</h3>
 					<p>El sistema captura y aísla los errores tanto a nivel de inicialización del motor como durante la ejecución de consultas SQL o del Query Builder:</p>
@@ -180,7 +180,7 @@ _sqlite_frontend('SELECT * FROM usuarios').sql(function(respuesta) {
 	}
 
 	console.log('Resultados:', res.get.columna_inexistente.result);
-});</code><button class="copy">Copy</button></pre>
+});</code><button class="copy">Copiar</button></pre>
 					<br>
 
 					<h3>3. Métodos para Cadenas (<code>String</code>)</h3>
@@ -196,21 +196,21 @@ _sqlite_frontend('SELECT * FROM usuarios').sql(function(respuesta) {
 
 _sqlite_frontend("SELECT name FROM sqlite_master WHERE type='table'").sql(function(res) {
 	console.log('Tablas en la BD:', res);
-});</code><button class="copy">Copy</button></pre>
+});</code><button class="copy">Copiar</button></pre>
 					<br>
 
 					<h4><code>.db(callback?, timeout?)</code>:</h4>
 					<p>Configura y selecciona la <b>base de datos de trabajo activa</b>. Si no se especifica un nombre de base de datos, el motor utilizará automáticamente la base de datos por defecto <code>_default_db</code>. Una vez ejecutado, todas las consultas posteriores se dirigirán a esta base de datos.</p>
 
 					<pre><code>// Seleccionar 'mi_base_datos.db' como el contexto de trabajo activo
-_sqlite_frontend('mi_base_datos.db').db();</code><button class="copy">Copy</button></pre>
+_sqlite_frontend('mi_base_datos.db').db();</code><button class="copy">Copiar</button></pre>
 					<br>
 
 					<h4><code>.table(callback?, timeout?)</code>:</h4>
 					<p>Configura y selecciona la <b>tabla de trabajo activa</b> sobre la cual operarán los métodos estructurados (<code>.column()</code>, <code>.row()</code>, <code>.get()</code>, <code>.set()</code>, <code>.del()</code>). Si no se especifica un nombre, operará por defecto sobre <code>_default_table</code>. Si la tabla no existe en la base de datos activa, se crea automáticamente incluyendo la clave primaria autogenerada <code>_auto_id</code>.</p>
 
 					<pre><code>// Seleccionar 'usuarios' como la tabla activa para las operaciones siguientes
-_sqlite_frontend('usuarios').table();</code><button class="copy">Copy</button></pre>
+_sqlite_frontend('usuarios').table();</code><button class="copy">Copiar</button></pre>
 					<br>
 
 					<h4><code>.save(callback?, timeout?)</code>:</h4>
@@ -223,7 +223,7 @@ _sqlite_frontend('usuarios').table();</code><button class="copy">Copy</button></
 	a.download = res.save.name;
 	a.click();
 	URL.revokeObjectURL(blob);
-});</code><button class="copy">Copy</button></pre>
+});</code><button class="copy">Copiar</button></pre>
 					<br>
 
 					<h3>4. Métodos para Objetos (<code>Object</code>)</h3>
@@ -235,7 +235,7 @@ _sqlite_frontend('usuarios').table();</code><button class="copy">Copy</button></
 
 		<pre><code>_sqlite_frontend({ name: 'fecha', type: 'INTEGER' }).column(function(res) {
 	console.log('Columna creada/verificada:', res);
-});</code><button class="copy">Copy</button></pre>
+});</code><button class="copy">Copiar</button></pre>
 					<br>
 
 					<h4><code>.row(callback?, timeout?)</code>:</h4>
@@ -243,7 +243,7 @@ _sqlite_frontend('usuarios').table();</code><button class="copy">Copy</button></
 
 		<pre><code>_sqlite_frontend({ fecha: Date.now() }).row(function(res) {
 	console.log('ID asignado al registro:', res.row.id);
-});</code><button class="copy">Copy</button></pre>
+});</code><button class="copy">Copiar</button></pre>
 					<br>
 
 					<h4><code>.get(callback?, timeout?)</code>:</h4>
@@ -289,7 +289,7 @@ try {
 } catch (err) {
   console.error('Consulta cancelada por tiempo:', err.message);
 }
-</code><button class="copy">Copy</button></pre>
+</code><button class="copy">Copiar</button></pre>
                     <br>
                     <p><b>Operadores soportados en cláusulas WHERE:</b></p>
                     <ul>
@@ -324,7 +324,7 @@ _sqlite_frontend({
 	'fecha': { set: 9999, query: 1 }
 }).set(function(res) {
 	console.log('Filas modificadas:', res.set.fecha.result);
-});</code><button class="copy">Copy</button></pre>
+});</code><button class="copy">Copiar</button></pre>
 					<br>
 					<p>
 						<b>Advertencia de Actualización Global:</b> Si se define una columna únicamente con el valor a modificar sin especificar la propiedad <code>query</code> (por ejemplo: <code>{ 'estado': 'activo' }</code>), la consulta se ejecutará como una actualización global sin cláusula <code>WHERE</code>, aplicando el nuevo valor a <b>todas las filas</b> de la tabla activa.
@@ -350,7 +350,7 @@ _sqlite_frontend({
 	console.log('Registros eliminados:', res);
 
 	console.log('Filas eliminadas:', res.del['*'].result);
-});</code><button class="copy">Copy</button></pre>
+});</code><button class="copy">Copiar</button></pre>
 					<br>
 					<p>
 						<b>Advertencia de Borrado Masivo:</b> Al pasar una evaluación general con un valor verdadero (por ejemplo: <code>{ '*': true }</code>) sin especificar una condición <code>where</code> o un ID directo, la consulta ejecutará un borrado global en la tabla activa, <b>eliminando la totalidad de los registros</b>.
@@ -383,7 +383,7 @@ _sqlite_frontend({
 	// 5. Eliminar el registro por su _auto_id
 	await _sqlite_frontend({ 'fecha': nuevoId }).del();
 	console.log('Registro eliminado con éxito.');
-});</code><button class="copy">Copy</button></pre>
+});</code><button class="copy">Copiar</button></pre>
 					<br>
 <h3>6. Manejo de Respuestas Tardías o Huérfanas (<code>unhandledResponse</code>)</h3>
 <p>En operaciones asíncronas donde se especifica un límite de tiempo de espera (<i>timeout</i>), es posible que una consulta en la base de datos tarde más del tiempo concedido. En estos casos, la promesa en el hilo principal se rechaza y se descarta de la cola interna de seguimiento.</p>
@@ -408,7 +408,7 @@ console.log('La actualización tardía se completó con éxito en segundo plano.
 _sqlite_frontend({ '*': true }).get(null, 1).catch(function(error) {
 console.error('El cliente expiró por timeout:', error.message);
 // Si el Worker responde un momento después, 'unhandledResponse' capturará el resultado.
-});</code><button class="copy">Copy</button></pre>
+});</code><button class="copy">Copiar</button></pre>
                     <br>
 
 					<h3>7. Características Técnicas</h3>
@@ -445,7 +445,7 @@ module.exports = function customMiddleware (req, res, next) {
 
 
   next();
-};</code><button class="copy">Copy</button></pre>
+};</code><button class="copy">Copiar</button></pre>
 				</div>
 			</section>
 		</main>

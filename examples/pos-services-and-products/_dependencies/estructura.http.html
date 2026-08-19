@@ -81,7 +81,7 @@
 			<p><b>Sintaxis:</b></p>
 			<pre><code>var req = _http({ url: './config.json' });
 // req.abort();
-// req.getXHR();</code><button class="copy">Copy</button></pre>
+// req.getXHR();</code><button class="copy">Copiar</button></pre>
 			<br>
 			<p>Devuelve de forma síncrona un objeto de control con los siguientes métodos de instancia:</p>
 			<br>
@@ -99,7 +99,7 @@
 	url: 'https://backend.com/api/v1/setData',
 	method: 'POST',
 	data: { 'a': '1', 'N': '...' }
-});</code><button class="copy">Copy</button></pre>
+});</code><button class="copy">Copiar</button></pre>
 			<br>
 			<ul>
 				<li><code>url</code> (<code>String</code>): La dirección de destino del recurso. Requerido.<br><br><em><b>Nota:</b> El motor no realiza una validación previa de la presencia de este parámetro; su omisión provocará una excepción nativa en el método <code>open()</code> del navegador.</em></li>
@@ -162,7 +162,7 @@
 		console.error('Ocurrió un error en la transferencia:', err.message);
 	}
 });
-</code><button class="copy">Copy</button></pre>
+</code><button class="copy">Copiar</button></pre>
 			<br>
 
 			<p><b>Petición POST asíncrona con Seguimiento de Carga y Límite de Tiempo:</b></p>
@@ -188,7 +188,7 @@
 		console.error('No se pudo completar el envío:', err.message);
 	}
 });
-</code><button class="copy">Copy</button></pre>
+</code><button class="copy">Copiar</button></pre>
 			<br>
 
 			<p><b>Interrupción Programada de una Petición:</b></p>
@@ -206,7 +206,7 @@
 document.querySelector('#cancelar-accion').addEventListener('click', function() {
 	peticion.abort();
 });
-</code><button class="copy">Copy</button></pre>
+</code><button class="copy">Copiar</button></pre>
 			<br>
 
 			<p><b>Adaptación a Entornos Modernos mediante Promesas (ES6+):</b></p>
@@ -237,7 +237,7 @@ async function obtenerDatosDeUsuario() {
 		console.error('Error capturado con async/await:', error.message);
 	}
 }
-</code><button class="copy">Copy</button></pre>
+</code><button class="copy">Copiar</button></pre>
 			<br>
 
 			<h3>6. Características Técnicas de la Implementación</h3>

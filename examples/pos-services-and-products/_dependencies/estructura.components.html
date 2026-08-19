@@ -97,7 +97,7 @@ var configActiva = _components({
         js: '.js'
     }
 }).config();
-</code><button class="copy">Copy</button></pre>
+</code><button class="copy">Copiar</button></pre>
                 <br>
                 <p><strong>Propiedad <code>files</code> (<code>Object</code>):</strong> Permite personalizar los nombres de archivos de los componentes para cada tipo de recurso (<code>css</code>, <code>html</code>, <code>js</code>). Si no se especifica, por defecto utiliza el nombre de archivo precedido por un punto (<code>.css</code>, <code>.html</code>, <code>.js</code>).</p>
 				<br>
@@ -109,7 +109,7 @@ var componente = _components(contenedor, {
 	component: 'perfil-cliente',
 	id: 'tarjeta_activa'
 }).ref();
-</code><button class="copy">Copy</button></pre>
+</code><button class="copy">Copiar</button></pre>
 				<br>
 				<h3>2. Atributos Declarativos en el DOM</h3>
 				<p>La declaración y relación de componentes se estructura semánticamente en el HTML mediante atributos específicos.</p>
@@ -153,7 +153,7 @@ var componente = _components(contenedor, {
 	&lt;aside data-e-component="menu-lateral" data-e-component-id="menu_izq"&gt;&lt;/aside&gt;
 	&lt;article data-e-component="panel-de-control" data-e-component-required="menu_izq"&gt;&lt;/article&gt;
 &lt;/div&gt;
-</code><button class="copy">Copy</button></pre>
+</code><button class="copy">Copiar</button></pre>
 				<br>
 				<h3>4. Ciclo de Vida y Estados de Instancia</h3>
 				<p>Las instancias recuperadas mediante <code>.ref()</code> exponen las siguientes propiedades y métodos de control:</p>
@@ -189,7 +189,7 @@ if (inst) {
 		console.error('Fallo en el ciclo del componente:', err.message);
 	});
 }
-</code><button class="copy">Copy</button></pre>
+</code><button class="copy">Copiar</button></pre>
 				<br>
 				<p><b>Mecanismo de Retención de Eventos (Cola de Mensajería):</b></p>
 				<p>Para asegurar la entrega de mensajes asíncronos enviados mediante <code>_components.emit()</code>, el motor retiene temporalmente los eventos en una cola interna hasta un límite estricto de <code>50</code> registros (<code>MAX_QUEUE_SIZE</code>). Si el componente destino alcanza el estado <code>"ready"</code>, la cola se vacía cronológicamente y los eventos son despachados de forma síncrona. Si el componente destino transiciona al estado <code>"failed"</code>, los eventos en cola se descartan de forma inmediata para proteger el uso de memoria de la aplicación.</p>
@@ -216,7 +216,7 @@ _components._registerStateObserver(monitorDeEstados);
 
 // Si se requiere dar de baja:
 // _components._unregisterStateObserver(monitorDeEstados);
-</code><button class="copy">Copy</button></pre>
+</code><button class="copy">Copiar</button></pre>
 				<br>
 				<h3>6. Arquitectura Interna y Características Técnicas</h3>
 				<div class="features">
