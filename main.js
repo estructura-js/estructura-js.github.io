@@ -67,9 +67,10 @@ _events(document).ready(function () {
   pre_codes.each(function (element) {
     _events(element).on('click', function (event) {
       event.preventDefault();
-      console.log('Copy:', element.textContent);
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(element.textContent);
+      var code = element.querySelector('code');
+      if (code && navigator.clipboard && navigator.clipboard.writeText) {
+        console.log('Copy:', code.textContent);
+        navigator.clipboard.writeText(code.textContent);
       }
     });
   });

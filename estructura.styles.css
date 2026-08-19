@@ -108,19 +108,18 @@ details p {
     margin-top: var(--width-base-0-5);
 }
 ul { list-style: none; }
-pre::after {
-    content: '(Clic para copiar)';
-    display: block;
+button.copy {
     padding: var(--width-base-0-5);
     color: var(--white-color);
     text-align: right;
-    margin: 0 var(--width-base);
+    margin: 0 var(--width-base) var(--width-base-0-5) var(--width-base);
     border-radius: var(--width-base-0-5);
     border-top-left-radius: 0;
     border-top-right-radius: 0;
     font-weight: bold;
     font-size: 0.85rem;
     background: var(--headers-color);
+    align-self: flex-end;
 }
 @media screen and (max-width: 640px){
 

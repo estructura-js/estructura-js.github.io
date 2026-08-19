@@ -89,7 +89,7 @@
 &lt;script src="https://estructura.okzgn.com/extensions/events/estructura.events.js"&gt;&lt;/script&gt;
 
 &lt;!-- EXTENSION: Estructura / Handlers --&gt;
-&lt;script src="https://estructura.okzgn.com/extensions/handlers/estructura.handlers.js"&gt;&lt;/script&gt;</code></pre>
+&lt;script src="https://estructura.okzgn.com/extensions/handlers/estructura.handlers.js"&gt;&lt;/script&gt;</code><button class="copy">Copy</button></pre>
 					</div>
 				</section>
 
@@ -100,7 +100,7 @@
 						<p>El motor expone globalmente la interfaz <code>_handlers</code>. Esta extensión coordina la lógica declarativa y se apoya directamente en <code>_events</code> para la vinculación física de los disparadores del DOM.</p>
 						<br>
 						<p><b>Sintaxis de Registro:</b></p>
-						<pre><code>_handlers(...handlersMapsOrStrings).start(startNode?);</code></pre>
+						<pre><code>_handlers(...handlersMapsOrStrings).start(startNode?);</code><button class="copy">Copy</button></pre>
 						<br>
 						<p><b>Argumentos del Constructor:</b></p>
 						<ul>
@@ -175,13 +175,13 @@
 								<pre><code>function miHandler(event) {
 	// event: Objeto Event del DOM o trigger de activación
 	console.log("Elemento emisor:", this.liveElement);
-}</code></pre>
+}</code><button class="copy">Copy</button></pre>
 							</li>
 							<li><br><b>Manejadores de Éxito / Error:</b> Reciben el payload asignado al descriptor de acceso reactivo.
 								<pre><code>function miHandlerExito(data) {
 	// data: El valor asignado a this.success o this.error
 	console.log("Datos de éxito recibidos:", data);
-}</code></pre>
+}</code><button class="copy">Copy</button></pre>
 							</li>
 						</ul>
 						<br>
@@ -193,13 +193,13 @@
 								<pre><code>function miMiddleware(event, data, next) {
 	data.timestamp = Date.now();
 	return next(data); // Propaga la continuación del flujo
-}</code></pre>
+}</code><button class="copy">Copy</button></pre>
     				</li>
     				<li><br><b>Middlewares de Éxito o Error:</b> Reciben el valor asignado al setter reactivo (payload), el acumulador y la función de continuación.
     					<pre><code>function miMiddlewareExito(payload, data, next) {
 	data.resultado = payload;
 	return next(data);
-}</code></pre>
+}</code><button class="copy">Copy</button></pre>
 							</li>
 						</ul>
 						<p>Si alguna de las funciones interceptoras en la tubería de middlewares omite llamar o retornar la ejecución de <code>next(data)</code>, la ejecución de los handlers posteriores en la secuencia se cancela por completo.</p>
@@ -216,7 +216,7 @@
 	data-e-handler-end-start="validador"
 	data-e-validador-success="moduloOk"&gt;
 	Procesar Formulario
-&lt;/button&gt;</code></pre>
+&lt;/button&gt;</code><button class="copy">Copy</button></pre>
 						<br>
 
 						<p><b>Control Declarativo de Propagación Ascendente (Burbujeo):</b></p>
@@ -225,7 +225,7 @@
 	&lt;button data-e-handler="hijoAccion" data-e-handler-id="btn-hijo" data-e-handler-event="click" data-e-handler-propagation&gt;
 		Ejecutar y Propagar al Padre
 	&lt;/button&gt;
-&lt;/div&gt;</code></pre>
+&lt;/div&gt;</code><button class="copy">Copy</button></pre>
 						<br>
 
 						<p><b>Registro de Handlers Públicos, Reutilización y Control de Flujo:</b></p>
@@ -249,7 +249,7 @@ _handlers("comun", {
 	moduloOk: function(data) {
 		console.log("Flujo completado exitosamente con datos:", data);
 	}
-}).start();</code></pre>
+}).start();</code><button class="copy">Copy</button></pre>
 						<br>
 
 						<h3>6. Características Técnicas de la Implementación</h3>
