@@ -67,10 +67,20 @@ _events(document).ready(function () {
   pre_codes.each(function (element) {
     _events(element).on('click', function (event) {
       event.preventDefault();
+
       var code = element.querySelector('code');
+      var btn = element.querySelector('button.copy');
+
       if (code && navigator.clipboard && navigator.clipboard.writeText) {
         console.log('Copy:', code.textContent);
         navigator.clipboard.writeText(code.textContent);
+
+        if (btn) {
+          btn.textContent = 'Copiado';
+          setTimeout(function () {
+            btn.textContent = 'Copiar';
+          }, 567);
+        }
       }
     });
   });

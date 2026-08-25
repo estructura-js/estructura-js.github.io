@@ -110,37 +110,37 @@ _dom(document.body).each(function(element, index){ console.log('Body:', element)
 
 // Con Nodes
 var classes = _dom(document.getElementsByClassName('miClase')).get('className');
-</code><button class="copy">Copiar</button></pre>
+</code><button aria-live="polite" class="copy">Copiar</button></pre>
 				<br>
 				<h3>2. Métodos Principales</h3>
 				<h4><code>.each(callback)</code>:</h4>
 				<p>Itera sobre cada elemento seleccionado del DOM.</p>
 <pre><code>_dom('> li').each(function(element, index){
 	console.log('Elemento ' + index + ':', element);
-});</code><button class="copy">Copiar</button></pre>
+});</code><button aria-live="polite" class="copy">Copiar</button></pre>
 				<br>
 				<h4><code>.get(property)</code>:</h4>
 				<p>Obtiene el valor de una propiedad de todos los elementos del DOM seleccionados. Soporta acceso anidado mediante puntos. Retorna un arreglo (<code>Array</code>) con los resultados.</p>
 <pre><code>var valor = _dom('> input').get('value');
 var clase = _dom('> div').get('className');
 var estilo = _dom('> main').get('style.color');
-</code><button class="copy">Copiar</button></pre>
+</code><button aria-live="polite" class="copy">Copiar</button></pre>
 				<br>
 				<h4><code>.set(property, value)</code>:</h4>
 				<p>Establece el valor de una propiedad a todos los elementos del DOM seleccionados. Soporta acceso anidado mediante puntos.</p>
 <pre><code>_dom('> input').set('value', 'Hola Mundo');
 _dom('> body').set('style.background', 'yellow');
-</code><button class="copy">Copiar</button></pre>
+</code><button aria-live="polite" class="copy">Copiar</button></pre>
 				<br>
 				<h4><code>.style(property, value)</code>:</h4>
 <p>Manipula estilos CSS. Si se omite el argumento <code>value</code>, retorna el estilo actual del elemento. Los valores se aplican como estilos <i>inline</i>. Retorna un arreglo (<code>Array</code>) con los resultados. Soporta tanto nombres de propiedades en formato camelCase (ej. <code>backgroundColor</code>) como kebab-case (ej. <code>background-color</code>).</p>
 <pre><code>_dom('> .caja').style('color', 'blue');
-var color = _dom('> .caja').style('color'); // Retorna el valor computado</code><button class="copy">Copiar</button></pre>
+var color = _dom('> .caja').style('color'); // Retorna el valor computado</code><button aria-live="polite" class="copy">Copiar</button></pre>
 				<br>
 				<h4><code>.data(property, value)</code>:</h4>
 				<p>Manipula el <code>dataset</code>. Si se omite el argumento <code>value</code>, retorna la propiedad del elemento. Permite leer y escribir propiedades del <code>dataset</code> usando opcionalmente el prefijo <code>data-</code> y gestionando la conversión de formato de guiones a mayúsculas de manera automática (<code>camelCase</code>). Retorna un arreglo (<code>Array</code>) con los resultados.</p>
 <pre><code>_dom('> div').data('user-id', '456');
-var id = _dom('> div').data('user-id'); // Retorna el valor</code><button class="copy">Copiar</button></pre>
+var id = _dom('> div').data('user-id'); // Retorna el valor</code><button aria-live="polite" class="copy">Copiar</button></pre>
 				<br>
 				<h3>3. Características Técnicas</h3>
 				<div class="features">

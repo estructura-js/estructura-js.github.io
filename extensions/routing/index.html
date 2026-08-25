@@ -84,7 +84,7 @@
 
 			<div class="padding-y">
 				<b>Importación:</b><pre><code>&lt;!-- CDN: Estructura / Routing --&gt;
-&lt;script src="https://estructura.okzgn.com/extensions/routing/estructura.routing.js"&gt;&lt;/script&gt;</code><button class="copy">Copiar</button></pre>
+&lt;script src="https://estructura.okzgn.com/extensions/routing/estructura.routing.js"&gt;&lt;/script&gt;</code><button aria-live="polite" class="copy">Copiar</button></pre>
 			</div>
 		</section>
 
@@ -121,20 +121,20 @@ _routing(function(ctx, next) {
 	console.log('Log global para:', ctx.pathname);
 	next();
 });
-</code><button class="copy">Copiar</button></pre>
+</code><button aria-live="polite" class="copy">Copiar</button></pre>
 				<br>
 				<h3>3. Parámetros Dinámicos y Coincidencias</h3>
 				<p>El motor de enrutamiento traduce los patrones declarados a expresiones regulares, aislando y asignando parámetros estructurados en el contexto.</p>
 				<br>
 				<ul>
 					<li><b>Parámetros Requeridos (<code>:param</code>)</b>: Captura cualquier segmento de texto ubicado entre barras diagonales.
-						<pre><code>_routing('/usuario/:id', function(ctx) { console.log(ctx.params.id); });</code><button class="copy">Copiar</button></pre>
+						<pre><code>_routing('/usuario/:id', function(ctx) { console.log(ctx.params.id); });</code><button aria-live="polite" class="copy">Copiar</button></pre>
 					</li>
 					<li><br><b>Parámetros Opcionales (<code>:param?</code>)</b>: Permite que el segmento final sea omitido en la ruta de navegación.
-						<pre><code>_routing('/blog/:categoria?', function(ctx) { /* ... */ });</code><button class="copy">Copiar</button></pre>
+						<pre><code>_routing('/blog/:categoria?', function(ctx) { /* ... */ });</code><button aria-live="polite" class="copy">Copiar</button></pre>
 					</li>
 					<li><br><b>Comodín Global (<code>*</code>)</b>: Captura cualquier subruta posterior y lo asigna en el parámetro <code>ctx.params.wildcard</code>.
-						<pre><code>_routing('/archivos/*', function(ctx) { /* ... */ });</code><button class="copy">Copiar</button></pre>
+						<pre><code>_routing('/archivos/*', function(ctx) { /* ... */ });</code><button aria-live="polite" class="copy">Copiar</button></pre>
 					</li>
 				</ul>
 				<br>
@@ -174,7 +174,7 @@ _routing.redirect('/inicio', '/');
 _routing('/obsoleto', function(ctx) {
 	_routing.redirect('/');
 });
-</code><button class="copy">Copiar</button></pre>
+</code><button aria-live="polite" class="copy">Copiar</button></pre>
 					</li>
 				</ul>
 				<br>
