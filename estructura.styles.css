@@ -300,6 +300,9 @@ section pre code {
     margin-top: 0;
     text-align: center;
 }
+input[type="file"]#test {
+    font-size: 0.85rem;
+}
 
 nav .lines li { margin: 0; }
 

@@ -156,14 +156,16 @@ For commercial licensing, please visit one of the following:
       sql: _sqlite_str_command('sql'),
       db: _sqlite_str_command('db'),
       table: _sqlite_str_command('table'),
-      save: _sqlite_str_command('save')
+      save: _sqlite_str_command('save'),
+      close: _sqlite_str_command('close')
     },
     Object: {
       column: _sqlite_obj_command('column'),
       row: _sqlite_obj_command('row'),
       get: _sqlite_obj_command('get'),
       set: _sqlite_obj_command('set'),
-      del: _sqlite_obj_command('del')
+      del: _sqlite_obj_command('del'),
+      open: _sqlite_obj_command('open')
     }
   });
 

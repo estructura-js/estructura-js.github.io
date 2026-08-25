@@ -3,7 +3,7 @@
 <html>
 
 <head>
-	<title>SQLITE FRONTEND</title>
+	<title>SQLite Frontend</title>
 
 	<link rel="icon" href="../../estructura.icon.png">
 	<meta charset="UTF-8">
@@ -16,12 +16,10 @@
 	<script src="https://cdn.jsdelivr.net/npm/estructura-js"></script>
 	<script src="../dom/estructura.dom.js"></script>
 	<script src="../events/estructura.events.js"></script>
-	 <script src="estructura.sqlite.frontend.js"></script>
+	<script src="estructura.sqlite.frontend.js"></script>
 	<script src="../../main.js"></script>
 	<script>
-		document.addEventListener('DOMContentLoaded', function(){
-			console.log('Estructura SQLITE FRONTEND ready.');
-
+	    function testSQLite() {
 			_sqlite_frontend('PRAGMA database_list;')
             .sql(function (result) {
               console.log('Result 1:', result);
@@ -83,6 +81,40 @@
               document.body.removeChild(a);
               URL.revokeObjectURL(blob);
             });
+		}
+
+		document.addEventListener('DOMContentLoaded', function(){
+			console.log('Estructura SQLite Frontend ready.');
+
+            var file = document.getElementById('test');
+            file.addEventListener('change', function (event) {
+              var stdFile = event.target.files[0];
+              if (!stdFile) {
+                return alert('File required.');
+              }
+
+              if (stdFile.size < (1024 * 20)) {
+                return alert('Very small file size.');
+              }
+
+              stdFile.arrayBuffer()
+              .then((buffer) => {
+                _sqlite_frontend({
+                  name: stdFile.name,
+                  data: buffer
+                })
+                .open(function (result) {
+                  console.info('Open DB:', result);
+
+                  testSQLite();
+                });
+              })
+              .catch((e) => {
+                console.warn('Open DB arrayBuffer:', e);
+              });
+            });
+
+            testSQLite();
 		});
 	</script>
 </head>
@@ -91,7 +123,7 @@
 	<header class="center-y padding">
 		<h1 class="extension center-y">
 			<img id="logo" src="../../estructura.logo.png" alt="Estructura, JavaScript Framework">
-			<span id="test">Console test</span>
+			<input id="test" type="file" accept=".sqlite">
 		</h1>
 	</header>
 
@@ -223,6 +255,28 @@ _sqlite_frontend('usuarios').table();</code><button class="copy">Copiar</button>
 	a.download = res.save.name;
 	a.click();
 	URL.revokeObjectURL(blob);
+});</code><button class="copy">Copiar</button></pre>
+					<br>
+
+					<h4><code>.close(callback?, timeout?)</code>:</h4>
+					<p>Cierra la conexión con la base de datos especificada y libera los recursos asignados en la memoria del Web Worker.</p>
+
+<pre><code>// 1. Cerrar mediante async/await
+try {
+	var res = await _sqlite_frontend('mi_base_datos.db').close();
+	console.log('Base de datos cerrada:', res.close.name);
+}
+catch (error) {
+	console.error('Error al cerrar BD:', error.message);
+}
+
+// 2. Cerrar mediante Callback tradicional
+_sqlite_frontend('mi_base_datos.db').close(function(res) {
+	if (res.error) {
+		console.error('Error:', res.error);
+		return;
+	}
+	console.log('Base de datos cerrada correctamente:', res.close.name);
 });</code><button class="copy">Copiar</button></pre>
 					<br>
 
@@ -359,6 +413,39 @@ _sqlite_frontend({
                     <p><b>Nota sobre IDs numéricos:</b> Al realizar eliminaciones por ID numérico directo (ejemplo: <code>{ '*': 1 }</code>), la consulta opera sobre la columna primaria autogenerada <code>_auto_id</code>. Se aceptan valores numéricos enteros comprendidos entre <code>1</code> y <code>Number.MAX_SAFE_INTEGER</code>.</p>
                     <br>
 
+                    <h4><code>.open(callback?, timeout?)</code>:</h4>
+					<p>Importa y carga una base de datos existente a partir de datos binarios (<code>ArrayBuffer</code>, <code>Uint8Array</code> o <code>TypedArray</code>). La base de datos cargada pasa a ser la base de datos de trabajo activa y, si el entorno lo soporta, se almacena de forma persistente en OPFS.</p>
+
+<pre><code>// Ejemplo con un input de tipo archivo: &lt;input type="file" id="archivo_db"&gt;
+var file = document.getElementById('archivo_db').files[0];
+var buffer = await file.arrayBuffer();
+
+// 1. Cargar mediante async/await
+try {
+	var res = await _sqlite_frontend({
+		name: file.name,
+		data: buffer
+	}).open();
+
+	console.log('Base de datos cargada:', res.open.name);
+}
+catch (error) {
+	console.error('Error al abrir la BD:', error.message);
+}
+
+// 2. Cargar mediante Callback tradicional
+_sqlite_frontend({
+	name: 'mi_respaldo.sqlite',
+	data: buffer
+}).open(function(res) {
+	if (res.error) {
+		console.error('Error al abrir:', res.error);
+		return;
+	}
+	console.log('Base de datos lista para operar:', res.open.name);
+});</code><button class="copy">Copiar</button></pre>
+					<br>
+
 					<h3>5. Flujo Completo de Ejemplo</h3>
 					<p>Integración de definición de esquema, inserción, consulta, actualización y exportación:</p>
 
@@ -396,18 +483,18 @@ _sqlite_frontend({
 
 <pre><code>// Definir el recolector global para respuestas fuera de tiempo
 _sqlite_frontend.unhandledResponse = function (respuesta) {
-console.warn('Respuesta recibida tras expiración de tiempo (ID ' + respuesta.id + '):', respuesta);
+    console.warn('Respuesta recibida tras expiración de tiempo (ID ' + respuesta.id + '):', respuesta);
 
-// Ejemplo: Si la consulta que expiró era una actualización, podemos verificar su resultado
-if (respuesta.set) {
-console.log('La actualización tardía se completó con éxito en segundo plano.');
-}
+    // Ejemplo: Si la consulta que expiró era una actualización, podemos verificar su resultado
+    if (respuesta.set) {
+        console.log('La actualización tardía se completó con éxito en segundo plano.');
+    }
 };
 
 // Ejemplo: Ejecutar una consulta con un timeout muy estricto de 1ms
 _sqlite_frontend({ '*': true }).get(null, 1).catch(function(error) {
-console.error('El cliente expiró por timeout:', error.message);
-// Si el Worker responde un momento después, 'unhandledResponse' capturará el resultado.
+    console.error('El cliente expiró por timeout:', error.message);
+    // Si el Worker responde un momento después, 'unhandledResponse' capturará el resultado.
 });</code><button class="copy">Copiar</button></pre>
                     <br>
 
