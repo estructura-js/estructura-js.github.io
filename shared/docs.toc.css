@@ -1,0 +1,64 @@
+/* shared/docs.toc.css — TOC reutilizable (inyectado por Docs.TOC como <details>, sin tocar texto). */
+.docs-toc {
+  font-size: var(--docs-font-s);
+  background: var(--docs-card);
+  border: 1px solid var(--docs-line);
+  border-radius: var(--docs-radius-l);
+  box-shadow: var(--docs-shadow-s);
+  padding: var(--docs-space-2) var(--docs-space-3);
+}
+
+/* Summary: título del bloque y disparador en móvil/tablet */
+.docs-toc-title {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--docs-space-2);
+  list-style: none; cursor: pointer;
+  padding: var(--docs-space-1) 0;
+  font-size: var(--docs-font-xs); font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--docs-muted);
+}
+.docs-toc-title::-webkit-details-marker { display: none; }
+.docs-toc-title::after {
+  content: '▾'; font-size: 0.9em; line-height: 1;
+  transition: transform var(--docs-transition);
+}
+.docs-toc[open] > .docs-toc-title { margin-bottom: var(--docs-space-2); }
+.docs-toc[open] > .docs-toc-title::after { transform: rotate(180deg); }
+
+.docs-toc ol {
+  list-style: none;
+  display: flex; flex-direction: column; gap: 0.15rem;
+}
+.docs-toc ol ol {
+  margin-top: 0.15rem; margin-left: var(--docs-space-1);
+  padding-left: var(--docs-space-3);
+  border-left: 1px solid var(--docs-line);
+}
+.docs-toc a {
+  display: block; padding: 0.2rem var(--docs-space-2);
+  border-radius: var(--docs-radius-s); color: var(--docs-muted);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.docs-toc a:hover { color: var(--docs-accent-ink); }
+.docs-toc a[aria-current="true"] {
+  color: var(--docs-accent-ink); background: var(--docs-paper-deep);
+  font-weight: 700; text-decoration: none;
+}
+.docs-toc li[data-level="2"] > a { font-weight: 700; }
+.docs-toc li[data-level="3"] > a { opacity: 0.92; }
+.docs-toc li[data-level="4"] { font-size: 0.85em; opacity: 0.9; }
+
+/* Móvil/tablet: bloque colapsable, sin scroll interno anidado */
+@media screen and (max-width: 1023px) {
+  .docs-toc ol { max-height: none; overflow: visible; }
+}
+
+/* Desktop: siempre abierto y sin affordance de toggle (es sidebar sticky) */
+@media screen and (min-width: 1024px) {
+  .docs-toc-title { cursor: default; pointer-events: none; }
+  .docs-toc-title::after { content: none; }
+  /* Salvaguarda: si el bloque quedase cerrado, permitir reabrirlo */
+  .docs-toc:not([open]) > .docs-toc-title { cursor: pointer; pointer-events: auto; }
+  .docs-toc:not([open]) > .docs-toc-title::after { content: '▾'; }
+}

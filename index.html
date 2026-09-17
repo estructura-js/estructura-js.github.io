@@ -33,13 +33,13 @@
 
 	<link rel="preload" href="fb.ttf" as="font" type="font/ttf" crossorigin>
 	<link rel="preload" href="fr.ttf" as="font" type="font/ttf" crossorigin>
-	<link rel="preload" href="estructura.styles.css" as="style">
+	<link rel="preload" href="shared/docs.css" as="style">
 
-	<link href="estructura.styles.css" rel="stylesheet" />
+	<link href="shared/docs.css" rel="stylesheet" />
 	<script src="https://cdn.jsdelivr.net/npm/estructura-js" defer></script>
 	<script src="./extensions/dom/estructura.dom.js" defer></script>
 	<script src="./extensions/events/estructura.events.js" defer></script>
-	<script src="main.js" defer></script>
+	<script src="shared/docs.js" defer></script>
 	<script type="application/ld+json">
 	{
       "@context": "https://schema.org",
@@ -61,13 +61,14 @@
 </head>
 
 <body>
-	<header class="center-y padding">
+<div class="docs-shell"><div class="docs-container">
+	<header class="center-y padding site-header">
 		<h1>
 			<img id="logo" src="estructura.logo.png" alt="Estructura, JavaScript Framework">
 		</h1>
 	</header>
 
-	<nav class="margin-y">
+	<nav class="margin-y docs-nav">
 		<section class="silver">
 			<h2 id="index" class="center-x">Menú</h2>
 			<div class="padding">
@@ -81,14 +82,12 @@
 		</section>
 	</nav>
 
-	<main>
+	<main class="docs-main">
 		<section class="margin-y">
 			<h2 id="description">Descripción</h2>
 				<div class="padding">
 					<p><strong>Estructura es un framework de JavaScript ligero y sin dependencias que te permite asignar funciones que se vincularán automáticamente a tipos de datos personalizados o extendidos, basándose en uno o múltiples argumentos.</strong></p>
-					<br>
 					<p>Diseñado para ofrecer una base sólida al programar en JavaScript, superando sus conocidas peculiaridades nativas en el manejo de tipos («type quirks»).</p>
-					<br>
 					<details>
                         <summary><b>Leer más</b></summary>
                         <p>Es una solución de tiempo de ejecución («runtime») ligera, sin dependencias, sin TypeScript, sin verbosidad ni las limitaciones de la verificación de tipos en tiempo de compilación («compile-time»). Proporciona la capacidad de identificar claramente cualquier tipo de dato, crear cualquier tipo de dato personalizado, organizarlos y utilizarlos con la garantía de que el despachador («dispatcher») siempre vinculará las funciones especificadas a sus tipos correspondientes o predefinidos. Fue construido con una optimización máxima, ofrece flexibilidad, y fue diseñado teniendo en cuenta una compatibilidad casi universal (ES3+ [1999]).</p>
@@ -100,12 +99,12 @@
 			<h2 id="get_started">Cómo utilizar</h2>
 
 			<div class="padding">
-                <strong>Importación:</strong><br>
+                <strong>Importación:</strong>
     			<ul class="separated">
-        			<li><button aria-expanded="true" aria-controls="umd" class="collapsed-links" data-read-more="+ UMD" data-read-less="— UMD">— UMD</button><br>
+        			<li><button aria-expanded="true" aria-controls="umd" class="collapsed-links" data-read-more="+ UMD" data-read-less="— UMD">— UMD</button>
         			    <pre class="entirely" id="umd"><code>&lt;!-- UMD / CDN: Unpkg --&gt;
 &lt;script src="https://unpkg.com/estructura-js"&gt;&lt;/script&gt;</code><button aria-live="polite" class="copy">Copiar</button></pre></li>
-        			<li><button aria-expanded="false" aria-controls="esm" class="collapsed-links" data-read-more="+ ESM" data-read-less="— ESM">+ ESM</button><br>
+        			<li><button aria-expanded="false" aria-controls="esm" class="collapsed-links" data-read-more="+ ESM" data-read-less="— ESM">+ ESM</button>
         			    <pre class="entirely collapsed" id="esm"><code>&lt;!-- ESM / CDN: Unpkg --&gt;
 &lt;script type="module"&gt;
     import _e from 'https://unpkg.com/estructura-js';
@@ -145,7 +144,6 @@
 
 			<div class="padding">
                 <p>Las extensiones son un ecosistema <code>enterprise-grade</code> modular que fundamenta todo el desarrollo del frontend/cliente.</p>
-                <br>
                 <details>
                  <summary><b>Leer más</b></summary>
                  <p><b>Incluye fundamentos como:</b> cliente HTTP, enrutamiento SPA, reactividad, control del DOM, eventos, orquestación de lógica y componentes declarativos o asíncronos. Unificadas sobre el núcleo de despacho múltiple, ofrecen un stack completo, ligero y sin dependencias para construir aplicaciones complejas de extremo a extremo, desde prototipos pequeños hasta sistemas de mayor escala.</p>
@@ -156,13 +154,13 @@
 			    <strong>Para usar las extensiones, importar primero Estructura (framework principal):</strong>
 
 				<ul class="separated">
-				<li><button aria-expanded="true" aria-controls="cdn_unpkg" class="collapsed-links" data-read-more="+ CDN: Unpkg" data-read-less="— CDN: Unpkg">— CDN: Unpkg</button><br>
+				<li><button aria-expanded="true" aria-controls="cdn_unpkg" class="collapsed-links" data-read-more="+ CDN: Unpkg" data-read-less="— CDN: Unpkg">— CDN: Unpkg</button>
 				    <pre class="entirely" id="cdn_unpkg"><code>&lt;!-- CDN: Unpkg --&gt;
 &lt;script src="https://unpkg.com/estructura-js"&gt;&lt;/script&gt;</code><button aria-live="polite" class="copy">Copiar</button></pre></li>
-				<li><button aria-expanded="false" aria-controls="cdn_jsdelivr" class="collapsed-links" data-read-more="+ CDN: JSDelivr" data-read-less="— CDN: JSDelivr">+ CDN: JSDelivr</button><br>
+				<li><button aria-expanded="false" aria-controls="cdn_jsdelivr" class="collapsed-links" data-read-more="+ CDN: JSDelivr" data-read-less="— CDN: JSDelivr">+ CDN: JSDelivr</button>
 				    <pre class="entirely collapsed" id="cdn_jsdelivr"><code>&lt;!-- CDN: JSDelivr --&gt;
 &lt;script src="https://cdn.jsdelivr.net/npm/estructura-js"&gt;&lt;/script&gt;</code><button aria-live="polite" class="copy">Copiar</button></pre></li>
-				<li><button aria-expanded="false" aria-controls="cdn_estructura" class="collapsed-links" data-read-more="+ CDN: Estructura" data-read-less="— CDN: Estructura">+ CDN: Estructura</button><br>
+				<li><button aria-expanded="false" aria-controls="cdn_estructura" class="collapsed-links" data-read-more="+ CDN: Estructura" data-read-less="— CDN: Estructura">+ CDN: Estructura</button>
 				    <pre class="entirely collapsed" id="cdn_estructura"><code>&lt;!-- CDN: Estructura --&gt;
 &lt;script src="https://estructura.okzgn.com/estructura.umd.js"&gt;&lt;/script&gt;</code><button aria-live="polite" class="copy">Copiar</button></pre></li>
 				</ul>
@@ -225,8 +223,9 @@
 		</section>
 	</main>
 
-	<footer class="center-y padding">
+	<footer class="center-y padding docs-footer">
 		<p>&copy; 2026 <a href="https://okzgn.com">OKZGN</a></p>
 	</footer>
+</div></div>
 </body>
 </html>

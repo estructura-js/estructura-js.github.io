@@ -1,6 +1,6 @@
 ﻿<!DOCTYPE html>
 
-<html>
+<html lang="es">
 
 <head>
 	<title>DOM</title>
@@ -12,11 +12,11 @@
 	<meta name="author" content="OKZGN">
 	<meta name="theme-color" content="#ffffff">
 
-	<link href="../../estructura.styles.css" rel="stylesheet" />
+	<link href="../../shared/docs.css" rel="stylesheet" />
 	<script src="https://cdn.jsdelivr.net/npm/estructura-js"></script>
 	<script src="estructura.dom.js"></script>
 	<script src="../events/estructura.events.js"></script>
-	<script src="../../main.js"></script>
+	<script src="../../shared/docs.js"></script>
 	<script>
 		document.addEventListener('DOMContentLoaded', function(){
 			console.log('Estructura DOM ready.');
@@ -60,14 +60,15 @@
 </head>
 
 <body>
-	<header class="center-y padding">
+<div class="docs-shell"><div class="docs-container">
+	<header class="center-y padding site-header">
 		<h1 class="extension center-y">
 			<img id="logo" src="../../estructura.logo.png" alt="Estructura, JavaScript Framework">
 			<span id="test">DOM test<b id="test_node"></b></span>
 		</h1>
 	</header>
 
-	<nav class="margin-y">
+	<nav class="margin-y docs-nav">
 		<section class="silver">
 			<h2 id="index" class="center-x">Menú</h2>
 			<div class="padding">
@@ -80,7 +81,7 @@
 		</section>
 	</nav>
 
-	<main>
+	<main class="docs-main">
 		<h2 class="title">DOM</h2>
 		<section class="margin-y">
 			<h2 id="description">Descripción</h2>
@@ -102,7 +103,7 @@
 			<h2 id="docs">Documentación</h2>
 			<div class="padding">
 				<h3>1. Uso Básico</h3>
-				<p>Seleccione elementos del DOM mediante selectores <code>String</code> CSS con <code>&gt;</code> al inicio (<code>DOMQuery</code>), y objetos <code>Node</code> o <code>NodeList</code>.<br><b>El prefijo <code>&gt;</code></b> al inicio de la cadena indica a la librería que debe interpretar el texto como un selector CSS para realizar una búsqueda en el DOM (<code>DOMQuery</code>).</p>
+				<p>Seleccione elementos del DOM mediante selectores <code>String</code> CSS con <code>&gt;</code> al inicio (<code>DOMQuery</code>), y objetos <code>Node</code> o <code>NodeList</code>. <b>El prefijo <code>&gt;</code></b> al inicio de la cadena indica a la librería que debe interpretar el texto como un selector CSS para realizar una búsqueda en el DOM (<code>DOMQuery</code>).</p>
 <pre><code>// Seleccionar elementos y aplicar cambios
 _dom('> .mi-clase').set('id', 'nuevo-id');
 _dom('> div').style('backgroundColor', 'red');
@@ -116,49 +117,44 @@ _dom(document.body).each(function(element, index){ console.log('Body:', element)
 // Con Nodes
 var classes = _dom(document.getElementsByClassName('miClase')).get('className');
 </code><button aria-live="polite" class="copy">Copiar</button></pre>
-				<br>
 				<h3>2. Métodos Principales</h3>
 				<h4><code>.each(callback)</code>:</h4>
 				<p>Itera sobre cada elemento seleccionado del DOM.</p>
 <pre><code>_dom('> li').each(function(element, index){
 	console.log('Elemento ' + index + ':', element);
 });</code><button aria-live="polite" class="copy">Copiar</button></pre>
-				<br>
 				<h4><code>.get(property)</code>:</h4>
 				<p>Obtiene el valor de una propiedad de todos los elementos del DOM seleccionados. Soporta acceso anidado mediante puntos. Retorna un arreglo (<code>Array</code>) con los resultados.</p>
 <pre><code>var valor = _dom('> input').get('value');
 var clase = _dom('> div').get('className');
 var estilo = _dom('> main').get('style.color');
 </code><button aria-live="polite" class="copy">Copiar</button></pre>
-				<br>
 				<h4><code>.set(property, value)</code>:</h4>
 				<p>Establece el valor de una propiedad a todos los elementos del DOM seleccionados. Soporta acceso anidado mediante puntos.</p>
 <pre><code>_dom('> input').set('value', 'Hola Mundo');
 _dom('> body').set('style.background', 'yellow');
 </code><button aria-live="polite" class="copy">Copiar</button></pre>
-				<br>
 				<h4><code>.style(property, value)</code>:</h4>
-<p>Manipula estilos CSS. Si se omite el argumento <code>value</code>, retorna el estilo actual del elemento. Los valores se aplican como estilos <i>inline</i>. Retorna un arreglo (<code>Array</code>) con los resultados. Soporta tanto nombres de propiedades en formato camelCase (ej. <code>backgroundColor</code>) como kebab-case (ej. <code>background-color</code>).</p>
+				<p>Manipula estilos CSS. Si se omite el argumento <code>value</code>, retorna el estilo actual del elemento. Los valores se aplican como estilos <i>inline</i>. Retorna un arreglo (<code>Array</code>) con los resultados. Soporta tanto nombres de propiedades en formato camelCase (ej. <code>backgroundColor</code>) como kebab-case (ej. <code>background-color</code>).</p>
 <pre><code>_dom('> .caja').style('color', 'blue');
 var color = _dom('> .caja').style('color'); // Retorna el valor computado</code><button aria-live="polite" class="copy">Copiar</button></pre>
-				<br>
 				<h4><code>.data(property, value)</code>:</h4>
 				<p>Manipula el <code>dataset</code>. Si se omite el argumento <code>value</code>, retorna la propiedad del elemento. Permite leer y escribir propiedades del <code>dataset</code> usando opcionalmente el prefijo <code>data-</code> y gestionando la conversión de formato de guiones a mayúsculas de manera automática (<code>camelCase</code>). Retorna un arreglo (<code>Array</code>) con los resultados.</p>
 <pre><code>_dom('> div').data('user-id', '456');
 var id = _dom('> div').data('user-id'); // Retorna el valor</code><button aria-live="polite" class="copy">Copiar</button></pre>
-				<br>
 				<h3>3. Características Técnicas</h3>
 				<div class="features">
 				<p><strong>Lazy Computed Style:</strong> Optimiza el rendimiento evitando llamadas a <code>getComputedStyle</code> retornando como primera opción el valor del estilo <i>inline</i>.</p>
-				<br><p><strong>Sanitización Inteligente:</strong> Limpia automáticamente espacios y puntos redundantes en las rutas de propiedades.</p>
-				<br><p><strong>Gestión de Errores:</strong> Proporciona mensajes de error claros al intentar acceder a propiedades inexistentes o selectores/rutas inválidos.</p>
+				<p><strong>Sanitización Inteligente:</strong> Limpia automáticamente espacios y puntos redundantes en las rutas de propiedades.</p>
+				<p><strong>Gestión de Errores:</strong> Proporciona mensajes de error claros al intentar acceder a propiedades inexistentes o selectores/rutas inválidos.</p>
 				</div>
 			</div>
 		</section>
 	</main>
 
-	<footer class="center-y padding">
+	<footer class="center-y padding docs-footer">
 		<p>&copy; 2026 <a href="https://okzgn.com">OKZGN</a></p>
 	</footer>
+</div></div>
 </body>
 </html>

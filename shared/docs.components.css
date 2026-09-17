@@ -1,0 +1,198 @@
+/* shared/docs.components.css — componentes reutilizables/abstractos: card, títulos, listas, código, botones, brand. */
+@font-face { font-family: 'A'; src: url('../fr.ttf'); font-weight: normal; }
+@font-face { font-family: 'A'; src: url('../fb.ttf'); font-weight: bold; }
+
+/* Card: aplica a `main section` (docs actuales) y a `.card` (reutilizable a futuro) */
+:is(.card, main section) {
+  background: var(--docs-card);
+  border: 1px solid var(--docs-line);
+  border-radius: var(--docs-radius-l);
+  box-shadow: var(--docs-shadow-s);
+  overflow: hidden;
+  overflow: clip;
+}
+:is(.card, main section) > div,
+:is(.card, main section) > p { padding: var(--docs-space-3); }
+:is(.card, main section) > p { padding-block: var(--docs-space-2); }
+
+/* Títulos de sección (scope a main: no afecta nav sr-only ni TOC) */
+main h2:not(.title), .section-title {
+  background: var(--docs-paper-deep);
+  color: var(--docs-header-ink);
+  font-size: 1.375rem;
+  font-weight: 700;
+  padding: var(--docs-space-2) var(--docs-space-3);
+  border-bottom: 1px solid var(--docs-line);
+}
+h2.title, .page-title {
+  font-size: clamp(1.75rem, 1.2rem + 2vw, 2.5rem);
+  font-weight: 800;
+  padding: var(--docs-space-2) var(--docs-space-3);
+  letter-spacing: -0.01em;
+}
+h2.title::before {
+  content: 'Estructura >';
+  margin-right: var(--docs-space-3);
+  color: var(--docs-muted);
+  font-size: 1.1rem;
+  font-weight: 400;
+}
+/* Jerarquía interna: h3 = sección numerada, h4 = subsección o firma de API */
+h3 { color: var(--docs-header-ink); margin-block: var(--docs-space-4) var(--docs-space-2); font-size: 1.1875rem; font-weight: 700; }
+h4 { color: var(--docs-header-ink); margin-block: var(--docs-space-3) var(--docs-space-1); font-size: 1.0625rem; font-weight: 700; }
+:is(.card, main section) .padding h3:first-child { margin-top: 0; }
+:is(.card, main section) .padding h3 {
+  margin-top: var(--docs-space-4);
+  padding-bottom: var(--docs-space-1);
+  border-bottom: 1px solid var(--docs-line);
+}
+/* Firmas de API: h4 cuyo primer hijo es una firma <code> (ej. .sql(callback?, timeout?)) */
+:is(.card, main section) .padding h4:has(> code:first-child) {
+  display: flex; align-items: center;
+  margin-block: var(--docs-space-4) var(--docs-space-2);
+  padding: var(--docs-space-1) var(--docs-space-2);
+  background: var(--docs-paper-deep);
+  border: 1px solid var(--docs-line);
+  border-left: 3px solid var(--docs-accent);
+  border-radius: var(--docs-radius-s);
+}
+:is(.card, main section) :is(h3, h4) code { background: transparent; padding: 0; border: 0; }
+:is(.card, main section) .padding h4 > code:first-child { color: var(--docs-accent-ink); }
+
+/* Detalles / resumen */
+details { padding-inline: var(--docs-space-3); padding-block-end: var(--docs-space-2); }
+details p { margin-top: var(--docs-space-2); }
+summary {
+  display: inline-block; padding: var(--docs-space-1) var(--docs-space-2);
+  border-radius: var(--docs-radius-s); font-weight: 700;
+}
+
+/* Listas */
+.lines { padding-left: var(--docs-space-5); }
+.lines li { text-indent: calc(var(--docs-space-3) * -1); margin-top: var(--docs-space-2); }
+.lines li::before {
+  content: ''; position: relative; display: inline-block;
+  width: var(--docs-space-3); height: 2px;
+  margin-bottom: 0.25rem; background: currentColor; opacity: 0.5;
+  left: calc(var(--docs-space-3) * -1); overflow: hidden;
+}
+.lines li.back::before { content: '<'; background: none; height: auto; opacity: 1; }
+.separated li { margin-top: var(--docs-space-3); }
+.separated li + li { border-top: 1px dashed var(--docs-line); padding-top: var(--docs-space-3); }
+
+/* Nav: estático, horizontal con wrapping, activo por scrollspy */
+.docs-nav .silver {
+  border: 1px solid var(--docs-line);
+  background: var(--docs-card);
+  border-radius: var(--docs-radius-l);
+  box-shadow: var(--docs-shadow-s);
+  overflow: clip;
+}
+/* Accesible: antes display:none; ahora visualmente oculto */
+.docs-nav h2 {
+  position: absolute; display: block; width: 1px; height: 1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap;
+  border: 0; padding: 0; margin: 0; background: transparent;
+}
+.docs-nav .lines { padding: var(--docs-space-2); }
+.docs-nav ul {
+  display: flex; flex-direction: row; flex-wrap: wrap;
+  gap: var(--docs-space-1); align-items: center;
+}
+.docs-nav .lines li {
+  margin: 0; padding: 0; text-indent: 0; border: 0;
+  flex: 0 0 auto;
+}
+.docs-nav .lines li::before { content: none; }
+.docs-nav a {
+  display: inline-block; padding: var(--docs-space-1) var(--docs-space-2);
+  border-radius: 999px; border: 1px solid transparent; white-space: nowrap;
+}
+.docs-nav a:hover { border-color: var(--docs-line); }
+.docs-nav a[aria-current="true"] {
+  background: var(--docs-ink); color: var(--docs-card);
+  border-color: var(--docs-ink); text-decoration: none;
+}
+.docs-nav li.back a { border-color: var(--docs-line); }
+
+/* Código */
+code {
+  border-radius: var(--docs-radius-s);
+  background: var(--docs-chip);
+  border: 1px solid var(--docs-line);
+  padding: 0.125rem 0.375rem;
+}
+/* API: la entidad definida (firma dentro de <b>/<strong> o primer identificador de una definición) */
+:is(b, strong) > code:first-child,
+main li > code:first-child {
+  background: var(--docs-paper-deep);
+  border-color: var(--docs-accent);
+  color: var(--docs-accent-ink);
+  font-weight: 700;
+}
+pre {
+  display: flex; flex-direction: column; cursor: pointer;
+  background: var(--docs-code-bg); color: var(--docs-code-ink);
+  border-radius: var(--docs-radius-m);
+  border: 1px solid var(--docs-line);
+  overflow: hidden;
+}
+:is(.card, main section) pre { margin: var(--docs-space-2) 0; }
+:is(.card, main section) > pre { margin-inline: var(--docs-space-3); }
+pre code {
+  background: transparent; color: inherit; border: 0;
+  padding: var(--docs-space-3);
+  cursor: copy; white-space: pre; overflow-x: auto;
+  width: 100%; min-width: 0; max-width: 100%;
+}
+:is(.card, main section) > div,
+:is(.card, main section) pre,
+:is(.card, main section) pre code { overflow-wrap: break-word; }
+
+/* Botones: copiar + toggle */
+button.copy {
+  align-self: flex-end;
+  margin: var(--docs-space-2) var(--docs-space-3) var(--docs-space-3);
+  padding: var(--docs-space-1) var(--docs-space-3);
+  border-radius: var(--docs-radius-s);
+  background: transparent; color: var(--docs-code-ink);
+  border: 1px solid currentColor; opacity: 0.85;
+  font-size: var(--docs-font-xs); font-weight: 700;
+}
+button.copy:hover, button.copy:focus-visible {
+  opacity: 1; color: var(--docs-code-ink);
+  background: rgba(255, 255, 255, 0.12);
+  text-decoration: none;
+}
+.collapsed-links {
+  display: inline-flex; align-items: center; gap: var(--docs-space-2);
+  padding: var(--docs-space-1) var(--docs-space-2);
+  border: 1px solid var(--docs-line); border-radius: 999px;
+  background: var(--docs-card); font-size: 0.95rem;
+}
+.collapsed-links:hover { border-color: var(--docs-accent-ink); }
+
+/* Brand */
+#logo { width: min(var(--width-base-logo), 60vw); height: auto; }
+.extension #logo { width: min(var(--width-base-logo-small), 40vw); }
+.extension span {
+  width: 100%; font-size: var(--docs-space-4); text-align: center;
+  border-top: 1px solid var(--docs-line);
+  padding: var(--docs-space-2) var(--docs-space-3) 0;
+  margin-top: var(--docs-space-2); color: var(--docs-muted);
+}
+@media screen and (min-width: 640px) {
+  .site-header .extension { flex-direction: row; gap: var(--docs-space-3); }
+  .extension span { border-top: 0; padding: 0; margin: 0; text-align: left; }
+}
+
+/* Zona demo */
+#test { font-size: 1.25rem; text-align: center; }
+input[type="file"]#test { font-size: var(--docs-font-s); }
+
+/* Colapso (API preservada para docs.js y legacy) */
+.collapsed { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.entirely.collapsed { display: none; }
+
+/* Contenido legacy: features es solo agrupador */
+.features > * + * { margin-top: var(--docs-space-3); }

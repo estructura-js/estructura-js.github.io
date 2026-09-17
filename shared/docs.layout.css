@@ -1,0 +1,93 @@
+/* shared/docs.layout.css — maquetación docs: shell centrado, header, nav estático, main + TOC, footer. */
+.docs-shell {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background:
+    radial-gradient(120rem 30rem at 50% -10rem, var(--docs-paper-deep) 0%, transparent 60%),
+    var(--docs-paper);
+}
+
+.docs-container {
+  width: 100%;
+  max-width: var(--docs-measure);
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--docs-space-3);
+  padding-inline: var(--docs-space-3);
+  padding-block: var(--docs-space-3) var(--docs-space-6);
+}
+@media screen and (min-width: 640px) {
+  .docs-container { padding-inline: var(--docs-space-4); }
+}
+
+/* Header (elemento+clase para no ser pisado por la utilidad .padding).
+   Sin padding-inline: el gutter lo aporta .docs-container (alineado con secciones). */
+header.site-header {
+  display: flex;
+  justify-content: center;
+  padding-block: var(--docs-space-4) var(--docs-space-2);
+  text-align: center;
+}
+.site-header h1 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--docs-space-2);
+}
+
+/* Nav estático (no flotante). El único sticky es el TOC lateral. */
+.docs-nav { position: static; z-index: auto; }
+
+/* Cuerpo: main + TOC inyectado por Docs.js (sin tocar texto) */
+.docs-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--docs-space-4);
+}
+.docs-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--docs-space-4);
+  min-width: 0;
+  flex: 1 1 auto;
+}
+/* El gap ya separa: anula el margen legacy de las secciones */
+.docs-main > .margin-y { margin-block: 0; }
+
+/* Móvil/tablet: el TOC va primero como bloque colapsable */
+@media screen and (max-width: 1023px) {
+  .docs-body .docs-toc { order: -1; }
+}
+
+@media screen and (min-width: 1024px) {
+  .docs-container { gap: var(--docs-space-4); }
+  .docs-body { flex-direction: row; align-items: flex-start; gap: var(--docs-space-5); }
+  .docs-body .docs-toc {
+    order: 0;
+    flex: 0 0 var(--docs-toc-w);
+    position: sticky; top: var(--docs-space-3);
+    max-height: calc(100dvh - var(--docs-space-6));
+    overflow: auto;
+  }
+  .docs-main { gap: var(--docs-space-5); }
+}
+
+/* Footer (elemento+clase para no ser pisado por la utilidad .padding) */
+footer.docs-footer {
+  display: flex;
+  justify-content: center;
+  padding-block: var(--docs-space-4);
+  color: var(--docs-muted);
+  font-size: var(--docs-font-s);
+}
+
+/* Ritmo interno de secciones sin tocar texto */
+.docs-main > h2.title { margin-block: var(--docs-space-2) 0; }
+.docs-main section { scroll-margin-top: var(--docs-space-4); }
+
+/* Ritmo interno del contenido: márgenes colapsables en lugar de <br> de separación */
+:is(.card, main section) .padding > * + * { margin-top: var(--docs-space-3); }
+:is(.card, main section) .padding li > * + * { margin-top: var(--docs-space-2); }
+main section li + li { margin-top: var(--docs-space-2); }

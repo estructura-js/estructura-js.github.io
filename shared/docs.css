@@ -1,0 +1,7 @@
+/* shared/docs.css — entrada única del sistema de diseño docs (compartido, modular, DRY). */
+@import url('./docs.tokens.css');
+@import url('./docs.base.css');
+@import url('./docs.layout.css');
+@import url('./docs.components.css');
+@import url('./docs.toc.css');
+@import url('./docs.utilities.css');

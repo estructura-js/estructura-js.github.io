@@ -1,0 +1,82 @@
+/* shared/docs.base.css — reset + tipografía. No usa selectores de página concreta. */
+*, *::after, *::before {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  color-scheme: light dark;
+}
+
+body {
+  overflow-x: hidden;
+  background: var(--docs-paper);
+  color: var(--docs-ink);
+  font-family: var(--docs-font);
+  font-size: 1rem;
+  word-spacing: 0.2rem;
+  line-height: 1.6;
+  accent-color: var(--docs-accent);
+  scrollbar-color: var(--docs-muted) var(--docs-paper);
+  scrollbar-width: thin;
+}
+
+/* Foco accesible: corrige outline:0 global del legacy sin romper diseño */
+:active { -webkit-tap-highlight-color: transparent; }
+:focus { outline: none; }
+:focus-visible {
+  outline: 0.125rem solid var(--docs-accent-ink);
+  outline-offset: 0.125rem;
+  border-radius: var(--docs-radius-s);
+}
+
+::selection { background: var(--docs-ink); color: var(--docs-card); }
+::placeholder { color: var(--docs-ink); opacity: 0.5; }
+
+a, summary, button {
+  color: var(--docs-accent);
+  text-decoration: none;
+  cursor: pointer;
+  background: transparent;
+  font: inherit;
+  transition: all var(--docs-transition);
+}
+a:hover, summary:hover, button:hover,
+a:focus-visible, summary:focus-visible, button:focus-visible {
+  color: var(--docs-accent-ink);
+  background-color: var(--docs-paper);
+  text-decoration: underline;
+  border-radius: var(--docs-radius-s);
+}
+button { font-weight: 700; }
+
+ul { list-style: none; }
+img { max-width: 100%; }
+
+h1, h2, h3, h4 { line-height: 1.25; text-wrap: balance; scroll-margin-top: var(--docs-space-4); }
+code { font-family: var(--docs-mono); font-size: 0.92em; }
+/* Inline code no debe romper el interlineado ni forzar bloque */
+p code, li code, span code, h3 code, h4 code { display: inline; }
+
+/* Skip-link (lo inyecta Docs.js; oculto hasta foco) */
+.docs-skip {
+  position: fixed; left: var(--docs-space-3); top: -10rem;
+  background: var(--docs-ink); color: var(--docs-card);
+  padding: var(--docs-space-2) var(--docs-space-3);
+  border-radius: var(--docs-radius-s); z-index: 100;
+}
+.docs-skip:focus-visible { top: var(--docs-space-2); }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::after, *::before { transition: none !important; animation: none !important; }
+}
+
+@media print {
+  .docs-nav, .docs-toc, button.copy, .collapsed-links { display: none !important; }
+  .docs-shell { background: #fff; }
+  :is(.card, main section) { box-shadow: none; }
+  .entirely.collapsed { display: block !important; }
+}

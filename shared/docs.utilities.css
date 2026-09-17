@@ -1,0 +1,13 @@
+/* shared/docs.utilities.css — utilidades + aliases legacy (no duplicar, solo mapear). */
+.margin-y { margin-block: var(--docs-space-3); }
+.docs-nav.margin-y { margin-block: 0; }
+.padding { padding: var(--docs-space-3); }
+.padding-y { padding: var(--docs-space-2) var(--docs-space-3); }
+.center-x, .center-y { display: flex; justify-content: center; }
+.center-y { flex-direction: column; gap: var(--docs-space-2); color: var(--docs-muted); }
+.center-y > *, .center-x > * { align-self: center; }
+.all_width_height { width: 100%; }
+.sr-only {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0, 0, 0, 0); white-space: nowrap;
+}
