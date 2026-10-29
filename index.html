@@ -11,7 +11,7 @@
     <link rel="canonical" href="https://estructura.okzgn.com/">
 
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="description" content="Estructura es un framework de JavaScript ligero y sin dependencias que te permite asignar funciones que se vincularán automáticamente a tipos de datos personalizados o extendidos, basándose en uno o múltiples argumentos.">
+	<meta name="description" content="Estructura es un framework de JavaScript ligero y sin dependencias que permite asignar funciones que se vincularán automáticamente a tipos de datos personalizados o extendidos, basándose en uno o múltiples argumentos.">
 	<meta name="author" content="OKZGN">
 	<meta name="theme-color" content="#ffffff">
 	<meta name="robots" content="index, follow, max-image-preview:large">
@@ -19,7 +19,7 @@
 	<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self'; child-src 'none'; style-src 'self' https://cdn.jsdelivr.net; script-src 'self' https://cdn.jsdelivr.net; connect-src 'self' https://cdn.jsdelivr.net">
 
 	<meta property="og:title" content="Estructura">
-	<meta property="og:description" content="Estructura es un framework de JavaScript ligero y sin dependencias que te permite asignar funciones que se vincularán automáticamente a tipos de datos personalizados o extendidos, basándose en uno o múltiples argumentos.">
+	<meta property="og:description" content="Estructura es un framework de JavaScript ligero y sin dependencias que permite asignar funciones que se vincularán automáticamente a tipos de datos personalizados o extendidos, basándose en uno o múltiples argumentos.">
 	<meta property="og:image" content="https://estructura.okzgn.com/estructura.icon.png">
 	<meta property="og:url" content="https://estructura.okzgn.com/">
 	<meta property="og:site_name" content="Estructura">
@@ -28,7 +28,7 @@
 
 	<meta name="twitter:card" content="summary_large_image">
 	<meta name="twitter:title" content="Estructura">
-	<meta name="twitter:description" content="Estructura es un framework de JavaScript ligero y sin dependencias que te permite asignar funciones que se vincularán automáticamente a tipos de datos personalizados o extendidos, basándose en uno o múltiples argumentos.">
+	<meta name="twitter:description" content="Estructura es un framework de JavaScript ligero y sin dependencias que permite asignar funciones que se vincularán automáticamente a tipos de datos personalizados o extendidos, basándose en uno o múltiples argumentos.">
 	<meta name="twitter:image" content="https://estructura.okzgn.com/estructura.logo.large.png">
 
 	<link rel="preload" href="fb.ttf" as="font" type="font/ttf" crossorigin>
@@ -61,36 +61,40 @@
 </head>
 
 <body>
-<div class="docs-shell"><div class="docs-container">
-	<header class="center-y padding site-header">
+<div class="docs-shell">
+	<header class="site-header site-bar">
+		<div class="site-bar-inner">
+			<a class="site-brand" href="./" aria-label="Estructura: inicio"><img class="site-brand-logo" src="estructura.logo.png" alt="Estructura"></a>
+			<nav class="site-links" aria-label="Sitio">
+				<a href="./#get_started">Guía</a>
+				<a href="./#extensions">Extensiones</a>
+				<a class="site-github" target="_blank" rel="noopener noreferrer" href="https://github.com/okzgn/estructura"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span>GitHub</span></a>
+				<span class="site-version" title="Versión del núcleo">v1.20.0</span>
+			</nav>
+		</div>
+	</header>
+<div class="docs-container">
+	<header class="center-y padding site-header site-hero">
 		<h1>
 			<img id="logo" src="estructura.logo.png" alt="Estructura, JavaScript Framework">
 		</h1>
+		<p class="site-tagline">Despacho múltiple por tipos para JavaScript: ligero, sin dependencias y compatible desde ES3.</p>
+		<div class="site-actions">
+			<a class="docs-button docs-button-primary" href="#get_started">Empezar</a>
+			<a class="docs-button" href="#extensions">Ver extensiones</a>
+		</div>
 	</header>
-
-	<nav class="margin-y docs-nav">
-		<section class="silver">
-			<h2 id="index" class="center-x">Menú</h2>
-			<div class="padding">
-				<ul class="lines center-y">
-					<li><a href="#description">Descripción</a></li>
-					<li><a href="#get_started">Cómo utilizar</a></li>
-					<li><a href="#docs">Documentación</a></li>
-					<li><a href="#extensions">Extensiones</a></li>
-				</ul>
-			</div>
-		</section>
-	</nav>
 
 	<main class="docs-main">
 		<section class="margin-y">
 			<h2 id="description">Descripción</h2>
 				<div class="padding">
-					<p><strong>Estructura es un framework de JavaScript ligero y sin dependencias que te permite asignar funciones que se vincularán automáticamente a tipos de datos personalizados o extendidos, basándose en uno o múltiples argumentos.</strong></p>
-					<p>Diseñado para ofrecer una base sólida al programar en JavaScript, superando sus conocidas peculiaridades nativas en el manejo de tipos («type quirks»).</p>
+					<p><strong>Estructura es un framework de JavaScript ligero y sin dependencias que permite asignar funciones que se vincularán automáticamente a tipos de datos personalizados o extendidos, basándose en uno o múltiples argumentos.</strong></p>
+					<p>Su objetivo es ofrecer una base sólida para programar en JavaScript frente a las conocidas peculiaridades del lenguaje en el manejo de tipos («type quirks»).</p>
 					<details>
                         <summary><b>Leer más</b></summary>
-                        <p>Es una solución de tiempo de ejecución («runtime») ligera, sin dependencias, sin TypeScript, sin verbosidad ni las limitaciones de la verificación de tipos en tiempo de compilación («compile-time»). Proporciona la capacidad de identificar claramente cualquier tipo de dato, crear cualquier tipo de dato personalizado, organizarlos y utilizarlos con la garantía de que el despachador («dispatcher») siempre vinculará las funciones especificadas a sus tipos correspondientes o predefinidos. Fue construido con una optimización máxima, ofrece flexibilidad, y fue diseñado teniendo en cuenta una compatibilidad casi universal (ES3+ [1999]).</p>
+                        <p>Es una solución en tiempo de ejecución («runtime»), ligera y sin dependencias, que no requiere TypeScript ni verificación de tipos en tiempo de compilación («compile-time»). Permite identificar cualquier tipo de dato, crear tipos personalizados, organizarlos y usarlos sabiendo que el despachador («dispatcher») vinculará de forma determinista las funciones registradas a sus tipos correspondientes o predefinidos. Prioriza un bajo costo de despacho y es compatible con ES3 (1999) en adelante.</p>
+                        <p><strong>Rendimiento:</strong> cada llamada al despachador cuesta del orden de microsegundos. El costo crece con el número de argumentos, con la cantidad de tipos detectados por argumento y con las funciones de subtipo, que se ejecutan en cada llamada. Recomendaciones: reutilizar el resultado de <code>_e(valor)</code> cuando se llame varias veces a sus métodos, mantener ligeras las funciones de <code>_e.subtype()</code> y evitar cadenas de subtipos innecesariamente profundas.</p>
                     </details>
 				</div>
 		</section>
@@ -107,7 +111,7 @@
         			<li><button aria-expanded="false" aria-controls="esm" class="collapsed-links" data-read-more="+ ESM" data-read-less="— ESM">+ ESM</button>
         			    <pre class="entirely collapsed" id="esm"><code>&lt;!-- ESM / CDN: Unpkg --&gt;
 &lt;script type="module"&gt;
-    import _e from 'https://unpkg.com/estructura-js';
+    import _e from 'https://unpkg.com/estructura-js/dist/estructura.esm.mjs';
 &lt;/script&gt;</code><button aria-live="polite" class="copy">Copiar</button></pre></li>
 
     			</ul>
@@ -131,10 +135,10 @@
 					<li><strong>Versión: 1.20.0</strong></li>
 					<li><strong>Licencia: MIT</strong></li>
 					<li><strong>NPM:</strong> <a target="_blank" rel="noopener noreferrer" href="https://npmjs.com/estructura-js">https://npmjs.com/estructura-js</a></li>
-					<li><strong>GITHUB:</strong> <a target="_blank" rel="noopener noreferrer" href="https://github.com/okzgn/estructura">https://github.com/okzgn/estructura</a></li>
+					<li><strong>GitHub:</strong> <a target="_blank" rel="noopener noreferrer" href="https://github.com/okzgn/estructura">https://github.com/okzgn/estructura</a></li>
 					<li><strong>Justificación:</strong> <a target="_blank" rel="noopener noreferrer" href="https://okzgn.com/articles/why-not-build-frontend-frameworks-on-raw-html-css-or-js/">Why not build frontend frameworks on raw HTML, CSS or JS?</a> (artículo analítico y propuesta del ecosistema).</li>
-					<li><strong>Prototipos originales:</strong> <a target="_blank" rel="noopener noreferrer" href="https://github.com/okzgn/emerald-prototype-2024-js">Emerald</a> (JS Library, 2016-2024, <a target="_blank" rel="noopener noreferrer" href="https://okzgn.github.io/emerald-prototype-2024-js/">website</a>), <a target="_blank" rel="noopener noreferrer" href="https://github.com/okzgn/componentes-prototype-2025-js">Componentes</a> (JS Frontend Framework, 2025).</li>
-					<li><strong>Extensiones:</strong> Las documentaciones de las extensiones se encuentran en los siguientes enlaces (<b>actualmente sin repositorios públicos [Github]</b>).</li>
+					<li><strong>Prototipos originales:</strong> <a target="_blank" rel="noopener noreferrer" href="https://github.com/okzgn/emerald-prototype-2024-js">Emerald</a> (librería de JavaScript, 2016-2024, <a target="_blank" rel="noopener noreferrer" href="https://okzgn.github.io/emerald-prototype-2024-js/">sitio web</a>), <a target="_blank" rel="noopener noreferrer" href="https://github.com/okzgn/componentes-prototype-2025-js">Componentes</a> (framework frontend de JavaScript, 2025).</li>
+					<li><strong>Extensiones:</strong> la documentación de cada extensión está en la sección <a href="#extensions">Extensiones</a> (sus repositorios aún no son públicos).</li>
 				</ul>
 			</div>
 		</section>
@@ -143,15 +147,94 @@
 			<h2 id="extensions">Extensiones</h2>
 
 			<div class="padding">
-                <p>Las extensiones son un ecosistema <code>enterprise-grade</code> modular que fundamenta todo el desarrollo del frontend/cliente.</p>
+                <p>Las extensiones son un conjunto modular de librerías para el desarrollo frontend, construidas sobre el núcleo de Estructura. Se publican como versiones candidatas (RC) bajo licencia AGPL v3, con licencia comercial disponible.</p>
                 <details>
                  <summary><b>Leer más</b></summary>
-                 <p><b>Incluye fundamentos como:</b> cliente HTTP, enrutamiento SPA, reactividad, control del DOM, eventos, orquestación de lógica y componentes declarativos o asíncronos. Unificadas sobre el núcleo de despacho múltiple, ofrecen un stack completo, ligero y sin dependencias para construir aplicaciones complejas de extremo a extremo, desde prototipos pequeños hasta sistemas de mayor escala.</p>
+                 <p><b>Incluyen fundamentos como:</b> cliente HTTP, enrutamiento SPA, reactividad, control del DOM, eventos, orquestación de lógica, componentes declarativos o asíncronos y una base de datos SQLite en el navegador. Unificadas sobre el núcleo de despacho múltiple, forman un stack ligero y sin dependencias externas, salvo SQLite Frontend, que usa la compilación oficial de SQLite WASM. Entre ellas, solo Components depende de HTTP, y Handlers, de Events.</p>
                 </details>
 			</div>
 
+
 			<div class="padding">
-			    <strong>Para usar las extensiones, importar primero Estructura (framework principal):</strong>
+			    <strong>Extensiones disponibles:</strong>
+				<ul class="ext-grid">
+					<li class="ext-card">
+						<div class="ext-card-head"><a class="ext-card-title" href="extensions/http/">HTTP</a><span class="docs-badge">RC2</span></div>
+						<p class="ext-card-desc">Peticiones HTTP sobre XMLHttpRequest, con callbacks o promesas, JSON y control de errores.</p>
+						<p class="ext-card-meta"><span>ES3/ES5+</span><span>AGPL v3</span><span>UMD</span></p>
+						<div class="ext-card-actions"><button aria-expanded="false" aria-controls="ext_http" class="collapsed-links" data-read-more="+ Importación" data-read-less="— Importación">+ Importación</button></div>
+						<pre class="entirely collapsed" id="ext_http"><code>&lt;!-- EXTENSIÓN: Estructura / HTTP --&gt;
+&lt;script src="https://estructura.okzgn.com/extensions/http/estructura.http.js"&gt;&lt;/script&gt;</code><button aria-live="polite" class="copy">Copiar</button></pre>
+					</li>
+					<li class="ext-card">
+						<div class="ext-card-head"><a class="ext-card-title" href="extensions/dom/">DOM</a><span class="docs-badge">RC2</span></div>
+						<p class="ext-card-desc">Lee y modifica propiedades del DOM con selectores, nodos o listas, con sanitización de URL.</p>
+						<p class="ext-card-meta"><span>ES5+</span><span>AGPL v3</span><span>UMD</span></p>
+						<div class="ext-card-actions"><button aria-expanded="false" aria-controls="ext_dom" class="collapsed-links" data-read-more="+ Importación" data-read-less="— Importación">+ Importación</button></div>
+						<pre class="entirely collapsed" id="ext_dom"><code>&lt;!-- EXTENSIÓN: Estructura / DOM --&gt;
+&lt;script src="https://estructura.okzgn.com/extensions/dom/estructura.dom.js"&gt;&lt;/script&gt;</code><button aria-live="polite" class="copy">Copiar</button></pre>
+					</li>
+					<li class="ext-card">
+						<div class="ext-card-head"><a class="ext-card-title" href="extensions/events/">Events</a><span class="docs-badge">RC2</span></div>
+						<p class="ext-card-desc">Eventos con namespaces, modos (once, capture, passive, signal), pausa y disparo manual.</p>
+						<p class="ext-card-meta"><span>ES5/ES6+</span><span>AGPL v3</span><span>UMD</span></p>
+						<div class="ext-card-actions"><button aria-expanded="false" aria-controls="ext_events" class="collapsed-links" data-read-more="+ Importación" data-read-less="— Importación">+ Importación</button></div>
+						<pre class="entirely collapsed" id="ext_events"><code>&lt;!-- EXTENSIÓN: Estructura / Events --&gt;
+&lt;script src="https://estructura.okzgn.com/extensions/events/estructura.events.js"&gt;&lt;/script&gt;</code><button aria-live="polite" class="copy">Copiar</button></pre>
+					</li>
+					<li class="ext-card">
+						<div class="ext-card-head"><a class="ext-card-title" href="extensions/components/">Components</a><span class="docs-badge">RC3</span></div>
+						<p class="ext-card-desc">Carga declarativa de componentes HTML, CSS y JS con orquestación, dependencias y contingencias.</p>
+						<p class="ext-card-meta"><span>ES5/ES6+</span><span>AGPL v3</span><span>UMD</span><span>Dep.: HTTP</span></p>
+						<div class="ext-card-actions"><button aria-expanded="false" aria-controls="ext_components" class="collapsed-links" data-read-more="+ Importación" data-read-less="— Importación">+ Importación</button></div>
+						<pre class="entirely collapsed" id="ext_components"><code>&lt;!-- DEPENDENCIA: Estructura / HTTP --&gt;
+&lt;script src="https://estructura.okzgn.com/extensions/http/estructura.http.js"&gt;&lt;/script&gt;
+
+&lt;!-- EXTENSIÓN: Estructura / Components --&gt;
+&lt;script src="https://estructura.okzgn.com/extensions/components/estructura.components.js"&gt;&lt;/script&gt;</code><button aria-live="polite" class="copy">Copiar</button></pre>
+					</li>
+					<li class="ext-card">
+						<div class="ext-card-head"><a class="ext-card-title" href="extensions/handlers/">Handlers</a><span class="docs-badge">RC3</span></div>
+						<p class="ext-card-desc">Lógica declarativa con atributos data-e-handler: middlewares, estados de éxito/error y ciclo de vida.</p>
+						<p class="ext-card-meta"><span>ES5/ES6+</span><span>AGPL v3</span><span>UMD</span><span>Dep.: Events</span></p>
+						<div class="ext-card-actions"><button aria-expanded="false" aria-controls="ext_handlers" class="collapsed-links" data-read-more="+ Importación" data-read-less="— Importación">+ Importación</button></div>
+						<pre class="entirely collapsed" id="ext_handlers"><code>&lt;!-- DEPENDENCIA: Estructura / Events --&gt;
+&lt;script src="https://estructura.okzgn.com/extensions/events/estructura.events.js"&gt;&lt;/script&gt;
+
+&lt;!-- EXTENSIÓN: Estructura / Handlers --&gt;
+&lt;script src="https://estructura.okzgn.com/extensions/handlers/estructura.handlers.js"&gt;&lt;/script&gt;</code><button aria-live="polite" class="copy">Copiar</button></pre>
+					</li>
+					<li class="ext-card">
+						<div class="ext-card-head"><a class="ext-card-title" href="extensions/reactive/">Reactive</a><span class="docs-badge">RC2</span></div>
+						<p class="ext-card-desc">Plantillas {{ }} con enlace de datos bidireccional entre el estado y el DOM.</p>
+						<p class="ext-card-meta"><span>ES6+</span><span>AGPL v3</span><span>UMD</span></p>
+						<div class="ext-card-actions"><button aria-expanded="false" aria-controls="ext_reactive" class="collapsed-links" data-read-more="+ Importación" data-read-less="— Importación">+ Importación</button></div>
+						<pre class="entirely collapsed" id="ext_reactive"><code>&lt;!-- EXTENSIÓN: Estructura / Reactive --&gt;
+&lt;script src="https://estructura.okzgn.com/extensions/reactive/estructura.reactive.js"&gt;&lt;/script&gt;</code><button aria-live="polite" class="copy">Copiar</button></pre>
+					</li>
+					<li class="ext-card">
+						<div class="ext-card-head"><a class="ext-card-title" href="extensions/routing/">Routing</a><span class="docs-badge">RC2</span></div>
+						<p class="ext-card-desc">Enrutamiento SPA con parámetros, middlewares encadenados y la API History.</p>
+						<p class="ext-card-meta"><span>ES6+</span><span>AGPL v3</span><span>UMD</span></p>
+						<div class="ext-card-actions"><button aria-expanded="false" aria-controls="ext_routing" class="collapsed-links" data-read-more="+ Importación" data-read-less="— Importación">+ Importación</button></div>
+						<pre class="entirely collapsed" id="ext_routing"><code>&lt;!-- EXTENSIÓN: Estructura / Routing --&gt;
+&lt;script src="https://estructura.okzgn.com/extensions/routing/estructura.routing.js"&gt;&lt;/script&gt;</code><button aria-live="polite" class="copy">Copiar</button></pre>
+					</li>
+					<li class="ext-card">
+						<div class="ext-card-head"><a class="ext-card-title" href="extensions/sqlite.frontend/">SQLite Frontend</a><span class="docs-badge">RC2</span></div>
+						<p class="ext-card-desc">SQLite en WebAssembly dentro de un Web Worker, con persistencia en OPFS.</p>
+						<p class="ext-card-meta"><span>ES6+ / WebAssembly / Web Workers / OPFS</span><span>AGPL v3</span><span>UMD</span><span>autoalojado</span></p>
+						<div class="ext-card-actions"><button aria-expanded="false" aria-controls="ext_sqlite_frontend" class="collapsed-links" data-read-more="+ Importación" data-read-less="— Importación">+ Importación</button></div>
+						<pre class="entirely collapsed" id="ext_sqlite_frontend"><code>&lt;!-- EXTENSIÓN: Estructura / SQLite Frontend (autoalojada): copie estructura.sqlite.frontend.js,
+     estructura.sqlite.frontend.wasm.worker.js y _dependencies/_sqlite/ en el mismo
+     directorio que esta página. El Worker no puede cargarse desde un CDN. --&gt;
+&lt;script src="estructura.sqlite.frontend.js"&gt;&lt;/script&gt;</code><button aria-live="polite" class="copy">Copiar</button></pre>
+					</li>
+				</ul>
+			</div>
+
+			<div class="padding">
+			    <strong>Requisito: cargue primero el núcleo de Estructura como script UMD (las extensiones usan la variable global <code>_e</code>; con la importación ESM no existe):</strong>
 
 				<ul class="separated">
 				<li><button aria-expanded="true" aria-controls="cdn_unpkg" class="collapsed-links" data-read-more="+ CDN: Unpkg" data-read-less="— CDN: Unpkg">— CDN: Unpkg</button>
@@ -163,61 +246,6 @@
 				<li><button aria-expanded="false" aria-controls="cdn_estructura" class="collapsed-links" data-read-more="+ CDN: Estructura" data-read-less="— CDN: Estructura">+ CDN: Estructura</button>
 				    <pre class="entirely collapsed" id="cdn_estructura"><code>&lt;!-- CDN: Estructura --&gt;
 &lt;script src="https://estructura.okzgn.com/estructura.umd.js"&gt;&lt;/script&gt;</code><button aria-live="polite" class="copy">Copiar</button></pre></li>
-				</ul>
-			</div>
-
-			<div class="padding">
-			    <strong>Extensiones/librerías y documentaciones disponibles:</strong>
-				<ul class="separated">
-					<li><button aria-expanded="false" aria-controls="ext_http" class="collapsed-links" data-read-more="+ HTTP" data-read-less="— HTTP">+ HTTP</button> — <a href="extensions/http/">Documentación</a> — (RC1, ES3/ES5+, AGPL v3, UMD)
-					<pre class="entirely collapsed" id="ext_http"><code>&lt;!-- CDN: Estructura / HTTP --&gt;
-&lt;script src="https://estructura.okzgn.com/extensions/http/estructura.http.js"&gt;&lt;/script&gt;</code><button aria-live="polite" class="copy">Copiar</button></pre>
-					</li>
-
-					<li><button aria-expanded="false" aria-controls="ext_dom" class="collapsed-links" data-read-more="+ DOM" data-read-less="— DOM">+ DOM</button> — <a href="extensions/dom/">Documentación</a> — (RC1, ES5+, AGPL v3, UMD)
-					<pre class="entirely collapsed" id="ext_dom"><code>&lt;!-- CDN: Estructura / DOM --&gt;
-&lt;script src="https://estructura.okzgn.com/extensions/dom/estructura.dom.js"&gt;&lt;/script&gt;</code><button aria-live="polite" class="copy">Copiar</button></pre>
-					</li>
-
-					<li><button aria-expanded="false" aria-controls="ext_events" class="collapsed-links" data-read-more="+ Events" data-read-less="— Events">+ Events</button> — <a href="extensions/events/">Documentación</a> — (RC1, ES5/ES6+, AGPL v3, UMD)
-					<pre class="entirely collapsed" id="ext_events"><code>&lt;!-- CDN: Estructura / Events --&gt;
-&lt;script src="https://estructura.okzgn.com/extensions/events/estructura.events.js"&gt;&lt;/script&gt;</code><button aria-live="polite" class="copy">Copiar</button></pre>
-					</li>
-
-					<li><button aria-expanded="false" aria-controls="ext_components" class="collapsed-links" data-read-more="+ Components" data-read-less="— Components">+ Components</button> — <a href="extensions/components/">Documentación</a> — (RC2, ES5/ES6+, AGPL v3, UMD, Dep.: HTTP)
-					<pre class="entirely collapsed" id="ext_components"><code>&lt;!-- CDN: Estructura / Components --&gt;
-
-&lt;!-- DEPENDENCY: Estructura / HTTP --&gt;
-&lt;script src="https://estructura.okzgn.com/extensions/http/estructura.http.js"&gt;&lt;/script&gt;
-
-&lt;!-- EXTENSION: Estructura / Components --&gt;
-&lt;script src="https://estructura.okzgn.com/extensions/components/estructura.components.js"&gt;&lt;/script&gt;</code><button aria-live="polite" class="copy">Copiar</button></pre>
-					</li>
-
-					<li><button aria-expanded="false" aria-controls="ext_handlers" class="collapsed-links" data-read-more="+ Handlers" data-read-less="— Handlers">+ Handlers</button> — <a href="extensions/handlers/">Documentación</a> — (RC2, ES5/ES6+, AGPL v3, UMD, Dep.: Events)
-					<pre class="entirely collapsed" id="ext_handlers"><code>&lt;!-- CDN: Estructura / Handlers --&gt;
-
-&lt;!-- DEPENDENCIA: Estructura / Events --&gt;
-&lt;script src="https://estructura.okzgn.com/extensions/events/estructura.events.js"&gt;&lt;/script&gt;
-
-&lt;!-- EXTENSION: Estructura / Handlers --&gt;
-&lt;script src="https://estructura.okzgn.com/extensions/handlers/estructura.handlers.js"&gt;&lt;/script&gt;</code><button aria-live="polite" class="copy">Copiar</button></pre>
-					</li>
-
-					<li><button aria-expanded="false" aria-controls="ext_reactive" class="collapsed-links" data-read-more="+ Reactive" data-read-less="— Reactive">+ Reactive</button> — <a href="extensions/reactive/">Documentación</a> — (RC1, ES6+, AGPL v3, UMD)
-					<pre class="entirely collapsed" id="ext_reactive"><code>&lt;!-- CDN: Estructura / Reactive --&gt;
-&lt;script src="https://estructura.okzgn.com/extensions/reactive/estructura.reactive.js"&gt;&lt;/script&gt;</code><button aria-live="polite" class="copy">Copiar</button></pre>
-					</li>
-
-					<li><button aria-expanded="false" aria-controls="ext_routing" class="collapsed-links" data-read-more="+ Routing" data-read-less="— Routing">+ Routing</button> — <a href="extensions/routing/">Documentación</a> — (RC1, ES6+, AGPL v3, UMD)
-					<pre class="entirely collapsed" id="ext_routing"><code>&lt;!-- CDN: Estructura / Routing --&gt;
-&lt;script src="https://estructura.okzgn.com/extensions/routing/estructura.routing.js"&gt;&lt;/script&gt;</code><button aria-live="polite" class="copy">Copiar</button></pre>
-					</li>
-
-					<li><button aria-expanded="false" aria-controls="ext_sqlite_frontend" class="collapsed-links" data-read-more="+ SQLite Frontend" data-read-less="— SQLite Frontend">+ SQLite Frontend</button> — <a href="extensions/sqlite.frontend/">Documentación</a> — (RC1, ES6+ / WebAssembly / Web Workers / OPFS, AGPL v3, UMD)
-					<pre class="entirely collapsed" id="ext_sqlite_frontend"><code>&lt;!-- CDN: Estructura / SQLite Frontend --&gt;
-&lt;script src="https://estructura.okzgn.com/extensions/sqlite.frontend/estructura.sqlite.frontend.js"&gt;&lt;/script&gt;</code><button aria-live="polite" class="copy">Copiar</button></pre>
-					</li>
 				</ul>
 			</div>
 		</section>

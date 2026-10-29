@@ -92,8 +92,105 @@
       script.src = this.JS;
       script.onload = function () {
         try { if (global.hljs) global.hljs.highlightAll(); } catch (e) {}
+        /* Con el lenguaje ya detectado, se afinan las etiquetas de los bloques */
+        Docs.CodeBars.label();
       };
       document.body.appendChild(script);
+    }
+  };
+
+  /* Abstracto: barra superior de cada bloque de código (lenguaje + botón Copiar existente) */
+  Docs.CodeBars = {
+    NAMES: { javascript: 'JavaScript', js: 'JavaScript', xml: 'HTML', html: 'HTML', css: 'CSS', json: 'JSON', bash: 'Shell', shell: 'Shell', sql: 'SQL', typescript: 'TypeScript' },
+    init: function (root) {
+      domAll('pre', root).forEach(function (pre) {
+        if (pre.__docsBar) return;
+        var code = pre.querySelector('code');
+        if (!code) return;
+        pre.__docsBar = true;
+        var bar = document.createElement('div');
+        bar.className = 'code-bar';
+        var lang = document.createElement('span');
+        lang.className = 'code-lang';
+        bar.appendChild(lang);
+        var btn = pre.querySelector('button.copy');
+        if (btn) bar.appendChild(btn);
+        pre.insertBefore(bar, pre.firstChild);
+      });
+      this.label();
+    },
+    /* Lenguaje detectado por highlight.js (clase language-*) o, si aún no está, una estimación por el contenido */
+    label: function () {
+      var names = this.NAMES;
+      domAll('pre .code-lang').forEach(function (lang) {
+        var code = lang.parentNode.parentNode.querySelector('code');
+        if (!code) return;
+        var match = /\blanguage-([\w-]+)/.exec(code.className);
+        var key = match ? match[1].toLowerCase() : '';
+        /* La detección automática a veces elige variantes (php-template, arduino…): solo se muestran los lenguajes conocidos */
+        if (!names[key]) key = /^\s*</.test(code.textContent) ? 'html' : 'javascript';
+        lang.textContent = names[key];
+      });
+    }
+  };
+
+  /* Abstracto: ancla "#" junto a cada título con id (aparece al pasar el ratón o con el foco) */
+  Docs.Anchors = {
+    init: function () {
+      domAll('main h2[id], main h3[id], main h4[id]').forEach(function (h) {
+        if (h.querySelector('.docs-anchor')) return;
+        var a = document.createElement('a');
+        a.className = 'docs-anchor';
+        a.href = '#' + h.id;
+        /* Ancla interna: no debe ser interceptada por extensiones de enrutamiento */
+        a.setAttribute('data-e-routing-excluded', '');
+        a.setAttribute('aria-label', 'Enlace a esta sección');
+        a.textContent = '#';
+        h.appendChild(a);
+      });
+    }
+  };
+
+  /* Abstracto: enlaces "anterior / siguiente" al final, según el orden de la barra lateral */
+  Docs.Pager = {
+    init: function () {
+      var main = document.querySelector('main');
+      var links = domAll('.docs-sidebar a');
+      if (!main || links.length < 2 || document.querySelector('.docs-pager')) return;
+      var index = -1;
+      links.forEach(function (a, i) { if (a.getAttribute('aria-current') === 'page') index = i; });
+      if (index === -1) return;
+      var nav = document.createElement('nav');
+      nav.className = 'docs-pager';
+      nav.setAttribute('aria-label', 'Otras extensiones');
+      function item(link, label, cls) {
+        var a = document.createElement('a');
+        a.className = 'docs-pager-link ' + cls;
+        a.href = link.getAttribute('href');
+        a.setAttribute('data-e-routing-excluded', '');
+        var small = document.createElement('span');
+        small.className = 'docs-pager-label';
+        small.textContent = label;
+        var name = document.createElement('span');
+        name.className = 'docs-pager-name';
+        name.textContent = link.textContent;
+        a.appendChild(small);
+        a.appendChild(name);
+        return a;
+      }
+      if (index > 0) nav.appendChild(item(links[index - 1], 'Anterior', 'docs-pager-prev'));
+      if (index < links.length - 1) nav.appendChild(item(links[index + 1], 'Siguiente', 'docs-pager-next'));
+      main.appendChild(nav);
+    }
+  };
+
+  /* Abstracto: fija como absolutas las rutas relativas de la navegación del sitio, para que sigan
+     funcionando si la página cambia su URL con la API History (p. ej., la demo de Routing) */
+  Docs.Links = {
+    init: function () {
+      domAll('.site-bar a[href], .docs-sidebar a[href], .docs-pager a[href], .docs-footer a[href]').forEach(function (a) {
+        if (a.getAttribute('href').charAt(0) !== '#') a.setAttribute('href', a.href);
+      });
     }
   };
 
@@ -171,12 +268,12 @@
       toc.className = 'docs-toc';
       var summary = document.createElement('summary');
       summary.className = 'docs-toc-title';
-      summary.textContent = 'Contenido';
+      summary.textContent = 'En esta página';
       toc.appendChild(summary);
       toc.appendChild(this.render(tree.children));
 
       /* Desktop: sidebar abierto. Móvil/tablet: bloque colapsable */
-      var mq = window.matchMedia ? window.matchMedia('(min-width: 1024px)') : null;
+      var mq = window.matchMedia ? window.matchMedia('(min-width: 1280px)') : null;
       var sync = function () { toc.open = mq ? mq.matches : true; };
       sync();
       if (mq) {
@@ -187,6 +284,9 @@
       var body = document.createElement('div');
       body.className = 'docs-body';
       main.parentNode.insertBefore(body, main);
+      /* Tres columnas: navegación de extensiones (si existe), contenido e índice de la página */
+      var sidebar = document.querySelector('.docs-sidebar');
+      if (sidebar) { body.appendChild(sidebar); body.className += ' has-sidebar'; }
       body.appendChild(main);
       body.appendChild(toc);
     },
@@ -303,14 +403,31 @@
     }
   };
 
+  /* Abstracto: en la barra de navegación desplazable (móvil), muestra la página actual */
+  Docs.NavCurrent = {
+    init: function () {
+      var current = document.querySelector('.docs-nav a[aria-current="page"]');
+      if (!current) return;
+      var list = current.closest ? current.closest('ul') : null;
+      if (!list || list.scrollWidth <= list.clientWidth) return;
+      var cr = current.getBoundingClientRect(), lr = list.getBoundingClientRect();
+      list.scrollLeft += (cr.left + cr.width / 2) - (lr.left + list.clientLeft + list.clientWidth / 2);
+    }
+  };
+
   Docs.init = function (root) {
     Docs.Demo.init();
     Docs.Highlight.init();
     Docs.Toggle.init(root);
     Docs.Copy.init(root);
+    Docs.CodeBars.init(root);
     Docs.Skip.init();
     Docs.TOC.init();
+    Docs.Anchors.init();
+    Docs.Pager.init();
+    Docs.Links.init();
     Docs.Nav.init();
+    Docs.NavCurrent.init();
   };
 
   function ready(fn) {

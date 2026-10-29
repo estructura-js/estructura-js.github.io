@@ -48,8 +48,9 @@ For commercial licensing, please visit one of the following:
   var
     _events_check = typeof _events;
 
+  // Uses '_error_fn' directly: '_error' is still '_noop' until '_handlers.errors(true)' runs below.
   if (_events_check === 'undefined' || _events_check !== 'function') {
-    _error('"_events" extension required before "_handlers".');
+    _error_fn('"_events" extension required before "_handlers".');
   }
 
   function _console(type) {
@@ -134,10 +135,10 @@ For commercial licensing, please visit one of the following:
       return _cache;
     },
     _e_cache_has = function (cache, key) {
-      return cache.indexOf(key);
+      return cache.indexOf(key) !== -1;
     },
     _e_cache_get = function (cache, key) {
-      var cached = _e_cache_has(cache, key);
+      var cached = cache.indexOf(key);
       return cached !== -1 ? cache.values[cached] : undefined;
     },
     _e_cache_register = function (cache, key, value) {
@@ -145,7 +146,7 @@ For commercial licensing, please visit one of the following:
       cache.values.push(value);
     },
     _e_cache_delete = function (cache, key) {
-      var cached = _e_cache_has(cache, key);
+      var cached = cache.indexOf(key);
       if (cached === -1) { return; }
       cache.splice(cached, 1);
       cache.values.splice(cached, 1);
@@ -218,7 +219,8 @@ For commercial licensing, please visit one of the following:
   }
 
   function _clear_handler_str(str) {
-    return (str || '').replace(_e_ids_re, ' ').replace(_e_trim_re, '').split(_e_handlers_re);
+    // Empty names (from leading or trailing separators) are dropped
+    return (str || '').replace(_e_ids_re, ' ').replace(_e_trim_re, '').split(_e_handlers_re).filter(function (name) { return !!name; });
   }
 
   function _clear_handler_id(str) {
@@ -568,7 +570,7 @@ For commercial licensing, please visit one of the following:
       var data_connect = this[id].initialElement.getAttribute(_data_connect);
 
       if (data_connect) {
-        _data_connect = data_connect.split(_e_handlers_re);
+        _data_connect = _clear_handler_str(data_connect);
         _e_handlers_execute(_source, id, _data_connect, _e_handlers_register(_source, id, element, elementClone, _component), _middleware);
 
         _const(this[id], 'connect', function (state, data, ids) {
@@ -599,13 +601,13 @@ For commercial licensing, please visit one of the following:
       }
 
       var data_success = this[id].initialElement.getAttribute(_handler + '-success');
-      var _data_success = (data_success ? data_success.split(_e_handlers_re) : []);
+      var _data_success = _clear_handler_str(data_success);
 
       _e_handlers_execute(_source, id, _data_success, _e_handlers_register(_source, id, element, elementClone, _component), _middleware);
       _get_set(this[id], 'success', false, _e_execute_fn(_source, _handler + ' success', _data_success, id, _middleware));
 
       var data_error = this[id].initialElement.getAttribute(_handler + '-error');
-      var _data_error = (data_error ? data_error.split(_e_handlers_re) : []);
+      var _data_error = _clear_handler_str(data_error);
 
       _e_handlers_execute(_source, id, _data_error, _e_handlers_register(_source, id, element, elementClone, _component), _middleware);
       _get_set(this[id], 'error', false, _e_execute_fn(_source, _handler + ' error', _data_error, id, _middleware));
@@ -613,7 +615,7 @@ For commercial licensing, please visit one of the following:
   }
 
   function _e_end(handlers) {
-    return _e_nodes(function (start_nodes, _start_node) {
+    return _e_nodes(function (start_nodes, _start_node, _events_ref, _cache_key) {
       var
         ids = [],
         handlers_list = [],
@@ -622,17 +624,17 @@ For commercial licensing, please visit one of the following:
         event_nonBubbling = [],
         event_nonBubbling_private = Object.create(null);
 
-      if (_start_node) {
+      if (_is_handler_root(_start_node)) {
         _e_nodes_iteration([_start_node], _e_collect_metadata(ids, handlers_list, event_bubbling, event_bubbling_private, event_nonBubbling, event_nonBubbling_private));
       }
 
       _e_nodes_iteration(start_nodes, _e_collect_metadata(ids, handlers_list, event_bubbling, event_bubbling_private, event_nonBubbling, event_nonBubbling_private));
 
       for (var i = 0; i < handlers_list.length; i++) {
-        var _handler = _resolve_shortcut(handlers, handlers_list[i]);
+        var _handler = _resolve_shortcut(handlers, handlers_list[i].split(_e_handlers_ids_re)[0]);
 
         for (var j = 0; j < _handler.length; j++) {
-          var _handler_fn = handlers[_handler[j]];
+          var _handler_fn = handlers[String(_handler[j]).split(_e_handlers_ids_re)[0]];
           if (typeof _handler_fn !== 'function') { continue; }
 
           for (var k = 0; k < ids.length; k++) {
@@ -641,12 +643,12 @@ For commercial licensing, please visit one of the following:
 
               if (_handler_fn[ids[k]].liveElement) {
                 var _event;
-                if (event_bubbling_private.ids[ids[k]]) {
+                if (event_bubbling_private.ids && event_bubbling_private.ids[ids[k]]) {
                   _event = _events(document.documentElement);
                   _event.off(Object.keys(event_bubbling_private.ids[ids[k]]).join(','));
                 }
 
-                if (event_nonBubbling_private.ids[ids[k]]) {
+                if (event_nonBubbling_private.ids && event_nonBubbling_private.ids[ids[k]]) {
                   _event = _events(_handler_fn[ids[k]].liveElement);
                   _event.off(Object.keys(event_nonBubbling_private.ids[ids[k]]).join(','));
                 }
@@ -658,7 +660,7 @@ For commercial licensing, please visit one of the following:
         }
       }
 
-      _e_cache_delete(_e_cache, _start_node);
+      _e_cache_delete(_e_cache, _cache_key);
     });
   }
 
@@ -681,6 +683,12 @@ For commercial licensing, please visit one of the following:
         _split_event_types(id, _handler_events, event_bubbling, event_bubbling_private, event_nonBubbling, event_nonBubbling_private);
       }
     }
+  }
+
+  // The start node is processed too, but only when it is itself a handler element;
+  // a plain container used as scope is skipped instead of failing for missing attributes.
+  function _is_handler_root(node) {
+    return !!node && typeof node.hasAttribute === 'function' && node.hasAttribute('data-e-handler');
   }
 
   function _e_nodes(callback) {
@@ -717,10 +725,11 @@ For commercial licensing, please visit one of the following:
         }
 
         var start_nodes = (start_node ? start_node : document.querySelectorAll(_e_handlers_str));
-        var start_values = [start_nodes, _start_node, Object.create(null)];
+        var _cache_key = _start_node_string_str || _start_node;
+        var start_values = [start_nodes, _start_node, Object.create(null), _cache_key];
 
         // If start_node is a String, subsequent calls to .start(StringNodeStr) with the same CSS selector will use the cached elements. It is required to apply .end(StringNodeStr) and call .start() again to update the selected nodes.
-        _e_cache_register(_e_cache, _start_node_string_str || _start_node, start_values);
+        _e_cache_register(_e_cache, _cache_key, start_values);
 
         callback.apply(null, start_values);
       }
@@ -728,6 +737,20 @@ For commercial licensing, please visit one of the following:
         _error('DOM iteration: ' + e.message, e);
       }
     }
+  }
+
+  // After .end() on part of a scope, the shared delegated listener can still list an element whose
+  // contexts were removed: it is skipped instead of running its handlers without a context.
+  function _e_handlers_alive(_source, data) {
+    var id = data[0], list = data[1];
+    for (var i = 0; i < list.length; i++) {
+      var names = _resolve_shortcut(_source, String(list[i]).split(_e_handlers_ids_re)[0]);
+      for (var j = 0; j < names.length; j++) {
+        var fn = _source[String(names[j]).split(_e_handlers_ids_re)[0]];
+        if (typeof fn === 'function' && fn[id]) { return true; }
+      }
+    }
+    return false;
   }
 
   function _e_start(handlers) {
@@ -739,14 +762,14 @@ For commercial licensing, please visit one of the following:
         event_nonBubbling = [],
         event_nonBubbling_private = Object.create(null);
 
-      if (_start_node) {
+      if (_is_handler_root(_start_node)) {
         _e_iteration(handlers, [_start_node], end_starts, event_bubbling, event_bubbling_private, event_nonBubbling, event_nonBubbling_private);
       }
 
       _e_iteration(handlers, start_nodes, end_starts, event_bubbling, event_bubbling_private, event_nonBubbling, event_nonBubbling_private);
 
       // Set bubbling event listeners before 'end_starts'
-      var _events_bubbling_ref = Object.keys(event_bubbling_private.events).join(',');
+      var _events_bubbling_ref = Object.keys(event_bubbling_private.events || {}).join(',');
       if (_events_bubbling_ref && !_events_ref[_events_bubbling_ref]) {
         _events_ref[_events_bubbling_ref] = true;
 
@@ -769,7 +792,7 @@ For commercial licensing, please visit one of the following:
             while (_current) {
               var _match = _e_cache_get(_event.elements, _current);
 
-              if (typeof _match !== 'undefined') {
+              if (typeof _match !== 'undefined' && _e_handlers_alive(handlers, _match)) {
                 var _propagation_ref = _event_found.propagation;
 
                 if (!(_propagation_ref && _e_cache_has(_propagation_ref, _current))) {

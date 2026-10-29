@@ -6,7 +6,6 @@
 .center-x, .center-y { display: flex; justify-content: center; }
 .center-y { flex-direction: column; gap: var(--docs-space-2); color: var(--docs-muted); }
 .center-y > *, .center-x > * { align-self: center; }
-.all_width_height { width: 100%; }
 .sr-only {
   position: absolute; width: 1px; height: 1px; overflow: hidden;
   clip: rect(0, 0, 0, 0); white-space: nowrap;

@@ -51,13 +51,31 @@ For commercial licensing, please visit one of the following:
     return target;
   }
 
+  // Malformed percent-encodings (e.g. '%') return the raw string instead of throwing a URIError
+  function safeDecode(str) {
+    try {
+      return decodeURIComponent(str);
+    } catch (err) {
+      return str;
+    }
+  }
+
   // Recursive deep clone compatible with ES5 and modern collections
   function deepClone(obj, cache) {
-    if (typeof structuredClone === 'function') {
-      return structuredClone(obj);
+    if (typeof structuredClone === 'function' && !cache) {
+      try {
+        return structuredClone(obj);
+      } catch (err) {
+        // Non-serializable values (functions, DOM nodes...): fall back to the manual clone below,
+        // which keeps such values by reference.
+      }
     }
 
     if (obj === null || typeof obj === 'function' || typeof obj !== 'object') {
+      return obj;
+    }
+    // DOM nodes (and window-like hosts) are kept by reference
+    if (typeof obj.nodeType === 'number' || obj === obj.window) {
       return obj;
     }
     if (obj instanceof Date) {
@@ -162,7 +180,11 @@ For commercial licensing, please visit one of the following:
     };
   }
 
-  // Routes punctuation
+  // Routes punctuation: static 100, required parameter 10, optional parameter 5, wildcard 1.
+  // A missing segment counts as 6 when comparing: above an optional parameter, so "/blog" goes before
+  // "/blog/:category?", while "/:lang?" still goes before the global "*".
+  var SCORE_MISSING_SEGMENT = 6;
+
   function getSpecificityScore(pattern) {
     if (pattern === '*') return [1];
     var
@@ -172,14 +194,16 @@ For commercial licensing, please visit one of the following:
       var part = parts[j];
       if (part === '') continue;
       if (part.indexOf(':') === 0) {
-        score.push(10);
+        // An optional parameter ranks above a wildcard but below a missing segment (see SCORE_MISSING_SEGMENT)
+        score.push(part.charAt(part.length - 1) === '?' ? 5 : 10);
       } else if (part === '*') {
         score.push(1);
       } else {
         score.push(100);
       }
     }
-    return score;
+    // The root "/" is a static route: it must rank above the global "*"
+    return score.length ? score : [100];
   }
 
   // ES5-compatible microtask implementation (preventing memory leaks)
@@ -230,7 +254,8 @@ For commercial licensing, please visit one of the following:
     this.canonicalPath = url.pathname + url.search + url.hash;
 
     var clean_path = url.pathname;
-    if (basepath && clean_path.indexOf(basepath) === 0) {
+    // Only strips the base path on a segment boundary ('/app' must not match '/application')
+    if (basepath && clean_path.indexOf(basepath) === 0 && (clean_path.length === basepath.length || basepath.charAt(basepath.length - 1) === '/' || clean_path.charAt(basepath.length) === '/')) {
       clean_path = clean_path.slice(basepath.length);
     }
     if (clean_path.charAt(0) !== '/') {
@@ -246,7 +271,11 @@ For commercial licensing, please visit one of the following:
     this.pathname = clean_path || '/';
     this.querystring = url.search.slice(1);
 
-    var raw_state = deepClone(state) || {};
+    var raw_state = deepClone(state);
+    // Only objects can carry "path" and "cleanPath"; any other value is replaced by an empty state
+    if (!raw_state || typeof raw_state !== 'object') {
+      raw_state = {};
+    }
 
     if (raw_state.path && raw_state.path !== this.canonicalPath) {
       console.warn('_routing: Router is overwriting state.path from "' + raw_state.path + '" to "' + this.canonicalPath + '"');
@@ -272,10 +301,13 @@ For commercial licensing, please visit one of the following:
         search = url.search.substring(1),
         pairs = search.split('&');
       for (var i = 0; i < pairs.length; i++) {
+        // Split on the first "=" only, so values may contain "=" (e.g. "?t=abc==")
         var
-          pair = pairs[i].split('='),
-          key = decodeURIComponent(pair[0].replace(/\+/g, ' ')),
-          value = pair[1] !== undefined ? decodeURIComponent(pair[1].replace(/\+/g, ' ')) : '';
+          separator = pairs[i].indexOf('='),
+          raw_key = separator === -1 ? pairs[i] : pairs[i].slice(0, separator),
+          raw_value = separator === -1 ? undefined : pairs[i].slice(separator + 1),
+          key = safeDecode(raw_key.replace(/\+/g, ' ')),
+          value = raw_value !== undefined ? safeDecode(raw_value.replace(/\+/g, ' ')) : '';
         if (key) {
           if (this.query[key] !== undefined) {
             this.query[key] = [].concat(this.query[key], value);
@@ -287,15 +319,27 @@ For commercial licensing, please visit one of the following:
     }
   }
 
+  // The History API only stores serializable states. If the state holds functions or DOM nodes,
+  // the URL is still written (with only the path data as state) and a warning explains why.
+  function writeHistory(method, ctx) {
+    try {
+      window.history[method](ctx.state, document.title, ctx.canonicalPath);
+    } catch (err) {
+      if (!err || err.name !== 'DataCloneError') throw err;
+      console.warn('_routing: state is not serializable for the History API (' + err.message + '). The history entry keeps only "path" and "cleanPath"; ctx.state remains available to the handlers.');
+      window.history[method]({ path: ctx.state.path, cleanPath: ctx.state.cleanPath }, document.title, ctx.canonicalPath);
+    }
+  }
+
   Context.prototype.pushState = function () {
     if (has_history) {
-      window.history.pushState(this.state, document.title, this.canonicalPath);
+      writeHistory('pushState', this);
     }
   };
 
   Context.prototype.save = function () {
     if (has_history) {
-      window.history.replaceState(this.state, document.title, this.canonicalPath);
+      writeHistory('replaceState', this);
     }
   };
 
@@ -356,7 +400,7 @@ For commercial licensing, please visit one of the following:
         var params = {};
         for (var i = 0; i < route.keys.length; i++) {
           var val = m[i + 1];
-          params[route.keys[i]] = val ? decodeURIComponent(val) : val;
+          params[route.keys[i]] = val ? safeDecode(val) : val;
         }
         matches.push({
           callbacks: route.callbacks,
@@ -371,8 +415,8 @@ For commercial licensing, please visit one of the following:
       var len = Math.max(a.score.length, b.score.length);
       for (var i = 0; i < len; i++) {
         var
-          score_a = a.score[i] !== undefined ? a.score[i] : -1,
-          score_b = b.score[i] !== undefined ? b.score[i] : -1;
+          score_a = a.score[i] !== undefined ? a.score[i] : SCORE_MISSING_SEGMENT,
+          score_b = b.score[i] !== undefined ? b.score[i] : SCORE_MISSING_SEGMENT;
         if (score_a !== score_b) {
           return score_b - score_a;
         }
@@ -434,6 +478,10 @@ For commercial licensing, please visit one of the following:
     if (!el || el.nodeName.toUpperCase() !== 'A') return;
 
     if (el.hasAttribute('download') || el.getAttribute('rel') === 'external' || el.hasAttribute('data-e-routing-excluded')) return;
+
+    // Links that open in another browsing context ('_blank', named frames, etc.) keep native behavior
+    var link_target = el.getAttribute('target');
+    if (link_target && link_target.toLowerCase() !== '_self') return;
 
     var href = el.getAttribute('href');
     if (!href) return;

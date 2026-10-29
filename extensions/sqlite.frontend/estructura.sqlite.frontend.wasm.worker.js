@@ -48,7 +48,17 @@ sqlite3InitModule()
   postMessage({ error: startError });
 });
 
-self.onmessage = function(e){
+// Messages are processed one after another: an .open() that writes to OPFS (asynchronous)
+// finishes before the next request runs, so later requests never see a half-opened database.
+let messageQueue = Promise.resolve();
+
+self.onmessage = function (e) {
+  messageQueue = messageQueue
+    .then(function () { return processMessage(e); })
+    .catch(function (error) { console.error('SQLite worker:', error); });
+};
+
+function processMessage(e){
   const data = e.data;
   const id = data.id;
 
@@ -143,22 +153,26 @@ self.onmessage = function(e){
             response.open.db = data.open.name;
 
             const openDbName = cleanName(response.open.db, 'db');
-            currentDb = openDbName;
 
-            if (dbs[openDbName]) {
-              try {
-                dbs[openDbName].db.close();
-                delete dbs[openDbName];
-              }
-              catch (e) {
-                response.open.close = e.message;
-              }
-            }
-
+            // Validated first: invalid data must not close an open database nor change the active one
             let binaryData = data.open.data;
             if (!binaryData || typeof binaryData !== 'object' || typeof binaryData.byteLength !== 'number') {
               throw new Error('DB data not found.')
             }
+
+            // An open database with the same name is closed only once the new data is ready to replace it
+            // (after deserializing it), so a failed .open() leaves it untouched.
+            const closeExistingDb = function () {
+              if (dbs[openDbName]) {
+                try {
+                  dbs[openDbName].db.close();
+                  delete dbs[openDbName];
+                }
+                catch (e) {
+                  response.open.close = e.message;
+                }
+              }
+            };
 
             if (binaryData instanceof ArrayBuffer) {
               binaryData = new Uint8Array(binaryData);
@@ -203,27 +217,39 @@ self.onmessage = function(e){
               throw new Error('DB deserialize error.');
             }
 
+            // sqlite3_deserialize() does not validate the bytes: read the schema to reject data that is not a database
+            try {
+              db.selectValue('SELECT count(*) FROM sqlite_master');
+            }
+            catch (e) {
+              db.close();
+              throw new Error('Invalid SQLite database: ' + e.message);
+            }
+
+            // OPFS: the existing file must be released before it is overwritten
+            closeExistingDb();
+
             if (response.opfs) {
               try {
                 const dbContent = sqlite.capi.sqlite3_js_db_export(db.pointer);
                 db.close();
 
-                writeToOpfs(openDbName, dbContent)
+                return writeToOpfs(openDbName, dbContent)
                 .then(() => {
                   db = new sqlite.oo1.OpfsDb(openDbName);
 
                   dbs[openDbName] = { db: db, tables: {} };
+                  currentDb = openDbName;
                   response.open.name = openDbName;
                   response.done = Date.now();
                   postMessage(response);
                 })
                 .catch((e) => {
                   response.open.error = e.message;
+                  response.error = e.message;
                   response.done = Date.now();
                   postMessage(response);
                 });
-
-                break response_execution;
               }
               catch (e) {
                 try { db.close(); }
@@ -233,6 +259,7 @@ self.onmessage = function(e){
             }
 
             dbs[openDbName] = { db: db, tables: {} };
+            currentDb = openDbName;
             response.open.name = openDbName;
           }
           catch (e) {
@@ -333,10 +360,10 @@ self.onmessage = function(e){
 
           sqlQueryBuilder(data.get, response.get, {
             query: function (columns) { return ['SELECT', columns, 'FROM', '"' + data.table + '"']; },
-            byAutoId: db.selectObjects.bind(db),
-            byCount: db.selectValue.bind(db),
-            byLimit: db.selectObjects.bind(db),
-            byTruthyEnding: db.selectObjects.bind(db)
+            byAutoId: sqlQuerySelect(db, 'selectObjects'),
+            byCount: sqlQuerySelect(db, 'selectValue'),
+            byLimit: sqlQuerySelect(db, 'selectObjects'),
+            byTruthyEnding: sqlQuerySelect(db, 'selectObjects')
           });
         }
 
@@ -439,9 +466,21 @@ function cleanName(str, type, _default){
   return str.replace(/[^a-zA-Z0-9]/g, '');
 }
 
+// sqlite-wasm rejects an empty bind array for statements without parameters
+// (e.g. COUNT without WHERE, or WHERE as a string), so no bind is passed in that case.
+function bindValues (values) {
+  return values && values.length ? values : undefined;
+}
+
+function sqlQuerySelect (db, method) {
+  return function (query, values) {
+    return db[method](query, bindValues(values));
+  };
+}
+
 function sqlQueryRun (db) {
   return function (query, values) {
-    db.exec({ sql: query, bind: values });
+    db.exec({ sql: query, bind: bindValues(values) });
     return db.changes();
   };
 }
@@ -510,11 +549,9 @@ function sqlQueryBuilder(data, response, callbacks){
               continue;
             }
             else {
-              // To reuse WHERE next
-              delete columnsValue.set;
-              if (!columnsValue.query || typeof columnsValue.query !== 'object') {
-                columnsValue = columnsValue.query;
-              }
+              // To reuse WHERE next: the query (an ID or a criteria object such as { where }) is processed as the column value.
+              // Keeping the { query } wrapper would hide "where" and run the UPDATE over every row.
+              columnsValue = columnsValue.query;
             }
           }
 
@@ -578,7 +615,7 @@ function sqlQueryBuilder(data, response, callbacks){
                 if (whereSupported) {
                   switch (typeof where) {
                     case 'string':
-                      where = where.trim().replace(/\s+/g, ' ');
+                      where = where.trim();
                       if (where) {
                         sqlQuery.push('WHERE');
                         sqlQuery.push(where);
@@ -641,6 +678,8 @@ function sqlQueryBuilder(data, response, callbacks){
                                   if (!currentKey || privateComparingExpressions.indexOf(currentKey.toUpperCase()) === -1) {
                                     continue;
                                   }
+                                  // Case-insensitive operators: 'in' works like 'IN'
+                                  currentKey = currentKey.toUpperCase();
 
                                   if (!jc) {
                                     sqlQuery.push(ic ? 'AND' : 'WHERE');
@@ -669,7 +708,7 @@ function sqlQueryBuilder(data, response, callbacks){
                                     case 'NOT IN':
                                       sqlQuery.push(currentKey);
                                       sqlQuery.push('(');
-                                      if (Array.isArray(currentKeyValue) && currentKeyValue.length){
+                                      if (Array.isArray(currentKeyValue)){
                                         for (var k = 0; k < currentKeyValue.length; k++) {
                                           if (k) { sqlQuery.push(','); }
                                           sqlQuery.push('?');
@@ -711,6 +750,15 @@ function sqlQueryBuilder(data, response, callbacks){
                   }
                 }
 
+                // A criteria object for UPDATE/DELETE that produced no condition (no "where", empty object,
+                // invalid operators...) must not silently affect every row of the table. Affecting every row
+                // stays explicit: "true" in DELETE, or no "query" in UPDATE.
+                const whereDestructiveQuery = sqlMainQuery === 'UPDATE' || sqlMainQuery === 'DELETE';
+                if (whereDestructiveQuery && sqlQuery.indexOf('WHERE') === -1) {
+                  response[columns].error = 'WHERE produced no conditions; ' + sqlMainQuery + ' was not executed to protect the whole table.';
+                  break;
+                }
+
                 if (countSupported) {
                   response[columns].result = callbacks.byCount(sqlQuery.join(' '), sqlValues);
                   break;
@@ -734,6 +782,9 @@ function sqlQueryBuilder(data, response, callbacks){
                 }
 
                 byTruthyEnding = true;
+              }
+              else {
+                response[columns].error = 'Empty criteria object; nothing was executed.';
               }
 
             if (!byTruthyEnding) {

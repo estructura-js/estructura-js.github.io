@@ -47,7 +47,9 @@ For commercial licensing, please visit one of the following:
       origin: './',
       timeout: 10000,
       autoScan: false,
-      files: { css: '.css', html: '.html', js: '.js' }
+      files: { css: '.css', html: '.html', js: '.js' },
+      // null = unrestricted; Array of origins (or '*') allowed besides the page's own origin
+      allowedOrigins: null
   };
 
   var
@@ -88,7 +90,8 @@ For commercial licensing, please visit one of the following:
       var _err = event.error;
       if (!_err || typeof _err !== 'object') { return; }
       if (typeof _err[random_errors_id] !== 'undefined' && _err[random_errors_id] == _err.name) {
-        execution_errors[_err.name] = _err.message;
+        // The Error itself (not only its message) so 'error' listeners receive an Error object
+        execution_errors[_err.name] = _err;
       }
     });
   }
@@ -121,6 +124,10 @@ For commercial licensing, please visit one of the following:
       }
 
       var inst = instances[target_id];
+      if (inst && !inst.emitter) {
+          console.warn('_components: "' + target_id + '" is a coordinator; events can only be sent to components. Discarding event "' + event + '".');
+          return;
+      }
       if (inst && state === 'ready') {
           inst.emitter.emit(event, data);
       } else {
@@ -165,7 +172,11 @@ For commercial licensing, please visit one of the following:
         roots = search_root.querySelectorAll('[data-e-components]'),
         len = roots.length;
       for (var i = 0; i < len; i++) {
-          main(roots[i]);
+          // Skipped: elements that already have an instance (scanning twice does not duplicate them) and
+          // coordinators that a parent coordinator will start (inside, or on, one of its child components)
+          if (!has_registered_instance(roots[i]) && !is_started_by_parent_coordinator(roots[i], search_root)) {
+              initialize(roots[i]);
+          }
       }
   };
 
@@ -385,6 +396,91 @@ For commercial licensing, please visit one of the following:
   }
 
   /**
+    * Builds a comparable origin ("protocol//host", lowercase, without default ports).
+    * @param {string} protocol
+    * @param {string} host
+    * @returns {string}
+    */
+  function build_origin(protocol, host) {
+      var
+        _protocol = (protocol || '').toLowerCase(),
+        _host = (host || '').toLowerCase();
+      if ((_protocol === 'http:' && /:80$/.test(_host)) || (_protocol === 'https:' && /:443$/.test(_host))) {
+          _host = _host.replace(/:\d+$/, '');
+      }
+      return _protocol + '//' + _host;
+  }
+
+  /**
+    * Resolves the origin of a (possibly relative) URL against the document base.
+    * @param {string} url
+    * @returns {string}
+    */
+  function get_url_origin(url) {
+      var base = document.baseURI || window.location.href;
+      if (typeof URL === 'function') {
+          try {
+              var parsed = new URL(url, base);
+              return build_origin(parsed.protocol, parsed.host);
+          } catch (e) {}
+      }
+      var anchor = document.createElement('a');
+      anchor.href = url;
+      return build_origin(anchor.protocol, anchor.host);
+  }
+
+  function normalize_allowed_origin(origin) {
+      var entry = String(origin).trim();
+      if (entry === '*') return entry;
+      // Parsed like the target URL, so "https://cdn.example.com:443/" equals "https://cdn.example.com"
+      if (typeof URL === 'function') {
+          try {
+              var parsed = new URL(entry);
+              return build_origin(parsed.protocol, parsed.host);
+          } catch (e) {}
+      }
+      return entry.replace(/\/+$/, '').toLowerCase();
+  }
+
+  /**
+    * Checks the target URL against the optional "allowedOrigins" whitelist.
+    * @param {string} url
+    * @returns {string|null} Rejected origin, or null when the request is allowed.
+    */
+  function find_disallowed_origin(url) {
+      var allowed = global_config.allowedOrigins;
+      if (allowed === null || allowed === undefined) return null;
+      if (typeof allowed === 'string') allowed = [allowed];
+      if (!Array.isArray(allowed)) allowed = [];
+
+      var
+        target_origin = get_url_origin(url),
+        page_origin = build_origin(window.location.protocol, window.location.host);
+      if (target_origin === page_origin) return null;
+
+      var len = allowed.length;
+      for (var i = 0; i < len; i++) {
+          if (allowed[i] === null || allowed[i] === undefined) continue;
+          var entry = normalize_allowed_origin(allowed[i]);
+          if (entry === '*' || entry === target_origin) return null;
+      }
+      return target_origin;
+  }
+
+  /**
+    * Removes a failed resource entry so that a later attempt retries the request.
+    * Only removes it if the cache still holds that same entry.
+    * @param {string} cache_key
+    * @param {Object} cache_entry
+    */
+  function remove_failed_resource(cache_key, cache_entry) {
+      if (resource_cache[cache_key] !== cache_entry) return;
+      delete resource_cache[cache_key];
+      var idx = resource_cache_keys.indexOf(cache_key);
+      if (idx > -1) resource_cache_keys.splice(idx, 1);
+  }
+
+  /**
     * Adds an entry to the processed order strings cache under strict memory limits.
     * @param {string} key
     * @param {Array} value
@@ -460,6 +556,13 @@ For commercial licensing, please visit one of the following:
           return;
       }
 
+      // Optional whitelist: rejected before touching the cache so the normal failure/fallback flow applies
+      var disallowed_origin = find_disallowed_origin(url);
+      if (disallowed_origin !== null) {
+          callback(new Error('_components: Origin "' + disallowed_origin + '" not allowed for URL: ' + url + '. Add it to "allowedOrigins" to enable it.'));
+          return;
+      }
+
       if (type === 'css' && applied_css[cache_key]) {
           return callback(null);
       }
@@ -493,8 +596,18 @@ For commercial licensing, please visit one of the following:
       // Defensive control of maximum cached resource size (prevents duplicate entries)
       if (resource_cache_keys.indexOf(cache_key) === -1) {
           if (resource_cache_keys.length >= MAX_CACHE_ENTRIES) {
-              var oldest_key = resource_cache_keys.shift();
-              delete resource_cache[oldest_key];
+              // Evict the oldest entry that is not in flight; if all are loading, the limit is exceeded temporarily
+              var keys_len = resource_cache_keys.length;
+              for (var k = 0; k < keys_len; k++) {
+                  var
+                    candidate_key = resource_cache_keys[k],
+                    candidate = resource_cache[candidate_key];
+                  if (!candidate || candidate.status !== 'loading') {
+                      resource_cache_keys.splice(k, 1);
+                      delete resource_cache[candidate_key];
+                      break;
+                  }
+              }
           }
           resource_cache_keys.push(cache_key);
       }
@@ -512,6 +625,7 @@ For commercial licensing, please visit one of the following:
           cache_entry.status = 'failed';
           cache_entry.error = missing_dep_err;
           callback(missing_dep_err);
+          remove_failed_resource(cache_key, cache_entry);
           return;
       }
 
@@ -543,6 +657,7 @@ For commercial licensing, please visit one of the following:
                               console.error('_components: Error processing queued resource callback:', ex);
                           }
                       }
+                      if (err) remove_failed_resource(cache_key, cache_entry);
                   });
               } else {
                   apply_resource_to_dom(type, response_text, element, component_id, function(err) {
@@ -567,6 +682,7 @@ For commercial licensing, please visit one of the following:
                               console.error('_components: Error processing queued resource callback:', ex);
                           }
                       }
+                      if (err) remove_failed_resource(cache_key, cache_entry);
                   });
               }
           },
@@ -587,6 +703,7 @@ For commercial licensing, please visit one of the following:
                       console.error('_components: Error processing queued resource error callback:', ex);
                   }
               }
+              remove_failed_resource(cache_key, cache_entry);
           }
       });
   }
@@ -627,6 +744,7 @@ For commercial licensing, please visit one of the following:
                       .replace(/\n/g, '\\n');
                       wrapped_data = "try {\n" + data + "\n}\n" +
                                 "catch(e) {\n" +
+                                "  if (e === null || (typeof e !== 'object' && typeof e !== 'function')) { e = new Error(String(e)); }\n" +
                                 "  e." + random_errors_id + " = '" + safe_component_id + "';\n" +
                                 "  e.name = '" + safe_component_id + "';\n" +
                                 "  throw e;\n" +
@@ -851,11 +969,22 @@ For commercial licensing, please visit one of the following:
       return resolved_id;
   }
 
+  function has_registered_instance(element) {
+      for (var key in instances) {
+          if (instances.hasOwnProperty(key) && instances[key] && instances[key].element === element) {
+              return true;
+          }
+      }
+      return false;
+  }
+
   function register_instance(resolved_id, instance) {
       for (var key in instances) {
           if (instances.hasOwnProperty(key) && key !== resolved_id) {
               var other = instances[key];
-              if (other.element === instance.element) {
+              // Only an instance of the same kind is replaced: a node that is both a component and a coordinator
+              // keeps its loaded component when its coordinator is registered (coordinators have no emitter)
+              if (other.element === instance.element && !!other.emitter === !!instance.emitter) {
                   if (component_states[key] === 'loading' || component_states[key] === 'pending' || component_states[key] === 'loading-fallback') {
                       component_states[key] = 'failed';
                       main._notifyStateChange(key, 'failed');
@@ -1059,7 +1188,7 @@ For commercial licensing, please visit one of the following:
           var resolved_src = options.src;
           if (!resolved_src) {
               var comp_path = component_name || options.id || '';
-              resolved_src = find_nearest_origin(element) + comp_path + '/';
+              resolved_src = (options.origin ? normalize_origin(options.origin) : find_nearest_origin(element)) + comp_path + '/';
           }
           resolved_src = normalize_origin(resolved_src);
 
@@ -1132,14 +1261,26 @@ For commercial licensing, please visit one of the following:
                   remove_observer(instance);
                   main._unregisterInstance(final_id);
 
+                  // "fallbackSrc" is the fallback's own folder (like "src"); a coordinator's fallback origin is a base
+                  // folder (like "origin"), so the fallback component name is appended to it.
                   var
-                    resolved_fallback_src = options.fallbackSrc || find_nearest_fallback_origin(element),
+                    nearest_fallback_origin = options.fallbackSrc ? null : find_nearest_fallback_origin(element),
+                    resolved_fallback_src = options.fallbackSrc || (nearest_fallback_origin ? nearest_fallback_origin + options.fallback + '/' : null),
                     resolved_fallback_order = options.fallbackOrder || find_nearest_fallback_order(element) || 'css,html,js',
                     fallback_config = {
                       component: options.fallback,
                       id: final_id,
                       componentOrder: resolved_fallback_order,
-                      src: resolved_fallback_src || null
+                      src: resolved_fallback_src,
+                      // null (not undefined) stops the fallback from reading the element's fallback attributes again,
+                      // which would retry the same fallback endlessly if it also fails
+                      fallback: null,
+                      fallbackSrc: null,
+                      fallbackOrder: null,
+                      // Options passed to _components(el, options) also apply to the fallback
+                      files: options.files,
+                      timeout: options.timeout,
+                      origin: options.origin
                     },
                     fallback_inst = create_component_instance(element, fallback_config, parent_coordinator);
 
@@ -1168,16 +1309,19 @@ For commercial licensing, please visit one of the following:
                       instance.emitter.emit('ready', { replacedBy: fallback_inst });
                       if (on_ready) on_ready();
                   }, function(fallback_err) {
-                      terminate_with_error(fallback_err);
+                      // The fallback instance already set "failed" and emitted its own "error"
+                      terminate_with_error(fallback_err, true);
                   });
               } else {
                   terminate_with_error(err);
               }
           }
 
-          function terminate_with_error(err) {
-              component_states[final_id] = 'failed';
-              main._notifyStateChange(final_id, 'failed');
+          function terminate_with_error(err, reported_by_fallback) {
+              if (!reported_by_fallback) {
+                  component_states[final_id] = 'failed';
+                  main._notifyStateChange(final_id, 'failed');
+              }
 
               if (event_queues[final_id]) {
                   delete event_queues[final_id];
@@ -1209,7 +1353,7 @@ For commercial licensing, please visit one of the following:
 
               // Dual error notification (ensures both fallback and original listeners receive it)
               var active_inst = instances[final_id];
-              if (active_inst && active_inst !== instance) {
+              if (!reported_by_fallback && active_inst && active_inst !== instance) {
                   active_inst.emitter.emit('error', err);
               }
               instance.emitter.emit('error', err);
@@ -1327,14 +1471,18 @@ For commercial licensing, please visit one of the following:
                       var coordinator_inst = create_coordinator_instance(sub_coords[i], null);
 
                       (function(coord) {
-                          coord.start(function(err) {
-                              initialized++;
-                              if (err && !critical_failed) {
-                                  critical_failed = err;
-                              }
-                              if (initialized === total) {
-                                  done(critical_failed);
-                              }
+                          coord.start(function(coord_err) {
+                              // Then its own free sub-coordinators (not inside its child components)
+                              start_free_subcoordinators(coord.element, function(sub_err) {
+                                  var err = coord_err || sub_err;
+                                  initialized++;
+                                  if (err && !critical_failed) {
+                                      critical_failed = err;
+                                  }
+                                  if (initialized === total) {
+                                      done(critical_failed);
+                                  }
+                              });
                           });
                       })(coordinator_inst);
                   }
@@ -1429,17 +1577,29 @@ For commercial licensing, please visit one of the following:
 
                       var
                         child_id = matched_node.getAttribute('data-e-component-id') || child_name,
-                        child_inst = instances[child_id] || create_component_instance(matched_node, null, instance);
+                        existing_inst = instances[child_id],
+                        // An instance registered for another element with the same ID is not reused (the new one gets a unique ID)
+                        child_inst = (existing_inst && existing_inst.element === matched_node) ? existing_inst : create_component_instance(matched_node, null, instance);
 
                       (function(c_id, c_inst) {
                           c_inst.start(function() {
-                              scan_and_init_subcoordinators(c_inst.element, function(err) {
+                              var on_children_done = function(err) {
                                   if (err) {
                                       check_progress(c_id, false, true); // Added isCritical flag for correct propagation
                                   } else {
                                       check_progress(c_id, true);
                                   }
-                              });
+                              };
+                              // A child that is also a coordinator (component + coordinator on the same node) starts its own coordinator
+                              if (c_inst.element.getAttribute('data-e-components')) {
+                                  create_coordinator_instance(c_inst.element, null).start(function(coord_err) {
+                                      start_free_subcoordinators(c_inst.element, function(sub_err) {
+                                          on_children_done(coord_err || sub_err);
+                                      });
+                                  });
+                              } else {
+                                  scan_and_init_subcoordinators(c_inst.element, on_children_done);
+                              }
                           }, function() {
                               check_progress(c_id, false);
                           });
@@ -1459,6 +1619,51 @@ For commercial licensing, please visit one of the following:
       return instance;
   }
 
+  // True when the element is (or is inside) a component that has a coordinator above it: that coordinator
+  // starts it after loading the component, so scan() must not start it too.
+  function is_started_by_parent_coordinator(element, search_root) {
+      var current = element;
+      while (current && current !== search_root) {
+          if (current.hasAttribute && current.hasAttribute('data-e-component')) {
+              // An ancestor component that is also a coordinator starts it too (after loading)
+              var above = current === element ? current.parentElement : current;
+              while (above) {
+                  if (above.hasAttribute('data-e-components')) return true;
+                  above = above.parentElement;
+              }
+              return false;
+          }
+          current = current.parentElement;
+      }
+      return false;
+  }
+
+  // Starts the direct sub-coordinators of "root" that are not inside one of its child components
+  // (those are started by the coordinator itself after loading each child). Used for nodes that are
+  // both a component and a coordinator.
+  function start_free_subcoordinators(root, done) {
+      var
+        sub_coords = scan_direct_subcoordinators(root),
+        pending = [],
+        failed = null;
+      for (var i = 0; i < sub_coords.length; i++) {
+          var current = sub_coords[i].parentElement, inside_component = false;
+          while (current && current !== root) {
+              if (current.hasAttribute('data-e-component')) { inside_component = true; break; }
+              current = current.parentElement;
+          }
+          if (!inside_component && !has_registered_instance(sub_coords[i])) pending.push(sub_coords[i]);
+      }
+      var remaining = pending.length;
+      if (!remaining) { if (done) done(null); return; }
+      for (var j = 0; j < pending.length; j++) {
+          create_coordinator_instance(pending[j], null).start(function(err) {
+              if (err && !failed) failed = err;
+              if (--remaining === 0 && done) done(failed);
+          });
+      }
+  }
+
   function initialize(element, config) {
       if (!element) return;
       var
@@ -1471,13 +1676,17 @@ For commercial licensing, please visit one of the following:
           comp_instance.start(function() {
               if (is_coordinator) {
                   var coord_instance = create_coordinator_instance(element, config);
-                  coord_instance.start();
+                  coord_instance.start(function() {
+                      start_free_subcoordinators(element);
+                  });
               }
           });
           return comp_instance;
       } else if (is_coordinator) {
           var coord_instance = create_coordinator_instance(element, config);
-          coord_instance.start();
+          coord_instance.start(function() {
+              start_free_subcoordinators(element);
+          });
           return coord_instance;
       }
   }

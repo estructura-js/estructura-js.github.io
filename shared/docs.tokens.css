@@ -1,18 +1,28 @@
 /* shared/docs.tokens.css — único origen de verdad (tokens). Minimalista, extensible vía --docs-*. */
 :root {
-  /* Paleta (conserva identidad cálida original, refina contraste) */
-  --docs-paper: #fbf7ea;
-  --docs-paper-deep: #f3e7c3;
-  --docs-ink: #1a1a1a;
-  --docs-muted: #555;
-  --docs-accent: #886d1b;
+  /* Paleta (identidad cálida: papel, tinta y dorado) */
+  --docs-paper: #faf6ec;
+  --docs-paper-deep: #f2e6c6;
+  --docs-ink: #1d1a14;
+  --docs-muted: #6a604e;
+  /* AA (≥ 4.5:1) sobre todos los fondos claros, incluidas las bandas y los avisos */
+  --docs-accent: #80620f;
   --docs-accent-ink: #3c300c;
-  --docs-header-ink: #541;
-  --docs-line: #e8dfc3;
-  --docs-card: #ffffff;
-  --docs-code-bg: #201c10;
+  --docs-accent-soft: #f7efd9;
+  --docs-header-ink: #4a3a10;
+  --docs-line: #e7dcbf;
+  --docs-line-strong: #d6c697;
+  --docs-card: #fffdf8;
+  --docs-code-bg: #1f1b12;
   --docs-code-ink: #fdf6e3;
-  --docs-chip: #eeeeee;
+  --docs-chip: #f3eee1;
+
+  /* Avisos: nota (dorado) y advertencia (ámbar) */
+  --docs-note-bg: #f8f1dc;
+  --docs-note-line: #c9a94a;
+  --docs-warn-bg: #fff1e0;
+  --docs-warn-line: #d9822b;
+  --docs-warn-ink: #6b3a05;
 
   /* Aliases legacy (DRY: no duplicar valores, solo referenciar) */
   --main-color: var(--docs-muted);
@@ -55,13 +65,18 @@
   --docs-radius-l: 1rem;
   --docs-border: 2px;
   --borders-default-width: var(--docs-border);
-  --docs-transition: 0.125s ease;
+  --docs-transition: 0.15s ease;
 
-  --docs-shadow-s: 0 1px 2px rgba(60, 48, 12, 0.08);
-  --docs-shadow-m: 0 4px 16px rgba(60, 48, 12, 0.1);
+  --docs-shadow-s: 0 1px 2px rgba(60, 48, 12, 0.06), 0 1px 1px rgba(60, 48, 12, 0.04);
+  --docs-shadow-m: 0 2px 4px rgba(60, 48, 12, 0.05), 0 8px 24px rgba(60, 48, 12, 0.08);
+  --docs-shadow-l: 0 4px 8px rgba(60, 48, 12, 0.06), 0 16px 40px rgba(60, 48, 12, 0.12);
 
-  --docs-measure: 76rem;
-  --docs-toc-w: 16rem;
+  /* Maquetación: ancho total, columna de lectura, barra superior y columnas laterales */
+  --docs-measure: 90rem;
+  --docs-content: 48rem;
+  --docs-bar-h: 3.5rem;
+  --docs-sidebar-w: 13rem;
+  --docs-toc-w: 14rem;
   --docs-font-s: 0.9rem;
   --docs-font-xs: 0.8rem;
   --docs-font: 'A', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
@@ -70,18 +85,28 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --docs-paper: #14120c;
-    --docs-paper-deep: #2a2517;
-    --docs-card: #1c1a14;
-    --docs-ink: #f2ead6;
-    --docs-muted: #c9bfa8;
-    --docs-accent: #d9b84a;
-    --docs-accent-ink: #f3e7c3;
-    --docs-header-ink: #f3e7c3;
-    --docs-line: #3a3423;
-    --docs-chip: #2a2619;
-    --docs-code-bg: #111009;
+    --docs-paper: #13110b;
+    --docs-paper-deep: #262013;
+    --docs-card: #1b1810;
+    --docs-ink: #f1e9d4;
+    --docs-muted: #bdb29a;
+    --docs-accent: #e0bf55;
+    --docs-accent-ink: #f6e7bb;
+    --docs-accent-soft: #2a2414;
+    --docs-header-ink: #f3e3b3;
+    --docs-line: #362f1f;
+    --docs-line-strong: #4d4329;
+    --docs-chip: #262114;
+    --docs-code-bg: #0f0d08;
     --docs-code-ink: #fdf6e3;
+    --docs-note-bg: #241f12;
+    --docs-note-line: #b8973c;
+    --docs-warn-bg: #2b1d0e;
+    --docs-warn-line: #d9822b;
+    --docs-warn-ink: #f6c995;
+    --docs-shadow-s: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --docs-shadow-m: 0 2px 4px rgba(0, 0, 0, 0.35), 0 8px 24px rgba(0, 0, 0, 0.35);
+    --docs-shadow-l: 0 4px 8px rgba(0, 0, 0, 0.4), 0 16px 40px rgba(0, 0, 0, 0.45);
     --text-color: var(--docs-ink);
     --bg-color: var(--docs-card);
   }

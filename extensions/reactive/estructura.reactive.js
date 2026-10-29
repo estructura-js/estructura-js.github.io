@@ -37,7 +37,9 @@ For commercial licensing, please visit one of the following:
     var
     boolean_attrs = { disabled: true, checked: true, readonly: true, required: true, selected: true },
     private_fns = { on: true, off: true, stop: true, event: true },
-    re_vars = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/;
+    re_vars = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/,
+    url_attrs = { href: true, src: true, action: true, formaction: true, 'xlink:href': true, poster: true, cite: true, background: true },
+    data_url_attrs = { src: true, poster: true };
 
     function _error(message) {
         var e = new Error(message);
@@ -45,12 +47,41 @@ For commercial licensing, please visit one of the following:
         throw e;
     }
 
+    function _sanitize(value, ctx) {
+        if(value === null || value === undefined || !ctx || typeof ctx.name !== 'string'){ return value; }
+
+        var name = ctx.name.toLowerCase();
+
+        // Any interpolated attribute whose name starts with "on" (event handlers), except boolean element properties.
+        if(ctx.type === 'attribute' && name.indexOf('on') === 0 && !(ctx.element && typeof ctx.element[name] === 'boolean')){
+            console.warn('Estructura Reactive: interpolated "' + ctx.name + '" attribute blocked.', ctx.element);
+            return '';
+        }
+
+        if(!url_attrs[name]){ return value; }
+
+        // Browsers ignore spaces and control characters inside the scheme ("java\tscript:").
+        var url = String(value).replace(/[\x00-\x20\x7f-\x9f]+/g, '').toLowerCase();
+        if(/^(javascript|vbscript):/.test(url) || (/^data:/.test(url) && !(data_url_attrs[name] && /^data:(image|video|audio)\//.test(url)))){
+            console.warn('Estructura Reactive: unsafe URL blocked in "' + ctx.name + '".', ctx.element);
+            return '';
+        }
+        return value;
+    }
+
     var _reactive = _e.instance('reactive');
     _reactive.subtype('browser-dom');
+    // Any element is a "Node", also those missing from the core map (<time>, custom elements, SVG children...)
+    _reactive.subtype({
+        'Object': function (input) {
+            return input && input.nodeType === 1 && typeof input.tagName === 'string' ? 'Node' : false;
+        }
+    });
+    _reactive.sanitize = _sanitize;
 
     _reactive.fn(function (_reactive_node, _reactive_config) {
         var _reactive_node_type = _reactive.type(_reactive_node);
-        if(!_reactive_node_type['Node']){
+        if(!_reactive_node_type['Node'] && !_reactive_node_type['Document']){
             _error('"' + _reactive_node_type.join(', ') + '" not a Node.');
         }
 
@@ -92,7 +123,8 @@ For commercial licensing, please visit one of the following:
         re_prefix = '{{',
         re_postfix = '}}',
         extract_variables_fn = _extract_variable_fn(),
-        extract_variables_processor = null;
+        extract_variables_processor = null,
+        sanitizer = null;
 
         if(_reactive_config){
             if(typeof _reactive_config !== 'object'){
@@ -113,6 +145,10 @@ For commercial licensing, please visit one of the following:
 
             if(_reactive_config.variables_processor && typeof _reactive_config.variables_processor === 'function'){
                 extract_variables_processor = _reactive_config.variables_processor;
+            }
+
+            if(_reactive_config.sanitizer === false || typeof _reactive_config.sanitizer === 'function'){
+                sanitizer = _reactive_config.sanitizer;
             }
         }
 
@@ -158,7 +194,7 @@ For commercial licensing, please visit one of the following:
         var _reactive_exposed_state = new Proxy(_reactive_exposed_object, {
             set: function (target, property, value) {
                 if(typeof property !== 'string'){
-                  _error('Cannot use symbol as property name: ' + property);
+                  _error('Cannot use symbol as property name: ' + String(property));
                 }
 
                 if(private_fns[property]){
@@ -192,7 +228,13 @@ For commercial licensing, please visit one of the following:
         attribute_registry,
         expr_registry,
         reactive_templates,
-        ignored_mutations;
+        ignored_mutations,
+        attr_owners,
+        // True while the MutationObserver is connected
+        observing = false,
+        // Expression text -> virtual key. Kept across off()/on() so a key never changes its expression.
+        expr_keys = new Map(),
+        expr_used_keys = new Set();
 
         function _reactive_registries() {
             variables = new Map();
@@ -201,6 +243,8 @@ For commercial licensing, please visit one of the following:
             expr_registry = new Map();
             reactive_templates = new WeakMap();
             ignored_mutations = new WeakMap();
+            // A removed attribute (e.g. a boolean set to false) loses its ownerElement; keep it to set it again later
+            attr_owners = new WeakMap();
         }
 
         _reactive_registries();
@@ -269,6 +313,7 @@ For commercial licensing, please visit one of the following:
                         var registry = attribute_registry.get(owner) || {};
                         registry[node.name] = node;
                         attribute_registry.set(owner, registry);
+                        attr_owners.set(node, owner);
                     }
                 },
 
@@ -354,13 +399,28 @@ For commercial licensing, please visit one of the following:
             };
         }
 
+        // The same expression always maps to the same key; different expressions found at the same
+        // positions of different nodes get distinct keys ("_e_7_18", "_e_7_18_2", ...).
+        function _expression_key(result) {
+            var key = expr_keys.get(result.variable);
+            if(key){ return key; }
+
+            var base = '_e_' + result.start + '_' + result.end, suffix = 1;
+            key = base;
+            while(expr_used_keys.has(key)){ key = base + '_' + (++suffix); }
+
+            expr_keys.set(result.variable, key);
+            expr_used_keys.add(key);
+            return key;
+        }
+
         function _compile_template(text) {
             var segments = [];
             var last_position = 0;
             var result;
 
             while((result = extract_variables_fn(text, last_position)) !== undefined){
-                var varName = result.expr ? ('_e_' + result.start + '_' + result.end) : result.variable;
+                var varName = result.expr ? _expression_key(result) : result.variable;
                 if(result.expr && !expr_registry.has(varName)){
                     expr_registry.set(varName, result.variable);
                 }
@@ -383,9 +443,14 @@ For commercial licensing, please visit one of the following:
         }
 
         function _ignore_mutation(target, type, attrName) {
+            // With the observer disconnected (initial render, after stop()) no record is produced;
+            // registering one would make the next real mutation be ignored.
+            if(!observing){ return; }
+
             var record = ignored_mutations.get(target);
             if(!record){
-                record = { characterData: 0, attributes: new Set() };
+                // Counters per attribute: one attribute can change several times before the observer runs
+                record = { characterData: 0, attributes: new Map() };
                 ignored_mutations.set(target, record);
             }
 
@@ -393,7 +458,7 @@ For commercial licensing, please visit one of the following:
                 record.characterData++;
             }
             else if(type === 'attributes'){
-                record.attributes.add(attrName);
+                record.attributes.set(attrName, (record.attributes.get(attrName) || 0) + 1);
             }
         }
 
@@ -415,8 +480,10 @@ For commercial licensing, please visit one of the following:
                 }
             }
             else if(mutation.type === 'attributes'){
-                if(record.attributes.has(mutation.attributeName)){
-                    record.attributes.delete(mutation.attributeName);
+                var pending = record.attributes.get(mutation.attributeName);
+                if(pending){
+                    if(pending > 1){ record.attributes.set(mutation.attributeName, pending - 1); }
+                    else { record.attributes.delete(mutation.attributeName); }
                     _should_delete_ignored(record, mutation.target);
                     return true;
                 }
@@ -602,6 +669,7 @@ For commercial licensing, please visit one of the following:
                 subtree: true,
                 characterData: true
             });
+            observing = true;
         }
 
         function _reactive_state_stop() {
@@ -609,6 +677,9 @@ For commercial licensing, please visit one of the following:
             _reactive_node.removeEventListener('change', _reactive_state_input_handler);
 
             _dom_reactive.disconnect();
+            observing = false;
+            // disconnect() drops pending records, so pending "ignore" marks would swallow later real mutations
+            ignored_mutations = new WeakMap();
 
             render_pending_updates.clear();
             render_is_flush_scheduled = false;
@@ -662,8 +733,10 @@ For commercial licensing, please visit one of the following:
                     var item = boundNodes[i];
                     var node = item.node;
 
-                    if(node.nodeType === 2 && node.ownerElement && !node.ownerElement.isConnected){
-                        _delete_attr_variable(node.ownerElement, node.nodeName);
+                    var attr_owner = node.nodeType === 2 ? (node.ownerElement || attr_owners.get(node) || null) : null;
+
+                    if(node.nodeType === 2 && attr_owner && !attr_owner.isConnected){
+                        _delete_attr_variable(attr_owner, node.nodeName);
                         continue;
                     }
                     else if(node.nodeType === 3 && !node.isConnected){
@@ -671,7 +744,7 @@ For commercial licensing, please visit one of the following:
                         continue;
                     }
 
-                    var associatedElement = node.nodeType === 2 ? node.ownerElement : node.parentNode;
+                    var associatedElement = node.nodeType === 2 ? attr_owner : node.parentNode;
                     if(associatedElement && associatedElement === excludeElement){
                         continue;
                     }
@@ -681,7 +754,7 @@ For commercial licensing, please visit one of the following:
 
                     if(node.nodeType === 2 && boolean_attrs[node.name]){
                         var stateValue = _reactive_exposed_state[variableName];
-                        var owner = node.ownerElement;
+                        var owner = attr_owner;
                         if(owner){
                             var newValue;
 
@@ -692,10 +765,15 @@ For commercial licensing, please visit one of the following:
                                     events.beforeMutateVariable(variableName, newValue, owner, node, node.name);
                                 }
 
-                                _ignore_mutation(owner, 'attributes', node.name);
+                                // removeAttribute() on a missing attribute produces no mutation record to ignore
+                                if(owner.hasAttribute(node.name)){
+                                    _ignore_mutation(owner, 'attributes', node.name);
+                                }
 
                                 owner.removeAttribute(node.name);
-                                owner[node.name] = newValue;
+                                // Reflected properties (e.g. "disabled") already match the attribute; setting them again
+                                // would produce a second mutation record that is not ignored and would unbind the attribute
+                                if(owner[node.name] !== newValue){ owner[node.name] = newValue; }
 
                                 if(typeof events.afterMutateVariable === 'function' && owner.isConnected){
                                     events.afterMutateVariable(variableName, newValue, owner, node, node.name);
@@ -711,7 +789,7 @@ For commercial licensing, please visit one of the following:
                                 _ignore_mutation(owner, 'attributes', node.name);
 
                                 owner.setAttribute(node.name, '');
-                                owner[node.name] = newValue;
+                                if(owner[node.name] !== newValue){ owner[node.name] = newValue; }
 
                                 if(typeof events.afterMutateVariable === 'function' && owner.isConnected){
                                     events.afterMutateVariable(variableName, newValue, owner, node, node.name);
@@ -736,6 +814,11 @@ For commercial licensing, please visit one of the following:
 
                         node.textContent = renderedText;
 
+                        // Once the user edits a <textarea>, its text node no longer drives what it shows
+                        if(node.parentNode && node.parentNode.nodeName === 'TEXTAREA' && node.parentNode.value !== renderedText){
+                            node.parentNode.value = renderedText;
+                        }
+
                         if(typeof events.afterMutateVariable === 'function' && node.isConnected){
                             events.afterMutateVariable(variableName, renderedText, node.parentNode, node, name);
                         }
@@ -743,7 +826,13 @@ For commercial licensing, please visit one of the following:
                     else if(node.nodeType === 2){
                         name = node.name;
 
-                        if(typeof events.beforeMutateVariable === 'function' && owner.isConnected){
+                        var sanitize_fn = sanitizer === null ? _reactive.sanitize : sanitizer;
+                        if(typeof sanitize_fn === 'function'){
+                            renderedText = sanitize_fn(renderedText, { type: 'attribute', name: name, element: owner, variable: variableName });
+                            if(renderedText === null || renderedText === undefined){ renderedText = ''; }
+                        }
+
+                        if(typeof events.beforeMutateVariable === 'function' && owner && owner.isConnected){
                             events.beforeMutateVariable(variableName, renderedText, owner, node, name);
                         }
 
@@ -756,7 +845,7 @@ For commercial licensing, please visit one of the following:
                             owner.value = renderedText;
                         }
 
-                        if(typeof events.afterMutateVariable === 'function' && owner.isConnected){
+                        if(typeof events.afterMutateVariable === 'function' && owner && owner.isConnected){
                             events.afterMutateVariable(variableName, renderedText, owner, node, name);
                         }
                     }

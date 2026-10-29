@@ -40,7 +40,45 @@ For commercial licensing, please visit one of the following:
     _sqlite_frontend_worker,
     _sqlite_frontend_queue = new Map(),
     _sqlite_frontend_prestart_queue = new Map(),
+    _sqlite_frontend_start_error = '',
     _sqlite_run_id = 0;
+
+  // Delivers a response to its callback or promise. The entry is removed first, so a callback that throws
+  // does not leave it in the queue; a rejected promise keeps the whole response in error.response.
+  function _sqlite_deliver(entry, data) {
+    var
+      callback = entry[1],
+      resolve = entry[2],
+      reject = entry[3];
+
+    if (typeof callback === 'function') {
+      callback(data);
+    }
+    else if (resolve) {
+      if (data.error){
+        var error = new Error(data.error);
+        error.response = data;
+        reject(error);
+      }
+      else {
+        resolve(data);
+      }
+    }
+  }
+
+  // The Worker or SQLite could not start: every pending and future request receives the error
+  function _sqlite_start_failed(message) {
+    _sqlite_frontend_start_error = message || 'SQLite could not be started.';
+    var pending = [];
+    _sqlite_frontend_prestart_queue.forEach(function (entry, id) { pending.push([id, entry]); });
+    _sqlite_frontend_queue.forEach(function (entry, id) { pending.push([id, entry]); });
+    _sqlite_frontend_prestart_queue.clear();
+    _sqlite_frontend_queue.clear();
+    for (var i = 0; i < pending.length; i++) {
+      try { _sqlite_deliver(pending[i][1], { id: pending[i][0], error: _sqlite_frontend_start_error }); }
+      catch (e) { console.error('_sqlite_frontend: callback error:', e); }
+    }
+  }
 
   function _sqlite_run(object, data, timeout) {
     var
@@ -58,6 +96,11 @@ For commercial licensing, please visit one of the following:
         resolvePromise = resolve;
         rejectPromise = reject;
       });
+    }
+
+    if (_sqlite_frontend_start_error) {
+      _sqlite_deliver([object, isCallback ? data : null, resolvePromise, rejectPromise], { id: id, error: _sqlite_frontend_start_error });
+      return isCallback ? void(0) : promise;
     }
 
     queue.set(id, [object, isCallback ? data : null, resolvePromise, rejectPromise]);
@@ -88,6 +131,8 @@ For commercial licensing, please visit one of the following:
         if (data && typeof data === 'object') {
           if (data.sqlite === true) {
             _sqlite_frontend_start = true;
+            // A transient error reported before the Worker became ready no longer applies
+            _sqlite_frontend_start_error = '';
 
             // Executes queued SQL queries prior to initialization
             for (var object of _sqlite_frontend_prestart_queue.values()) {
@@ -101,30 +146,29 @@ For commercial licensing, please visit one of the following:
               responseData = queue || prestartQueue;
 
             if (responseData) {
-              var
-                callback = responseData[1],
-                resolve = responseData[2],
-                reject = responseData[3];
-
-              if (typeof callback === 'function') {
-                callback(data);
-              }
-              else if (resolve) {
-                if (data.error){
-                  reject(new Error(data.error), data);
-                }
-                else {
-                  resolve(data);
-                }
-              }
-
               if (prestartQueue){ _sqlite_frontend_prestart_queue.delete(data.id); }
               else { _sqlite_frontend_queue.delete(data.id); }
+
+              _sqlite_deliver(responseData, data);
             }
             else if(typeof _sqlite_frontend.unhandledResponse === 'function') {
               _sqlite_frontend.unhandledResponse(data);
             }
           }
+          else if (data.error) {
+            // Initialization error (a message without "id")
+            _sqlite_start_failed(data.error);
+          }
+        }
+      };
+      _sqlite_frontend_worker.onerror = function (event) {
+        var message = event && event.message ? event.message : '';
+        // Before the "ready" message, an error means the Worker (or its modules) could not be loaded
+        if (!_sqlite_frontend_start) {
+          _sqlite_start_failed('SQLite worker could not be loaded' + (message ? ': ' + message : '.'));
+        }
+        else {
+          console.error('_sqlite_frontend: worker error:', message || event);
         }
       };
     }

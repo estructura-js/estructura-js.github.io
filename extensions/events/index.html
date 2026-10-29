@@ -8,7 +8,7 @@
 	<link rel="icon" href="../../estructura.icon.png">
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="description" content="Gestiona eventos del DOM. Con arquitectura de namespaces, gestión de memoria eficiente, soporte para múltiples modalidades de eventos y opciones para activar/pausar o vincular/ejecutar/eliminar eventos.">
+	<meta name="description" content="Gestiona eventos del DOM. Con namespaces, registro por modos (once, capture, passive, signal) y opciones para pausar, reanudar, disparar manualmente o eliminar eventos.">
 	<meta name="author" content="OKZGN">
 	<meta name="theme-color" content="#ffffff">
 
@@ -37,132 +37,190 @@
 </head>
 
 <body>
-<div class="docs-shell"><div class="docs-container">
-	<header class="center-y padding site-header">
-		<h1 class="extension center-y">
-			<img id="logo" src="../../estructura.logo.png" alt="Estructura, JavaScript Framework">
-			<span id="test">Click test<b id="test_output"></b></span>
-		</h1>
+<div class="docs-shell">
+	<header class="site-header site-bar">
+		<div class="site-bar-inner">
+			<a class="site-brand" href="../../" aria-label="Estructura: inicio"><img class="site-brand-logo" src="../../estructura.logo.png" alt="Estructura"></a>
+			<nav class="site-links" aria-label="Sitio">
+				<a href="../../#get_started">Guía</a>
+				<a href="../../#extensions">Extensiones</a>
+				<a class="site-github" target="_blank" rel="noopener noreferrer" href="https://github.com/okzgn/estructura"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span>GitHub</span></a>
+				<span class="site-version" title="Versión del núcleo">v1.20.0</span>
+			</nav>
+		</div>
 	</header>
-
-	<nav class="margin-y docs-nav">
-		<section class="silver">
-			<h2 id="index" class="center-x">Menú</h2>
-			<div class="padding">
-				<ul class="lines center-y">
-					<li class="back"><a href="../../index.html#extensions">Atrás</a></li>
-					<li><a href="#description">Descripción</a></li>
-					<li><a href="#docs">Documentación</a></li>
-				</ul>
-			</div>
-		</section>
+<div class="docs-container">
+	<nav class="docs-nav docs-sidebar" aria-label="Extensiones">
+		<p class="docs-sidebar-title">Extensiones</p>
+		<ul>
+			<li><a href="../http/">HTTP</a></li>
+			<li><a href="../dom/">DOM</a></li>
+			<li><a href="./" aria-current="page">Events</a></li>
+			<li><a href="../components/">Components</a></li>
+			<li><a href="../handlers/">Handlers</a></li>
+			<li><a href="../reactive/">Reactive</a></li>
+			<li><a href="../routing/">Routing</a></li>
+			<li><a href="../sqlite.frontend/">SQLite Frontend</a></li>
+		</ul>
 	</nav>
 
 	<main class="docs-main">
-		<h2 class="title">Events</h2>
+		<h1 class="title">Events</h1>
 		<section class="margin-y">
 			<h2 id="description">Descripción</h2>
-			<div class="padding">Gestiona eventos del DOM. Con arquitectura de namespaces, gestión de memoria eficiente, soporte para múltiples modalidades de eventos y opciones para activar/pausar o vincular/ejecutar/eliminar eventos.</div>
-			<p class="padding-y">
-                <b>Librería:</b> <a target="_blank" href="estructura.events.js">estructura.events.js</a>
-			</p>
-			<p class="padding-y">
-				<b>Compatibilidad:</b> <a target="_blank" href="https://okzgn.com/articles/why-not-build-frontend-frameworks-on-raw-html-css-or-js/#dom--events---templating">ES5/ES6+</a>
-			</p>
-
-			<div class="padding-y">
-				<b>Importación:</b><pre><code>&lt;!-- CDN: Estructura / Events --&gt;
+			<div class="padding">Gestiona eventos del DOM. Con namespaces, registro por modos (<code>once</code>, <code>capture</code>, <code>passive</code>, <code>signal</code>) y opciones para pausar, reanudar, disparar manualmente o eliminar eventos.</div>
+			<div class="docs-meta">
+				<p class="padding-y docs-meta-item">
+	                <b>Librería:</b> <a target="_blank" href="estructura.events.js">estructura.events.js</a>
+				</p>
+				<p class="padding-y docs-meta-item">
+					<b>Compatibilidad:</b> <a target="_blank" href="https://okzgn.com/articles/why-not-build-frontend-frameworks-on-raw-html-css-or-js/#steps-to-bypass-between-points-1-and-2-dom-events-templating">ES5/ES6+</a>
+				</p>
+				<p class="padding-y docs-meta-item">
+					<b>Estado:</b> RC2
+				</p>
+				<p class="padding-y docs-meta-item">
+					<b>Licencia:</b> <a target="_blank" href="../LICENSE">AGPL v3</a>
+				</p>
+			</div>
+<div class="padding-y">
+				<b>Importación:</b><pre><code>&lt;!-- EXTENSIÓN: Estructura / Events --&gt;
 &lt;script src="https://estructura.okzgn.com/extensions/events/estructura.events.js"&gt;&lt;/script&gt;</code><button aria-live="polite" class="copy">Copiar</button></pre>
+			</div>
+		</section>
+
+		<section class="margin-y">
+			<h2 id="demo">Demo en vivo</h2>
+			<div class="padding">
+				<p>Haga clic en cualquier parte de la página. Un listener registrado con <code>_events(document.body).on('click', fn, { capture: true })</code> muestra la etiqueta del elemento pulsado.</p>
+				<p class="docs-demo"><span id="test">Elemento pulsado<b id="test_output">: ninguno</b></span></p>
 			</div>
 		</section>
 
 		<section class="margin-y">
 			<h2 id="docs">Documentación</h2>
 			<div class="padding">
-				<h3>1. Inicialización y Control Global</h3>
+				<h3>1. Inicialización y control global</h3>
 				<ul>
-					<li><b><code>_events</code></b>: Expone globalmente el manejador de la librería y sus funciones.</li>
-					<li><code>_events.pause()</code>: Detiene globalmente la ejecución de todos los eventos registrados.</li>
-					<li><code>_events.resume()</code>: Reactiva globalmente la ejecución de todos los eventos registrados.</li>
-					<li><code>_events(target)</code>: Selecciona el objetivo (<code>target</code>) de tipo <code>Object</code>, normalmente <code>Node</code> del DOM, que incluya las funciones <code>addEventListener</code> y <code>removeEventListener</code>, para aplicar los métodos disponibles.</li>
+					<li><b><code>_events</code></b>: función global de la librería.</li>
+					<li><code>_events.pause()</code>: detiene globalmente, en todos los objetivos, la ejecución de los eventos registrados. Mientras está en pausa, tampoco tienen efecto <code>.off()</code> ni los disparos manuales (incluida la reactivación con <code>resume</code>); los nuevos registros con <code>.on(event, fn)</code> sí se guardan.</li>
+					<li><code>_events.resume()</code>: reactiva globalmente la ejecución de todos los eventos registrados.</li>
+					<li><code>_events(target)</code>: selecciona el objetivo sobre el que se aplican los métodos. Puede ser un nodo del DOM (<code>Node</code>), una lista de nodos (<code>NodeList</code> o <code>HTMLCollection</code>; cada método se aplica a cada nodo de la lista), <code>document</code>, <code>window</code> o cualquier <code>Object</code> con las funciones <code>addEventListener</code> y <code>removeEventListener</code>. Si el objetivo no es válido (por ejemplo, <code>null</code> porque <code>querySelector</code> no encontró nada), el resultado no tiene <code>.on()</code> ni <code>.off()</code> y la llamada lanza un <code>TypeError</code>.</li>
+					<li><code>.on()</code>, <code>.off()</code>, <code>.load()</code> y <code>.ready()</code> retornan el mismo objeto, por lo que se pueden encadenar: <code>_events(boton).on('click', fn).on('keyup', fn2)</code>.</li>
 				</ul>
-				<h3>2. Registro de Eventos:</h3>
-				<p><b><code>.on(event?, fn?, config?)</code></b>: Vincula manejadores de eventos al objeto <code>target</code>.</p>
+				<h3>2. Registro de eventos</h3>
+				<p><b><code>.on(event?, fn?, config?)</code></b>: vincula callbacks a eventos del objetivo. El nombre del evento va siempre primero: <code>.on(fn)</code> sin evento se ignora con un aviso en la consola.</p>
 				<p><b>Sintaxis:</b></p>
 				<pre><code>_events(document.querySelector('body')).on('event.namespace', function(){}, {})</code><button aria-live="polite" class="copy">Copiar</button></pre>
 				<p><b>Argumentos:</b></p>
 				<p><b><code>event</code></b> (<code>String</code>):</p>
-				<p>Nombre del evento al que se vinculará el manejador. Opcionalmente puede incluir uno o varios namespaces para identificar el registro.</p>
+				<p>Nombre del evento. Opcionalmente puede incluir un namespace tras un punto para identificar el registro (ver <a href="#namespaces">Namespaces</a>). Se pueden indicar varios eventos en la misma cadena, separados por comas o espacios: <code>'click, keyup.ns'</code>.</p>
+				<ul>
+					<li>Los nombres de evento se pasan a minúsculas (salvo <code>DOMContentLoaded</code>). Por eso un evento propio con mayúsculas que se despache con <code>dispatchEvent</code> (por ejemplo, <code>'miEvento'</code>) no llega a los callbacks: use nombres en minúsculas.</li>
+					<li>El prefijo <code>on</code> se elimina (<code>'onclick'</code> equivale a <code>'click'</code> y <code>'onfocusin'</code> a <code>'focusin'</code>), salvo en eventos cuyo nombre real empieza por «on»: <code>'online'</code>, o cualquier nombre cuyo manejador <code>'on' + nombre</code> exista en el objetivo.</li>
+					<li>Si la cadena, quitando los separadores del inicio y del final, tiene menos de 2 caracteres (por ejemplo, <code>'x'</code>), la llamada se ignora. Una cadena vacía (<code>''</code>), en cambio, equivale a no indicar <code>event</code>.</li>
+				</ul>
 				<p><b><code>fn</code></b> (<code>Function</code>):</p>
-				<p>Manejador enlazado al evento, recibe como primer argumento la información del evento. Si se omite, actúa como trigger (activador del evento).</p>
+				<p>Callback vinculado al evento; recibe como primer argumento el objeto <code>Event</code>, y <code>this</code> es el objetivo. Si se omite, <code>.on()</code> dispara manualmente los callbacks registrados (ver <a href="#trigger">Ejecución manual</a>).</p>
 				<p><b><code>config</code></b> (<code>Object</code>):</p>
-				<p><b>Configuración General:</b></p>
+				<p><b>Configuración general:</b></p>
 				<ul>
-					<li><code>overwrite</code>: Si es <code>true</code>, reemplaza todos los eventos previos en ese mismo namespace/evento.</li>
-					<li><code>resume</code>: Si es <code>true</code>, reactiva todos los eventos registrados respectivos.</li>
-					<li><code>execute</code>: Si es <code>false</code>, impide que se autoejecuten (por defecto) todos los eventos reactivados con <code>resume</code>.</li>
+					<li><code>overwrite</code>: si es <code>true</code>, reemplaza los callbacks previos de ese mismo evento, namespace y modo por el nuevo.</li>
+					<li><code>resume</code>: si es <code>true</code> (en un disparo manual, sin <code>fn</code>), reactiva los eventos pausados que coincidan, sin ejecutarlos.</li>
+					<li><code>execute</code>: si es <code>true</code> junto con <code>resume</code>, además ejecuta en ese momento todos los callbacks que coincidan, estuvieran pausados o no. Como <code>resume</code> y <code>execute</code> no son opciones de modo, actúan en todos los modos del evento, salvo que <code>config</code> incluya también <code>once</code>, <code>capture</code>, <code>passive</code> o <code>signal</code>.</li>
 				</ul>
-				<p><b>Configuración Específica:</b></p>
+				<p><b>Configuración específica (modo):</b></p>
 				<ul>
-					<li><code>once</code>: Si es <code>true</code>, el evento se ejecuta una sola vez y se autoelimina.</li>
-					<li><code>capture</code>: Si es <code>true</code>, se usa la fase de captura del DOM.</li>
-					<li><code>passive</code>: Si es <code>true</code>, el evento es pasivo (optimización de scroll/touch).</li>
+					<li><code>once</code>: si es <code>true</code>, el callback se ejecuta la primera vez que ocurre el evento y después se elimina (los disparos manuales no cuentan; ver <a href="#trigger">Ejecución manual</a>).</li>
+					<li><code>capture</code>: si es <code>true</code>, se usa la fase de captura del DOM.</li>
+					<li><code>passive</code>: si es <code>true</code>, el listener es pasivo: <code>preventDefault()</code> no tiene efecto (útil en scroll/touch).</li>
+					<li><code>signal</code>: un <code>AbortSignal</code>. Cada señal distinta forma su propio modo, con su propio listener nativo. Al abortarse, el navegador retira ese listener y la librería elimina su registro, de modo que el evento se puede volver a registrar. Con una señal ya abortada, el registro se ignora.</li>
 				</ul>
+				<p>Cada combinación de <code>once</code>, <code>capture</code>, <code>passive</code> y <code>signal</code> es un modo distinto con su propio listener nativo.</p>
 				<p><b>Ejemplos:</b></p>
-<pre><code>// Ejemplo básico
-var target = document.querySelector('a');
+				<p>Registrar un evento con namespace:</p>
+<pre><code>var target = document.querySelector('a');
 
-_events(target).on('click.miMenu', function(e) {
-	console.log('Click detectado');
-}, { once: true });
-
-// Eliminamos el evento
-_events(target).off('.miMenu');
+_events(target).on('click.miMenu', function(e){
+	console.log('Clic detectado');
+});
 </code><button aria-live="polite" class="copy">Copiar</button></pre>
-				<h3>3. Eliminación de Eventos:</h3>
-				<p><b><code>.off(event?, config?)</code></b>: Elimina registros de eventos de forma granular usando namespaces o de forma masiva.</p>
+				<p>Registrar en varios eventos a la vez; con <code>once</code>, cada uno se ejecuta una sola vez:</p>
+<pre><code>_events(target).on('click.aviso, keyup.aviso', function(e){
+	console.log('Primera vez:', e.type);
+}, { once: true });
+</code><button aria-live="polite" class="copy">Copiar</button></pre>
+				<p>Registrar con un <code>AbortSignal</code>:</p>
+<pre><code>var controller = new AbortController();
+
+_events(window).on('resize.temporal', function(){
+	console.log('Redimensionado');
+}, { signal: controller.signal });
+
+controller.abort(); // Retira el listener y su registro
+</code><button aria-live="polite" class="copy">Copiar</button></pre>
+				<h3>3. Eliminación de eventos</h3>
+				<p><b><code>.off(event?, config?)</code></b>: elimina registros de eventos, de forma selectiva mediante nombre y namespace, o todos a la vez.</p>
 				<p><b>Argumentos:</b></p>
-				<p><b><code>event</code></b> (<code>String</code>): Nombre del evento que se desvinculará del manejador. Opcionalmente puede incluir uno o varios namespaces para identificar granularmente el registro.</p>
+				<p><b><code>event</code></b> (<code>String</code>): nombre del evento que se desvinculará. Opcionalmente puede incluir un namespace para identificar el registro, o ser solo el namespace (<code>'.miMenu'</code>), y admite varios eventos separados por comas o espacios. Sigue las mismas reglas que en <code>.on()</code>: con menos de 2 caracteres la llamada se ignora, y una cadena vacía equivale a <code>.off()</code>, que lo elimina todo.</p>
 				<p><b><code>config</code></b> (<code>Object</code>):</p>
-				<p><b>Configuración General:</b></p>
+				<p><b>Configuración general:</b></p>
 				<ul>
-					<li><code>pause</code>: Si es <code>true</code>, pausa todos los eventos registrados respectivos. No elimina ni desvincula definitivamente el manejador.</li>
+					<li><code>pause</code>: si es <code>true</code>, pausa los eventos que coincidan sin eliminarlos. Se reactivan con <code>.on(event, { resume: true })</code>.</li>
 				</ul>
-				<p><b>Configuración Específica:</b></p>
-				<p>Para remover un evento que fue registrado con opciones de comportamiento específicas (como <code>capture: true</code>), se debe pasar un objeto <code>config</code> con esas mismas propiedades al invocar <code>.off()</code>.</p>
+				<p><b>Configuración específica (modo):</b></p>
+				<p>Sin opciones de modo, <code>.off()</code> actúa sobre el evento en todos sus modos. Si <code>config</code> incluye alguna (<code>capture</code>, <code>once</code>, <code>passive</code> o <code>signal</code>, aunque valga <code>false</code>), solo actúa sobre el modo que resulta de esa combinación exacta: <code>{ capture: true }</code> no afecta a un registro hecho con <code>{ capture: true, once: true }</code>. Para <code>signal</code> hay que pasar el mismo objeto <code>AbortSignal</code> usado al registrar (<code>{ signal: miSignal }</code>); <code>signal: true</code> no coincide con ningún registro.</p>
+				<p><b>Sin nombre de evento:</b> <code>config</code> se pasa como primer argumento, y entonces las opciones de modo no filtran. <code>.off({ pause: true })</code> pausa todos los eventos del objetivo, pero <code>.off({ capture: true })</code> los elimina todos. No pase <code>undefined</code> ni <code>null</code> como primer argumento con <code>config</code> en el segundo: la configuración se ignora y <code>.off()</code> lo elimina todo.</p>
 				<p><b>Ejemplos:</b></p>
 				<ul>
 					<li>Elimina solo el evento del namespace indicado: <pre><code>_events(target).off('click.miMenu')</code><button aria-live="polite" class="copy">Copiar</button></pre></li>
+					<li>Elimina solo los registros de <code>click</code> hechos con <code>capture: true</code> (y sin otras opciones de modo): <pre><code>_events(target).off('click', { capture: true })</code><button aria-live="polite" class="copy">Copiar</button></pre></li>
+					<li>Elimina solo los registros de <code>resize</code> hechos con una señal concreta (se pasa el mismo objeto <code>AbortSignal</code>): <pre><code>_events(window).off('resize', { signal: controller.signal })</code><button aria-live="polite" class="copy">Copiar</button></pre></li>
 					<li>Pausa la ejecución de todos los eventos del tipo sin desvincularlos del DOM: <pre><code>_events(target).off('click', { pause: true })</code><button aria-live="polite" class="copy">Copiar</button></pre></li>
-					<li>Elimina todos los eventos vinculados al nodo y libera la memoria: <pre><code>_events(target).off()</code><button aria-live="polite" class="copy">Copiar</button></pre></li>
+					<li>Reactiva los eventos pausados sin ejecutarlos: <pre><code>_events(target).on('click', { resume: true })</code><button aria-live="polite" class="copy">Copiar</button></pre></li>
+					<li>Reactiva los eventos pausados y ejecuta en ese momento todos los callbacks de <code>click</code>: <pre><code>_events(target).on('click', { resume: true, execute: true })</code><button aria-live="polite" class="copy">Copiar</button></pre></li>
+					<li>Pausa y reactiva todos los eventos del objetivo: <pre><code>_events(target).off({ pause: true });
+_events(target).on({ resume: true });</code><button aria-live="polite" class="copy">Copiar</button></pre></li>
+					<li>Elimina todos los eventos vinculados al objetivo: <pre><code>_events(target).off()</code><button aria-live="polite" class="copy">Copiar</button></pre></li>
 				</ul>
-				<h3>4. Namespaces (Utilidad para Identificar Registros de Eventos)</h3>
-				<p>El framework permite definir namespaces mediante el punto (<code>.</code>). Esto permite tener múltiples manejadores para el mismo evento en el mismo elemento sin conflictos.</p>
+				<h3 id="namespaces">4. Namespaces</h3>
+				<p>La librería permite identificar registros con un namespace tras un punto (<code>.</code>). Así se pueden tener varios callbacks para el mismo evento en el mismo elemento y eliminarlos o dispararlos por separado.</p>
 <pre><code>_events(window).on('resize.layout', fn1);
 _events(window).on('resize.analytics', fn2);
 
 // Eliminar solo analytics sin tocar layout:
 _events(window).off('resize.analytics');</code><button aria-live="polite" class="copy">Copiar</button></pre>
-				<h3>5. Ejecución Manual (Trigger)</h3>
-				<p>Es posible activar la ejecución de eventos registrados sin que ocurra el evento nativo del DOM. Al utilizar <code>.on()</code> como disparador, el primer argumento (<code>event</code>) acepta únicamente el nombre del evento, únicamente el namespace (comenzando con punto) o la combinación de ambos, omitiendo los argumentos posteriores.</p>
+				<p>Todo lo que sigue al primer punto forma un único identificador: en <code>'click.a.b'</code> el namespace es <code>a.b</code>, no dos namespaces. Por eso <code>.off('.a')</code> no elimina ese registro; hay que usar <code>.off('.a.b')</code>.</p>
+				<p>A diferencia del nombre del evento, el namespace distingue mayúsculas y minúsculas: <code>.off('.mimenu')</code> no elimina <code>'click.miMenu'</code>. Un namespace sin nombre de evento sirve para eliminar o disparar, pero no para registrar: <code>.on('.miMenu', fn)</code> se ignora.</p>
+				<h3 id="trigger">5. Ejecución manual</h3>
+				<p>Es posible ejecutar los callbacks registrados sin que ocurra el evento nativo del DOM. Al utilizar <code>.on()</code> sin <code>fn</code>, el primer argumento (<code>event</code>) acepta el nombre del evento, solo el namespace (comenzando con punto) o ambos. En un disparo manual los callbacks reciben un objeto vacío (<code>{}</code>) en lugar del objeto <code>Event</code>.</p>
+				<ul>
+					<li>El segundo argumento es <code>config</code>: además de <code>resume</code> y <code>execute</code>, admite opciones de modo para ejecutar solo los registros de ese modo (por ejemplo, <code>.on('click', { capture: true })</code>). Sin nombre de evento, <code>config</code> va en el primer argumento (<code>.on({ resume: true })</code>).</li>
+					<li>Los callbacks pausados no se ejecutan (salvo con <code>resume</code> y <code>execute</code>).</li>
+					<li>Un disparo manual no consume los registros <code>once</code>: el callback se ejecuta y sigue registrado hasta que ocurre el evento nativo. Para ejecutarlo y eliminarlo, use <code>.on('click', { once: true })</code>.</li>
+					<li>Si un callback lanza un error, el error no llega a quien llama: el núcleo de Estructura lo captura y lo muestra en la consola con hasta un segundo de retraso.</li>
+				</ul>
 				<p><b>Ejemplos:</b></p>
 				<p>Ejecuta solo los eventos del namespace registrado:</p>
 <pre><code>_events(target).on('.miEvento');</code><button aria-live="polite" class="copy">Copiar</button></pre>
-				<p>Ejecuta todos los eventos del tipo registrados:</p>
+				<p>Ejecuta todos los eventos registrados de ese tipo:</p>
 <pre><code>_events(target).on('click');</code><button aria-live="polite" class="copy">Copiar</button></pre>
 				<p>Ejecuta todos los eventos registrados:</p>
 <pre><code>_events(target).on();</code><button aria-live="polite" class="copy">Copiar</button></pre>
-				<h3>6. Eventos Especiales</h3>
-				<p>Están incluidos wrappers optimizados para eventos de ciclo de vida:</p>
+				<h3>6. Eventos especiales</h3>
+				<p>Atajos para eventos de ciclo de vida. Registran un listener normal, así que si el evento ya ocurrió el callback no se ejecuta. Admiten <code>config</code> como segundo argumento y, sin <code>fn</code>, disparan manualmente los callbacks registrados para ese evento:</p>
 				<ul>
-					<li>Al terminar de cargar toda la página: <pre><code>_events(window).load(fn)</code><button aria-live="polite" class="copy">Copiar</button></pre></li>
-					<li>Al terminar de cargar el DOM de la página: <pre><code>_events(document).ready(fn)</code><button aria-live="polite" class="copy">Copiar</button></pre></li>
+					<li>Al terminar de cargar toda la página (<code>load</code>): <pre><code>_events(window).load(fn)</code><button aria-live="polite" class="copy">Copiar</button></pre></li>
+					<li>Al terminar de cargar el DOM de la página (<code>DOMContentLoaded</code>): <pre><code>_events(document).ready(fn)</code><button aria-live="polite" class="copy">Copiar</button></pre></li>
 				</ul>
-				<h3>7. Consideraciones Técnicas</h3>
+				<h3>7. Consideraciones técnicas</h3>
 				<ul>
-					<li><b>Memoria:</b> El framework utiliza <code>WeakMap</code> donde es posible. En entornos/navegadores antiguos, se recomienda usar <code>.off()</code> antes de remover nodos del DOM para evitar fugas de memoria.</li>
-					<li><b>Inmutabilidad:</b> La configuración (<code>config</code>) se copia al registrar el evento. Cambios posteriores en el objeto original no afectarán al comportamiento del evento ya registrado.</li>
-					<li><b>Sobrescritura:</b> Usar <code>overwrite: true</code> junto con un namespace específico (ej. <code>.miMenu</code>) permite actualizar la configuración de un evento existente de forma transparente sin necesidad de eliminarlo previamente (ej. cambiar de <code>passive: true</code> a <code>false</code>).</li>
+					<li><b>Memoria:</b> la librería usa <code>WeakMap</code> cuando está disponible. En navegadores sin <code>WeakMap</code>, use <code>.off()</code> antes de retirar nodos del DOM para evitar fugas de memoria.</li>
+					<li><b>Configuración:</b> el listener nativo de cada modo se crea con la configuración del primer registro de ese modo y la sigue leyendo en cada evento. No modifique el objeto <code>config</code> después de registrarlo: si cambia una opción de modo, los callbacks de ese modo dejan de ejecutarse.</li>
+					<li><b>Sobrescritura:</b> <code>overwrite: true</code> reemplaza los callbacks dentro del mismo evento, namespace y modo. No cambia el modo de un registro existente: registrar con otras opciones (por ejemplo, <code>passive: false</code> en lugar de <code>true</code>) crea un listener distinto; para cambiarlo, elimine antes el anterior con <code>.off()</code>.</li>
+					<li><b>Duplicados:</b> a diferencia de <code>addEventListener</code>, registrar dos veces la misma función hace que se ejecute dos veces.</li>
+					<li><b><code>once</code> y pausa:</b> la librería retira un registro <code>once</code> después de ejecutarlo. Si el evento ocurre mientras está pausado, no se ejecuta ni se retira: se ejecutará una vez tras reactivarlo.</li>
+					<li><b>Errores:</b> si un callback lanza un error, el resto se ejecuta igualmente y al final se lanza un único error con todos los mensajes. En un evento nativo aparece en la consola como error no capturado; en un disparo manual lo captura el núcleo (ver <a href="#trigger">Ejecución manual</a>).</li>
 				</ul>
 			</div>
 		</section>

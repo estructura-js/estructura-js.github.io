@@ -37,6 +37,14 @@ For commercial licensing, please visit one of the following:
     var _dom = _e.instance('dom');
     _dom.subtype('browser-dom');
 
+    // The core "browser-dom" map lists element constructors by name; any other element
+    // (<time>, <data>, SVG children such as <path>, custom elements...) is also treated as a "Node".
+    _dom.subtype({
+        'Object': function (input) {
+            return input && input.nodeType === 1 && typeof input.tagName === 'string' ? 'Node' : false;
+        }
+    });
+
     _dom.subtype({
         'String': {
             'DOMQuery': function (input) {
@@ -48,7 +56,8 @@ For commercial licensing, please visit one of the following:
     _dom.fn({
         'DOMQuery': {
             each: function (DOMQuery, fn) {
-                return _fn_each.call(this, DOMQuery, fn);
+                _fn_each.call(this, DOMQuery, fn);
+                return this;
             },
             get: function (DOMQuery, property) {
                 return _fn_get.call(this, DOMQuery, property);
@@ -60,7 +69,8 @@ For commercial licensing, please visit one of the following:
 
         'Node': {
             each: function (Node, fn) {
-                return _fn_each.call(this, null, fn, [Node[0]]);
+                _fn_each.call(this, null, fn, [Node[0]]);
+                return this;
             },
             get: function (Node, property) {
                 return _fn_get.call(this, null, property, [Node[0]]);
@@ -72,7 +82,8 @@ For commercial licensing, please visit one of the following:
 
         'Nodes': {
             each: function (Nodes, fn) {
-                return _fn_each.call(this, null, fn, Nodes[0]);
+                _fn_each.call(this, null, fn, Nodes[0]);
+                return this;
             },
             get: function (Nodes, property) {
                 return _fn_get.call(this, null, property, Nodes[0]);
@@ -92,8 +103,10 @@ For commercial licensing, please visit one of the following:
                 (!property_prefix ? '' : property_prefix + '.') + property,
                 (is_domquery ? null : (type === 'Node' ? [reference[0]] : reference[0]))
             ];
-            if(have_value){ args.push(arguments[2]); }
-            return (!have_value ? _fn_get : _fn_set).apply(this, args);
+            if(!have_value){ return _fn_get.apply(this, args); }
+            args.push(arguments[2]);
+            _fn_set.apply(this, args);
+            return this;
         }
     }
 
@@ -149,6 +162,12 @@ For commercial licensing, please visit one of the following:
             if(property_parts.length > 2){
                 var error = new Error('"' + property_parts.slice(1).join('.') + '"');
                 error.name = 'unknown "' + name + '" property';
+                throw error;
+            }
+
+            if(property_parts.length < 2){
+                var error = new Error('a property name is required (e.g. "' + name + '.color")');
+                error.name = '"' + name + '" property';
                 throw error;
             }
 
@@ -212,6 +231,10 @@ For commercial licensing, please visit one of the following:
         }
 
         var last_key = keys[keys.length - 1];
+        if(is_set && !_unsanitized_prefixes[keys[0]] && typeof _dom.sanitize === 'function'){
+            value = _dom.sanitize(value, { type: 'property', name: last_key, element: object });
+        }
+
         var args = [last_key, value, current[last_key], current];
         if(!is_set){ return !get_fn ? current[last_key] : get_fn.apply(object, args); }
         current[!set_fn ? last_key : (set_fn.key ? set_fn.key.apply(object, args) : set_fn.apply(object, args))] = !set_fn ? value : (set_fn.value ? set_fn.value.apply(object, args) : set_fn.apply(object, args));
@@ -232,6 +255,28 @@ For commercial licensing, please visit one of the following:
             throw error;
         }
     }
+
+    var
+    _unsanitized_prefixes = { style: true, dataset: true },
+    _url_properties = { href: true, src: true, action: true, formaction: true, 'xlink:href': true, poster: true, cite: true, background: true },
+    _data_url_properties = { src: true, poster: true };
+
+    function _sanitize(value, ctx) {
+        if(value === null || value === undefined || !ctx || typeof ctx.name !== 'string'){ return value; }
+
+        var name = ctx.name.toLowerCase();
+        if(!_url_properties[name]){ return value; }
+
+        // Browsers ignore spaces and control characters inside the scheme ("java\tscript:").
+        var url = String(value).replace(/[\x00-\x20\x7f-\x9f]+/g, '').toLowerCase();
+        if(/^(javascript|vbscript):/.test(url) || (/^data:/.test(url) && !(_data_url_properties[name] && /^data:(image|video|audio)\//.test(url)))){
+            console.warn('Estructura DOM: unsafe URL blocked in "' + ctx.name + '".', ctx.element);
+            return '';
+        }
+        return value;
+    }
+
+    _dom.sanitize = _sanitize;
 
     return _dom;
 }));

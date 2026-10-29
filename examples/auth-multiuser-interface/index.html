@@ -47,7 +47,7 @@
 	<script src="../../extensions/http/estructura.http.js"></script>
 	<script src="../../extensions/routing/estructura.routing.js"></script>
 	<script src="../../extensions/handlers/estructura.handlers.js"></script>
-	<script src="estructura.handlers.commons.js" defer></script>
+	<script src="../shared/estructura.handlers.commons.js" defer></script>
 	<script src="app.bundle.js" defer></script>
 
 	<script type="application/ld+json">
@@ -99,7 +99,7 @@
      			    <legend data-selected="no" data-e-handler="selectiveAccordion" data-e-handler-id="signup-header" data-e-handler-event="click" data-e-handler-data="#signup">Registro</legend>
 
         				<div id="signup" data-box data-hidden>
-                            <div data-e-handler="notification" data-e-handler-id="signup-notif" data-hidden>Loading...</div>
+                            <div data-e-handler="notification" data-e-handler-id="signup-notif" data-hidden>Cargando…</div>
 
             				<div>
             				    <strong>Tipo</strong>
@@ -150,7 +150,7 @@
          			    <legend data-e-handler="selectiveAccordion" data-e-handler-id="signin-header" data-e-handler-event="click" data-e-handler-data="#signin">Ingreso</legend>
 
         				<div id="signin" data-box data-hidden="no">
-                            <div data-e-handler="notification" data-e-handler-id="signin-notif" data-hidden>Loading...</div>
+                            <div data-e-handler="notification" data-e-handler-id="signin-notif" data-hidden>Cargando…</div>
             				<label data-flex-column>
             				    <strong>Usuario</strong>
          			        <input type="text" name="user" autocomplete="on">

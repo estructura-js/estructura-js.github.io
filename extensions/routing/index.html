@@ -8,7 +8,7 @@
 	<link rel="icon" href="../../estructura.icon.png">
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="description" content="Gestiona la navegación y el enrutamiento en el cliente para aplicaciones de una sola página (SPA). Ofrece un control completo sobre el historial del navegador mediante la API de History, soporte para parámetros dinámicos y opcionales, ordenación de rutas basada en especificidad, middleware en cadena síncrono/asíncrono, desestructuración automática de parámetros de consulta (query strings) y control robusto de errores.">
+	<meta name="description" content="Gestiona la navegación y el enrutamiento en el cliente para aplicaciones de una sola página (SPA), mediante la API History: parámetros dinámicos y opcionales, ordenación de rutas por especificidad, callbacks encadenados con next(), análisis de parámetros de consulta y gestión de errores.">
 	<meta name="author" content="OKZGN">
 	<meta name="theme-color" content="#ffffff">
 
@@ -50,137 +50,178 @@
 </head>
 
 <body>
-<div class="docs-shell"><div class="docs-container">
-	<header class="center-y padding site-header">
-		<h1 class="extension center-y">
-			<img id="logo" src="../../estructura.logo.png" alt="Estructura, JavaScript Framework">
-			<span id="test"><a id="test_link" href="#">Routing <b id="test_node"></b></a></span>
-		</h1>
+<div class="docs-shell">
+	<header class="site-header site-bar">
+		<div class="site-bar-inner">
+			<a class="site-brand" href="../../" data-e-routing-excluded aria-label="Estructura: inicio"><img class="site-brand-logo" src="../../estructura.logo.png" alt="Estructura"></a>
+			<nav class="site-links" aria-label="Sitio">
+				<a href="../../#get_started" data-e-routing-excluded>Guía</a>
+				<a href="../../#extensions" data-e-routing-excluded>Extensiones</a>
+				<a class="site-github" target="_blank" rel="noopener noreferrer" href="https://github.com/okzgn/estructura" data-e-routing-excluded><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span>GitHub</span></a>
+				<span class="site-version" title="Versión del núcleo">v1.20.0</span>
+			</nav>
+		</div>
 	</header>
-
-	<nav class="margin-y docs-nav">
-		<section class="silver">
-			<h2 id="index" class="center-x">Menú</h2>
-			<div class="padding">
-				<ul class="lines center-y">
-					<li class="back"><a data-e-routing-excluded href="../../index.html#extensions">Atrás</a></li>
-					<li><a data-e-routing-excluded href="#description">Descripción</a></li>
-					<li><a data-e-routing-excluded href="#docs">Documentación</a></li>
-				</ul>
-			</div>
-		</section>
+<div class="docs-container">
+	<nav class="docs-nav docs-sidebar" aria-label="Extensiones">
+		<p class="docs-sidebar-title">Extensiones</p>
+		<ul>
+			<li><a data-e-routing-excluded href="../http/">HTTP</a></li>
+			<li><a data-e-routing-excluded href="../dom/">DOM</a></li>
+			<li><a data-e-routing-excluded href="../events/">Events</a></li>
+			<li><a data-e-routing-excluded href="../components/">Components</a></li>
+			<li><a data-e-routing-excluded href="../handlers/">Handlers</a></li>
+			<li><a data-e-routing-excluded href="../reactive/">Reactive</a></li>
+			<li><a data-e-routing-excluded href="./" aria-current="page">Routing</a></li>
+			<li><a data-e-routing-excluded href="../sqlite.frontend/">SQLite Frontend</a></li>
+		</ul>
 	</nav>
 
 	<main class="docs-main">
-		<h2 class="title">Routing</h2>
+		<h1 class="title">Routing</h1>
 		<section class="margin-y">
 			<h2 id="description">Descripción</h2>
-			<div class="padding">Gestiona la navegación y el enrutamiento en el cliente para aplicaciones de una sola página (SPA). Ofrece un control completo sobre el historial del navegador mediante la API de History, soporte para parámetros dinámicos y opcionales, ordenación de rutas basada en especificidad, middleware en cadena síncrono/asíncrono, desestructuración automática de parámetros de consulta (query strings) y control robusto de errores.</div>
-			<p class="padding-y">
-				<b>Librería:</b> <a data-e-routing-excluded target="_blank" href="estructura.routing.js">estructura.routing.js</a>
-			</p>
-			<p class="padding-y">
-				<b>Compatibilidad:</b> <a target="_blank" href="https://okzgn.com/articles/why-not-build-frontend-frameworks-on-raw-html-css-or-js/#routing---navigation">ES6+</a>
-			</p>
-
-			<div class="padding-y">
-				<b>Importación:</b><pre><code>&lt;!-- CDN: Estructura / Routing --&gt;
+			<div class="padding">Gestiona la navegación y el enrutamiento en el cliente para aplicaciones de una sola página (SPA), mediante la API History del navegador. Admite parámetros dinámicos y opcionales, ordena las rutas por especificidad, encadena callbacks síncronos o asíncronos con <code>next()</code>, analiza los parámetros de consulta (query strings) y permite registrar callbacks de error.</div>
+			<div class="docs-meta">
+				<p class="padding-y docs-meta-item">
+					<b>Librería:</b> <a data-e-routing-excluded target="_blank" href="estructura.routing.js">estructura.routing.js</a>
+				</p>
+				<p class="padding-y docs-meta-item">
+					<b>Compatibilidad:</b> <a target="_blank" href="https://okzgn.com/articles/why-not-build-frontend-frameworks-on-raw-html-css-or-js/#steps-to-bypass-between-points-1-and-2-routing-navigation">ES6+</a>
+				</p>
+				<p class="padding-y docs-meta-item">
+					<b>Estado:</b> RC2
+				</p>
+				<p class="padding-y docs-meta-item">
+					<b>Licencia:</b> <a data-e-routing-excluded target="_blank" href="../LICENSE">AGPL v3</a>
+				</p>
+			</div>
+<div class="padding-y">
+				<b>Importación:</b><pre><code>&lt;!-- EXTENSIÓN: Estructura / Routing --&gt;
 &lt;script src="https://estructura.okzgn.com/extensions/routing/estructura.routing.js"&gt;&lt;/script&gt;</code><button aria-live="polite" class="copy">Copiar</button></pre>
+			</div>
+		</section>
+
+		<section class="margin-y">
+			<h2 id="demo">Demo en vivo</h2>
+			<div class="padding">
+				<p>Esta página tiene el enrutador activo, con la ruta actual como base. Pulse el enlace: navega sin recargar a una ruta <code>/test/:id</code> con un número aleatorio, y la ruta <code>/test/:id</code> muestra el valor resuelto de <code>id</code>.</p>
+				<p class="docs-demo"><span id="test"><a id="test_link" href="#">Ir a una ruta aleatoria (actual: <b id="test_node"></b>)</a></span></p>
 			</div>
 		</section>
 
 		<section class="margin-y">
 			<h2 id="docs">Documentación</h2>
 			<div class="padding">
-				<h3>1. Inicialización y Ciclo de Vida Global</h3>
-				<p>El sistema de enrutamiento se gestiona directamente a través de la instancia global única <code>_routing</code>, la cual expone todos los métodos de configuración y control de ciclo de vida.</p>
+				<h3>1. Inicialización y ciclo de vida</h3>
+				<p>El enrutamiento se gestiona a través de la instancia global <code>_routing</code>, que expone los métodos de configuración y de control del ciclo de vida.</p>
 				<ul>
-					<li><b><code>_routing.start(options?)</code></b>: Activa el enrutador y comienza a escuchar eventos en la ventana (<code>window</code>).
- <b>Opciones de Configuración:</b>
+					<li><b><code>_routing.start(options?)</code></b>: activa el enrutador y empieza a escuchar eventos en la ventana (<code>window</code>). Retorna <code>false</code> si lo arranca y <code>true</code> si ya estaba en marcha (en ese caso no hace nada).
+ <b>Opciones de configuración:</b>
 						<ul>
-							<li><code>click</code> (<code>Boolean</code>): Intercepta automáticamente clics en enlaces locales de tipo ancla (<code>&lt;a&gt;</code>) evitando la recarga de página (por defecto, <code>true</code>).</li>
-							<li><code>popstate</code> (<code>Boolean</code>): Escucha los cambios de historial cuando el usuario retrocede o avanza en el navegador (por defecto, <code>true</code>).</li>
-							<li><code>dispatch</code> (<code>Boolean</code>): Ejecuta de forma inmediata el análisis y correspondencia de la ruta de la dirección actual al arrancar (por defecto, <code>true</code>).</li>
+							<li><code>click</code> (<code>Boolean</code>): intercepta los clics en enlaces (<code>&lt;a&gt;</code>) del mismo origen y navega sin recargar la página (por defecto, <code>true</code>). Ver <i>Filtrado de interceptación</i> en <i>Características técnicas</i>.</li>
+							<li><code>popstate</code> (<code>Boolean</code>): escucha los cambios de historial cuando el usuario retrocede o avanza en el navegador (por defecto, <code>true</code>).</li>
+							<li><code>dispatch</code> (<code>Boolean</code>): al arrancar, ejecuta las rutas que coinciden con la dirección actual, sin escribir en el historial (por defecto, <code>true</code>). Se ejecuta en el momento, así que registre las rutas antes de arrancar.</li>
 						</ul>
 					</li>
-					<li><b><code>_routing.stop()</code></b>: Detiene el enrutador y elimina todos los escuchadores de eventos globales asociados (clics y <code>popstate</code>).</li>
-					<li><b><code>_routing.base(path?)</code></b>: Obtiene o establece la ruta base (prefijo) para todo el sistema de enrutamiento (ej. <code>/app</code>). Para establecerla se debe pasar un argumento de tipo string.</li>
+					<li><b><code>_routing.stop()</code></b>: detiene el enrutador y elimina sus listeners globales (<code>click</code> y <code>popstate</code>). Retorna <code>true</code> si lo detiene y <code>false</code> si no estaba en marcha.</li>
+					<li><b><code>_routing.base(path?)</code></b>: sin argumentos, retorna la ruta base (prefijo) del enrutamiento; con un <code>String</code> que empiece por <code>/</code>, la establece (ej. <code>/app</code>). Se elimina la barra final (<code>/app/</code> queda como <code>/app</code>). La base solo se recorta de la dirección en un límite de segmento: <code>/app</code> coincide con <code>/app</code> y <code>/app/perfil</code>, pero no con <code>/application</code>.</li>
 				</ul>
-				<h3>2. Registro de Rutas y Middlewares</h3>
-				<p>El enrutador admite la declaración de rutas de manera secuencial invocando directamente la función global <code>_routing</code>. Permite encadenar múltiples controladores (middlewares) utilizando una devolución de llamada (<code>next</code>).</p>
-				<p><b>Sintaxis de Registro:</b></p>
-<pre><code>// Rutas con controladores múltiples
-_routing('/perfil', authMiddleware, function(ctx) {
+				<p><b>Atajos:</b></p>
+<pre><code>_routing();                    // Arranca, como _routing.start()
+_routing({ dispatch: false }); // Arranca con opciones, como _routing.start({...})
+_routing('/perfil');           // Navega, como _routing.show('/perfil')
+</code><button aria-live="polite" class="copy">Copiar</button></pre>
+				<p>A diferencia de los métodos, los atajos no retornan su resultado (por ejemplo, el contexto de <code>show()</code>), y un error que se produzca dentro se muestra en la consola con hasta un segundo de retraso, en lugar de lanzarse.</p>
+				<h3>2. Registro de rutas</h3>
+				<p>Las rutas se declaran llamando a la función global <code>_routing</code> con un patrón y uno o varios callbacks. Cada callback recibe el contexto (<code>ctx</code>) y la función <code>next</code>, que da paso al siguiente callback; puede llamarse más tarde, por ejemplo tras una operación asíncrona. Registrar de nuevo el mismo patrón reemplaza sus callbacks.</p>
+				<p><b>Orden de ejecución:</b> al navegar, se ejecutan todas las rutas cuyo patrón coincide, de la más específica a la menos específica, y dentro de cada ruta sus callbacks en el orden registrado. La ejecución solo avanza mientras cada callback llame a <code>next()</code>; si uno no lo llama, la cadena se detiene ahí.</p>
+				<p><code>_routing(fn)</code> registra el patrón <code>*</code>, que coincide con cualquier ruta y tiene la prioridad más baja: se ejecuta <b>después</b> de las rutas más específicas, y solo si estas llaman a <code>next()</code>.</p>
+				<p><b>Sintaxis de registro:</b></p>
+<pre><code>var sesion = { activa: true };
+
+// Middleware: continúa con next() o redirige
+function authMiddleware(ctx, next){
+	if(!sesion.activa){
+		_routing.redirect('/login');
+		return;
+	}
+	next();
+}
+
+// Ruta con varios callbacks
+_routing('/perfil', authMiddleware, function(ctx, next){
 	console.log('Ruta de perfil cargada');
+	next(); // Sin esta llamada, el callback de '*' no se ejecutaría
 });
 
-// Registrar un middleware global para todas las rutas
-_routing(function(ctx, next) {
-	console.log('Log global para:', ctx.pathname);
+// Callback para todas las rutas (patrón '*', se ejecuta al final)
+_routing(function(ctx, next){
+	console.log('Log para:', ctx.pathname);
 	next();
 });
 </code><button aria-live="polite" class="copy">Copiar</button></pre>
-				<h3>3. Parámetros Dinámicos y Coincidencias</h3>
-				<p>El motor de enrutamiento traduce los patrones declarados a expresiones regulares, aislando y asignando parámetros estructurados en el contexto.</p>
+				<h3>3. Parámetros y patrones</h3>
+				<p>Los patrones declarados se traducen a expresiones regulares, y los segmentos variables se guardan en <code>ctx.params</code>. Los valores se decodifican (<code>decodeURIComponent</code>); una secuencia mal formada (como un <code>%</code> suelto) se conserva sin decodificar en lugar de lanzar un error.</p>
 				<ul>
-					<li><b>Parámetros Requeridos (<code>:param</code>)</b>: Captura cualquier segmento de texto ubicado entre barras diagonales.
-						<pre><code>_routing('/usuario/:id', function(ctx) { console.log(ctx.params.id); });</code><button aria-live="polite" class="copy">Copiar</button></pre>
+					<li><b>Parámetros requeridos (<code>:param</code>)</b>: capturan un segmento de texto entre barras.
+						<pre><code>_routing('/usuario/:id', function(ctx){ console.log(ctx.params.id); });</code><button aria-live="polite" class="copy">Copiar</button></pre>
 					</li>
-					<li><b>Parámetros Opcionales (<code>:param?</code>)</b>: Permite que el segmento final sea omitido en la ruta de navegación.
-						<pre><code>_routing('/blog/:categoria?', function(ctx) { /* ... */ });</code><button aria-live="polite" class="copy">Copiar</button></pre>
+					<li><b>Parámetros opcionales (<code>:param?</code>)</b>: el segmento puede omitirse (<code>/blog</code> y <code>/blog/noticias</code> coinciden); si falta, el parámetro es <code>undefined</code>.
+						<pre><code>_routing('/blog/:categoria?', function(ctx){ console.log(ctx.params.categoria); });</code><button aria-live="polite" class="copy">Copiar</button></pre>
 					</li>
-					<li><b>Comodín Global (<code>*</code>)</b>: Captura cualquier subruta posterior y lo asigna en el parámetro <code>ctx.params.wildcard</code>.
-						<pre><code>_routing('/archivos/*', function(ctx) { /* ... */ });</code><button aria-live="polite" class="copy">Copiar</button></pre>
+					<li><b>Comodín (<code>*</code>)</b>: captura cualquier subruta posterior y la asigna a <code>ctx.params.wildcard</code>. Exige la barra previa: <code>/archivos/*</code> coincide con <code>/archivos/a/b</code>, pero no con <code>/archivos</code>.
+						<pre><code>_routing('/archivos/*', function(ctx){ console.log(ctx.params.wildcard); });</code><button aria-live="polite" class="copy">Copiar</button></pre>
 					</li>
 				</ul>
-				<h3>4. El Objeto de Contexto (<code>Context</code>)</h3>
-				<p>Cada controlador registrado recibe como primer argumento un objeto de contexto que contiene toda la información de la transición actual.</p>
-				<p><b>Propiedades del Contexto:</b></p>
+				<h3>4. Objeto de contexto</h3>
+				<p>Cada callback registrado recibe como primer argumento un objeto de contexto con la información de la navegación actual.</p>
+				<p><b>Propiedades del contexto:</b></p>
 				<ul>
-					<li><code>ctx.canonicalPath</code> (<code>String</code>): La ruta de navegación completa incluyendo la ruta base asignada, parámetros de búsqueda y fragmentos (hash).</li>
-					<li><code>ctx.path</code> (<code>String</code>): Ruta limpia de navegación sin el prefijo de la ruta base (incluye búsqueda y hash).</li>
-					<li><code>ctx.pathname</code> (<code>String</code>): Segmento de ruta pura sin parámetros de búsqueda, hash, ni barras diagonales redundantes al final.</li>
-					<li><code>ctx.querystring</code> (<code>String</code>): Cadena de texto de consulta limpia sin el símbolo de interrogación (<code>?</code>).</li>
-					<li><code>ctx.state</code> (<code>Object</code>): Copia profunda e independiente del objeto de estado asociado a la entrada del historial de navegación.</li>
-					<li><code>ctx.params</code> (<code>Object</code>): Mapa de variables dinámicas extraídas del patrón de la ruta actual (ej. <code>{ id: "42" }</code>).</li>
-					<li><code>ctx.query</code> (<code>Object</code>): Parámetros de consulta desestructurados automáticamente. Admite la acumulación de múltiples valores repetidos en forma de arreglos (ej. <code>?filtro=a&filtro=b</code> se convierte en <code>{ filtro: ["a", "b"] }</code>).</li>
-					<li><code>ctx.hash</code> (<code>String</code>): El segmento de ancla de la URL omitiendo el carácter inicial (<code>#</code>).</li>
-					<li><code>ctx.routePath</code> (<code>String</code>): El patrón original registrado que coincidió con la dirección actual.</li>
+					<li><code>ctx.canonicalPath</code> (<code>String</code>): la ruta completa, incluida la ruta base, los parámetros de búsqueda y el fragmento (hash).</li>
+					<li><code>ctx.path</code> (<code>String</code>): la ruta sin el prefijo de la ruta base (incluye búsqueda y hash).</li>
+					<li><code>ctx.pathname</code> (<code>String</code>): la ruta sin base, sin parámetros de búsqueda, sin hash y sin barra final. Es la que se compara con los patrones; no se decodifica (<code>%20</code> se mantiene).</li>
+					<li><code>ctx.querystring</code> (<code>String</code>): la cadena de consulta sin el símbolo de interrogación (<code>?</code>).</li>
+					<li><code>ctx.state</code> (<code>Object</code>): copia del estado pasado a <code>show()</code> o <code>replace()</code> (o del guardado en la entrada del historial, al retroceder o avanzar), a la que la librería añade <code>path</code> (igual que <code>ctx.canonicalPath</code>) y <code>cleanPath</code> (igual que <code>ctx.path</code>); si el estado ya traía otros valores en esas claves, se sobrescriben con un aviso en la consola. Puede contener funciones o nodos del DOM: se conservan por referencia en <code>ctx.state</code>. Como la API History solo guarda datos serializables, en ese caso la entrada del historial guarda únicamente <code>path</code> y <code>cleanPath</code> y se emite un aviso en la consola.</li>
+					<li><code>ctx.params</code> (<code>Object</code>): parámetros extraídos del patrón de la ruta actual (ej. <code>{ id: "42" }</code>).</li>
+					<li><code>ctx.query</code> (<code>Object</code>): parámetros de consulta analizados y decodificados (<code>+</code> se convierte en espacio). Cada par se divide por el primer <code>=</code>, así que el valor puede contener <code>=</code> (<code>?t=abc==</code> da <code>'abc=='</code>). Las claves repetidas se acumulan en un array (ej. <code>?filtro=a&amp;filtro=b</code> se convierte en <code>{ filtro: ["a", "b"] }</code>). Como en <code>ctx.params</code>, una secuencia mal formada se conserva sin decodificar.</li>
+					<li><code>ctx.hash</code> (<code>String</code>): el fragmento de la URL sin el carácter inicial (<code>#</code>).</li>
+					<li><code>ctx.routePath</code> (<code>String</code>): el patrón registrado de la ruta que se está ejecutando.</li>
 				</ul>
-				<p><b>Métodos del Contexto:</b></p>
+				<p><b>Métodos del contexto:</b></p>
 				<ul>
-					<li><code>ctx.pushState()</code>: Escribe el estado actual y la ruta en el historial del navegador.</li>
-					<li><code>ctx.save()</code>: Reemplaza la entrada actual de navegación en el historial con el estado modificado.</li>
+					<li><code>ctx.pushState()</code>: añade al historial del navegador una entrada con <code>ctx.state</code> y <code>ctx.canonicalPath</code>.</li>
+					<li><code>ctx.save()</code>: reemplaza la entrada actual del historial con <code>ctx.state</code> (útil tras modificarlo).</li>
 				</ul>
-				<h3>5. Navegación Programática y Redirecciones</h3>
-				<p>Permite disparar cambios en la navegación desde código, controlando la actualización del historial y la ejecución de callbacks.</p>
+				<h3>5. Navegación y redirecciones</h3>
+				<p>Permite navegar desde código, controlando la escritura en el historial y la ejecución de las rutas. Ambos métodos retornan el contexto creado. <code>state</code> es un objeto opcional; cualquier otro valor se sustituye por <code>{}</code>. Si <code>path</code> empieza por <code>/</code> y no incluye la ruta base, se le antepone (con base <code>/app</code>, <code>show('/perfil')</code> navega a <code>/app/perfil</code>); una ruta sin <code>/</code> inicial se resuelve desde la raíz del origen y no recibe la base.</p>
 				<ul>
-					<li><b><code>_routing.show(path, state?, dispatch?, push?)</code></b>: Navega a la ruta indicada creando un nuevo registro en el historial.</li>
-					<li><b><code>_routing.replace(path, state?, dispatch?, replace?)</code></b>: Navega a la ruta indicada sobrescribiendo el registro del historial de navegación actual.</li>
-					<li><b><code>_routing.redirect(from, to)</code></b> o <b><code>_routing.redirect(to)</code></b>: Configura una regla de redirección o ejecuta una redirección inmediata de forma asíncrona mediante microtareas.
-<pre><code>// Redirección programada
+					<li><b><code>_routing.show(path, state?, dispatch?, push?)</code></b>: navega a la ruta indicada añadiendo una entrada al historial. <code>dispatch</code> y <code>push</code> son <code>true</code> por defecto; con <code>false</code> se desactiva, respectivamente, la ejecución de las rutas o la escritura en el historial.</li>
+					<li><b><code>_routing.replace(path, state?, dispatch?, replace?)</code></b>: navega a la ruta indicada reemplazando la entrada actual del historial. <code>dispatch</code> y <code>replace</code> son <code>true</code> por defecto; con <code>false</code> se desactiva, respectivamente, la ejecución de las rutas o la escritura en el historial.</li>
+					<li><b><code>_routing.redirect(from, to)</code></b> o <b><code>_routing.redirect(to)</code></b>: con dos argumentos registra una regla de redirección (una ruta <code>from</code> que redirige a <code>to</code>); con uno, redirige a <code>to</code>. En ambos casos la redirección se aplica con <code>replace()</code> en una microtarea, después de que termine el callback actual.
+<pre><code>// Regla de redirección
 _routing.redirect('/inicio', '/');
 
-// Redirección inmediata dentro de un controlador
-_routing('/obsoleto', function(ctx) {
+// Redirección desde un callback
+_routing('/obsoleto', function(ctx){
 	_routing.redirect('/');
 });
 </code><button aria-live="polite" class="copy">Copiar</button></pre>
 					</li>
 				</ul>
-				<h3>6. Control de Errores y Desvinculación</h3>
-				<p>Proporciona herramientas de control para administrar fallas durante la ejecución de los controladores y limpiar registros existentes de memoria.</p>
+				<h3>6. Errores y desvinculación</h3>
+				<p>Permite gestionar los fallos durante la ejecución de los callbacks y eliminar rutas registradas.</p>
 				<ul>
-					<li><b><code>_routing.onError(callback?)</code></b>: Registra un manejador global que intercepta errores lanzados durante la ejecución de la cadena de controladores de rutas. Si se invoca sin argumentos, devuelve una copia superficial del arreglo de escuchadores de errores registrados.</li>
-					<li><b><code>_routing.offError(callback?)</code></b>: Desvincula un manejador de errores específico o vacía todos los registros de error existentes si se omite el argumento.</li>
-					<li><b><code>_routing.off(path?, callback?)</code></b>: Desvincula de forma granular un callback de una ruta, borra un patrón completo, o limpia la colección de rutas registradas si se invoca sin argumentos.</li>
+					<li><b><code>_routing.onError(callback?)</code></b>: registra un callback global que recibe <code>(error, ctx)</code> cuando un callback de ruta lanza un error de forma síncrona (no captura rechazos de promesas); la cadena de callbacks se detiene ahí. Si no hay ninguno registrado, el error se relanza. Sin argumentos, retorna una copia del array de callbacks de error registrados.</li>
+					<li><b><code>_routing.offError(callback?)</code></b>: elimina un callback de error concreto, o todos si se omite el argumento.</li>
+					<li><b><code>_routing.off(path?, callback?)</code></b>: elimina un callback de una ruta, una ruta completa o, sin argumentos, todas las rutas registradas. <code>path</code> es el patrón tal como se registró. Retorna <code>true</code> si elimina algo y <code>false</code> en caso contrario (sin argumentos, siempre <code>true</code>).</li>
 				</ul>
-				<h3>7. Características Técnicas</h3>
+				<h3>7. Características técnicas</h3>
 				<div class="features">
-					<p><strong>Resolución por Especificidad Dinámica:</strong> Para prevenir conflictos de coincidencia entre patrones similares, el motor evalúa dinámicamente cada ruta registrando un puntaje de prioridad. Segmentos estáticos asumen mayor prioridad que rutas con parámetros variables o comodines globales.</p>
-					<p><strong>Clonación Defensiva de Estado:</strong> Toda transición de datos a través del historial de navegación ejecuta un algoritmo recursivo de clonación profunda de bajo nivel. Protege referencias y mutaciones accidentales en estructuras avanzadas (como <code>Map</code>, <code>Set</code>, <code>ArrayBuffer</code>, o vistas de datos tipados).</p>
-					<p><strong>Filtrado de Interceptación Seguro:</strong> El analizador global de clics de anclas filtra de manera rigurosa eventos no estándar. <b>Evita interferir enlaces con el atributo <code>data-e-routing-excluded</code>, enlaces externos, descargas forzadas, teclas modificadoras del sistema (como Ctrl o Command), clics secundarios o protocolos nativos como <code>mailto:</code> o <code>tel:</code></b>.</p>
-					<p><strong>Ejecución Segura en Microtareas:</strong> La resolución de redirecciones se delega a microtareas del bucle de eventos utilizando de forma prioritaria <code>queueMicrotask</code> o <code>MutationObserver</code>, aislando los ciclos de navegación de la pila de llamadas principal para evitar bloqueos del motor de renderizado.</p>
+					<p><strong>Resolución por especificidad:</strong> los patrones se comparan segmento a segmento, de izquierda a derecha, con este orden de prioridad: segmento estático, parámetro requerido (<code>:id</code>), segmento ausente (el patrón ya no tiene más), parámetro opcional (<code>:id?</code>) y comodín (<code>*</code>). Así, en la dirección <code>/blog</code> se ejecuta <code>/blog</code> antes que <code>/blog/:categoria?</code>; en <code>/blog/5</code>, <code>/blog/:id</code> antes que <code>/blog/:categoria?</code>; y en <code>/es</code>, <code>/:idioma?</code> antes que <code>*</code>. La ruta raíz <code>/</code> cuenta como estática y va antes que <code>*</code>. Con la misma puntuación, se respeta el orden de registro.</p>
+					<p><strong>Copia del estado:</strong> el estado de cada navegación se copia en profundidad con <code>structuredClone</code>. Si no está disponible, o el estado contiene valores no serializables, se usa una copia recursiva propia que admite <code>Map</code>, <code>Set</code>, <code>Date</code>, <code>RegExp</code>, <code>ArrayBuffer</code> y arrays tipados, y conserva por referencia funciones y nodos del DOM.</p>
+					<p><strong>Filtrado de interceptación:</strong> con <code>click</code> activo, el enrutador no intercepta los enlaces con <code>target</code> distinto de <code>_self</code>, con el atributo <code>download</code>, con <code>rel="external"</code> (valor exacto: <code>rel="external noopener"</code> sí se intercepta), con el atributo <code>data-e-routing-excluded</code> o sin <code>href</code>; tampoco los de otro origen, los que usan los esquemas <code>mailto:</code>, <code>tel:</code>, <code>sms:</code>, <code>javascript:</code> o <code>data:</code>, los clics con teclas modificadoras (Ctrl, Shift, Alt o Meta/Command), con un botón distinto del principal o cuyo evento ya fue cancelado (<code>preventDefault()</code>). Los <code>href</code> interceptados se resuelven desde la raíz del origen (no desde la página actual) y, si no empiezan por la ruta base, se les antepone. Las anclas internas (<code>href="#seccion"</code>) también se interceptan: navegan a la raíz de la base con ese hash y el navegador no se desplaza hasta la sección; añádales <code>data-e-routing-excluded</code> para conservar el comportamiento nativo.</p>
+					<p><strong>Redirecciones en microtareas:</strong> <code>redirect()</code> se aplica en una microtarea (<code>queueMicrotask</code> o, si no existe, <code>MutationObserver</code>; como último recurso, <code>setTimeout</code>), una vez que termina el código que la llamó.</p>
 				</div>
 			</div>
 		</section>

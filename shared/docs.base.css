@@ -16,8 +16,9 @@ body {
   color: var(--docs-ink);
   font-family: var(--docs-font);
   font-size: 1rem;
-  word-spacing: 0.2rem;
-  line-height: 1.6;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
   accent-color: var(--docs-accent);
   scrollbar-color: var(--docs-muted) var(--docs-paper);
   scrollbar-width: thin;
@@ -32,7 +33,7 @@ body {
   border-radius: var(--docs-radius-s);
 }
 
-::selection { background: var(--docs-ink); color: var(--docs-card); }
+::selection { background: var(--docs-accent); color: var(--docs-card); }
 ::placeholder { color: var(--docs-ink); opacity: 0.5; }
 
 a, summary, button {
@@ -46,19 +47,33 @@ a, summary, button {
 a:hover, summary:hover, button:hover,
 a:focus-visible, summary:focus-visible, button:focus-visible {
   color: var(--docs-accent-ink);
-  background-color: var(--docs-paper);
   text-decoration: underline;
-  border-radius: var(--docs-radius-s);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
 }
+/* Enlaces dentro del texto: subrayado discreto para distinguirlos sin depender solo del color */
+main :is(p, li, .padding) > a:not(.docs-button) {
+  text-decoration: underline;
+  text-decoration-color: var(--docs-line-strong);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+main :is(p, li, .padding) > a:not(.docs-button):hover { text-decoration-color: currentColor; }
 button { font-weight: 700; }
 
 ul { list-style: none; }
 img { max-width: 100%; }
 
-h1, h2, h3, h4 { line-height: 1.25; text-wrap: balance; scroll-margin-top: var(--docs-space-4); }
+h1, h2, h3, h4 { line-height: 1.25; text-wrap: balance; }
+/* Los saltos a una sección no quedan tapados por la barra superior fija */
+:target, section[id], :is(h1, h2, h3, h4)[id] { scroll-margin-top: calc(var(--docs-bar-h, 3.5rem) + var(--docs-space-3)); }
 code { font-family: var(--docs-mono); font-size: 0.92em; }
+/* Sin ligaduras: fuentes como Cascadia Code dibujan `<!--` y `-->` como flechas */
+code, pre, kbd, samp { font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0; }
+/* Tabulaciones de los ejemplos a 4 columnas (el valor por defecto, 8, desplaza demasiado el código) */
+pre, code { tab-size: 4; -moz-tab-size: 4; }
 /* Inline code no debe romper el interlineado ni forzar bloque */
-p code, li code, span code, h3 code, h4 code { display: inline; }
+p code, li code, span code, h3 code, h4 code { display: inline; overflow-wrap: anywhere; }
 
 /* Skip-link (lo inyecta Docs.js; oculto hasta foco) */
 .docs-skip {
@@ -75,8 +90,8 @@ p code, li code, span code, h3 code, h4 code { display: inline; }
 }
 
 @media print {
-  .docs-nav, .docs-toc, button.copy, .collapsed-links { display: none !important; }
+  .site-bar, .docs-nav, .docs-toc, .docs-pager, .docs-anchor, .code-bar, button.copy, .collapsed-links { display: none !important; }
   .docs-shell { background: #fff; }
-  :is(.card, main section) { box-shadow: none; }
+  .card { box-shadow: none; }
   .entirely.collapsed { display: block !important; }
 }

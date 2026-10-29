@@ -8,7 +8,7 @@
 	<link rel="icon" href="../../estructura.icon.png">
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="description" content="Reactive: extensión del framework Estructura. En desarrollo, beta.">
+	<meta name="description" content="Enlace de datos bidireccional entre un objeto de estado y el DOM mediante plantillas con delimitadores configurables.">
 	<meta name="author" content="OKZGN">
 	<meta name="theme-color" content="#ffffff">
 
@@ -21,7 +21,8 @@
 	<script>
 		document.addEventListener('DOMContentLoaded', function(){
 			console.log('Estructura Reactive ready.');
-			var _reactiveDocument = _reactive(document.documentElement, {
+			// Raíz acotada a la demo: así la plantilla no captura otros textos de la página (como este script)
+			var _reactiveDocument = _reactive(document.querySelector('.docs-demo'), {
 				variables_prefix: '__',
 				variables_postfix: '__'
 			});
@@ -39,50 +40,71 @@
 </head>
 
 <body>
-<div class="docs-shell"><div class="docs-container">
-	<header class="center-y padding site-header">
-		<h1 class="extension center-y">
-			<img id="logo" src="../../estructura.logo.png" alt="Estructura, JavaScript Framework">
-			<span id="test">__date__</span>
-		</h1>
+<div class="docs-shell">
+	<header class="site-header site-bar">
+		<div class="site-bar-inner">
+			<a class="site-brand" href="../../" aria-label="Estructura: inicio"><img class="site-brand-logo" src="../../estructura.logo.png" alt="Estructura"></a>
+			<nav class="site-links" aria-label="Sitio">
+				<a href="../../#get_started">Guía</a>
+				<a href="../../#extensions">Extensiones</a>
+				<a class="site-github" target="_blank" rel="noopener noreferrer" href="https://github.com/okzgn/estructura"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span>GitHub</span></a>
+				<span class="site-version" title="Versión del núcleo">v1.20.0</span>
+			</nav>
+		</div>
 	</header>
-
-	<nav class="margin-y docs-nav">
-		<section class="silver">
-			<h2 id="index" class="center-x">Menú</h2>
-			<div class="padding">
-				<ul class="lines center-y">
-					<li class="back"><a href="../../index.html#extensions">Atrás</a></li>
-					<li><a href="#description">Descripción</a></li>
-					<li><a href="#docs">Documentación</a></li>
-				</ul>
-			</div>
-		</section>
+<div class="docs-container">
+	<nav class="docs-nav docs-sidebar" aria-label="Extensiones">
+		<p class="docs-sidebar-title">Extensiones</p>
+		<ul>
+			<li><a href="../http/">HTTP</a></li>
+			<li><a href="../dom/">DOM</a></li>
+			<li><a href="../events/">Events</a></li>
+			<li><a href="../components/">Components</a></li>
+			<li><a href="../handlers/">Handlers</a></li>
+			<li><a href="./" aria-current="page">Reactive</a></li>
+			<li><a href="../routing/">Routing</a></li>
+			<li><a href="../sqlite.frontend/">SQLite Frontend</a></li>
+		</ul>
 	</nav>
 
 	<main class="docs-main">
-		<h2 class="title">Reactive</h2>
+		<h1 class="title">Reactive</h1>
 		<section class="margin-y">
 			<h2 id="description">Descripción</h2>
-			<div class="padding">Proporciona enlace de datos bidireccional y reactividad síncrona y optimizada con el DOM. Sincroniza de manera automática el estado del script con la interfaz de usuario utilizando plantillas de delimitadores configurables (por defecto, <code>{{ variable }}</code>).</div>
-			<p class="padding-y">
-				<b>Librería:</b> <a target="_blank" href="estructura.reactive.js">estructura.reactive.js</a>
-			</p>
-			<p class="padding-y">
-				<b>Compatibilidad:</b> <a target="_blank" href="https://okzgn.com/articles/why-not-build-frontend-frameworks-on-raw-html-css-or-js/#state---reactivity">ES6+</a>
-			</p>
-
-			<div class="padding-y">
-				<b>Importación:</b><pre><code>&lt;!-- CDN: Estructura / Reactive --&gt;
+			<div class="padding">Proporciona enlace de datos bidireccional entre un objeto de estado y el DOM. Sincroniza el estado del script con la interfaz de usuario mediante plantillas con delimitadores configurables (por defecto, <code>{{ variable }}</code>). Las actualizaciones del DOM se agrupan y se aplican de forma asíncrona, en una microtarea.</div>
+			<div class="docs-meta">
+				<p class="padding-y docs-meta-item">
+					<b>Librería:</b> <a target="_blank" href="estructura.reactive.js">estructura.reactive.js</a>
+				</p>
+				<p class="padding-y docs-meta-item">
+					<b>Compatibilidad:</b> <a target="_blank" href="https://okzgn.com/articles/why-not-build-frontend-frameworks-on-raw-html-css-or-js/#steps-to-bypass-between-points-1-and-2-state-reactivity">ES6+</a>
+				</p>
+				<p class="padding-y docs-meta-item">
+					<b>Estado:</b> RC2
+				</p>
+				<p class="padding-y docs-meta-item">
+					<b>Licencia:</b> <a target="_blank" href="../LICENSE">AGPL v3</a>
+				</p>
+			</div>
+<div class="padding-y">
+				<b>Importación:</b><pre><code>&lt;!-- EXTENSIÓN: Estructura / Reactive --&gt;
 &lt;script src="https://estructura.okzgn.com/extensions/reactive/estructura.reactive.js"&gt;&lt;/script&gt;</code><button aria-live="polite" class="copy">Copiar</button></pre>
+			</div>
+		</section>
+
+		<section class="margin-y">
+			<h2 id="demo">Demo en vivo</h2>
+			<div class="padding">
+				<p>Esta página tiene una instancia reactiva sobre el recuadro de la demo, con dos guiones bajos como delimitadores de apertura y cierre. Cada segundo se asigna la hora actual a <code>state.date</code> y la plantilla siguiente se actualiza sola.</p>
+				<p class="docs-demo">Hora local: <span id="test">__date__</span></p>
 			</div>
 		</section>
 
 		<section class="margin-y">
 			<h2 id="docs">Documentación</h2>
 			<div class="padding">
-				<h3>1. Inicialización y Estado</h3>
-				<p>Inicialice la reactividad seleccionando un nodo del DOM (por lo general, el nodo raíz de la vista). Acceda al estado reactivo utilizando el objeto <code>Proxy</code> devuelto por el método <code>.state()</code>.</p>
+				<h3>1. Inicialización y estado</h3>
+				<p>Inicialice la reactividad pasando como raíz cualquier elemento del DOM (por lo general, el contenedor de la vista) o <code>document</code>, en cuyo caso se usa <code>document.documentElement</code>. Las plantillas se compilan y se renderizan por primera vez de forma síncrona al crear la instancia. Acceda al estado reactivo mediante el objeto <code>Proxy</code> devuelto por el método <code>.state()</code>.</p>
 <pre><code>// Inicializar reactividad sobre el documento
 var miReactivo = _reactive(document.documentElement);
 
@@ -91,24 +113,29 @@ var state = miReactivo.state();
 
 // Escribir propiedades en el estado
 state.miVariable = 'Hola Mundo';
+// El DOM se actualiza en la siguiente microtarea, no en esta línea
 </code><button aria-live="polite" class="copy">Copiar</button></pre>
-				<h3>2. Configuración Avanzada</h3>
-				<p>El constructor acepta un segundo argumento opcional (<code>Object</code>) para configurar delimitadores personalizados de plantillas y procesadores dinámicos de nombres y expresiones.</p>
-				<p><b>Opciones de Configuración:</b></p>
+				<p><b>Nombres reservados:</b> <code>on</code>, <code>off</code>, <code>stop</code> y <code>event</code> son métodos del estado y no pueden usarse como variables: asignarlos lanza un error. Tampoco se admiten claves <code>Symbol</code>.</p>
+				<p><b>Fallos de inicialización:</b> si la raíz no es un nodo válido, la configuración no es un objeto o una plantilla es incorrecta (por ejemplo, un enlace bidireccional con dos variables), <code>_reactive()</code> no lanza el error: lo muestra en la consola con hasta un segundo de retraso y devuelve un objeto sin el método <code>state()</code>.</p>
+				<p><b>Raíces anidadas:</b> evite crear una instancia dentro de la raíz de otra. La primera que compila una plantilla la sustituye por su valor, y la otra ya no la encuentra.</p>
+				<h3>2. Configuración avanzada</h3>
+				<p>El constructor acepta un segundo argumento opcional (<code>Object</code>) para configurar delimitadores personalizados de plantillas y procesadores de nombres y expresiones.</p>
+				<p><b>Opciones de configuración:</b></p>
 				<ul>
-					<li><code>variables_prefix</code> (<code>String</code>): Delimitador de apertura de la plantilla (por defecto, <code>"{{"</code>).</li>
-					<li><code>variables_postfix</code> (<code>String</code>): Delimitador de cierre de la plantilla (por defecto, <code>"}}"</code>).</li>
-					<li><code>variables_preprocessor</code> (<code>Function</code>): Callback que se ejecuta inmediatamente al extraer variables. Recibe el nombre crudo de la variable y un objeto de metadatos (<code>{ expr, start, end }</code>). Permite filtrar o reescribir variables en tiempo de compilación.</li>
-					<li><code>variables_processor</code> (<code>Function</code>): Callback que inicializa valores de expresiones complejas o rutas anidadas en el objeto de estado de manera inicial (se ejecuta una única vez en el momento del registro). Recibe el identificador virtual generado (<code>String</code>), la expresión original del DOM (<code>String</code>) y el estado expuesto (<code>Object</code>).</li>
+					<li><code>variables_prefix</code> (<code>String</code>): delimitador de apertura de la plantilla (por defecto, <code>"{{"</code>).</li>
+					<li><code>variables_postfix</code> (<code>String</code>): delimitador de cierre de la plantilla (por defecto, <code>"}}"</code>).</li>
+					<li><code>variables_preprocessor</code> (<code>Function</code>): callback que se ejecuta al extraer cada plantilla. Recibe el texto entre delimitadores (sin los espacios de los extremos) y un objeto de metadatos (<code>{ expr, start, end }</code>). Lo que retorne se usa como nombre de la variable (o como texto de la expresión); si retorna un valor falso, la plantilla se ignora y queda como texto literal.</li>
+					<li><code>variables_processor</code> (<code>Function</code>): callback que calcula el valor inicial de una expresión. Se ejecuta una sola vez, al registrarse la expresión. Recibe la clave virtual (<code>String</code>), el texto de la expresión (<code>String</code>) y el estado (<code>Object</code>), y lo que retorne se guarda en el estado.</li>
+					<li><code>sanitizer</code> (<code>Function</code> | <code>false</code>): sanitizador propio de la instancia para los valores interpolados en atributos, en lugar de <code>_reactive.sanitize</code>. Con <code>false</code> se desactiva la sanitización en esta instancia (ver <a href="#sanitization">Sanitización</a>).</li>
 				</ul>
-				<p><b>Ejemplo de Configuración:</b></p>
+				<p><b>Ejemplo de configuración:</b></p>
 <pre><code>var miReactivo = _reactive(document.documentElement, {
 	variables_prefix: '[[',
 	variables_postfix: ']]',
-	variables_preprocessor: function(name, meta) {
+	variables_preprocessor: function(name, meta){
 		// Ignorar variables específicas retornando un valor falso
-		if (name === 'ignore_me') return null;
-		return name.toLowerCase();
+		if(name === 'ignore_me') return null;
+		return meta.expr ? name : name.toLowerCase();
 	},
 	variables_processor: function(key, expr, state){
 		try {
@@ -119,14 +146,16 @@ state.miVariable = 'Hola Mundo';
 	}
 });
 </code><button aria-live="polite" class="copy">Copiar</button></pre>
-				<h3>3. Enlace de Datos (Templates) y Expresiones</h3>
-				<p>El compilador de la librería analiza el contenido sintáctico y clasifica las plantillas en dos categorías de manera automática:</p>
+				<p class="docs-callout docs-callout-warn"><b>Advertencia:</b> evaluar expresiones con <code>new Function</code> equivale a usar <code>eval</code>. Requiere que la política CSP permita <code>'unsafe-eval'</code> y nunca debe usarse con plantillas que puedan contener contenido de usuarios.</p>
+				<h3>3. Plantillas y expresiones</h3>
+				<p>La librería clasifica automáticamente el texto entre delimitadores en dos categorías:</p>
 				<ul>
-					<li><b>Identificadores Simples:</b> Si el texto cumple con la regla de un identificador válido de JavaScript (ej. <code>nombre</code>, <code>mi_variable</code>), se registra de forma directa y nativa en el estado reactivo.</li>
-					<li><b>Expresiones Complejas u Operaciones:</b> Si el texto contiene operadores, espacios o rutas de objeto (ej. <code>user.name</code> o <code>1 * 2</code>), el motor lo detecta como expresión, lo aísla del preprocesador (no aplica el preprocesador automáticamente sobre la expresión, pero la expone mediante el metadata <code>{ expr: true }</code>) y genera una clave de estado virtual única basada en posiciones de carácter dentro del texto (ej. <code>_e_7_18</code>). Esto protege el objeto de estado y permite evaluar cálculos o rutas anidadas mediante el <code>variables_processor</code>.</li>
+					<li><b>Identificadores simples:</b> si el texto (sin los espacios de los extremos) solo contiene letras ASCII, dígitos, <code>_</code> o <code>$</code> y no empieza por un dígito (ej. <code>nombre</code>, <code>mi_variable</code>), se registra directamente como variable del estado y se actualiza cada vez que esta cambia. Un nombre con tildes o eñes (<code>año</code>) se trata como expresión.</li>
+					<li><b>Expresiones:</b> si el texto contiene operadores, espacios internos o rutas de objeto (ej. <code>user.name</code> o <code>a + b</code>), se trata como expresión y se le asigna una clave virtual basada en su posición dentro del texto (ej. <code>_e_7_18</code>). La misma expresión usa siempre la misma clave, también en nodos distintos; si dos expresiones distintas ocupan la misma posición, la segunda recibe un sufijo (ej. <code>_e_7_18_2</code>). El preprocesador también recibe las expresiones, con <code>meta.expr</code> en <code>true</code>.</li>
 				</ul>
-				<h4>Enlace Unidireccional</h4>
-				<p>Se aplica en nodos de texto estándar y en atributos comunes (como <code>class</code>, <code>src</code>, <code>id</code>, etc.). Permite múltiples variables o expresiones en una sola línea.</p>
+				<p class="docs-callout docs-callout-warn"><b>Importante:</b> el valor de una expresión se calcula una sola vez, al registrarse, mediante <code>variables_processor</code> (sin procesador, queda vacío). No se recalcula cuando cambian las variables que usa: en <code>{{a + b}}</code> o <code>{{user.name}}</code>, modificar <code>state.a</code> o <code>state.user</code> no actualiza el texto renderizado. Además, el procesador solo ve los valores que el estado tenga en ese momento. Para cambiar lo que muestra una expresión, asigne el nuevo valor a su clave virtual (la reciben <code>variables_processor</code> y el evento <code>createdVariable</code>) o, mejor, calcule el valor en JavaScript y use una variable simple.</p>
+				<h4>Enlace unidireccional</h4>
+				<p>Se aplica en nodos de texto y en atributos comunes (como <code>class</code>, <code>src</code>, <code>id</code>, etc.). Admite varias variables o expresiones en un mismo texto. En los atributos booleanos <code>disabled</code>, <code>checked</code>, <code>readonly</code>, <code>required</code> y <code>selected</code>, un valor falso (o el texto <code>'false'</code>) quita el atributo y cualquier otro lo añade. Los demás atributos booleanos (como <code>hidden</code> u <code>open</code>) se tratan como atributos comunes: siguen presentes aunque el valor sea vacío.</p>
 <pre><code>&lt;!-- Nodos de texto con identificadores y expresiones --&gt;
 &lt;h1&gt;Bienvenido, {{nombre}} {{apellido}}&lt;/h1&gt;
 &lt;p&gt;Operación: {{1 * 2}}&lt;/p&gt;
@@ -134,9 +163,10 @@ state.miVariable = 'Hola Mundo';
 
 &lt;!-- Atributos --&gt;
 &lt;div class="alerta {{tipo_alerta}}" id="{{id_registro}}"&gt;&lt;/div&gt;
+&lt;button disabled="{{bloqueado}}"&gt;Enviar&lt;/button&gt;
 </code><button aria-live="polite" class="copy">Copiar</button></pre>
-				<h4>Enlace Bidireccional</h4>
-				<p>Sincroniza en tiempo real los cambios de entrada de la interfaz con el estado reactivo. Soporta atributos de entrada (<code>value</code>, <code>checked</code>) y nodos de texto dentro de elementos <code>&lt;textarea&gt;</code>. Para evitar colisiones de escritura, estos elementos solo admiten un único enlace directo a un identificador simple.</p>
+				<h4>Enlace bidireccional</h4>
+				<p>Lleva al estado los cambios que el usuario hace en la interfaz, mediante los eventos <code>input</code> y <code>change</code> del nodo raíz. Se aplica al atributo <code>value</code> (o <code>checked</code> en casillas y botones de opción) y al texto de los elementos <code>&lt;textarea&gt;</code>. En sentido contrario, cada cambio del estado se refleja en el control, también en un <code>&lt;textarea&gt;</code> que el usuario ya haya editado. Estos enlaces solo admiten una variable: con más de una, la inicialización falla (ver <i>Fallos de inicialización</i>).</p>
 <pre><code>&lt;!-- Input de texto --&gt;
 &lt;input type="text" value="{{miVariable}}"&gt;
 
@@ -146,35 +176,68 @@ state.miVariable = 'Hola Mundo';
 &lt;!-- Textarea --&gt;
 &lt;textarea&gt;{{miVariable}}&lt;/textarea&gt;
 </code><button aria-live="polite" class="copy">Copiar</button></pre>
-				<h3>4. Control del Ciclo de Vida</h3>
-				<p>La instancia reactiva expone métodos protegidos en el estado para activar, pausar o apagar la ejecución del motor.</p>
+				<h3>4. Ciclo de vida</h3>
+				<p>El estado expone métodos para activar, pausar o apagar la instancia.</p>
 				<ul>
-					<li><code>state.on()</code>: Activa la reactividad, compila las plantillas del DOM por primera vez de forma síncrona e inicializa los observadores. Se ejecuta automáticamente en el arranque (puede llamarse manualmente después de un <code>stop()</code> para reanudar).</li>
-					<li><code>state.stop()</code>: Pausa la reactividad deteniendo el flujo de eventos e interrumpiendo temporalmente el observador de mutaciones, sin perder los registros internos ni los datos del estado.</li>
-					<li><code>state.off()</code>: Apaga y desmantela completamente la reactividad, deteniendo el motor, eliminando registros y liberando la memoria asignada.</li>
+					<li><code>state.on()</code>: compila las plantillas del nodo raíz, renderiza todas las variables y activa los listeners <code>input</code>/<code>change</code> y el <code>MutationObserver</code>. Se ejecuta automáticamente al crear la instancia; puede llamarse de nuevo después de <code>stop()</code> para reanudar.</li>
+					<li><code>state.stop()</code>: retira los listeners <code>input</code>/<code>change</code>, desconecta el <code>MutationObserver</code> y descarta las actualizaciones pendientes, sin perder los registros ni los datos del estado. Las asignaciones posteriores al estado siguen actualizando los nodos ya registrados.</li>
+					<li><code>state.off()</code>: llama a <code>stop()</code> y después elimina los registros de nodos y variables. Los valores del estado se conservan. Como las plantillas ya renderizadas no conservan sus delimitadores, <code>state.on()</code> no recupera esos enlaces.</li>
 				</ul>
-				<h3>5. Sistema de Eventos (Hooks)</h3>
-				<p>Permite suscribir callbacks a eventos específicos del ciclo de vida de las variables y del motor reactivo mediante el método de registro <code>state.event()</code>. Los callbacks se ejecutan en un contexto aislado y protegido contra errores.</p>
+				<h3>5. Eventos del ciclo de vida</h3>
+				<p>Permite suscribir callbacks a eventos del ciclo de vida de las variables y de la instancia mediante <code>state.event()</code>. Cada evento admite un único callback: registrar otro reemplaza el anterior. Si un callback lanza un error, se relanza con el nombre del evento en el mensaje.</p>
 				<p><b>Sintaxis:</b></p>
-<pre><code>state.event('createdVariable', function(name) {
+<pre><code>state.event('createdVariable', function(name){
 	console.log('Variable registrada:', name);
 });</code><button aria-live="polite" class="copy">Copiar</button></pre>
-				<p><b>Eventos Soportados:</b></p>
+				<p><b>Eventos soportados:</b></p>
 				<ul>
-					<li><code>createdVariable</code>: Se dispara cuando una variable se registra en el DOM por primera vez. Recibe como argumento el nombre de la variable (<code>String</code>).</li>
-					<li><code>deletedVariable</code>: Se dispara cuando una variable pierde todas sus vinculaciones con nodos del DOM. Recibe el nombre de la variable (<code>String</code>).</li>
-					<li><code>beforeMutateVariable</code>: Se dispara antes de actualizar el DOM. Recibe la variable (<code>String</code>), el valor nuevo, el elemento contenedor nativo del DOM (<code>Element</code>), el nodo físico exacto que muta y el nombre de la propiedad o atributo.</li>
-					<li><code>afterMutateVariable</code>: Se dispara tras actualizar el DOM. Recibe los mismos argumentos que el evento <i>before</i>.</li>
-					<li><code>reactiveOn</code>: Se ejecuta cuando se activa el motor de reactividad.</li>
-					<li><code>reactiveStop</code>: Se ejecuta cuando se pausa el motor.</li>
-					<li><code>reactiveOff</code>: Se ejecuta cuando se apaga y desmonta el motor.</li>
+					<li><code>createdVariable</code>: se dispara cuando aparece en el DOM una variable que aún no existe en el estado. Recibe el nombre de la variable (<code>String</code>; en las expresiones, su clave virtual).</li>
+					<li><code>deletedVariable</code>: se dispara cuando una variable pierde todas sus vinculaciones con nodos del DOM. Recibe el nombre de la variable (<code>String</code>); su valor se conserva en el estado.</li>
+					<li><code>beforeMutateVariable</code>: se dispara antes de actualizar un nodo del DOM. Recibe la variable (<code>String</code>), el valor que se va a escribir (el texto completo resultante del nodo o atributo; en los atributos booleanos, <code>true</code> o <code>false</code>), el elemento contenedor (<code>Element</code>), el nodo que cambia (texto o atributo) y el nombre del atributo (<code>'textContent'</code> en los nodos de texto).</li>
+					<li><code>afterMutateVariable</code>: se dispara tras actualizar el nodo. Recibe los mismos argumentos que <code>beforeMutateVariable</code>.</li>
+					<li><code>reactiveOn</code>: se dispara al llamar a <code>state.on()</code>. No se dispara en el arranque inicial, porque en ese momento aún no hay callbacks registrados.</li>
+					<li><code>reactiveStop</code>: se dispara al llamar a <code>state.stop()</code>, y también a <code>state.off()</code>.</li>
+					<li><code>reactiveOff</code>: se dispara al llamar a <code>state.off()</code>, después de <code>reactiveStop</code>.</li>
 				</ul>
-				<h3>6. Características Técnicas</h3>
+				<h3 id="sanitization">6. Sanitización</h3>
+				<p>Cada vez que se renderiza un atributo interpolado (excepto los booleanos), el texto resultante pasa por <code>_reactive.sanitize(value, ctx)</code> antes de escribirse, donde <code>ctx</code> es <code>{ type: 'attribute', name, element, variable }</code>. La función retorna el valor que finalmente se escribe (también el que reciben los eventos <code>beforeMutateVariable</code>/<code>afterMutateVariable</code>). Los nodos de texto no pasan por ella.</p>
+				<p><b>Qué se filtra por defecto:</b></p>
+				<ul>
+					<li>En atributos de URL (<code>href</code>, <code>src</code>, <code>action</code>, <code>formaction</code>, <code>xlink:href</code>, <code>poster</code>, <code>cite</code>, <code>background</code>), los esquemas <code>javascript:</code> y <code>vbscript:</code> se neutralizan: se escribe <code>''</code> y se emite un <code>console.warn</code>.</li>
+					<li><code>data:</code> solo se permite en <code>src</code> y <code>poster</code>, y únicamente para <code>data:image/</code>, <code>data:video/</code> o <code>data:audio/</code>.</li>
+					<li>Antes de comparar el esquema se eliminan espacios y caracteres de control y se pasa a minúsculas, ya que los navegadores aceptan variantes como <code>java\tscript:</code>.</li>
+					<li>Se bloquea cualquier atributo interpolado cuyo nombre empiece por <code>on</code> (sin distinguir mayúsculas), sea o no un manejador de eventos, como <code>onclick="{{accion}}"</code>: se escribe <code>''</code> y se emite un <code>console.warn</code>. Solo se exceptúan los atributos que coinciden con una propiedad booleana del elemento (los elementos nativos no tienen ninguna que empiece por <code>on</code>; puede darse en elementos personalizados).</li>
+				</ul>
+				<p><b>Qué no se filtra, y por qué:</b> el texto (<code>textContent</code>, ya es seguro), <code>value</code> y <code>checked</code> (enlace bidireccional: alterarlos desincronizaría el estado), los atributos booleanos, <code>class</code>, <code>id</code>, <code>style</code>, <code>data-*</code> y <code>aria-*</code>, porque no ejecutan código. Los <i>sinks</i> HTML (<code>srcdoc</code>) pasan sin cambios: filtrar HTML de forma fiable requiere un parser completo, por lo que se delega en una librería especializada.</p>
+				<p><b>Reemplazar o extender:</b> asigne su propia función a <code>_reactive.sanitize</code> (afecta a todas las instancias que no definan <code>sanitizer</code>), o use la opción <code>sanitizer</code> por instancia. Para conservar las reglas por defecto, guarde la original y llámela desde la nueva.</p>
+				<p>HTML:</p>
+<pre><code>&lt;div id="app"&gt;
+	&lt;a href="{{enlace}}"&gt;Enlace&lt;/a&gt;
+	&lt;iframe srcdoc="{{contenido}}"&gt;&lt;/iframe&gt;
+&lt;/div&gt;
+&lt;div id="panel"&gt;&lt;a href="{{destino}}"&gt;Contenido de confianza&lt;/a&gt;&lt;/div&gt;
+</code><button aria-live="polite" class="copy">Copiar</button></pre>
+				<p>JavaScript:</p>
+<pre><code>// Conectar DOMPurify para los sinks HTML, manteniendo las reglas por defecto
+var sanitizeDefault = _reactive.sanitize;
+
+_reactive.sanitize = function(value, ctx){
+	if(ctx.name === 'srcdoc'){ return DOMPurify.sanitize(String(value)); }
+	return sanitizeDefault(value, ctx);
+};
+
+var state = _reactive(document.getElementById('app')).state();
+state.enlace = 'java\tscript:alert(1)'; // Escribe '' y avisa en consola
+
+// Desactivar la sanitización en una instancia concreta (#panel está fuera de #app)
+var confiable = _reactive(document.getElementById('panel'), { sanitizer: false });
+</code><button aria-live="polite" class="copy">Copiar</button></pre>
+				<h3>7. Características técnicas</h3>
 				<div class="features">
-				<p><strong>Batching síncrono por microtareas:</strong> Agrupa múltiples actualizaciones consecutivas del estado en una sola tarea de microsegundo mediante promesas nativas, previniendo actualizaciones redundantes en el DOM.</p>
-				<p><strong>Compilación síncrona en un paso:</strong> El procesador auxiliar compila y extrae de forma limpia las variables recorriendo de manera única los índices impares del arreglo compilado, evitando dobles bucles de escaneo.</p>
-				<p><strong>MutationObserver dinámico con guardas:</strong> Monitorea en tiempo real adición, remoción o cambios estructurales del DOM, asociando reactividad a elementos nuevos y limpiando de forma segura los destruidos. La validación de conexión nativa (<code>.isConnected</code>) garantiza que los callbacks de eventos nunca operen sobre nodos huérfanos.</p>
-				<p><strong>Gestión defensiva de memoria:</strong> Utiliza estructuras <code>WeakMap</code> para almacenar datos de plantillas y registros de elementos, garantizando que los nodos removidos puedan ser procesados por el recolector de basura sin fugas de memoria.</p>
+				<p><strong>Actualización asíncrona por microtareas:</strong> las asignaciones al estado no actualizan el DOM de inmediato. Se agrupan y se aplican juntas en una microtarea (<code>Promise.resolve().then</code>), así que tras <code>state.x = 1</code> el DOM todavía no ha cambiado. Para leer el DOM actualizado, espere una microtarea (por ejemplo, <code>await Promise.resolve()</code> dentro de una función <code>async</code>). Asignar el mismo valor que ya tenía no genera actualización.</p>
+				<p><strong>Compilación inicial síncrona:</strong> al crear la instancia (o al llamar a <code>state.on()</code>), las plantillas se compilan y se renderizan en el mismo paso.</p>
+				<p><strong>MutationObserver:</strong> detecta nodos y atributos añadidos, eliminados o modificados dentro del nodo raíz, registra las plantillas nuevas y retira del registro los nodos eliminados. Los nodos añadidos después del arranque se registran, pero no se renderizan hasta el siguiente cambio de alguna de sus variables. Antes de actualizar un nodo se comprueba si sigue conectado (<code>.isConnected</code>); los nodos desconectados se retiran del registro en lugar de actualizarse.</p>
+				<p><strong>Memoria:</strong> usa <code>WeakMap</code> para asociar plantillas y registros a los nodos, de modo que los nodos retirados del registro pueden liberarse.</p>
 				</div>
 			</div>
 		</section>

@@ -72,7 +72,9 @@ For commercial licensing, please visit one of the following:
     _events = _e.instance('events'),
     _events_on = true,
     _events_library = verify_weakmap ? new WeakMap() : {},
-    _events_last_id = 0;
+    _events_last_id = 0,
+    _events_signals_ids = verify_weakmap ? new WeakMap() : null,
+    _events_signals_last_id = 0;
 
     _events.pause = function () { _events_on = false; };
     _events.resume = function () { _events_on = true; };
@@ -89,6 +91,11 @@ For commercial licensing, please visit one of the following:
         EventTarget: {
             on: _iteration_wrapper(_on),
             off: _iteration_wrapper(_off)
+        },
+        // NodeList / HTMLCollection: each method is applied to every node of the list
+        Nodes: {
+            on: _iteration_wrapper(_on),
+            off: _iteration_wrapper(_off)
         }
     });
 
@@ -97,9 +104,11 @@ For commercial licensing, please visit one of the following:
         Document: { ready: _custom_iteration_wrapper('Document', 'DOMContentLoaded') }
     });
 
+    // Wrappers return the dispatcher's result object ("this") so calls can be chained
     function _custom_iteration_wrapper(event_from, events) {
         return function (arg) {
-            return _iterate_elements(_on, event_from, [arg[0]], [events].concat(Array.prototype.slice.call(arguments, 1)));
+            _iterate_elements(_on, event_from, [arg[0]], [events].concat(Array.prototype.slice.call(arguments, 1)));
+            return this;
         }
     }
 
@@ -112,11 +121,18 @@ For commercial licensing, please visit one of the following:
             else if(types['Document']){ event_from = 'Document'; }
             else if(types['Window']){ event_from = 'Window'; }
 
-            return _iterate_elements(iteration_fn, event_from, (event_from === 'Nodes' ? arg[0] : [arg[0]]), Array.prototype.slice.call(arguments, 1));
+            _iterate_elements(iteration_fn, event_from, (event_from === 'Nodes' ? arg[0] : [arg[0]]), Array.prototype.slice.call(arguments, 1));
+            return this;
         }
     }
 
     function _iterate_elements(iteration_fn, event_from, elements, args) {
+        // A function without an event name would otherwise act as a manual trigger of every event
+        if(_is_function(args[0])){
+            console.warn('_events: an event name is required before the callback, e.g. .on("click", fn). Call ignored.');
+            return;
+        }
+
         var iterator = 0;
         var events_list = [];
         var have_event_names = args[0] && typeof args[0] === 'string';
@@ -130,12 +146,8 @@ For commercial licensing, please visit one of the following:
                 events_list[iterator] = events_list[iterator].replace(/^\.+/g, '.').replace(/\.+$/g, '').split(/\.+/);
 
                 events_list[iterator] = {
-                    name: events_list[iterator][0] ? events_list[iterator][0].replace(/^on/i, '').toLowerCase() : '',
+                    name: events_list[iterator][0] ? events_list[iterator][0].toLowerCase() : '',
                     id: events_list[iterator][1] ? events_list[iterator].slice(1).join('.') : ''
-                }
-
-                if(events_list[iterator].name === 'domcontentloaded'){
-                    events_list[iterator].name = 'DOMContentLoaded';
                 }
             }
         }
@@ -145,7 +157,11 @@ For commercial licensing, please visit one of the following:
         for(var element = 0; element < elements.length; element++){
             iterator = 0;
             do {
-                if(have_event_names){ args[2] = events_list[iterator++]; }
+                if(have_event_names){
+                    // A fresh event object per element: the name is resolved against each target and "mode" is set later.
+                    args[2] = { name: _event_name(events_list[iterator].name, elements[element]), id: events_list[iterator].id };
+                    iterator++;
+                }
                 iteration_fn.apply(elements[element], args);
             }
             while(iterator < events_list.length);
@@ -153,12 +169,25 @@ For commercial licensing, please visit one of the following:
         return this;
     }
 
+    // Event names that really start with "on" and must keep it
+    var _events_on_names = { online: true };
+
+    // The "on" prefix is removed ("onclick" -> "click", "onfocusin" -> "focusin"), except for real event
+    // names that start with "on": known ones ("online") or those whose handler property exists ("ononline").
+    function _event_name(name, target) {
+        if(name.length > 2 && name.indexOf('on') === 0 && !_events_on_names[name] && !(target && typeof target === 'object' && ('on' + name) in target)){
+            name = name.slice(2);
+        }
+
+        return name === 'domcontentloaded' ? 'DOMContentLoaded' : name;
+    }
+
     function _return_event_library(event_from, reference, mode) {
         if(!verify_weakmap){
             try {
                 if(!mode && isNaN(reference._e_events_id)){
                     reference._e_events_id = String(_events_last_id++);
-                    _events_library[reference._e_events_id] = {};
+                    _events_library[reference._e_events_id] = Object.create(null);
                 }
 
                 return _events_library[reference._e_events_id];
@@ -169,7 +198,7 @@ For commercial licensing, please visit one of the following:
         }
 
         if(!mode && !_events_library.has(reference)){
-            _events_library.set(reference, {});
+            _events_library.set(reference, Object.create(null));
         }
 
         return _events_library.get(reference);
@@ -184,33 +213,76 @@ For commercial licensing, please visit one of the following:
 
         data = (!_is_object(data) ? {} : data);
 
+        // An already aborted signal never adds the native listener; registering would leave a dead entry.
+        if(data.signal && data.signal.aborted){ return; }
+
         var _event_library = _return_event_library(event_from, this);
         if(!_event_library){ return; }
 
         if(!_is_object(_event_library[event.name])){
-            _event_library[event.name] = {};
+            _event_library[event.name] = Object.create(null);
         }
 
         event.mode = _event_mode(data);
 
-        if(!_is_function(_event_library[event.name][event.mode])){
-            _event_library[event.name][event.mode] = function (event_data) {
-                return _on_event.call(this, call_mode, event_from, { name: event.name, mode: event.mode, id: '' }, event_data, simple_object_copy({}, data));
+        // Each mode keeps its native listener and its namespace ids apart. Ids are stored in a prototype-less
+        // object (not as properties of the listener function) so names like "name" or "length" are valid ids.
+        var _event_mode_library = _event_library[event.name][event.mode];
+        if(!_is_object(_event_mode_library) || !_is_function(_event_mode_library.listener)){
+            _event_mode_library = _event_library[event.name][event.mode] = {
+                listener: function (event_data) {
+                    return _on_event.call(this, call_mode, event_from, { name: event.name, mode: event.mode, id: '' }, event_data, simple_object_copy({}, data));
+                },
+                ids: Object.create(null)
             };
 
-            this.addEventListener(event.name, _event_library[event.name][event.mode], data);
+            // "once" is handled by the library (the entry is removed after its callbacks run). Passing it to the
+            // browser would drop the native listener even when the callbacks were paused and did not run.
+            var _native_options = simple_object_copy({}, data);
+            delete _native_options.once;
+
+            this.addEventListener(event.name, _event_mode_library.listener, _native_options);
+
+            // The browser removes the native listener when the signal aborts; drop its entry too,
+            // so a later registration with a new signal adds a listener again.
+            if(data.signal && _is_function(data.signal.addEventListener)){
+                var _signal_name = event.name, _signal_mode = event.mode, _signal_mode_library = _event_mode_library;
+                data.signal.addEventListener('abort', function () {
+                    var _name_library = _event_library[_signal_name];
+                    if(!_name_library || _name_library[_signal_mode] !== _signal_mode_library){ return; }
+                    delete _name_library[_signal_mode];
+                    for(var _mode in _name_library){ return; }
+                    delete _event_library[_signal_name];
+                }, { once: true });
+            }
         }
 
-        if(!_is_object(_event_library[event.name][event.mode][event.id]) || _is_undefined(_event_library[event.name][event.mode][event.id].length)){
-           _event_library[event.name][event.mode][event.id] = [];
+        var _event_ids = _event_mode_library.ids;
+
+        if(!_is_object(_event_ids[event.id]) || _is_undefined(_event_ids[event.id].length)){
+           _event_ids[event.id] = [];
         }
 
-        if(data.overwrite === true){ _event_library[event.name][event.mode][event.id] = [fn]; }
-        else { _event_library[event.name][event.mode][event.id].push(fn); }
+        if(data.overwrite === true){ _event_ids[event.id] = [fn]; }
+        else { _event_ids[event.id].push(fn); }
+    }
+
+    // Each AbortSignal gets its own mode (and native listener), so aborting one signal does not
+    // remove the callbacks registered with another signal for the same event.
+    function _signal_mode(signal) {
+        if(!_events_signals_ids || !signal || typeof signal !== 'object'){ return '_signal'; }
+
+        var id = _events_signals_ids.get(signal);
+        if(!id){
+            id = String(++_events_signals_last_id);
+            _events_signals_ids.set(signal, id);
+        }
+
+        return '_signal' + id;
     }
 
     function _event_mode(object) {
-        return ((object.once ? '_once' : '') + (object.capture ? '_capture' : '') + (object.passive ? '_passive' : '') + (object.signal ? '_signal' : '')) || 'default';
+        return ((object.once ? '_once' : '') + (object.capture ? '_capture' : '') + (object.passive ? '_passive' : '') + (object.signal ? _signal_mode(object.signal) : '')) || 'default';
     }
 
     function _on_event(call_mode, event_from, event, event_data, data) {
@@ -246,7 +318,7 @@ For commercial licensing, please visit one of the following:
                 }
             }
 
-            if(data.once === true){
+            if(data.once){
                 _off.call(this, true, event_from, { name: event.name, mode: event.mode, id: id }, data);
             }
         });
@@ -263,7 +335,7 @@ For commercial licensing, please visit one of the following:
 
             if(typeof data !== 'string'){
                 for(var key in data){
-                    if(!verify_own_property_fn.call(data, key) || key === 'pause' || key === 'resume' || key === 'overwrite'){
+                    if(!verify_own_property_fn.call(data, key) || key === 'pause' || key === 'resume' || key === 'overwrite' || key === 'execute'){
                         continue;
                     }
                     have_mode = true;
@@ -309,18 +381,18 @@ For commercial licensing, please visit one of the following:
                 var has_modes_left = false;
 
                 for(var mode in event_name_library[name]){
-                    var wrapper_fn = event_name_library[name][mode];
+                    var mode_library = event_name_library[name][mode];
                     var has_ids_left = false;
 
-                    for(var key in wrapper_fn){
-                        if(verify_own_property_fn.call(wrapper_fn, key) && _is_array(wrapper_fn[key]) && wrapper_fn[key].length > 0){
+                    for(var key in mode_library.ids){
+                        if(verify_own_property_fn.call(mode_library.ids, key) && _is_array(mode_library.ids[key]) && mode_library.ids[key].length > 0){
                             has_ids_left = true;
                             break;
                         }
                     }
 
                     if(!has_ids_left){
-                        this.removeEventListener(name, wrapper_fn, mode.indexOf('_capture') !== -1);
+                        this.removeEventListener(name, mode_library.listener, mode.indexOf('_capture') !== -1);
                         delete event_name_library[name][mode];
                     }
                     else {
@@ -343,10 +415,12 @@ For commercial licensing, please visit one of the following:
             for(var registered_event_mode in _event_library[registered_event_name]){
                 if(!verify_own_property_fn.call(_event_library[registered_event_name], registered_event_mode) || (event.mode && event.mode !== registered_event_mode)){ continue; }
 
-                for(var registered_event_id in _event_library[registered_event_name][registered_event_mode]){
-                    if(!verify_own_property_fn.call(_event_library[registered_event_name][registered_event_mode], registered_event_id) || (event.id && event.id !== registered_event_id)){ continue; }
+                var registered_event_ids = _event_library[registered_event_name][registered_event_mode].ids;
 
-                    event_id_fn.call(this, _event_library[registered_event_name][registered_event_mode], registered_event_id);
+                for(var registered_event_id in registered_event_ids){
+                    if(!verify_own_property_fn.call(registered_event_ids, registered_event_id) || (event.id && event.id !== registered_event_id)){ continue; }
+
+                    event_id_fn.call(this, registered_event_ids, registered_event_id);
                 }
 
                 if(event_mode_fn){ event_mode_fn.call(this, _event_library[registered_event_name], registered_event_mode); }

@@ -1,0 +1,13 @@
+# Files that must not be published as static assets by Wrangler.
+# Keep explicit names: hidden files such as extensions/components/components-origin/test/.css,
+# .html and .js are used by the Components documentation and must stay published.
+.git
+.gitignore
+.gitattributes
+.assetsignore
+.wrangler
+.dev.vars*
+.env*
+wrangler.jsonc
+README.md
+.claude

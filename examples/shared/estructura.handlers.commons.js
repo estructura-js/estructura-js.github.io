@@ -255,7 +255,7 @@
 
         if (event.loading) {
           element.data('data-loading', '');
-          _content = event.loading || event.message || 'Loading...'
+          _content = event.loading || event.message || 'Cargando…'
           this.success = _content;
         }
         else if (event.error) {

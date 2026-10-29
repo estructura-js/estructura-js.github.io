@@ -60,55 +60,80 @@
 </head>
 
 <body>
-<div class="docs-shell"><div class="docs-container">
-	<header class="center-y padding site-header">
-		<h1 class="extension center-y">
-			<img id="logo" src="../../estructura.logo.png" alt="Estructura, JavaScript Framework">
-			<span id="test">DOM test<b id="test_node"></b></span>
-		</h1>
+<div class="docs-shell">
+	<header class="site-header site-bar">
+		<div class="site-bar-inner">
+			<a class="site-brand" href="../../" aria-label="Estructura: inicio"><img class="site-brand-logo" src="../../estructura.logo.png" alt="Estructura"></a>
+			<nav class="site-links" aria-label="Sitio">
+				<a href="../../#get_started">Guía</a>
+				<a href="../../#extensions">Extensiones</a>
+				<a class="site-github" target="_blank" rel="noopener noreferrer" href="https://github.com/okzgn/estructura"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span>GitHub</span></a>
+				<span class="site-version" title="Versión del núcleo">v1.20.0</span>
+			</nav>
+		</div>
 	</header>
-
-	<nav class="margin-y docs-nav">
-		<section class="silver">
-			<h2 id="index" class="center-x">Menú</h2>
-			<div class="padding">
-				<ul class="lines center-y">
-					<li class="back"><a href="../../index.html#extensions">Atrás</a></li>
-					<li><a href="#description">Descripción</a></li>
-					<li><a href="#docs">Documentación</a></li>
-				</ul>
-			</div>
-		</section>
+<div class="docs-container">
+	<nav class="docs-nav docs-sidebar" aria-label="Extensiones">
+		<p class="docs-sidebar-title">Extensiones</p>
+		<ul>
+			<li><a href="../http/">HTTP</a></li>
+			<li><a href="./" aria-current="page">DOM</a></li>
+			<li><a href="../events/">Events</a></li>
+			<li><a href="../components/">Components</a></li>
+			<li><a href="../handlers/">Handlers</a></li>
+			<li><a href="../reactive/">Reactive</a></li>
+			<li><a href="../routing/">Routing</a></li>
+			<li><a href="../sqlite.frontend/">SQLite Frontend</a></li>
+		</ul>
 	</nav>
 
 	<main class="docs-main">
-		<h2 class="title">DOM</h2>
+		<h1 class="title">DOM</h1>
 		<section class="margin-y">
 			<h2 id="description">Descripción</h2>
 			<div class="padding">Manipula el DOM. Realiza consultas, obtiene y establece propiedades (incluyendo <code>style</code> y <code>dataset</code>) de forma unificada, mediante selectores CSS (<code>DOMQuery</code>), nodos únicos (<code>Node</code>) o listas de nodos (<code>Nodes</code>).</div>
-			<p class="padding-y">
-			    <b>Librería:</b> <a target="_blank" href="estructura.dom.js">estructura.dom.js</a>
-			</p>
-			<p class="padding-y">
-				<b>Compatibilidad:</b> <a target="_blank" href="https://okzgn.com/articles/why-not-build-frontend-frameworks-on-raw-html-css-or-js/#dom--events---templating">ES5+</a>
-			</p>
-
-			<div class="padding-y">
-				<b>Importación:</b><pre><code>&lt;!-- CDN: Estructura / DOM --&gt;
+			<div class="docs-meta">
+				<p class="padding-y docs-meta-item">
+				    <b>Librería:</b> <a target="_blank" href="estructura.dom.js">estructura.dom.js</a>
+				</p>
+				<p class="padding-y docs-meta-item">
+					<b>Compatibilidad:</b> <a target="_blank" href="https://okzgn.com/articles/why-not-build-frontend-frameworks-on-raw-html-css-or-js/#steps-to-bypass-between-points-1-and-2-dom-events-templating">ES5+</a>
+				</p>
+				<p class="padding-y docs-meta-item">
+					<b>Estado:</b> RC2
+				</p>
+				<p class="padding-y docs-meta-item">
+					<b>Licencia:</b> <a target="_blank" href="../LICENSE">AGPL v3</a>
+				</p>
+			</div>
+<div class="padding-y">
+				<b>Importación:</b><pre><code>&lt;!-- EXTENSIÓN: Estructura / DOM --&gt;
 &lt;script src="https://estructura.okzgn.com/extensions/dom/estructura.dom.js"&gt;&lt;/script&gt;</code><button aria-live="polite" class="copy">Copiar</button></pre>
+			</div>
+		</section>
+
+		<section class="margin-y">
+			<h2 id="demo">Demo en vivo</h2>
+			<div class="padding">
+				<p>Haga clic, doble clic o clic derecho en cualquier elemento de la página. La demo lee el color y el fondo del elemento con <code>.style()</code>, los copia en el recuadro siguiente y muestra el tipo de evento y la etiqueta del elemento.</p>
+				<p class="docs-demo"><span id="test">Último evento:<b id="test_node"> ninguno</b></span></p>
 			</div>
 		</section>
 
 		<section class="margin-y">
 			<h2 id="docs">Documentación</h2>
 			<div class="padding">
-				<h3>1. Uso Básico</h3>
-				<p>Seleccione elementos del DOM mediante selectores <code>String</code> CSS con <code>&gt;</code> al inicio (<code>DOMQuery</code>), y objetos <code>Node</code> o <code>NodeList</code>. <b>El prefijo <code>&gt;</code></b> al inicio de la cadena indica a la librería que debe interpretar el texto como un selector CSS para realizar una búsqueda en el DOM (<code>DOMQuery</code>).</p>
+				<h3>1. Uso básico</h3>
+				<p>Seleccione elementos del DOM mediante un selector CSS en un <code>String</code> que empiece por <code>&gt;</code> (<code>DOMQuery</code>), un nodo (<code>Node</code>) o una lista de nodos (<code>NodeList</code> o <code>HTMLCollection</code>). El prefijo <code>&gt;</code> indica a la librería que el texto es un selector CSS con el que debe buscar en el documento. La búsqueda se repite en cada llamada a un método, así que refleja el estado actual del documento.</p>
+				<ul>
+					<li>Un <code>String</code> sin <code>&gt;</code>, <code>null</code>, <code>document</code>, <code>window</code> o un array no son objetivos válidos: el resultado no tiene métodos y llamar a uno lanza un <code>TypeError</code>.</li>
+					<li>Al pasar un nodo directamente, se reconoce cualquier elemento (HTML, SVG como <code>&lt;path&gt;</code>, elementos personalizados…) y los nodos de texto y comentario.</li>
+				</ul>
 <pre><code>// Seleccionar elementos y aplicar cambios
 _dom('> .mi-clase').set('id', 'nuevo-id');
 _dom('> div').style('backgroundColor', 'red');
 
-// Obtener valores
+// Obtener valores (un array, con un valor por elemento)
 var ids = _dom('> #mi_elemento_con_id').get('id');
 
 // Con Node
@@ -117,36 +142,69 @@ _dom(document.body).each(function(element, index){ console.log('Body:', element)
 // Con Nodes
 var classes = _dom(document.getElementsByClassName('miClase')).get('className');
 </code><button aria-live="polite" class="copy">Copiar</button></pre>
-				<h3>2. Métodos Principales</h3>
-				<h4><code>.each(callback)</code>:</h4>
-				<p>Itera sobre cada elemento seleccionado del DOM.</p>
+				<h3>2. Métodos principales</h3>
+				<p><b>Encadenamiento:</b> <code>.each()</code> y las escrituras (<code>.set()</code>, y <code>.style()</code>/<code>.data()</code> cuando reciben <code>value</code>) retornan el mismo objeto, por lo que pueden encadenarse. Las lecturas (<code>.get()</code>, y <code>.style()</code>/<code>.data()</code> sin <code>value</code>) retornan un array (<code>Array</code>) con un valor por elemento. <code>.set()</code> sin <code>value</code> (o con <code>undefined</code>) también se comporta como una lectura y retorna un array.</p>
+<pre><code>_dom('> .caja')
+	.set('title', 'Caja')
+	.style('color', 'blue')
+	.data('estado', 'activa')
+	.each(function(element, index){ console.log(index, element); });
+</code><button aria-live="polite" class="copy">Copiar</button></pre>
+				<h4><code>.each(callback)</code></h4>
+				<p>Itera sobre cada elemento seleccionado del DOM. El callback recibe el elemento y su índice. Retorna el mismo objeto para encadenar.</p>
 <pre><code>_dom('> li').each(function(element, index){
 	console.log('Elemento ' + index + ':', element);
 });</code><button aria-live="polite" class="copy">Copiar</button></pre>
-				<h4><code>.get(property)</code>:</h4>
-				<p>Obtiene el valor de una propiedad de todos los elementos del DOM seleccionados. Soporta acceso anidado mediante puntos. Retorna un arreglo (<code>Array</code>) con los resultados.</p>
-<pre><code>var valor = _dom('> input').get('value');
-var clase = _dom('> div').get('className');
-var estilo = _dom('> main').get('style.color');
+				<h4><code>.get(property)</code></h4>
+				<p>Obtiene el valor de una propiedad de todos los elementos del DOM seleccionados. Soporta acceso anidado mediante puntos. Retorna un array (<code>Array</code>) con los resultados. Las rutas <code>style.*</code> siguen la misma regla de lectura que <code>.style()</code>.</p>
+<pre><code>var valores = _dom('> input').get('value'); // Un valor por cada input
+var primerValor = valores[0];
+var clases = _dom('> div').get('className');
+var estilos = _dom('> main').get('style.color');
 </code><button aria-live="polite" class="copy">Copiar</button></pre>
-				<h4><code>.set(property, value)</code>:</h4>
-				<p>Establece el valor de una propiedad a todos los elementos del DOM seleccionados. Soporta acceso anidado mediante puntos.</p>
+				<h4><code>.set(property, value)</code></h4>
+				<p>Establece el valor de una propiedad en todos los elementos del DOM seleccionados. Soporta acceso anidado mediante puntos. El valor pasa antes por <code>_dom.sanitize</code> (ver <a href="#sanitization">Sanitización</a>). Retorna el mismo objeto para encadenar.</p>
 <pre><code>_dom('> input').set('value', 'Hola Mundo');
 _dom('> body').set('style.background', 'yellow');
 </code><button aria-live="polite" class="copy">Copiar</button></pre>
-				<h4><code>.style(property, value)</code>:</h4>
-				<p>Manipula estilos CSS. Si se omite el argumento <code>value</code>, retorna el estilo actual del elemento. Los valores se aplican como estilos <i>inline</i>. Retorna un arreglo (<code>Array</code>) con los resultados. Soporta tanto nombres de propiedades en formato camelCase (ej. <code>backgroundColor</code>) como kebab-case (ej. <code>background-color</code>).</p>
+				<h4><code>.style(property, value)</code></h4>
+				<p>Manipula estilos CSS. Con <code>value</code>, aplica el valor como estilo <i>inline</i> y retorna el mismo objeto para encadenar. Sin <code>value</code>, retorna un array (<code>Array</code>) con el estilo <i>inline</i> de cada elemento; si el estilo <i>inline</i> está vacío, se usa el valor computado (<code>getComputedStyle</code>). Acepta nombres de propiedades en camelCase (ej. <code>backgroundColor</code>) y en kebab-case (ej. <code>background-color</code>). Las propiedades personalizadas de CSS (<code>--mi-variable</code>) no se admiten: use <code>style.setProperty()</code> y <code>getPropertyValue()</code> dentro de <code>.each()</code>.</p>
 <pre><code>_dom('> .caja').style('color', 'blue');
-var color = _dom('> .caja').style('color'); // Retorna el valor computado</code><button aria-live="polite" class="copy">Copiar</button></pre>
-				<h4><code>.data(property, value)</code>:</h4>
-				<p>Manipula el <code>dataset</code>. Si se omite el argumento <code>value</code>, retorna la propiedad del elemento. Permite leer y escribir propiedades del <code>dataset</code> usando opcionalmente el prefijo <code>data-</code> y gestionando la conversión de formato de guiones a mayúsculas de manera automática (<code>camelCase</code>). Retorna un arreglo (<code>Array</code>) con los resultados.</p>
+var colores = _dom('> .caja').style('color'); // Array: estilo inline o, si está vacío, el computado</code><button aria-live="polite" class="copy">Copiar</button></pre>
+				<h4><code>.data(property, value)</code></h4>
+				<p>Manipula el <code>dataset</code>. Permite leer y escribir propiedades del <code>dataset</code> con o sin el prefijo <code>data-</code>; los nombres con guiones se convierten automáticamente a camelCase. Con <code>value</code>, escribe (el valor se guarda como texto, igual que en <code>dataset</code>) y retorna el mismo objeto para encadenar. Sin <code>value</code>, retorna un array (<code>Array</code>) con el valor de cada elemento.</p>
 <pre><code>_dom('> div').data('user-id', '456');
-var id = _dom('> div').data('user-id'); // Retorna el valor</code><button aria-live="polite" class="copy">Copiar</button></pre>
-				<h3>3. Características Técnicas</h3>
+var ids = _dom('> div').data('user-id'); // Array con el valor de cada div</code><button aria-live="polite" class="copy">Copiar</button></pre>
+				<h3 id="sanitization">3. Sanitización</h3>
+				<p>Toda escritura con <code>.set()</code> pasa por la función <code>_dom.sanitize(value, ctx)</code> antes de asignarse, donde <code>ctx</code> es <code>{ type: 'property', name, element }</code> y <code>name</code> es la clave final de la ruta. La función retorna el valor que finalmente se escribe. Las escrituras con <code>.style()</code>/<code>.data()</code> (o rutas <code>style.*</code>/<code>dataset.*</code>) no pasan por ella.</p>
+				<p><b>Qué se filtra por defecto:</b></p>
+				<ul>
+					<li>En propiedades de URL (<code>href</code>, <code>src</code>, <code>action</code>, <code>formaction</code>, <code>xlink:href</code>, <code>poster</code>, <code>cite</code>, <code>background</code>), los esquemas <code>javascript:</code> y <code>vbscript:</code> se neutralizan: se escribe <code>''</code> y se emite un <code>console.warn</code>.</li>
+					<li><code>data:</code> solo se permite en <code>src</code> y <code>poster</code>, y únicamente para <code>data:image/</code>, <code>data:video/</code> o <code>data:audio/</code>.</li>
+					<li>Antes de comparar el esquema se eliminan espacios y caracteres de control y se pasa a minúsculas, ya que los navegadores aceptan variantes como <code>java\tscript:</code>.</li>
+				</ul>
+				<p><b>Qué no se filtra, y por qué:</b> <code>textContent</code> (ya es seguro), <code>value</code> y <code>checked</code>, atributos booleanos, <code>className</code>, <code>id</code>, <code>style.*</code>, <code>dataset.*</code> y <code>aria-*</code>, porque no ejecutan código. Los <i>sinks</i> HTML (<code>innerHTML</code>, <code>outerHTML</code>, <code>srcdoc</code>) pasan sin cambios: filtrar HTML de forma fiable requiere un parser completo, por lo que se delega en una librería especializada.</p>
+				<p><b>Reemplazar o extender:</b> asigne su propia función a <code>_dom.sanitize</code>. Para conservar las reglas por defecto, guarde la original y llámela desde la nueva. Asignar una función que retorne <code>value</code> sin cambios desactiva el filtro.</p>
+<pre><code>// Conectar DOMPurify (cargado previamente en la página) para los sinks HTML,
+// manteniendo las reglas por defecto
+var sanitizeDefault = _dom.sanitize;
+var htmlSinks = { innerHTML: true, outerHTML: true, srcdoc: true };
+
+_dom.sanitize = function(value, ctx){
+	if(htmlSinks[ctx.name]){ return DOMPurify.sanitize(String(value)); }
+	return sanitizeDefault(value, ctx);
+};
+
+var htmlDelUsuario = '&lt;img src="x" onerror="alert(1)"&gt;';
+_dom('> #contenido').set('innerHTML', htmlDelUsuario); // Escribe la imagen sin onerror
+_dom('> a').set('href', 'javascript:alert(1)'); // Escribe '' y avisa en consola
+</code><button aria-live="polite" class="copy">Copiar</button></pre>
+				<h3>4. Características técnicas</h3>
 				<div class="features">
-				<p><strong>Lazy Computed Style:</strong> Optimiza el rendimiento evitando llamadas a <code>getComputedStyle</code> retornando como primera opción el valor del estilo <i>inline</i>.</p>
-				<p><strong>Sanitización Inteligente:</strong> Limpia automáticamente espacios y puntos redundantes en las rutas de propiedades.</p>
-				<p><strong>Gestión de Errores:</strong> Proporciona mensajes de error claros al intentar acceder a propiedades inexistentes o selectores/rutas inválidos.</p>
+				<p><strong>Estilo computado solo si hace falta:</strong> al leer un estilo, se retorna primero el valor <i>inline</i> y solo se llama a <code>getComputedStyle</code> cuando este está vacío.</p>
+				<p><strong>Normalización de rutas:</strong> se eliminan todos los espacios de la ruta, y los puntos al inicio o al final (<code>' style.color. '</code> equivale a <code>'style.color'</code>).</p>
+				<p><strong>Rutas inexistentes:</strong> si un tramo intermedio de la ruta no existe, la lectura devuelve <code>undefined</code> para ese elemento y la escritura no hace nada.</p>
+				<p><strong>Errores:</strong> no llegan a quien llama como excepción. El núcleo de Estructura los captura y los muestra en la consola con hasta un segundo de retraso, y el método retorna el objeto de métodos en lugar de un array. Ocurren con una propiedad vacía o que no es un <code>String</code>, con un selector CSS no válido, con una ruta <code>style</code>/<code>dataset</code> que no tiene exactamente un nivel más (<code>'style.color'</code> es válida; <code>'style'</code> y <code>'style.a.b'</code> no) y cuando el callback de <code>.each()</code> lanza un error, lo que además detiene la iteración.</p>
 				</div>
 			</div>
 		</section>
