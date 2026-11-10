@@ -375,7 +375,7 @@ button.copy.is-copied::after {
 }
 .site-hero::before {
   inset: -2rem -20% 0;
-  background: radial-gradient(closest-side, var(--docs-accent-soft), transparent);
+  background: radial-gradient(closest-side, var(--docs-glow), transparent);
 }
 .site-hero::after {
   inset: calc(var(--docs-space-3) * -1) -50vw 0;
@@ -390,6 +390,8 @@ button.copy.is-copied::after {
 }
 .site-tagline {
   max-width: 34rem; margin-inline: auto;
+  /* Más aire respecto al logo y a las etiquetas de rasgos */
+  margin-block: var(--docs-space-3) var(--docs-space-2);
   color: var(--docs-muted); font-size: clamp(1.05rem, 0.95rem + 0.45vw, 1.3rem); line-height: 1.5;
   text-wrap: balance;
 }
@@ -410,23 +412,34 @@ button.copy.is-copied::after {
   content: ''; width: 0.4rem; height: 0.4rem; border-radius: 50%;
   background: var(--docs-accent);
 }
-/* Instalación en una línea, con copia directa */
+/* Instalación en una línea, con copia directa: tono secundario (mismo fondo que las pestañas) para no competir con "Empezar" */
 .site-install {
   display: flex; align-items: center; gap: var(--docs-space-2);
   max-width: 100%;
   margin-top: var(--docs-space-1);
-  padding: 0.3rem 0.3rem 0.3rem 1rem;
-  border: 1px solid var(--docs-line-strong); border-radius: var(--docs-radius-pill);
-  background: var(--docs-code-bg); color: var(--docs-code-ink);
-  box-shadow: var(--docs-shadow-s);
-  font-family: var(--docs-mono); font-size: 0.88rem;
+  padding: 0.25rem 0.25rem 0.25rem 1rem;
+  border: 1px solid var(--docs-line); border-radius: var(--docs-radius-pill);
+  background: var(--docs-chip); color: var(--docs-muted);
+  font-family: var(--docs-mono); font-size: 0.85rem;
 }
 .site-install code {
   background: transparent; box-shadow: none; padding: 0; color: inherit;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.site-install code::before { content: '$ '; color: #e0bf55; }
-.site-install button.copy { border-radius: var(--docs-radius-pill); flex: none; }
+.site-install code::before { content: '$ '; color: var(--docs-accent); }
+.site-install button.copy {
+  flex: none;
+  border-radius: var(--docs-radius-pill);
+  color: var(--docs-muted); border-color: transparent; opacity: 1;
+}
+.site-install button.copy:hover, .site-install button.copy:focus-visible {
+  color: var(--docs-accent-ink); background: var(--docs-card);
+  border-color: var(--docs-line-strong);
+}
+.site-install button.copy.is-copied, .site-install button.copy.is-copied:hover {
+  color: var(--docs-accent-ink); background: var(--docs-accent-soft);
+  border-color: var(--docs-accent);
+}
 /* Entrada escalonada de la portada */
 .site-hero > * { animation: docs-rise 0.6s var(--docs-ease) both; }
 .site-hero > :nth-child(2) { animation-delay: 60ms; }

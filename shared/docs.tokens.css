@@ -16,6 +16,8 @@
   --docs-code-bg: #1f1b12;
   --docs-code-ink: #fdf6e3;
   --docs-chip: #f3eee1;
+  /* Resplandor de la portada: siempre más claro que el papel (en claro, casi blanco cálido) */
+  --docs-glow: #fffefa;
 
   /* Avisos: nota (dorado) y advertencia (ámbar) */
   --docs-note-bg: #f8f1dc;
@@ -108,6 +110,7 @@
     --docs-line: #362f1f;
     --docs-line-strong: #4d4329;
     --docs-chip: #262114;
+    --docs-glow: var(--docs-accent-soft);
     --docs-code-bg: #0f0d08;
     --docs-code-ink: #fdf6e3;
     --docs-note-bg: #241f12;
