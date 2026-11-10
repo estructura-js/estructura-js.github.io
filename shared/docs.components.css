@@ -399,10 +399,12 @@ button.copy.is-copied::after {
   text-shadow:
     0 0 1px var(--docs-glow),
     0 0 2px var(--docs-glow),
-    0 0 4px var(--docs-glow),
-    0 0 6px var(--docs-glow),
-    0 0 10px var(--docs-glow),
-    0 0 16px var(--docs-glow);
+    0 0 3px var(--docs-glow),
+    0 0 5px var(--docs-glow),
+    0 0 8px var(--docs-glow),
+    0 0 12px var(--docs-glow),
+    0 0 18px var(--docs-glow),
+    0 0 26px var(--docs-glow);
 }
 .site-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--docs-space-2); margin-top: var(--docs-space-2); }
 /* Rasgos clave: fila de etiquetas bajo el lema */
