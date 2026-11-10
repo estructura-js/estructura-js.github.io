@@ -1,4 +1,4 @@
-/* shared/docs.js — JS exclusivamente compartido para documentación (abstracto, reutilizable, extensible). */
+/* shared/docs.js — JS shared exclusively by the documentation (abstract, reusable, extensible). */
 (function (global) {
   'use strict';
 
@@ -8,7 +8,7 @@
     return Array.prototype.slice.call((root || document).querySelectorAll(selector));
   }
 
-  /* Abstracto: toggle colapsable (preserva API: .collapsed-links, aria-controls, data-read-more/less, .collapsed/.entirely) */
+  /* Abstract: collapsible toggle (preserves API: .collapsed-links, aria-controls, data-read-more/less, .collapsed/.entirely) */
   Docs.Toggle = {
     SELECTOR: '.collapsed-links',
     COLLAPSED_CLASS: 'collapsed',
@@ -40,7 +40,7 @@
     }
   };
 
-  /* Abstracto: copiar snippet (preserva API: pre > code + button.copy, texto Copiar/Copiado) */
+  /* Abstract: copy snippet (preserves API: pre > code + button.copy, button text Copiar/Copiado) */
   Docs.Copy = {
     SELECTOR: 'pre, .site-install',
     DURATION: 1600,
@@ -82,8 +82,8 @@
     }
   };
 
-  /* Abstracto: listas de alternativas (ul.separated con un botón .collapsed-links + <pre> por opción)
-     convertidas en pestañas accesibles. Sin JS, la lista original sigue funcionando. */
+  /* Abstract: lists of alternatives (ul.separated with one .collapsed-links button + <pre> per option)
+     turned into accessible tabs. Without JS, the original list keeps working. */
   Docs.Tabs = {
     SELECTOR: 'ul.separated',
     init: function (root) {
@@ -145,7 +145,7 @@
         });
         if (focus) tabs[index].tab.focus();
       }
-      /* Teclado: flechas, Inicio y Fin recorren las pestañas (patrón ARIA de activación automática) */
+      /* Keyboard: arrow keys, Home and End move through the tabs (ARIA automatic-activation pattern) */
       list.addEventListener('keydown', function (ev) {
         var current = tabs.map(function (t) { return t.tab; }).indexOf(document.activeElement);
         if (current === -1) return;
@@ -159,8 +159,8 @@
     }
   };
 
-  /* Abstracto: estado de desplazamiento compartido — sombra de la barra superior, progreso de lectura,
-     botón "volver arriba" y logo de la barra oculto mientras se ve el logo grande de la portada (un único listener, agrupado por frame) */
+  /* Abstract: shared scroll state — top bar shadow, reading progress, "back to top" button,
+     and the bar logo hidden while the large home-page logo is visible (a single listener, batched per frame) */
   Docs.Scroll = {
     init: function () {
       var bar = document.querySelector('header.site-bar');
@@ -195,7 +195,7 @@
         var h = window.innerHeight || doc.clientHeight;
         var max = Math.max(1, doc.scrollHeight - h);
         if (bar) bar.classList.toggle('is-scrolled', y > 4);
-        /* En la portada el logo grande ya identifica el sitio: el de la barra aparece cuando aquel queda bajo la barra */
+        /* On the home page the large logo already identifies the site: the bar logo appears once the large one is under the bar */
         if (bar && heroLogo) bar.classList.toggle('is-hero', heroLogo.getBoundingClientRect().bottom > bar.offsetHeight);
         if (progress) progress.style.setProperty('--docs-progress', Math.min(1, Math.max(0, y / max)).toFixed(4));
         if (top) top.classList.toggle('is-visible', y > h * 1.2);
@@ -211,7 +211,7 @@
     }
   };
 
-  /* Abstracto: en las páginas de extensión, la barra superior marca "Extensiones" como sección actual */
+  /* Abstract: on extension pages, the top bar marks "Extensions" as the current section */
   Docs.SiteCurrent = {
     init: function () {
       if (!document.querySelector('.docs-sidebar')) return;
@@ -219,7 +219,7 @@
     }
   };
 
-  /* Abstracto: highlight diferido (una sola vez, extensible) */
+  /* Abstract: deferred highlighting (loaded once, extensible) */
   Docs.Highlight = {
     CSS: 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/styles/stackoverflow-dark.min.css',
     JS: 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/highlight.min.js',
@@ -235,14 +235,14 @@
       script.src = this.JS;
       script.onload = function () {
         try { if (global.hljs) global.hljs.highlightAll(); } catch (e) {}
-        /* Con el lenguaje ya detectado, se afinan las etiquetas de los bloques */
+        /* Once the language has been detected, refine the code block labels */
         Docs.CodeBars.label();
       };
       document.body.appendChild(script);
     }
   };
 
-  /* Abstracto: barra superior de cada bloque de código (lenguaje + botón Copiar existente) */
+  /* Abstract: top bar for each code block (language + the existing copy button) */
   Docs.CodeBars = {
     NAMES: { javascript: 'JavaScript', js: 'JavaScript', xml: 'HTML', html: 'HTML', css: 'CSS', json: 'JSON', bash: 'Shell', shell: 'Shell', sql: 'SQL', typescript: 'TypeScript' },
     init: function (root) {
@@ -262,7 +262,7 @@
       });
       this.label();
     },
-    /* Lenguaje detectado por highlight.js (clase language-*) o, si aún no está, una estimación por el contenido */
+    /* Language detected by highlight.js (language-* class) or, if not available yet, a guess based on the content */
     label: function () {
       var names = this.NAMES;
       domAll('pre .code-lang').forEach(function (lang) {
@@ -270,14 +270,14 @@
         if (!code) return;
         var match = /\blanguage-([\w-]+)/.exec(code.className);
         var key = match ? match[1].toLowerCase() : '';
-        /* La detección automática a veces elige variantes (php-template, arduino…): solo se muestran los lenguajes conocidos */
+        /* Auto-detection sometimes picks variants (php-template, arduino…): only known languages are shown */
         if (!names[key]) key = /^\s*</.test(code.textContent) ? 'html' : 'javascript';
         lang.textContent = names[key];
       });
     }
   };
 
-  /* Abstracto: ancla "#" junto a cada título con id (aparece al pasar el ratón o con el foco) */
+  /* Abstract: "#" anchor next to each heading with an id (shown on hover or focus) */
   Docs.Anchors = {
     init: function () {
       domAll('main h2[id], main h3[id], main h4[id]').forEach(function (h) {
@@ -285,7 +285,7 @@
         var a = document.createElement('a');
         a.className = 'docs-anchor';
         a.href = '#' + h.id;
-        /* Ancla interna: no debe ser interceptada por extensiones de enrutamiento */
+        /* Internal anchor: must not be intercepted by routing extensions */
         a.setAttribute('data-e-routing-excluded', '');
         a.setAttribute('aria-label', 'Enlace a esta sección');
         a.textContent = '#';
@@ -294,7 +294,7 @@
     }
   };
 
-  /* Abstracto: enlaces "anterior / siguiente" al final, según el orden de la barra lateral */
+  /* Abstract: "previous / next" links at the end, following the sidebar order */
   Docs.Pager = {
     init: function () {
       var main = document.querySelector('main');
@@ -327,8 +327,8 @@
     }
   };
 
-  /* Abstracto: fija como absolutas las rutas relativas de la navegación del sitio, para que sigan
-     funcionando si la página cambia su URL con la API History (p. ej., la demo de Routing) */
+  /* Abstract: makes the site navigation's relative paths absolute, so they keep working
+     if the page changes its URL through the History API (e.g., the Routing demo) */
   Docs.Links = {
     init: function () {
       domAll('.site-bar a[href], .docs-sidebar a[href], .docs-pager a[href], .docs-footer a[href]').forEach(function (a) {
@@ -337,7 +337,7 @@
     }
   };
 
-  /* Demo legacy preservada (compatibilidad): _e print */
+  /* Legacy demo kept for compatibility: _e print */
   Docs.Demo = {
     init: function () {
       try {
@@ -356,7 +356,7 @@
     return s.replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 64) || 'seccion';
   }
 
-  /* Abstracto: skip-link (a11y, sin tocar texto) */
+  /* Abstract: skip link (a11y, without changing any text) */
   Docs.Skip = {
     init: function () {
       if (document.querySelector('.docs-skip')) return;
@@ -366,14 +366,14 @@
       var a = document.createElement('a');
       a.className = 'docs-skip';
       a.href = '#' + main.id;
-      /* Ancla interna: no debe ser interceptada por extensiones de enrutamiento */
+      /* Internal anchor: must not be intercepted by routing extensions */
       a.setAttribute('data-e-routing-excluded', '');
       a.textContent = 'Saltar al contenido';
       document.body.insertBefore(a, document.body.firstChild);
     }
   };
 
-  /* Abstracto: TOC jerárquico generado desde h2/h3/h4 (no añade/quita texto doc) */
+  /* Abstract: hierarchical TOC generated from h2/h3/h4 (does not add or remove documentation text) */
   Docs.TOC = {
     SELECTOR: 'main.docs-main, main',
     LEVELS: { H2: 2, H3: 3, H4: 4 },
@@ -415,7 +415,7 @@
       toc.appendChild(summary);
       toc.appendChild(this.render(tree.children));
 
-      /* Desktop: sidebar abierto. Móvil/tablet: bloque colapsable */
+      /* Desktop: open sidebar. Mobile/tablet: collapsible block */
       var mq = window.matchMedia ? window.matchMedia('(min-width: 1280px)') : null;
       var sync = function () { toc.open = mq ? mq.matches : true; };
       sync();
@@ -423,8 +423,8 @@
         if (mq.addEventListener) mq.addEventListener('change', sync);
         else if (mq.addListener) mq.addListener(sync);
       }
-      /* Móvil/tablet: al elegir una sección, el índice se pliega sin animación antes del salto,
-         para que el desplazamiento llegue al título correcto */
+      /* Mobile/tablet: when a section is chosen, the TOC collapses without animation before the jump,
+         so the scroll lands on the right heading */
       toc.addEventListener('click', function (ev) {
         if (!mq || mq.matches) return;
         var node = ev.target;
@@ -437,7 +437,7 @@
       var body = document.createElement('div');
       body.className = 'docs-body';
       main.parentNode.insertBefore(body, main);
-      /* Tres columnas: navegación de extensiones (si existe), contenido e índice de la página */
+      /* Three columns: extensions navigation (if present), content, and the page TOC */
       var sidebar = document.querySelector('.docs-sidebar');
       if (sidebar) { body.appendChild(sidebar); body.className += ' has-sidebar'; }
       body.appendChild(main);
@@ -450,7 +450,7 @@
         li.setAttribute('data-level', node.level);
         var a = document.createElement('a');
         a.href = '#' + node.id;
-        /* Ancla interna: no debe ser interceptada por extensiones de enrutamiento */
+        /* Internal anchor: must not be intercepted by routing extensions */
         a.setAttribute('data-e-routing-excluded', '');
         a.textContent = node.text;
         li.appendChild(a);
@@ -461,7 +461,7 @@
     }
   };
 
-  /* Abstracto: scrollspy único para nav existente + TOC (solo aria-current, sin cambiar texto) */
+  /* Abstract: single scrollspy for the existing nav + TOC (aria-current only, without changing text) */
   Docs.Nav = {
     init: function () {
       var links = document.querySelectorAll('nav a[href^="#"], .docs-toc a[href^="#"]');
@@ -476,7 +476,7 @@
         ids.push(id);
       });
       if (!ids.length) return;
-      /* Orden documental: permite elegir "el último encabezado que pasó la línea" */
+      /* Document order: lets us pick "the last heading that crossed the line" */
       ids.sort(function (a, b) {
         var ea = document.getElementById(a), eb = document.getElementById(b);
         return (ea.compareDocumentPosition(eb) & 4) ? -1 : 1;
@@ -504,7 +504,7 @@
         if (el.getBoundingClientRect().top <= line) current = ids[i];
         else break;
       }
-      /* Al final del documento, el último ancla siempre queda activa */
+      /* At the end of the document, the last anchor always stays active */
       var doc = document.documentElement;
       if ((window.innerHeight + (window.pageYOffset || doc.scrollTop)) >= (doc.scrollHeight - 2)) {
         current = ids[ids.length - 1];
@@ -516,7 +516,7 @@
       var ticking = false;
       var settleTimer = null;
       var onScroll = function () {
-        /* Tras un clic, el ancla queda activa; el primer scroll real retoma el spy */
+        /* After a click, the anchor stays active; the first real scroll resumes the spy */
         if (self.locked === 'settled') self.locked = false;
         if (self.locked) {
           if (settleTimer) window.clearTimeout(settleTimer);
@@ -541,7 +541,7 @@
       window.addEventListener('wheel', unlock, { passive: true });
       window.addEventListener('touchstart', unlock, { passive: true });
       window.addEventListener('keydown', unlock);
-      /* Clic en un ancla: estado inmediato y persistente hasta el siguiente scroll */
+      /* Click on an anchor: immediate state that persists until the next scroll */
       document.addEventListener('click', function (ev) {
         var node = ev.target;
         while (node && node.nodeType === 1 && node.tagName !== 'A') node = node.parentNode;
@@ -556,7 +556,7 @@
     }
   };
 
-  /* Abstracto: en la barra de navegación desplazable (móvil), muestra la página actual */
+  /* Abstract: in the scrollable navigation bar (mobile), scrolls the current page into view */
   Docs.NavCurrent = {
     init: function () {
       var current = document.querySelector('.docs-nav a[aria-current="page"]');
