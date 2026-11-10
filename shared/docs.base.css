@@ -12,6 +12,8 @@ html {
   interpolate-size: allow-keywords;
   -webkit-text-size-adjust: 100%;
           text-size-adjust: 100%;
+  /* Sin la marca de toque de los navegadores móviles (se hereda): los controles ya muestran su propio estado al pulsar */
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -29,7 +31,6 @@ body {
 }
 
 /* Foco accesible: corrige outline:0 global del legacy sin romper diseño */
-:active { -webkit-tap-highlight-color: transparent; }
 :focus { outline: none; }
 :focus-visible {
   outline: 0.125rem solid var(--docs-accent-ink);

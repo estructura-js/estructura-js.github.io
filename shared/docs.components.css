@@ -374,11 +374,13 @@ button.copy.is-copied::after {
   pointer-events: none;
 }
 .site-hero::before {
-  inset: -2rem -20% 0;
+  /* Nunca más ancho que la ventana: en móvil, lo que sobresale ensancha la página aunque body lo recorte */
+  inset: -2rem max(-20%, 50% - 50vw) 0;
   background: radial-gradient(closest-side, var(--docs-glow), transparent);
 }
 .site-hero::after {
-  inset: calc(var(--docs-space-3) * -1) -50vw 0;
+  /* A sangre: de borde a borde de la ventana, sin sobresalir (la portada está centrada) */
+  inset: calc(var(--docs-space-3) * -1) calc(50% - 50vw) 0;
   background-image:
     linear-gradient(var(--docs-line) 1px, transparent 1px),
     linear-gradient(90deg, var(--docs-line) 1px, transparent 1px);
@@ -407,6 +409,11 @@ button.copy.is-copied::after {
     0 0 26px var(--docs-glow);
 }
 .site-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--docs-space-2); margin-top: var(--docs-space-2); }
+/* Pantallas muy estrechas: los dos botones no caben en fila; apilados comparten el mismo ancho */
+@media screen and (max-width: 359px) {
+  .site-actions { flex-direction: column; align-items: stretch; width: min(100%, 15rem); }
+  .site-actions .docs-button { justify-content: center; }
+}
 /* Rasgos clave: fila de etiquetas bajo el lema */
 .site-traits {
   display: flex; flex-wrap: wrap; justify-content: center; gap: var(--docs-space-2);
@@ -570,8 +577,11 @@ input[type="file"]#test { font-size: var(--docs-font-s); font-weight: 400; }
 .ext-card:hover .ext-card-title { color: var(--docs-accent-ink); }
 .ext-card:hover .ext-card-title::after { transform: translateX(4px); }
 .ext-card-desc { color: var(--docs-muted); font-size: 0.94rem; line-height: 1.55; }
-.ext-card-meta { display: flex; flex-wrap: wrap; gap: 0 0.5rem; color: var(--docs-muted); font-family: var(--docs-mono); font-size: 0.74rem; }
-.ext-card-meta span + span::before { content: '·'; margin-right: 0.5rem; color: var(--docs-line-strong); }
+/* Separadores "·" entre datos: cada uno vive en el hueco a la izquierda de su dato, así que el que
+   quedaría al inicio de una línea (al partirse la fila) cae fuera de la caja y se recorta */
+.ext-card-meta { display: flex; flex-wrap: wrap; gap: 0 1.1rem; overflow: hidden; color: var(--docs-muted); font-family: var(--docs-mono); font-size: 0.74rem; }
+.ext-card-meta span { position: relative; margin-left: -1.1rem; padding-left: 1.1rem; }
+.ext-card-meta span::before { content: '·'; position: absolute; left: 0.55rem; transform: translateX(-50%); color: var(--docs-line-strong); }
 .ext-card-actions {
   display: flex; flex-wrap: wrap; align-items: center; gap: var(--docs-space-2);
   margin-top: auto; padding-top: var(--docs-space-3);
