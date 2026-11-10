@@ -8,6 +8,10 @@
 html {
   scroll-behavior: smooth;
   color-scheme: light dark;
+  /* Permite animar alturas hasta "auto" (apertura de <details>) donde el navegador lo admite */
+  interpolate-size: allow-keywords;
+  -webkit-text-size-adjust: 100%;
+          text-size-adjust: 100%;
 }
 
 body {
@@ -42,8 +46,11 @@ a, summary, button {
   cursor: pointer;
   background: transparent;
   font: inherit;
-  transition: all var(--docs-transition);
+  transition-property: color, background-color, border-color, box-shadow, opacity, transform, text-decoration-color;
+  transition-duration: var(--docs-dur-2);
+  transition-timing-function: var(--docs-ease);
 }
+button { border: 0; }
 a:hover, summary:hover, button:hover,
 a:focus-visible, summary:focus-visible, button:focus-visible {
   color: var(--docs-accent-ink);
@@ -84,13 +91,22 @@ p code, li code, span code, h3 code, h4 code { display: inline; overflow-wrap: a
 }
 .docs-skip:focus-visible { top: var(--docs-space-2); }
 
+/* Aparición suave de bloques (portada, paneles de pestañas) */
+@keyframes docs-rise {
+  from { opacity: 0; transform: translateY(0.5rem); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes docs-fade { from { opacity: 0; } to { opacity: 1; } }
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::after, *::before { transition: none !important; animation: none !important; }
 }
 
 @media print {
-  .site-bar, .docs-nav, .docs-toc, .docs-pager, .docs-anchor, .code-bar, button.copy, .collapsed-links { display: none !important; }
+  .site-bar, .docs-nav, .docs-toc, .docs-pager, .docs-anchor, .code-bar, button.copy, .collapsed-links,
+  .docs-progress, .docs-top, .docs-tablist, .site-install button { display: none !important; }
+  .docs-tabpanel[hidden] { display: block !important; }
   .docs-shell { background: #fff; }
   .card { box-shadow: none; }
   .entirely.collapsed { display: block !important; }

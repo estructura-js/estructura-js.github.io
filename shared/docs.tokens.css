@@ -65,11 +65,22 @@
   --docs-radius-l: 1rem;
   --docs-border: 2px;
   --borders-default-width: var(--docs-border);
-  --docs-transition: 0.15s ease;
+  --docs-radius-pill: 999px;
+
+  /* Movimiento: curvas y duraciones únicas para todas las transiciones */
+  --docs-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --docs-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --docs-dur-1: 120ms;
+  --docs-dur-2: 200ms;
+  --docs-dur-3: 320ms;
+  --docs-transition: var(--docs-dur-2) var(--docs-ease);
 
   --docs-shadow-s: 0 1px 2px rgba(60, 48, 12, 0.06), 0 1px 1px rgba(60, 48, 12, 0.04);
   --docs-shadow-m: 0 2px 4px rgba(60, 48, 12, 0.05), 0 8px 24px rgba(60, 48, 12, 0.08);
   --docs-shadow-l: 0 4px 8px rgba(60, 48, 12, 0.06), 0 16px 40px rgba(60, 48, 12, 0.12);
+  /* Borde interior de los bloques de código (más visible en oscuro, donde el fondo se acerca al papel) */
+  --docs-code-edge: rgba(255, 255, 255, 0.06);
+  --docs-code-bar: rgba(255, 255, 255, 0.035);
 
   /* Maquetación: ancho total, columna de lectura, barra superior y columnas laterales */
   --docs-measure: 90rem;
@@ -107,6 +118,7 @@
     --docs-shadow-s: 0 1px 2px rgba(0, 0, 0, 0.4);
     --docs-shadow-m: 0 2px 4px rgba(0, 0, 0, 0.35), 0 8px 24px rgba(0, 0, 0, 0.35);
     --docs-shadow-l: 0 4px 8px rgba(0, 0, 0, 0.4), 0 16px 40px rgba(0, 0, 0, 0.45);
+    --docs-code-edge: rgba(224, 191, 85, 0.14);
     --text-color: var(--docs-ink);
     --bg-color: var(--docs-card);
   }

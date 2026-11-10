@@ -40,9 +40,10 @@
     }
   };
 
-  /* Abstracto: copiar snippet (preserva API: pre > code + button.copy, texto Copiar/Copiado 567ms) */
+  /* Abstracto: copiar snippet (preserva API: pre > code + button.copy, texto Copiar/Copiado) */
   Docs.Copy = {
-    SELECTOR: 'pre',
+    SELECTOR: 'pre, .site-install',
+    DURATION: 1600,
     init: function (root) {
       domAll(this.SELECTOR, root).forEach(function (pre) {
         if (pre.__docsCopyBound) return;
@@ -59,7 +60,12 @@
           function done() {
             if (!btn) return;
             btn.textContent = 'Copiado';
-            setTimeout(function () { btn.textContent = 'Copiar'; }, 567);
+            btn.classList.add('is-copied');
+            if (btn.__docsCopyTimer) clearTimeout(btn.__docsCopyTimer);
+            btn.__docsCopyTimer = setTimeout(function () {
+              btn.textContent = 'Copiar';
+              btn.classList.remove('is-copied');
+            }, Docs.Copy.DURATION);
           }
           if (navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(text).then(done, done);
@@ -73,6 +79,140 @@
           }
         });
       });
+    }
+  };
+
+  /* Abstracto: listas de alternativas (ul.separated con un botón .collapsed-links + <pre> por opción)
+     convertidas en pestañas accesibles. Sin JS, la lista original sigue funcionando. */
+  Docs.Tabs = {
+    SELECTOR: 'ul.separated',
+    init: function (root) {
+      domAll(this.SELECTOR, root).forEach(function (ul) {
+        var items = domAll(':scope > li', ul);
+        if (items.length < 2) return;
+        var options = [];
+        var valid = items.every(function (li) {
+          var btn = li.querySelector(':scope > .collapsed-links');
+          var pre = li.querySelector(':scope > pre');
+          if (!btn || !pre || !pre.id) return false;
+          options.push({ btn: btn, pre: pre });
+          return true;
+        });
+        if (!valid) return;
+        Docs.Tabs.build(ul, options);
+      });
+    },
+    label: function (btn) {
+      return String(btn.getAttribute('data-read-more') || btn.textContent).replace(/^\s*[+—–-]\s*/, '');
+    },
+    build: function (ul, options) {
+      var wrap = document.createElement('div');
+      wrap.className = 'docs-tabs';
+      var list = document.createElement('div');
+      list.className = 'docs-tablist';
+      list.setAttribute('role', 'tablist');
+      var prev = ul.previousElementSibling;
+      if (prev && /^(B|STRONG)$/.test(prev.tagName)) list.setAttribute('aria-label', prev.textContent.replace(/[:\s]+$/, ''));
+      wrap.appendChild(list);
+      var selected = 0;
+      options.forEach(function (o, i) { if (o.btn.getAttribute('aria-expanded') === 'true') selected = i; });
+      var tabs = options.map(function (o, i) {
+        var tab = document.createElement('button');
+        tab.type = 'button';
+        tab.className = 'docs-tab';
+        tab.id = o.pre.id + '-tab';
+        tab.setAttribute('role', 'tab');
+        tab.setAttribute('aria-controls', o.pre.id + '-panel');
+        tab.textContent = Docs.Tabs.label(o.btn);
+        list.appendChild(tab);
+        var panel = document.createElement('div');
+        panel.className = 'docs-tabpanel';
+        panel.id = o.pre.id + '-panel';
+        panel.setAttribute('role', 'tabpanel');
+        panel.setAttribute('aria-labelledby', tab.id);
+        o.pre.classList.remove('collapsed');
+        panel.appendChild(o.pre);
+        wrap.appendChild(panel);
+        tab.addEventListener('click', function () { select(i, false); });
+        return { tab: tab, panel: panel };
+      });
+      function select(index, focus) {
+        tabs.forEach(function (t, i) {
+          var on = i === index;
+          t.tab.setAttribute('aria-selected', on ? 'true' : 'false');
+          t.tab.tabIndex = on ? 0 : -1;
+          t.panel.hidden = !on;
+        });
+        if (focus) tabs[index].tab.focus();
+      }
+      /* Teclado: flechas, Inicio y Fin recorren las pestañas (patrón ARIA de activación automática) */
+      list.addEventListener('keydown', function (ev) {
+        var current = tabs.map(function (t) { return t.tab; }).indexOf(document.activeElement);
+        if (current === -1) return;
+        var next = { ArrowRight: current + 1, ArrowLeft: current - 1, Home: 0, End: tabs.length - 1 }[ev.key];
+        if (next === undefined) return;
+        ev.preventDefault();
+        select((next + tabs.length) % tabs.length, true);
+      });
+      select(selected, false);
+      ul.parentNode.replaceChild(wrap, ul);
+    }
+  };
+
+  /* Abstracto: estado de desplazamiento compartido — sombra de la barra superior, progreso de lectura
+     y botón "volver arriba" (un único listener, agrupado por frame) */
+  Docs.Scroll = {
+    init: function () {
+      var bar = document.querySelector('header.site-bar');
+      var doc = document.documentElement;
+      var progress = null, top = null;
+      if (bar && !bar.querySelector('.docs-progress')) {
+        progress = document.createElement('span');
+        progress.className = 'docs-progress';
+        progress.setAttribute('aria-hidden', 'true');
+        bar.appendChild(progress);
+      }
+      if (!document.querySelector('.docs-top')) {
+        top = document.createElement('a');
+        top.className = 'docs-top';
+        top.href = '#';
+        top.setAttribute('data-e-routing-excluded', '');
+        top.setAttribute('aria-label', 'Volver arriba');
+        top.title = 'Volver arriba';
+        top.addEventListener('click', function (ev) {
+          ev.preventDefault();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          var skip = document.querySelector('.site-brand');
+          if (skip && skip.focus) skip.focus({ preventScroll: true });
+        });
+        document.body.appendChild(top);
+      }
+      var ticking = false;
+      var update = function () {
+        ticking = false;
+        var y = window.pageYOffset || doc.scrollTop;
+        var h = window.innerHeight || doc.clientHeight;
+        var max = Math.max(1, doc.scrollHeight - h);
+        if (bar) bar.classList.toggle('is-scrolled', y > 4);
+        if (progress) progress.style.setProperty('--docs-progress', Math.min(1, Math.max(0, y / max)).toFixed(4));
+        if (top) top.classList.toggle('is-visible', y > h * 1.2);
+      };
+      var onScroll = function () {
+        if (ticking) return;
+        ticking = true;
+        (window.requestAnimationFrame || function (f) { window.setTimeout(f, 16); })(update);
+      };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll);
+      update();
+    }
+  };
+
+  /* Abstracto: en las páginas de extensión, la barra superior marca "Extensiones" como sección actual */
+  Docs.SiteCurrent = {
+    init: function () {
+      if (!document.querySelector('.docs-sidebar')) return;
+      domAll('.site-links a[href$="#extensions"]').forEach(function (a) { a.setAttribute('aria-current', 'true'); });
     }
   };
 
@@ -280,6 +420,16 @@
         if (mq.addEventListener) mq.addEventListener('change', sync);
         else if (mq.addListener) mq.addListener(sync);
       }
+      /* Móvil/tablet: al elegir una sección, el índice se pliega sin animación antes del salto,
+         para que el desplazamiento llegue al título correcto */
+      toc.addEventListener('click', function (ev) {
+        if (!mq || mq.matches) return;
+        var node = ev.target;
+        if (!node || !node.closest || !node.closest('a[href^="#"]')) return;
+        toc.classList.add('is-instant');
+        toc.open = false;
+        window.setTimeout(function () { toc.classList.remove('is-instant'); }, 50);
+      });
 
       var body = document.createElement('div');
       body.className = 'docs-body';
@@ -418,6 +568,7 @@
   Docs.init = function (root) {
     Docs.Demo.init();
     Docs.Highlight.init();
+    Docs.Tabs.init(root);
     Docs.Toggle.init(root);
     Docs.Copy.init(root);
     Docs.CodeBars.init(root);
@@ -426,8 +577,10 @@
     Docs.Anchors.init();
     Docs.Pager.init();
     Docs.Links.init();
+    Docs.SiteCurrent.init();
     Docs.Nav.init();
     Docs.NavCurrent.init();
+    Docs.Scroll.init();
   };
 
   function ready(fn) {

@@ -20,11 +20,17 @@
 }
 .docs-toc-title::-webkit-details-marker { display: none; }
 .docs-toc-title::after {
-  content: '▾'; font-size: 0.9em; line-height: 1;
+  content: ''; width: 0.45rem; height: 0.45rem; flex: none;
+  margin-right: 0.2rem;
+  border-right: 2px solid currentColor; border-bottom: 2px solid currentColor;
+  transform: translateY(-0.1rem) rotate(45deg);
   transition: transform var(--docs-transition);
 }
 .docs-toc[open] > .docs-toc-title { margin-bottom: var(--docs-space-2); }
-.docs-toc[open] > .docs-toc-title::after { transform: rotate(180deg); }
+.docs-toc[open] > .docs-toc-title::after { transform: translateY(0.1rem) rotate(-135deg); }
+
+/* Plegado instantáneo al navegar desde el índice (docs.js) */
+.docs-toc.is-instant::details-content { transition: none; }
 
 .docs-toc ol {
   list-style: none;
@@ -41,7 +47,7 @@
   /* Los títulos largos se parten en varias líneas en lugar de recortarse */
   overflow-wrap: anywhere;
 }
-.docs-toc a:hover { color: var(--docs-accent-ink); }
+.docs-toc a:hover { color: var(--docs-accent-ink); background: var(--docs-chip); text-decoration: none; }
 .docs-toc a[aria-current="true"] {
   color: var(--docs-accent-ink); background: var(--docs-accent-soft);
   font-weight: 700; text-decoration: none;
@@ -64,5 +70,12 @@
   .docs-toc-title::after { content: none; }
   /* Salvaguarda: si el bloque quedase cerrado, permitir reabrirlo */
   .docs-toc:not([open]) > .docs-toc-title { cursor: pointer; pointer-events: auto; }
-  .docs-toc:not([open]) > .docs-toc-title::after { content: '▾'; }
+  .docs-toc:not([open]) > .docs-toc-title::after { content: ''; }
+}
+
+/* Móvil y tableta: el bloque plegable es una tarjeta con la misma elevación que el resto */
+@media screen and (max-width: 1279px) {
+  .docs-toc { box-shadow: var(--docs-shadow-s); padding: var(--docs-space-2); }
+  .docs-toc-title { min-height: 2.25rem; padding-right: var(--docs-space-2); }
+  .docs-toc a { padding-block: 0.4rem; }
 }
