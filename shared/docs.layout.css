@@ -45,6 +45,10 @@ header.site-bar.is-scrolled {
 }
 .site-brand { display: inline-flex; align-items: center; flex: 0 0 auto; }
 .site-brand:hover, .site-brand:focus-visible { text-decoration: none; opacity: 0.75; }
+/* Portada (docs.js alterna .is-hero): el logo de la barra se retira mientras se ve el logo grande.
+   Conserva su espacio y sigue siendo enfocable: con el teclado vuelve a mostrarse */
+.site-brand { transition: opacity var(--docs-dur-3) var(--docs-ease), transform var(--docs-dur-3) var(--docs-ease); }
+header.site-bar.is-hero .site-brand:not(:focus-visible) { opacity: 0; transform: translateY(-0.25rem); pointer-events: none; }
 .site-links { display: flex; align-items: center; gap: var(--docs-space-1); }
 /* Enlaces como píldoras: área táctil cómoda y estado activo visible */
 .site-links a {

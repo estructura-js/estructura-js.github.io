@@ -394,6 +394,15 @@ button.copy.is-copied::after {
   margin-block: var(--docs-space-3) var(--docs-space-2);
   color: var(--docs-muted); font-size: clamp(1.05rem, 0.95rem + 0.45vw, 1.3rem); line-height: 1.5;
   text-wrap: balance;
+  /* Halo del color del resplandor de la portada: separa las letras de la retícula de fondo.
+     Capas apiladas de radio creciente: las cortas intensifican el borde, las largas amplían el efecto */
+  text-shadow:
+    0 0 1px var(--docs-glow),
+    0 0 2px var(--docs-glow),
+    0 0 4px var(--docs-glow),
+    0 0 6px var(--docs-glow),
+    0 0 10px var(--docs-glow),
+    0 0 16px var(--docs-glow);
 }
 .site-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--docs-space-2); margin-top: var(--docs-space-2); }
 /* Rasgos clave: fila de etiquetas bajo el lema */

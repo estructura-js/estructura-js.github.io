@@ -159,12 +159,13 @@
     }
   };
 
-  /* Abstracto: estado de desplazamiento compartido — sombra de la barra superior, progreso de lectura
-     y botón "volver arriba" (un único listener, agrupado por frame) */
+  /* Abstracto: estado de desplazamiento compartido — sombra de la barra superior, progreso de lectura,
+     botón "volver arriba" y logo de la barra oculto mientras se ve la portada (un único listener, agrupado por frame) */
   Docs.Scroll = {
     init: function () {
       var bar = document.querySelector('header.site-bar');
       var doc = document.documentElement;
+      var hero = document.querySelector('.site-hero');
       var progress = null, top = null;
       if (bar && !bar.querySelector('.docs-progress')) {
         progress = document.createElement('span');
@@ -194,6 +195,8 @@
         var h = window.innerHeight || doc.clientHeight;
         var max = Math.max(1, doc.scrollHeight - h);
         if (bar) bar.classList.toggle('is-scrolled', y > 4);
+        /* En la portada el logo grande ya identifica el sitio: el de la barra aparece al salir de ella */
+        if (bar && hero) bar.classList.toggle('is-hero', hero.getBoundingClientRect().bottom > bar.offsetHeight);
         if (progress) progress.style.setProperty('--docs-progress', Math.min(1, Math.max(0, y / max)).toFixed(4));
         if (top) top.classList.toggle('is-visible', y > h * 1.2);
       };
