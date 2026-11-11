@@ -1,24 +1,20 @@
-/* shared/docs.toc.css — reusable TOC (injected by Docs.TOC as <details>, without changing text). */
-.docs-toc {
-  font-size: var(--docs-font-s);
-  background: var(--docs-card);
-  border: 1px solid var(--docs-line);
-  border-radius: var(--docs-radius-l);
-  padding: var(--docs-space-2) var(--docs-space-3);
-}
+/* shared/docs.toc.css — page TOC (injected by Docs.TOC as <details>, without changing text).
+   Its links share shape, states, and marker with the extensions list: see "Side navigation" in docs.components.css. */
+.docs-toc { font-size: var(--docs-font-s); }
 
-/* Summary: block title and trigger on mobile/tablet */
+/* Summary: block title and, on mobile/tablet, the trigger. Same box as the title of the extensions list,
+   so both columns start their items on the same line */
 .docs-toc-title {
   display: flex; align-items: center; justify-content: space-between;
   gap: var(--docs-space-2);
   list-style: none; cursor: pointer;
-  /* Same indentation as the items’ text */
-  padding: var(--docs-space-1) 0 var(--docs-space-1) var(--docs-space-3);
-  font-size: var(--docs-font-xs); font-weight: 700;
-  text-transform: uppercase; letter-spacing: 0.08em;
-  color: var(--docs-muted);
+  /* The generic summary shifts to the left: here the title lines up with the items’ text */
+  margin: 0;
+  padding: var(--docs-space-1) var(--docs-space-3) var(--docs-space-2);
+  border-radius: var(--docs-radius-s);
 }
 .docs-toc-title::-webkit-details-marker { display: none; }
+.docs-toc-title:hover, .docs-toc-title:focus-visible { color: var(--docs-ink); text-decoration: none; }
 .docs-toc-title::after {
   content: ''; width: 0.45rem; height: 0.45rem; flex: none;
   margin-right: 0.2rem;
@@ -26,46 +22,24 @@
   transform: translateY(-0.1rem) rotate(45deg);
   transition: transform var(--docs-transition);
 }
-.docs-toc[open] > .docs-toc-title { margin-bottom: var(--docs-space-2); }
 .docs-toc[open] > .docs-toc-title::after { transform: translateY(0.1rem) rotate(-135deg); }
 
 /* Instant collapse when navigating from the table of contents (docs.js) */
 .docs-toc.is-instant::details-content { transition: none; }
 
+/* Hierarchy by indentation and weight only: no guide lines, so the marker is the only vertical bar */
 .docs-toc ol {
   list-style: none;
-  display: flex; flex-direction: column; gap: 0.15rem;
+  display: flex; flex-direction: column; gap: 0.125rem;
 }
-.docs-toc ol ol {
-  margin-top: 0.15rem; margin-left: var(--docs-space-1);
-  padding-left: var(--docs-space-3);
-  border-left: 1px solid var(--docs-line);
-}
-.docs-toc a {
-  display: block; padding: 0.3rem var(--docs-space-3);
-  border-radius: var(--docs-radius-s); color: var(--docs-muted);
-  /* Long headings wrap onto several lines instead of being clipped */
-  overflow-wrap: anywhere;
-}
-.docs-toc a:hover { color: var(--docs-accent-ink); background: var(--docs-chip); text-decoration: none; }
-.docs-toc a[aria-current="true"] {
-  color: var(--docs-accent-ink); background: var(--docs-accent-soft);
-  font-weight: 700; text-decoration: none;
-  box-shadow: inset 3px 0 0 var(--docs-accent);
-}
+.docs-toc ol ol { margin-top: 0.125rem; padding-left: var(--docs-space-3); }
+/* Long headings wrap onto several lines instead of being clipped */
+.docs-toc a { padding-block: 0.35rem; overflow-wrap: anywhere; }
 .docs-toc li[data-level="2"] > a { font-weight: 700; }
-.docs-toc li[data-level="3"] > a { opacity: 0.92; }
-.docs-toc li[data-level="4"] { font-size: 0.85em; opacity: 0.9; }
+.docs-toc li[data-level="4"] > a { font-size: 0.94em; }
 
-/* Mobile, tablet, and narrow desktop: collapsible block, without nested inner scrolling */
-@media screen and (max-width: 1279px) {
-  .docs-toc ol { max-height: none; overflow: visible; }
-}
-
-/* Wide desktop: always open and without a collapse control (fixed column on the right) */
+/* Wide desktop: always open and without a collapse control (fixed column on the right, like the extensions list on the left) */
 @media screen and (min-width: 1280px) {
-  /* No box: text list with a guide line on the left */
-  .docs-toc { background: transparent; border: 0; border-radius: 0; padding: 0 0 0 var(--docs-space-3); border-left: 1px solid var(--docs-line); }
   .docs-toc-title { cursor: default; pointer-events: none; }
   .docs-toc-title::after { content: none; }
   /* Safeguard: if the block ended up closed, allow reopening it */
@@ -73,9 +47,23 @@
   .docs-toc:not([open]) > .docs-toc-title::after { content: ''; }
 }
 
-/* Mobile and tablet: the collapsible block is a card with the same elevation as the rest */
+/* Mobile, tablet, and narrow desktop: collapsible card with the same elevation as the rest, without nested inner scrolling */
 @media screen and (max-width: 1279px) {
-  .docs-toc { box-shadow: var(--docs-shadow-s); padding: var(--docs-space-2); }
-  .docs-toc-title { min-height: 2.25rem; padding-right: var(--docs-space-2); }
-  .docs-toc a { padding-block: 0.4rem; }
+  .docs-toc {
+    background: var(--docs-card);
+    border: 1px solid var(--docs-line);
+    border-radius: var(--docs-radius-l);
+    box-shadow: var(--docs-shadow-s);
+    padding: var(--docs-space-2);
+  }
+  .docs-toc-title { min-height: 2.25rem; padding-block: var(--docs-space-1); }
+  .docs-toc-title:hover { background: var(--docs-chip); }
+  .docs-toc[open] > .docs-toc-title { margin-bottom: var(--docs-space-1); }
+  .docs-toc ol { max-height: none; overflow: visible; }
+  /* Comfortable touch area */
+  .docs-toc a { padding-block: 0.45rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .docs-body .docs-toc { scroll-behavior: auto; }
 }

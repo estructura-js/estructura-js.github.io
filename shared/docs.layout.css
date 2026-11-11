@@ -50,20 +50,20 @@ header.site-bar.is-scrolled {
 /* Home page (docs.js toggles .is-hero): the bar logo is hidden while the large logo is visible.
    It keeps its space and remains focusable: with the keyboard it shows again */
 .site-brand { transition: opacity var(--docs-dur-3) var(--docs-ease), transform var(--docs-dur-3) var(--docs-ease); }
-header.site-bar.is-hero .site-brand:not(:focus-visible) { opacity: 0; transform: translateY(-0.25rem); pointer-events: none; }
+header.site-bar.is-hero .site-brand:not(:focus-visible) { opacity: 0; transform: translateY(calc(var(--docs-rise) * -0.5)); pointer-events: none; }
 .site-links { display: flex; align-items: center; gap: var(--docs-space-1); }
 /* Links as pills: comfortable touch area and visible active state */
 .site-links a {
   display: inline-flex; align-items: center; gap: 0.4rem;
   min-height: 2.25rem; padding: 0.3rem 0.75rem;
   border-radius: var(--docs-radius-pill);
-  color: var(--docs-muted); font-size: 0.92rem; font-weight: 700;
+  color: var(--docs-muted); font-size: var(--docs-font-m); font-weight: 700;
 }
 .site-links a:hover, .site-links a:focus-visible { color: var(--docs-ink); background: var(--docs-chip); text-decoration: none; }
 .site-links a[aria-current] { color: var(--docs-accent-ink); background: var(--docs-accent-soft); }
 .site-version {
   margin-left: var(--docs-space-2);
-  font-family: var(--docs-mono); font-size: 0.75rem; color: var(--docs-muted);
+  font-family: var(--docs-mono); font-size: var(--docs-font-2xs); color: var(--docs-muted);
   padding: 0.1rem 0.55rem; border: 1px solid var(--docs-line); border-radius: var(--docs-radius-pill);
 }
 /* Language switcher ("Español" / "English"): highlighted pill at the end of the bar */
@@ -170,7 +170,9 @@ header.site-hero {
     width: var(--docs-toc-w); margin-inline: 0;
     position: sticky; top: calc(var(--docs-bar-h) + var(--docs-space-4));
     max-height: calc(100dvh - var(--docs-bar-h) - var(--docs-space-6));
-    overflow: auto;
+    overflow: auto; scrollbar-width: thin;
+    /* Its own scroll does not drag the page along, and it follows the current section smoothly (docs.js) */
+    overscroll-behavior: contain; scroll-behavior: smooth;
   }
 }
 

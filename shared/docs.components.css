@@ -1,7 +1,4 @@
 /* shared/docs.components.css — reusable components: content, headings, lists, code, navigation, buttons, callouts, and home page. */
-@font-face { font-family: 'A'; src: url('../fr.ttf'); font-weight: normal; font-display: swap; }
-@font-face { font-family: 'A'; src: url('../fb.ttf'); font-weight: bold; font-display: swap; }
-
 /* ---------- Content: continuous flow on the paper, without cards ---------- */
 .docs-main > section { margin-block: 0; }
 .docs-main > section + section {
@@ -57,12 +54,13 @@ h4 { color: var(--docs-header-ink); font-size: 1.05rem; font-weight: 700; }
 .docs-main section .padding :is(h3, h4) + * { margin-top: var(--docs-space-2); }
 /* API signatures: h4 whose first child is a <code> signature (e.g., .sql(callback?, timeout?)) */
 .docs-main section .padding h4:has(> code:first-child) {
+  position: relative;
   display: flex; flex-wrap: wrap; align-items: center; gap: 0 0.35em;
-  padding: var(--docs-space-2) var(--docs-space-3);
+  padding: var(--docs-space-2) var(--docs-space-3) var(--docs-space-2) calc(var(--docs-space-3) + var(--docs-marker));
   background: var(--docs-chip);
   border: 1px solid var(--docs-line);
-  border-left: 3px solid var(--docs-accent);
   border-radius: var(--docs-radius-s);
+  --marker-x: 0.35rem; --marker-y: 0.35rem;
 }
 main :is(h2, h3, h4) code { background: transparent; padding: 0; border: 0; box-shadow: none; }
 .docs-main section .padding h4 > code:first-child { color: var(--docs-accent-ink); font-size: 0.98em; }
@@ -104,6 +102,10 @@ details::details-content {
   transition: block-size var(--docs-dur-3) var(--docs-ease), opacity var(--docs-dur-3) var(--docs-ease), content-visibility var(--docs-dur-3) allow-discrete;
 }
 details[open]::details-content { block-size: auto; opacity: 1; }
+/* Reduced motion: the content fades in and out, but its height does not grow or shrink */
+@media (prefers-reduced-motion: reduce) {
+  details::details-content { transition: opacity var(--docs-dur-2) var(--docs-ease), content-visibility var(--docs-dur-2) allow-discrete; }
+}
 
 /* ---------- Lists ---------- */
 .lines { padding-left: var(--docs-space-5); }
@@ -111,7 +113,7 @@ details[open]::details-content { block-size: auto; opacity: 1; }
 .lines li::before {
   content: ''; position: relative; display: inline-block;
   width: 0.4rem; height: 0.4rem; margin-right: 0.5rem;
-  border-radius: 999px; background: var(--docs-accent); opacity: 0.55;
+  border-radius: var(--docs-radius-pill); background: var(--docs-accent); opacity: 0.55;
   left: calc(var(--docs-space-2) * -1); vertical-align: 0.15em;
 }
 .separated li { margin-top: var(--docs-space-3); }
@@ -123,24 +125,55 @@ main section .padding li > ul > li {
 main section .padding > ul:not(.lines):not(.separated):not(.ext-grid) > li::before,
 main section .padding li > ul > li::before {
   content: ''; position: absolute; left: 0.35rem; top: 0.75em;
-  width: 0.35rem; height: 0.35rem; border-radius: 999px;
+  width: 0.35rem; height: 0.35rem; border-radius: var(--docs-radius-pill);
   background: var(--docs-accent); opacity: 0.55;
 }
 
-/* ---------- Navigation between extensions (sidebar) ---------- */
+/* ---------- Marker: the accent bar of whatever is highlighted (current navigation item, API signature, callout).
+   One shape everywhere: a rounded bar inside the box, clear of its corners. Each use sets its color and insets ---------- */
+:is(.docs-sidebar, .docs-toc) a::before,
+.docs-callout::before,
+.docs-main section .padding h4:has(> code:first-child)::before {
+  content: ''; position: absolute;
+  left: var(--marker-x, 0); top: var(--marker-y, 0.4rem); bottom: var(--marker-y, 0.4rem);
+  width: var(--docs-marker);
+  border-radius: var(--docs-radius-pill);
+  background: var(--marker-color, var(--docs-accent));
+}
+
+/* ---------- Side navigation: the extensions list (left) and the page TOC (right) are the same component ---------- */
 .docs-nav ul { display: flex; }
 .docs-nav li { margin: 0; padding: 0; }
-.docs-nav a { display: block; color: var(--docs-muted); white-space: nowrap; }
-.docs-nav a:hover { color: var(--docs-ink); text-decoration: none; }
-.docs-nav a[aria-current="true"],
-.docs-nav a[aria-current="page"] { color: var(--docs-ink); font-weight: 700; text-decoration: none; }
-.docs-sidebar-title {
+.docs-sidebar-title, .docs-toc-title {
   font-size: var(--docs-font-xs); font-weight: 700;
   text-transform: uppercase; letter-spacing: 0.08em;
   color: var(--docs-muted);
 }
+.docs-sidebar a, .docs-toc a {
+  position: relative; display: block;
+  padding: 0.4rem var(--docs-space-3);
+  border-radius: var(--docs-radius-s);
+  color: var(--docs-muted); line-height: 1.4;
+}
+.docs-sidebar a { font-size: var(--docs-font-m); white-space: nowrap; }
+.docs-sidebar a:hover, .docs-toc a:hover { color: var(--docs-ink); background: var(--docs-chip); text-decoration: none; }
+.docs-sidebar a[aria-current="page"], .docs-toc a[aria-current="true"] {
+  color: var(--docs-accent-ink); background: var(--docs-accent-soft); text-decoration: none;
+}
+/* The current page is fixed, so it can be bold. The current TOC section changes while scrolling:
+   it keeps its weight, so the text never reflows */
+.docs-sidebar a[aria-current="page"] { font-weight: 700; }
+/* Focus ring inside the item: both lists scroll, and an outer ring would be clipped at their edges */
+.docs-sidebar a:focus-visible, .docs-toc a:focus-visible { outline-offset: -0.125rem; }
+/* Marker: hidden until the item is the current one, then it grows from the center */
+:is(.docs-sidebar, .docs-toc) a::before {
+  opacity: 0; transform: scaleY(0.4);
+  transition: opacity var(--docs-transition), transform var(--docs-transition);
+}
+.docs-sidebar a[aria-current="page"]::before, .docs-toc a[aria-current="true"]::before { opacity: 1; transform: none; }
 
-/* Mobile and tablet: a single scrollable row under the top bar (docs.js centers the current page) */
+/* Mobile and tablet: the extensions list is a single scrollable row under the top bar (docs.js centers the current page).
+   Same marker, lying on the line under the row */
 @media screen and (max-width: 1023px) {
   .docs-sidebar { border-bottom: 1px solid var(--docs-line); }
   .docs-sidebar-title { display: none; }
@@ -152,28 +185,23 @@ main section .padding li > ul > li::before {
             mask-image: linear-gradient(90deg, transparent 0, #000 0.75rem, #000 calc(100% - 0.75rem), transparent 100%);
   }
   .docs-sidebar ul::-webkit-scrollbar { display: none; }
-  .docs-sidebar a { padding: var(--docs-space-2) 0; margin-bottom: -1px; border-bottom: 2px solid transparent; font-size: 0.95rem; }
-  .docs-sidebar a:hover { border-bottom-color: var(--docs-line-strong); }
-  .docs-sidebar a[aria-current="page"] { border-bottom-color: var(--docs-accent); }
+  .docs-sidebar a { padding: var(--docs-space-2) 0 0.6rem; border-radius: 0; }
+  .docs-sidebar a:hover, .docs-sidebar a[aria-current="page"] { background: transparent; }
+  .docs-sidebar a::before {
+    left: 0; right: 0; top: auto; bottom: 0;
+    width: auto; height: var(--docs-marker);
+    transform: scaleX(0.4);
+  }
+  .docs-sidebar a:hover:not([aria-current])::before { opacity: 1; transform: none; background: var(--docs-line-strong); }
 }
 /* Desktop: vertical list fixed on the left */
 @media screen and (min-width: 1024px) {
   .docs-sidebar {
     max-height: calc(100dvh - var(--docs-bar-h) - var(--docs-space-5));
-    overflow-y: auto; scrollbar-width: thin;
+    overflow-y: auto; scrollbar-width: thin; overscroll-behavior: contain;
   }
   .docs-sidebar-title { padding: var(--docs-space-1) var(--docs-space-3) var(--docs-space-2); }
-  .docs-sidebar ul { flex-direction: column; gap: 0.1rem; }
-  .docs-sidebar a {
-    padding: 0.4rem var(--docs-space-3);
-    border-radius: var(--docs-radius-s);
-    font-size: 0.95rem; line-height: 1.4;
-  }
-  .docs-sidebar a:hover { background: var(--docs-chip); }
-  .docs-sidebar a[aria-current="page"] {
-    color: var(--docs-accent-ink); background: var(--docs-accent-soft);
-    box-shadow: inset 3px 0 0 var(--docs-accent);
-  }
+  .docs-sidebar ul { flex-direction: column; gap: 0.125rem; }
 }
 
 /* ---------- Previous / next (added by docs.js at the end of the content) ---------- */
@@ -191,11 +219,12 @@ main section .padding li > ul > li::before {
 }
 .docs-pager-link:hover, .docs-pager-link:focus-visible {
   border-color: var(--docs-line-strong); text-decoration: none;
-  box-shadow: var(--docs-shadow-m); transform: translateY(-2px);
+  box-shadow: var(--docs-shadow-m); transform: translateY(var(--docs-lift));
 }
+.docs-pager-link:active { box-shadow: var(--docs-shadow-s); transform: none; }
 .docs-pager-name::before, .docs-pager-name::after { display: inline-block; transition: transform var(--docs-transition); }
-.docs-pager-prev:hover .docs-pager-name::before { transform: translateX(-4px); }
-.docs-pager-next:hover .docs-pager-name::after { transform: translateX(4px); }
+.docs-pager-prev:hover .docs-pager-name::before { transform: translateX(calc(var(--docs-nudge) * -1)); }
+.docs-pager-next:hover .docs-pager-name::after { transform: translateX(var(--docs-nudge)); }
 .docs-pager-next { grid-column: 2; align-items: flex-end; text-align: right; }
 .docs-pager-label { color: var(--docs-muted); font-size: var(--docs-font-xs); }
 .docs-pager-name { color: var(--docs-accent-ink); font-weight: 700; font-size: 1.05rem; }
@@ -234,7 +263,7 @@ pre {
 pre code {
   background: transparent; color: inherit; border: 0; box-shadow: none;
   cursor: copy; white-space: pre; overflow-x: auto;
-  scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+  scrollbar-width: thin; scrollbar-color: var(--docs-code-scroll) transparent;
   width: 100%; min-width: 0; max-width: 100%;
   font-size: 0.875rem; line-height: 1.7;
 }
@@ -245,17 +274,17 @@ pre code {
   min-height: 2.25rem;
   padding: 0.25rem var(--docs-space-2) 0.25rem var(--docs-space-4);
   background: var(--docs-code-bar);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  border-bottom: 1px solid var(--docs-code-line);
   cursor: default;
 }
 /* Three subtle dots before the language: they mark the block as a code "window" */
 .code-lang {
   display: inline-flex; align-items: center; gap: 0.6rem;
-  font-family: var(--docs-mono); font-size: 0.72rem; letter-spacing: 0.04em;
+  font-family: var(--docs-mono); font-size: var(--docs-font-2xs); letter-spacing: 0.04em;
   color: var(--docs-code-ink); opacity: 0.6;
 }
 .code-lang::before {
-  content: ''; width: 0.45rem; height: 0.45rem; border-radius: 50%;
+  content: ''; width: 0.45rem; height: 0.45rem; border-radius: var(--docs-radius-pill);
   background: currentColor; opacity: 0.5;
   box-shadow: 0.7rem 0 0 currentColor, 1.4rem 0 0 currentColor;
   margin-right: 1.5rem;
@@ -267,7 +296,7 @@ button.copy {
   min-height: 1.75rem; padding: 0.15rem 0.6rem;
   border-radius: var(--docs-radius-s);
   background: transparent; color: var(--docs-code-ink);
-  border: 1px solid rgba(255, 255, 255, 0.14); opacity: 0.7;
+  border: 1px solid var(--docs-code-control); opacity: 0.7;
   font-size: var(--docs-font-xs); font-weight: 700; letter-spacing: 0.02em;
 }
 /* Copy icon drawn with borders (the site’s CSP does not allow data: images): L-shaped back sheet + front sheet */
@@ -290,13 +319,14 @@ button.copy::after {
 pre:hover button.copy, .site-install:hover button.copy { opacity: 0.9; }
 button.copy:hover, button.copy:focus-visible {
   opacity: 1; color: var(--docs-code-ink);
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--docs-code-hover);
   text-decoration: none;
 }
+button.copy:active, .collapsed-links:active, .docs-tab:active { transform: scale(0.97); }
 /* Copy confirmation: gold and a check mark */
 button.copy.is-copied, button.copy.is-copied:hover {
   opacity: 1; color: var(--docs-code-bg);
-  background: #e0bf55; border-color: #e0bf55;
+  background: var(--docs-code-accent); border-color: var(--docs-code-accent);
 }
 button.copy.is-copied::before { opacity: 0; }
 button.copy.is-copied::after {
@@ -309,12 +339,29 @@ button.copy.is-copied::after {
   display: inline-flex; align-items: center; gap: var(--docs-space-2);
   min-height: 2rem; padding: 0.25rem 0.85rem;
   border: 1px solid var(--docs-line); border-radius: var(--docs-radius-pill);
-  background: var(--docs-card); font-size: 0.88rem; color: var(--docs-accent);
+  background: var(--docs-card); font-size: var(--docs-font-s); color: var(--docs-accent);
 }
 .collapsed-links:hover { border-color: var(--docs-accent); background: var(--docs-accent-soft); text-decoration: none; }
 .collapsed-links[aria-expanded="true"] { border-color: var(--docs-accent); background: var(--docs-accent-soft); color: var(--docs-accent-ink); }
-/* Block expanded from a button: enters with a slight offset */
-.entirely:not(.collapsed) { animation: docs-rise var(--docs-dur-3) var(--docs-ease); }
+/* Block expanded from a button: enters with a slight offset and leaves with a fade
+   (the "display" step waits for the fade; browsers without discrete transitions use the entrance animation only) */
+.entirely {
+  transition: opacity var(--docs-transition), transform var(--docs-transition), display var(--docs-dur-2) allow-discrete;
+}
+@starting-style {
+  .entirely:not(.collapsed) { opacity: 0; transform: translateY(var(--docs-rise)); }
+}
+@supports not (transition-behavior: allow-discrete) {
+  .entirely:not(.collapsed) { animation: docs-rise var(--docs-dur-3) var(--docs-ease); }
+}
+/* Inside tabs the panel already fades in */
+.docs-tabpanel > .entirely { transition: none; }
+/* Reduced motion: the block still fades in and out, without the offset (the general rule in docs.base.css
+   does not cover the "display" step) */
+@media (prefers-reduced-motion: reduce) {
+  .entirely { transition: opacity var(--docs-transition), display var(--docs-dur-2) allow-discrete !important; }
+  .docs-tabpanel > .entirely { transition: none !important; }
+}
 
 /* ---------- Tabs (docs.js turns lists of import options into tabs) ---------- */
 .docs-tabs { margin-top: var(--docs-space-2); }
@@ -329,7 +376,7 @@ button.copy.is-copied::after {
 .docs-tab {
   min-height: 2rem; padding: 0.25rem 0.95rem;
   border-radius: var(--docs-radius-pill);
-  color: var(--docs-muted); font-size: 0.88rem;
+  color: var(--docs-muted); font-size: var(--docs-font-s);
 }
 .docs-tab:hover, .docs-tab:focus-visible { color: var(--docs-ink); text-decoration: none; }
 .docs-tab[aria-selected="true"] {
@@ -352,23 +399,23 @@ button.copy.is-copied::after {
 .docs-button:hover, .docs-button:focus-visible {
   text-decoration: none;
   border-color: var(--docs-accent); background: var(--docs-accent-soft);
-  transform: translateY(-1px);
+  transform: translateY(calc(var(--docs-lift) / 2));
 }
-.docs-button:active { transform: translateY(0); box-shadow: none; }
+.docs-button:active { transform: none; box-shadow: none; }
 .docs-button-primary { background: var(--docs-ink); color: var(--docs-card); border-color: var(--docs-ink); box-shadow: var(--docs-shadow-m); }
 .docs-button-primary::after { content: '→'; margin-left: 0.15rem; transition: transform var(--docs-transition); }
 .docs-button-primary:hover, .docs-button-primary:focus-visible { color: var(--docs-card); border-color: var(--docs-ink); background: var(--docs-ink); box-shadow: var(--docs-shadow-l); }
-.docs-button-primary:hover::after { transform: translateX(3px); }
-.docs-button-small { min-height: 2.25rem; padding: 0.3rem 0.85rem; font-size: 0.9rem; }
+.docs-button-primary:hover::after { transform: translateX(var(--docs-nudge)); }
+.docs-button-primary:active { box-shadow: var(--docs-shadow-s); }
+.docs-button-small { min-height: 2.25rem; padding: 0.3rem 0.85rem; font-size: var(--docs-font-s); }
 
 /* ---------- Brand and home page ---------- */
-#logo { width: min(var(--width-base-logo), 60vw); height: auto; }
+#logo { width: min(18rem, 66vw); height: auto; }
 .site-brand-logo { display: block; width: 6.25rem; height: auto; }
 @media (prefers-color-scheme: dark) {
   /* The logo is dark on transparent: it is lightened while keeping the warm tone */
   #logo, .site-brand-logo { filter: invert(1) hue-rotate(180deg) brightness(1.05); }
 }
-#logo { width: min(18rem, 66vw); }
 /* Warm glow + faint grid behind the hero (the "structure" as a motif) */
 .site-hero { position: relative; isolation: isolate; }
 .site-hero::before, .site-hero::after {
@@ -429,7 +476,7 @@ button.copy.is-copied::after {
   color: var(--docs-muted); font-size: var(--docs-font-s); font-weight: 700;
 }
 .site-traits li::before {
-  content: ''; width: 0.4rem; height: 0.4rem; border-radius: 50%;
+  content: ''; width: 0.4rem; height: 0.4rem; border-radius: var(--docs-radius-pill);
   background: var(--docs-accent);
 }
 /* One-line installation, with direct copy: secondary tone (same background as the tabs) so it does not compete with "Get started" */
@@ -441,7 +488,11 @@ button.copy.is-copied::after {
   border: 1px solid var(--docs-line); border-radius: var(--docs-radius-pill);
   background: var(--docs-chip); color: var(--docs-muted);
   font-family: var(--docs-mono); font-size: 0.85rem;
+  /* The whole line copies on click (docs.js) */
+  cursor: copy;
+  transition: border-color var(--docs-transition), background-color var(--docs-transition);
 }
+.site-install:hover { border-color: var(--docs-line-strong); }
 .site-install code {
   background: transparent; box-shadow: none; padding: 0; color: inherit;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
@@ -461,7 +512,7 @@ button.copy.is-copied::after {
   border-color: var(--docs-accent);
 }
 /* Staggered entrance of the home page */
-.site-hero > * { animation: docs-rise 0.6s var(--docs-ease) both; }
+.site-hero > * { animation: docs-rise var(--docs-dur-4) var(--docs-ease) both; }
 .site-hero > :nth-child(2) { animation-delay: 60ms; }
 .site-hero > :nth-child(3) { animation-delay: 120ms; }
 .site-hero > :nth-child(4) { animation-delay: 180ms; }
@@ -483,7 +534,7 @@ main p.docs-meta-item > a:hover { text-decoration: underline; }
 /* Status / badges */
 .docs-badge {
   display: inline-flex; align-items: center;
-  padding: 0.05rem 0.55rem; border-radius: 999px;
+  padding: 0.05rem 0.55rem; border-radius: var(--docs-radius-pill);
   background: var(--docs-accent-soft); color: var(--docs-accent-ink);
   border: 1px solid var(--docs-line-strong);
   font-size: var(--docs-font-xs); font-weight: 700; letter-spacing: 0.04em;
@@ -492,16 +543,17 @@ main p.docs-meta-item > a:hover { text-decoration: underline; }
 /* ---------- Callouts: what matters stands out ---------- */
 .docs-callout,
 .docs-main section > p.docs-callout {
-  padding: var(--docs-space-3) var(--docs-space-4);
+  position: relative;
+  padding: var(--docs-space-3) var(--docs-space-4) var(--docs-space-3) calc(var(--docs-space-4) + var(--docs-marker));
   border: 1px solid var(--docs-line);
-  border-left: 3px solid var(--docs-note-line);
-  border-radius: var(--docs-radius-s) var(--docs-radius-m) var(--docs-radius-m) var(--docs-radius-s);
+  border-radius: var(--docs-radius-m);
   background: var(--docs-note-bg);
+  --marker-color: var(--docs-note-line); --marker-x: 0.6rem; --marker-y: 0.6rem;
 }
 .docs-callout > :is(b, strong):first-child { color: var(--docs-header-ink); }
-.docs-callout-info { border-left-color: var(--docs-accent); background: var(--docs-accent-soft); }
+.docs-callout-info { --marker-color: var(--docs-accent); background: var(--docs-accent-soft); }
 .docs-callout-warn {
-  border-left-color: var(--docs-warn-line);
+  --marker-color: var(--docs-warn-line);
   background: var(--docs-warn-bg);
 }
 .docs-callout-warn > :is(b, strong):first-child { color: var(--docs-warn-ink); }
@@ -526,19 +578,35 @@ main :is(.docs-callout, .docs-demo) code:first-child {
 .docs-demo::before {
   content: 'Live';
   display: inline-flex; align-items: center;
-  padding: 0.05rem 0.55rem; border-radius: 999px;
+  padding: 0.05rem 0.55rem; border-radius: var(--docs-radius-pill);
   background: var(--docs-ink); color: var(--docs-card);
-  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  font-size: var(--docs-font-2xs); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
 }
 .docs-demo:lang(es)::before { content: 'En vivo'; }
 #test { font-size: 1.1rem; font-weight: 700; color: var(--docs-ink); }
 .docs-demo > * { max-width: 100%; min-width: 0; }
 input[type="file"]#test { font-size: var(--docs-font-s); font-weight: 400; }
+/* Demo button: the small version of the primary button */
 .docs-demo button:not(.copy) {
-  padding: 0.35rem 0.9rem; border-radius: 999px;
+  min-height: 2.25rem; padding: 0.3rem 0.95rem; border-radius: var(--docs-radius-pill);
   border: 1px solid var(--docs-ink); background: var(--docs-ink); color: var(--docs-card);
+  font-size: var(--docs-font-s); line-height: 1.2;
+  box-shadow: var(--docs-shadow-s);
 }
-.docs-demo button:not(.copy):hover { text-decoration: none; opacity: 0.9; }
+.docs-demo button:not(.copy):hover, .docs-demo button:not(.copy):focus-visible {
+  text-decoration: none; box-shadow: var(--docs-shadow-m);
+  transform: translateY(calc(var(--docs-lift) / 2));
+}
+.docs-demo button:not(.copy):active { transform: none; box-shadow: none; }
+/* File picker: the browser button becomes the small secondary button */
+.docs-demo input[type="file"]::file-selector-button {
+  min-height: 2.25rem; margin-right: var(--docs-space-2); padding: 0.3rem 0.95rem;
+  border: 1px solid var(--docs-line-strong); border-radius: var(--docs-radius-pill);
+  background: var(--docs-card); color: var(--docs-accent-ink);
+  font: inherit; font-weight: 700; line-height: 1.2; cursor: pointer;
+  transition: border-color var(--docs-transition), background-color var(--docs-transition);
+}
+.docs-demo input[type="file"]::file-selector-button:hover { border-color: var(--docs-accent); background: var(--docs-accent-soft); }
 
 /* ---------- Home page: extensions grid ---------- */
 .ext-grid {
@@ -565,7 +633,7 @@ input[type="file"]#test { font-size: var(--docs-font-s); font-weight: 400; }
 .ext-card:hover, .ext-card:focus-within {
   border-color: var(--docs-line-strong);
   box-shadow: var(--docs-shadow-m);
-  transform: translateY(-2px);
+  transform: translateY(var(--docs-lift));
 }
 .ext-card:has(.ext-card-title:focus-visible) { outline: 0.125rem solid var(--docs-accent-ink); outline-offset: 0.125rem; }
 .ext-card-title:focus-visible { outline: none; }
@@ -578,11 +646,11 @@ input[type="file"]#test { font-size: var(--docs-font-s); font-weight: 400; }
 }
 .ext-card-title:hover, .ext-card-title:focus-visible { text-decoration: none; }
 .ext-card:hover .ext-card-title { color: var(--docs-accent-ink); }
-.ext-card:hover .ext-card-title::after { transform: translateX(4px); }
-.ext-card-desc { color: var(--docs-muted); font-size: 0.94rem; line-height: 1.55; }
+.ext-card:hover .ext-card-title::after { transform: translateX(var(--docs-nudge)); }
+.ext-card-desc { color: var(--docs-muted); font-size: var(--docs-font-m); line-height: 1.55; }
 /* "·" separators between items: each one sits in the gap to the left of its item, so the one that
    would start a line (when the row wraps) falls outside the box and is clipped */
-.ext-card-meta { display: flex; flex-wrap: wrap; gap: 0 1.1rem; overflow: hidden; color: var(--docs-muted); font-family: var(--docs-mono); font-size: 0.74rem; }
+.ext-card-meta { display: flex; flex-wrap: wrap; gap: 0 1.1rem; overflow: hidden; color: var(--docs-muted); font-family: var(--docs-mono); font-size: var(--docs-font-2xs); }
 .ext-card-meta span { position: relative; margin-left: -1.1rem; padding-left: 1.1rem; }
 .ext-card-meta span::before { content: '·'; position: absolute; left: 0.55rem; transform: translateX(-50%); color: var(--docs-line-strong); }
 .ext-card-actions {
@@ -590,22 +658,16 @@ input[type="file"]#test { font-size: var(--docs-font-s); font-weight: 400; }
   margin-top: auto; padding-top: var(--docs-space-3);
   border-top: 1px solid var(--docs-line);
 }
-.ext-card-actions .collapsed-links { min-height: 1.85rem; font-size: 0.82rem; }
+.ext-card-actions .collapsed-links { min-height: 1.85rem; font-size: var(--docs-font-xs); }
 .ext-card pre { margin: 0; }
 .ext-card pre code { font-size: 0.78rem; }
 
 /* ---------- Collapse (API preserved for docs.js and legacy) ---------- */
 .collapsed { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.entirely.collapsed { display: none; }
+.entirely.collapsed { display: none; opacity: 0; transform: translateY(calc(var(--docs-rise) * -0.5)); }
 
 /* Legacy content: features is only a grouping wrapper */
 .features > * + * { margin-top: var(--docs-space-3); }
-
-/* Touch screens: no hover offsets (on mobile the :hover state "sticks" after a tap) */
-@media (hover: none) {
-  .ext-card:hover, .ext-card:focus-within, .docs-pager-link:hover, .docs-button:hover { transform: none; }
-  .ext-card:hover .ext-card-title::after { transform: none; }
-}
 
 /* ---------- Lead: the description of each extension reads as a summary ---------- */
 .title + section > h2 + div.padding {
@@ -620,17 +682,17 @@ input[type="file"]#test { font-size: var(--docs-font-s); font-weight: 400; }
   bottom: max(var(--docs-space-3), env(safe-area-inset-bottom));
   display: grid; place-items: center;
   width: 2.75rem; height: 2.75rem;
-  border: 1px solid var(--docs-line-strong); border-radius: 50%;
+  border: 1px solid var(--docs-line-strong); border-radius: var(--docs-radius-pill);
   background: color-mix(in srgb, var(--docs-card) 92%, transparent);
   -webkit-backdrop-filter: blur(8px);
           backdrop-filter: blur(8px);
   color: var(--docs-accent-ink);
   box-shadow: var(--docs-shadow-m);
-  opacity: 0; visibility: hidden; transform: translateY(0.75rem);
-  transition: opacity var(--docs-dur-3) var(--docs-ease), transform var(--docs-dur-3) var(--docs-ease), visibility var(--docs-dur-3), background-color var(--docs-transition), border-color var(--docs-transition);
+  opacity: 0; visibility: hidden; transform: translateY(calc(var(--docs-rise) * 1.5));
+  transition: opacity var(--docs-dur-3) var(--docs-ease), transform var(--docs-dur-3) var(--docs-ease), visibility var(--docs-dur-3), background-color var(--docs-transition), border-color var(--docs-transition), box-shadow var(--docs-transition);
 }
 .docs-top.is-visible { opacity: 1; visibility: visible; transform: none; }
-.docs-top:hover, .docs-top:focus-visible { border-color: var(--docs-accent); background: var(--docs-accent-soft); text-decoration: none; }
+.docs-top:hover, .docs-top:focus-visible { border-color: var(--docs-accent); background: var(--docs-accent-soft); text-decoration: none; box-shadow: var(--docs-shadow-l); }
 .docs-top::before {
   content: ''; width: 0.6rem; height: 0.6rem;
   border-left: 2px solid currentColor; border-top: 2px solid currentColor;

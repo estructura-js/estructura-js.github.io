@@ -1,4 +1,9 @@
-/* shared/docs.tokens.css — single source of truth (tokens). Minimal, extensible through --docs-*. */
+/* shared/docs.tokens.css — single source of truth (tokens). Minimal, extensible through --docs-*.
+   Imported by the documentation (docs.css) and by the example apps (examples/shared/examples.base.css). */
+/* Typeface of the site: declared with the tokens so that --docs-font works wherever they are imported */
+@font-face { font-family: 'A'; src: url('../fr.ttf'); font-weight: normal; font-display: swap; }
+@font-face { font-family: 'A'; src: url('../fb.ttf'); font-weight: bold; font-display: swap; }
+
 :root {
   /* Palette (warm identity: paper, ink, and gold) */
   --docs-paper: #faf6ec;
@@ -13,9 +18,18 @@
   --docs-line: #e7dcbf;
   --docs-line-strong: #d6c697;
   --docs-card: #fffdf8;
+  --docs-chip: #f3eee1;
+  /* Code surface: dark in both themes, so its accent, lines, and hover use fixed values */
   --docs-code-bg: #1f1b12;
   --docs-code-ink: #fdf6e3;
-  --docs-chip: #f3eee1;
+  --docs-code-accent: #e0bf55;
+  --docs-code-bar: rgba(255, 255, 255, 0.035);
+  --docs-code-line: rgba(255, 255, 255, 0.08);
+  --docs-code-control: rgba(255, 255, 255, 0.14);
+  --docs-code-hover: rgba(255, 255, 255, 0.1);
+  --docs-code-scroll: rgba(255, 255, 255, 0.25);
+  /* Inner border of code blocks (more visible in dark mode, where the background is close to the paper) */
+  --docs-code-edge: rgba(255, 255, 255, 0.06);
   /* Home page glow: always lighter than the paper (in light mode, almost warm white) */
   --docs-glow: #fffefa;
 
@@ -25,64 +39,49 @@
   --docs-warn-bg: #fff1e0;
   --docs-warn-line: #d9822b;
   --docs-warn-ink: #6b3a05;
+  /* Status (success and error messages of the example apps), in the same warm key as the callouts */
+  --docs-ok: #3f6b2a;
+  --docs-ok-bg: #eef3de;
+  --docs-danger: #a8321c;
+  --docs-danger-bg: #fbeae3;
 
-  /* Legacy aliases (DRY: do not duplicate values, only reference them) */
+  /* Legacy aliases used by the Components demo (DRY: do not duplicate values, only reference them) */
   --main-color: var(--docs-muted);
   --secondary-color: var(--docs-paper);
-  --tertiary-color: var(--docs-chip);
-  --black-color: #000;
-  --white-color: #fff;
-  --text-color: var(--docs-ink);
-  --bg-color: var(--docs-card);
-  --links-color: var(--docs-accent);
-  --links-color-hover-active-focus: var(--docs-accent-ink);
-  --headers-color: var(--docs-header-ink);
-  --headers-bg-color: var(--docs-paper-deep);
-  --headers-color-2: var(--docs-muted);
-  --headers-bg-color-2: var(--docs-chip);
 
-  /* Spacing / radius / shadow scale (abstract, extensible) */
-  --docs-space-0: 0;
+  /* Spacing scale */
   --docs-space-1: 0.25rem;
   --docs-space-2: 0.5rem;
   --docs-space-3: 1rem;
   --docs-space-4: 1.5rem;
   --docs-space-5: 2rem;
   --docs-space-6: 3rem;
-  --width-base: var(--docs-space-3);
-  --width-base-0-125: 0.125rem;
-  --width-base-0-25: var(--docs-space-1);
-  --width-base-0-5: var(--docs-space-2);
-  --width-base-0-75: 0.75rem;
-  --width-base-1-5: var(--docs-space-4);
-  --width-base-2: var(--docs-space-5);
-  --width-base-negative: calc(var(--width-base) * -1);
-  --width-base-logo: 15rem;
-  --width-base-logo-small: 7.5rem;
-  --width-base-logo-tiny: 5rem;
-  --width-base-logo-tiny-text: 2rem;
 
-  --docs-radius-s: 0.375rem;
-  --docs-radius-m: 0.625rem;
-  --docs-radius-l: 1rem;
-  --docs-border: 2px;
-  --borders-default-width: var(--docs-border);
-  --docs-radius-pill: 999px;
+  /* Shape: one radius per role */
+  --docs-radius-s: 0.375rem;   /* inline pieces: code chips, navigation items, small controls */
+  --docs-radius-m: 0.625rem;   /* blocks: code, callouts, demo */
+  --docs-radius-l: 1rem;       /* cards */
+  --docs-radius-pill: 999px;   /* controls and labels: buttons, tabs, badges, dots */
+  /* Marker: width of the accent bar that highlights the current navigation item, API signatures, and callouts */
+  --docs-marker: 3px;
 
-  /* Motion: a single set of curves and durations for all transitions */
+  /* Motion: a single set of curves, durations, and distances for all transitions */
   --docs-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
-  --docs-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   --docs-dur-1: 120ms;
   --docs-dur-2: 200ms;
   --docs-dur-3: 320ms;
+  --docs-dur-4: 600ms;
   --docs-transition: var(--docs-dur-2) var(--docs-ease);
+  /* What changes on hover, focus, or state: one list for every interactive element */
+  --docs-transition-props: color, background-color, border-color, outline-color, text-decoration-color, box-shadow, opacity, transform;
+  /* Distances: hover lift, arrow nudge, and entrance offset. Zero on touch screens and with reduced motion (see below) */
+  --docs-lift: -2px;
+  --docs-nudge: 4px;
+  --docs-rise: 0.5rem;
 
   --docs-shadow-s: 0 1px 2px rgba(60, 48, 12, 0.06), 0 1px 1px rgba(60, 48, 12, 0.04);
   --docs-shadow-m: 0 2px 4px rgba(60, 48, 12, 0.05), 0 8px 24px rgba(60, 48, 12, 0.08);
   --docs-shadow-l: 0 4px 8px rgba(60, 48, 12, 0.06), 0 16px 40px rgba(60, 48, 12, 0.12);
-  /* Inner border of code blocks (more visible in dark mode, where the background is close to the paper) */
-  --docs-code-edge: rgba(255, 255, 255, 0.06);
-  --docs-code-bar: rgba(255, 255, 255, 0.035);
 
   /* Layout: total width, reading column, top bar, and side columns */
   --docs-measure: 90rem;
@@ -90,8 +89,11 @@
   --docs-bar-h: 3.5rem;
   --docs-sidebar-w: 13rem;
   --docs-toc-w: 14rem;
+  /* Type scale for interface text (body text is 1rem) */
+  --docs-font-m: 0.92rem;
   --docs-font-s: 0.9rem;
   --docs-font-xs: 0.8rem;
+  --docs-font-2xs: 0.72rem;
   --docs-font: 'A', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
   --docs-mono: ui-monospace, 'Cascadia Code', Menlo, Consolas, monospace;
 }
@@ -118,11 +120,22 @@
     --docs-warn-bg: #2b1d0e;
     --docs-warn-line: #d9822b;
     --docs-warn-ink: #f6c995;
+    --docs-ok: #a9c77a;
+    --docs-ok-bg: #1d2414;
+    --docs-danger: #f0a28f;
+    --docs-danger-bg: #2e1812;
     --docs-shadow-s: 0 1px 2px rgba(0, 0, 0, 0.4);
     --docs-shadow-m: 0 2px 4px rgba(0, 0, 0, 0.35), 0 8px 24px rgba(0, 0, 0, 0.35);
     --docs-shadow-l: 0 4px 8px rgba(0, 0, 0, 0.4), 0 16px 40px rgba(0, 0, 0, 0.45);
     --docs-code-edge: rgba(224, 191, 85, 0.14);
-    --text-color: var(--docs-ink);
-    --bg-color: var(--docs-card);
   }
+}
+
+/* Touch screens: no hover offsets (on mobile the :hover state "sticks" after a tap) */
+@media (hover: none) {
+  :root { --docs-lift: 0px; --docs-nudge: 0px; }
+}
+/* Reduced motion: nothing travels. Color and opacity fades stay (see docs.base.css) */
+@media (prefers-reduced-motion: reduce) {
+  :root { --docs-lift: 0px; --docs-nudge: 0px; --docs-rise: 0px; }
 }

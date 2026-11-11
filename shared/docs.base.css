@@ -47,7 +47,13 @@ a, summary, button {
   cursor: pointer;
   background: transparent;
   font: inherit;
-  transition-property: color, background-color, border-color, box-shadow, opacity, transform, text-decoration-color;
+  transition-property: var(--docs-transition-props);
+  transition-duration: var(--docs-dur-2);
+  transition-timing-function: var(--docs-ease);
+}
+/* Form controls change state with the same rhythm as links and buttons */
+input, select, textarea {
+  transition-property: var(--docs-transition-props);
   transition-duration: var(--docs-dur-2);
   transition-timing-function: var(--docs-ease);
 }
@@ -85,23 +91,32 @@ p code, li code, span code, h3 code, h4 code { display: inline; overflow-wrap: a
 
 /* Skip link (injected by Docs.js; hidden until focused) */
 .docs-skip {
-  position: fixed; left: var(--docs-space-3); top: -10rem;
+  position: fixed; left: var(--docs-space-3); top: var(--docs-space-2);
   background: var(--docs-ink); color: var(--docs-card);
   padding: var(--docs-space-2) var(--docs-space-3);
   border-radius: var(--docs-radius-s); z-index: 100;
+  transform: translateY(calc(-100% - var(--docs-space-3)));
 }
-.docs-skip:focus-visible { top: var(--docs-space-2); }
+.docs-skip:hover, .docs-skip:focus-visible { color: var(--docs-card); text-decoration: none; }
+.docs-skip:focus-visible { transform: none; }
 
-/* Gentle fade-in of blocks (home page, tab panels) */
+/* Gentle fade-in of blocks (home page, tab panels). The offset comes from a token: with reduced motion it is zero */
 @keyframes docs-rise {
-  from { opacity: 0; transform: translateY(0.5rem); }
+  from { opacity: 0; transform: translateY(var(--docs-rise)); }
   to { opacity: 1; transform: none; }
 }
 @keyframes docs-fade { from { opacity: 0; } to { opacity: 1; } }
 
+/* Reduced motion (a system setting): nothing moves, grows, or slides, but color and opacity fades stay.
+   A fade is not motion, and without it every hover or state change is an abrupt jump.
+   Travel distances drop to zero through the tokens (--docs-lift, --docs-nudge, --docs-rise) */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  *, *::after, *::before { transition: none !important; animation: none !important; }
+  *, *::after, *::before {
+    transition-property: color, background-color, border-color, outline-color, text-decoration-color, box-shadow, opacity, visibility !important;
+  }
+  /* Live demos: no looping animations from the demonstrated code */
+  .docs-demo, .docs-demo * { animation: none !important; }
 }
 
 @media print {
@@ -110,5 +125,5 @@ p code, li code, span code, h3 code, h4 code { display: inline; overflow-wrap: a
   .docs-tabpanel[hidden] { display: block !important; }
   .docs-shell { background: #fff; }
   .card { box-shadow: none; }
-  .entirely.collapsed { display: block !important; }
+  .entirely.collapsed { display: block !important; opacity: 1 !important; transform: none !important; }
 }

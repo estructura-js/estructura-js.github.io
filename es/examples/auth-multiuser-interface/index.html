@@ -15,8 +15,8 @@
 	<meta name="description" content="Gestor de Tiques Tarifarios Horarios.">
 	<meta name="author" content="OKZGN">
 
-	<meta name="theme-color" content="#004e9b" media="(prefers-color-scheme: light)">
-	<meta name="theme-color" content="#000d1a" media="(prefers-color-scheme: dark)">
+	<meta name="theme-color" content="#faf6ec" media="(prefers-color-scheme: light)">
+	<meta name="theme-color" content="#13110b" media="(prefers-color-scheme: dark)">
 
 	<meta name="format-detection" content="telephone=no">
 	<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self'; child-src 'self';">
@@ -37,7 +37,10 @@
 
 	<link rel="preload" href="../../../examples/auth-multiuser-interface/icon.png" as="image">
 
-	<link rel="preload" href="../../../examples/auth-multiuser-interface/inter_variable.woff2" as="font" type="font/woff2" crossorigin>
+	<link rel="preload" href="../../../fb.ttf" as="font" type="font/ttf" crossorigin>
+	<link rel="preload" href="../../../fr.ttf" as="font" type="font/ttf" crossorigin>
+	<link rel="preload" href="../../../shared/docs.tokens.css" as="style">
+	<link rel="preload" href="../../../examples/shared/examples.base.css" as="style">
 	<link rel="preload" href="../../../examples/auth-multiuser-interface/style.css" as="style">
 	<link rel="stylesheet" href="../../../examples/auth-multiuser-interface/style.css">
 
@@ -182,7 +185,7 @@
                         <div class="options">
                             <div>
                                 <input type="text" autocomplete="off" name="ticket-value" data-e-handler="ticket" data-e-handler-id="ticketValue" data-e-handler-start>
-                                <button data-e-handler="createNewTicket" data-e-handler-id="ticket-btn" data-e-handler-event="click" data-e-create-new-ticket-connect="generateNewTicket.ticket-generator">Crear tique</button>
+                                <button data-primary data-e-handler="createNewTicket" data-e-handler-id="ticket-btn" data-e-handler-event="click" data-e-create-new-ticket-connect="generateNewTicket.ticket-generator">Crear tique</button>
                                 <button data-e-handler="updateNewTicket" data-e-handler-id="update-ticket-btn" data-e-handler-event="click" data-e-update-new-ticket-connect="updateExistentTicket.ticket-generator">Actualizar tique</button>
                             </div>
                             <button data-e-handler="signout" data-e-handler-id="signout-btn" data-e-handler-event="click" data-e-signout-route="/">Salir</button>

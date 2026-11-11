@@ -1,3 +1,5 @@
+/* examples/pos-services-and-products/pos-services-and-products.app.css — layout and components of the app.
+   Colors, radii, and motion are the tokens of the docs design system (through the shared base). */
 .app-shell {
     display: flex;
     flex-flow: row;
@@ -9,19 +11,26 @@
     padding: var(--space);
 }
 
+/* ---------- Sections: the side navigation of the documentation, inside a card ---------- */
 .app-sidebar {
     flex: 0 0 15rem;
     height: 100%;
     overflow-y: auto;
-    padding: var(--space);
-    background: var(--color5);
-    border: var(--border) solid var(--color7);
-    border-radius: var(--radius);
+    overscroll-behavior: contain;
+    padding: var(--half-space);
+    background: var(--docs-card);
+    border: 1px solid var(--docs-line);
+    border-radius: var(--docs-radius-l);
 }
 
 .app-sidebar-title {
-    margin-bottom: var(--space);
-    font-size: 1.25rem;
+    padding: var(--docs-space-1) var(--docs-space-3) var(--docs-space-2);
+    color: var(--docs-muted);
+    font-size: var(--docs-font-xs);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1.7;
+    text-transform: uppercase;
 }
 
 .app-navigation {
@@ -29,22 +38,55 @@
 }
 
 .app-navigation li + li {
-    margin-top: var(--half-space);
+    margin-top: 0.125rem;
 }
 
 .app-navigation a {
+    position: relative;
     display: block;
-    padding: var(--half-space) var(--space);
-    border-radius: var(--radius);
+    padding: 0.4rem var(--docs-space-3);
+    border-radius: var(--docs-radius-s);
+    color: var(--docs-muted);
+    font-size: var(--docs-font-m);
+    line-height: 1.4;
+    text-decoration: none;
 }
 
-.app-navigation a:hover,
-.app-navigation a:focus,
+.app-navigation a:hover {
+    background: var(--docs-chip);
+    color: var(--docs-ink);
+}
+
 .app-navigation a[aria-current="page"] {
-    background: var(--color1);
-    color: var(--color6);
+    background: var(--docs-accent-soft);
+    color: var(--docs-accent-ink);
+    font-weight: 700;
 }
 
+/* Focus ring inside the item: the list scrolls, and an outer ring would be clipped at its edges */
+.app-navigation a:focus-visible { outline-offset: -0.125rem; }
+
+/* Marker of the current section: the same rounded bar as in the documentation */
+.app-navigation a::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.4rem;
+    bottom: 0.4rem;
+    width: var(--docs-marker);
+    border-radius: var(--docs-radius-pill);
+    background: var(--docs-accent);
+    opacity: 0;
+    transform: scaleY(0.4);
+    transition: opacity var(--docs-transition), transform var(--docs-transition);
+}
+
+.app-navigation a[aria-current="page"]::before {
+    opacity: 1;
+    transform: none;
+}
+
+/* ---------- Workspace: one card with header, table, and lower panels ---------- */
 .app-content {
     display: flex;
     flex-flow: column;
@@ -53,9 +95,9 @@
     height: 100%;
     min-height: 0;
     margin: 0 0 0 var(--space);
-    background: var(--color5);
-    border: var(--border) solid var(--color7);
-    border-radius: var(--radius);
+    background: var(--docs-card);
+    border: 1px solid var(--docs-line);
+    border-radius: var(--docs-radius-l);
     overflow: hidden;
 }
 
@@ -66,14 +108,15 @@
     gap: var(--half-space);
     height: auto;
     padding: var(--space);
-    background: transparent;
-    border-bottom: 1px solid var(--color7);
-    color: inherit;
+    border-bottom: 1px solid var(--docs-line);
 }
 
 .app-content-title {
     flex: 0 0 auto;
-    font-size: 1.25rem;
+    margin-right: var(--half-space);
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
 }
 
 .app-toolbar-search {
@@ -95,10 +138,6 @@
 .app-toolbar-search input {
     width: 100%;
     min-width: 0;
-    padding: var(--half-space);
-    border: var(--border-input) solid var(--color4);
-    border-radius: var(--radius);
-    background: var(--color5);
 }
 
 .app-toolbar-actions {
@@ -149,7 +188,7 @@
 .app-data-table td {
     min-width: 6rem;
     padding: var(--half-space);
-    border-bottom: 1px solid var(--color7);
+    border-bottom: 1px solid var(--docs-line);
     overflow: hidden;
     text-align: left;
     text-overflow: ellipsis;
@@ -160,15 +199,24 @@
     padding-left: var(--space);
 }
 
+/* Column headings: the small uppercase label of the documentation */
 .app-data-table th {
     padding-left: var(--space);
-    background: var(--color7);
-    font-weight: bold;
+    background: var(--docs-chip);
+    color: var(--docs-muted);
+    font-size: var(--docs-font-xs);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.app-data-table tbody tr {
+    transition: background-color var(--docs-transition);
 }
 
 .app-data-table tbody tr:hover,
 .app-data-table tbody tr:focus-within {
-    background: var(--color14);
+    background: var(--docs-chip);
 }
 
 .app-lower-panel {
@@ -176,7 +224,9 @@
     flex-flow: row;
     flex: 0 0 auto;
     gap: var(--space);
-    margin: var(--space) 0 0 0;
+    margin: 0;
+    padding: var(--space);
+    border-top: 1px solid var(--docs-line);
 }
 
 .app-lower-panel[data-hidden] {
@@ -190,9 +240,10 @@
 .app-selection-detail,
 .app-summary {
     min-width: 0;
-    border: var(--border) solid var(--color7);
-    border-radius: var(--radius);
-    background: var(--color5);
+    border: 1px solid var(--docs-line);
+    border-radius: var(--docs-radius-m);
+    background: var(--docs-paper);
+    overflow: hidden;
 }
 
 .app-selection-detail {
@@ -208,20 +259,49 @@
     margin-bottom: var(--half-space);
 }
 
+/* Panel header: a quiet row with a chevron that points up while its content is open */
 .app-accordion-toggle {
+    position: relative;
     display: block;
     width: 100%;
-    padding-left: var(--space);
+    padding: 0.5rem 2.75rem 0.5rem var(--space);
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: var(--docs-ink);
+    box-shadow: none;
     text-align: left;
 }
 
-.app-accordion-toggle[data-selected="no"] {
-    background: var(--color7);
-    color: inherit;
+.app-accordion-toggle:hover,
+.app-accordion-toggle:focus-visible {
+    background: var(--docs-chip);
+    transform: none;
+}
+
+.app-accordion-toggle:focus-visible { outline-offset: -0.125rem; }
+
+.app-accordion-toggle::after {
+    content: '';
+    position: absolute;
+    right: var(--space);
+    top: 50%;
+    width: 0.45rem;
+    height: 0.45rem;
+    margin-top: -0.2rem;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: translateY(-0.1rem) rotate(45deg);
+    transition: transform var(--docs-transition);
+}
+
+.app-accordion-toggle:has(+ .app-accordion-content[data-hidden="no"])::after {
+    transform: translateY(0.1rem) rotate(-135deg);
 }
 
 .app-accordion-content {
     padding: var(--space);
+    border-top: 1px solid var(--docs-line);
 }
 
 .app-accordion-content[data-hidden] {
@@ -242,6 +322,10 @@
     display: flex;
     justify-content: space-between;
     gap: var(--space);
+}
+
+.app-summary-list dt {
+    color: var(--docs-muted);
 }
 
 .app-summary-list dd {
@@ -334,11 +418,15 @@
     margin-bottom: var(--half-space);
 }
 
+.app-config-view > p {
+    color: var(--docs-muted);
+}
+
 .app-divider {
     width: 100%;
     height: 1px;
     margin: var(--space) 0;
-    background: var(--color7);
+    background: var(--docs-line);
 }
 
 .app-config-fields {
@@ -356,10 +444,6 @@
 
 .app-config-fields input {
     width: 100%;
-    padding: var(--half-space);
-    border: var(--border-input) solid var(--color4);
-    border-radius: var(--radius);
-    background: var(--color5);
 }
 
 @media screen and (max-width: 760px) {
@@ -374,17 +458,16 @@
         width: 100%;
     }
 
-    .app-sidebar-title {
-        margin-bottom: var(--half-space);
-    }
-
+    /* Sections in one scrollable row: the items keep their shape, without the side marker */
     .app-navigation {
         display: flex;
-        gap: var(--half-space);
+        gap: var(--docs-space-1);
         overflow-x: auto;
-        padding-bottom: 0.25rem;
+        scrollbar-width: none;
         width: 100%;
     }
+
+    .app-navigation::-webkit-scrollbar { display: none; }
 
     .app-navigation li + li {
         margin-top: 0;
@@ -394,11 +477,20 @@
         white-space: nowrap;
     }
 
+    .app-navigation a::before {
+        content: none;
+    }
+
     .app-content {
         flex: 1 1 auto;
         height: auto;
         min-height: 0;
         margin: var(--half-space) 0 0;
         width: 100%;
+    }
+
+    .app-content-header,
+    .app-lower-panel {
+        padding: var(--half-space);
     }
 }

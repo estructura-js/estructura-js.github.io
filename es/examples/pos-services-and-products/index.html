@@ -15,8 +15,8 @@
 	<meta name="description" content="Punto de Venta de Servicios y Productos.">
 	<meta name="author" content="OKZGN">
 
-	<meta name="theme-color" content="#004e9b" media="(prefers-color-scheme: light)">
-	<meta name="theme-color" content="#000d1a" media="(prefers-color-scheme: dark)">
+	<meta name="theme-color" content="#faf6ec" media="(prefers-color-scheme: light)">
+	<meta name="theme-color" content="#13110b" media="(prefers-color-scheme: dark)">
 
 	<meta name="format-detection" content="telephone=no">
 	<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self'; child-src 'self';">
@@ -37,7 +37,10 @@
 
 	<link rel="preload" href="../../../examples/pos-services-and-products/icon.png" as="image">
 
-	<link rel="preload" href="../../../examples/pos-services-and-products/inter_variable.woff2" as="font" type="font/woff2" crossorigin>
+	<link rel="preload" href="../../../fb.ttf" as="font" type="font/ttf" crossorigin>
+	<link rel="preload" href="../../../fr.ttf" as="font" type="font/ttf" crossorigin>
+	<link rel="preload" href="../../../shared/docs.tokens.css" as="style">
+	<link rel="preload" href="../../../examples/shared/examples.base.css" as="style">
 	<link rel="preload" href="../../../examples/pos-services-and-products/pos-services-and-products.css" as="style">
 	<link rel="stylesheet" href="../../../examples/pos-services-and-products/pos-services-and-products.css">
 	<link rel="stylesheet" href="../../../examples/pos-services-and-products/pos-services-and-products.app.css">
@@ -108,7 +111,7 @@
 					<input id="app-search" type="search" name="search" autocomplete="off" placeholder="Buscar en facturación">
 				</div>
 				<div class="app-toolbar-actions" aria-label="Opciones de la sección" data-pvsp-workspace-toolbar>
-					<button type="button" data-pvsp-action="new">Nuevo</button>
+					<button type="button" data-primary data-pvsp-action="new">Nuevo</button>
 					<button type="button" data-pvsp-action="filter">Filtrar</button>
 					<button type="button" data-pvsp-action="export">Exportar</button>
 					<button type="button" data-pvsp-action="more" aria-label="Más opciones">Más</button>

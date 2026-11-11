@@ -1,0 +1,293 @@
+/* examples/shared/examples.base.css — base shared by the example apps.
+   The apps use the tokens of the docs design system (palette, shape, motion, type), so the examples and the
+   documentation read as one site. Only the sizes of the app interface are defined here. */
+@import url('../../shared/docs.tokens.css');
+
+:root {
+    --space: var(--docs-space-3);
+    --half-space: var(--docs-space-2);
+    --font: 1rem;
+    /* Width of the form fields and height of the controls (buttons and inputs) */
+    --input: 15rem;
+    --control: 2.25rem;
+    --radio-width: 1.25rem;
+}
+
+*, *::after, *::before {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    box-sizing: border-box;
+    font-family: var(--docs-font);
+    font-size: var(--font);
+    line-height: 1.25;
+    scrollbar-color: var(--docs-line-strong) transparent;
+    scrollbar-width: thin;
+}
+::-webkit-scrollbar {
+    width: 0.25rem;
+    height: 0.25rem;
+}
+::-webkit-scrollbar-thumb { background: var(--docs-line-strong); }
+::-webkit-scrollbar-track { background: transparent; }
+
+/* Accessible focus, as in the documentation */
+:focus { outline: none; }
+:focus-visible {
+    outline: 0.125rem solid var(--docs-accent-ink);
+    outline-offset: 0.125rem;
+}
+::selection { background: var(--docs-accent); color: var(--docs-card); }
+::placeholder { color: var(--docs-muted); opacity: 0.8; }
+
+html { color-scheme: light dark; -webkit-tap-highlight-color: transparent; }
+html, body {
+    width: 100%;
+    height: 100%;
+    height: 100vh;
+    height: 100dvh;
+    overflow-x: hidden;
+}
+body {
+    overscroll-behavior: none;
+    background: var(--docs-paper);
+    color: var(--docs-ink);
+    text-align: left;
+    justify-content: space-between;
+    accent-color: var(--docs-accent);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Everything interactive changes state with the rhythm of the documentation */
+a, button, input, select, textarea, legend {
+    transition-property: var(--docs-transition-props);
+    transition-duration: var(--docs-dur-2);
+    transition-timing-function: var(--docs-ease);
+}
+
+a {
+    color: var(--docs-accent);
+    text-decoration: underline;
+    text-decoration-color: var(--docs-line-strong);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+}
+a:hover, a:focus-visible { color: var(--docs-accent-ink); text-decoration-color: currentColor; }
+
+/* ---------- Form controls ---------- */
+input, button, textarea, select { accent-color: var(--docs-accent); }
+input[type="text"], input[type="password"], input[type="search"], input[type="number"], input[type="email"], input[type="tel"] {
+    width: var(--input);
+    min-height: var(--control);
+    padding: 0.3rem 0.75rem;
+    border: 1px solid var(--docs-line-strong);
+    border-radius: var(--docs-radius-s);
+    background: var(--docs-card);
+    color: var(--docs-ink);
+}
+input[type="text"]:hover, input[type="password"]:hover, input[type="search"]:hover, input[type="number"]:hover, input[type="email"]:hover, input[type="tel"]:hover { border-color: var(--docs-muted); }
+input[type="text"]:focus, input[type="password"]:focus, input[type="search"]:focus, input[type="number"]:focus, input[type="email"]:focus, input[type="tel"]:focus { border-color: var(--docs-accent); }
+input[type="radio"], input[type="checkbox"] {
+    flex: none;
+    width: var(--radio-width);
+    height: var(--radio-width);
+    margin-right: var(--half-space);
+    cursor: pointer;
+}
+
+/* Buttons: the secondary button of the documentation. The main action of a form or toolbar is the primary one */
+button {
+    min-height: var(--control);
+    padding: 0.3rem 0.95rem;
+    border: 1px solid var(--docs-line-strong);
+    border-radius: var(--docs-radius-pill);
+    background: var(--docs-card);
+    color: var(--docs-accent-ink);
+    font-weight: 700;
+    line-height: 1.2;
+    cursor: pointer;
+    box-shadow: var(--docs-shadow-s);
+}
+button:hover, button:focus-visible {
+    border-color: var(--docs-accent);
+    background: var(--docs-accent-soft);
+    transform: translateY(calc(var(--docs-lift) / 2));
+}
+button:active { transform: none; box-shadow: none; }
+button[type="submit"], button[data-primary] {
+    border-color: var(--docs-ink);
+    background: var(--docs-ink);
+    color: var(--docs-card);
+}
+button[type="submit"]:hover, button[type="submit"]:focus-visible,
+button[data-primary]:hover, button[data-primary]:focus-visible {
+    border-color: var(--docs-ink);
+    background: var(--docs-ink);
+    box-shadow: var(--docs-shadow-m);
+}
+button[type="submit"]:active, button[data-primary]:active { box-shadow: none; }
+
+/* ---------- Status messages (set by the notification handler): the callout of the documentation,
+   with its marker in the color of the status ---------- */
+[data-success], [data-error], [data-loading] {
+    position: relative;
+    display: inline-block;
+    width: var(--input);
+    padding: 0.6rem var(--space) 0.6rem calc(var(--space) + var(--docs-marker) + 0.25rem);
+    border: 1px solid var(--docs-line);
+    border-radius: var(--docs-radius-m);
+    background: var(--docs-note-bg);
+    color: var(--docs-ink);
+    word-break: keep-all;
+    --marker-color: var(--docs-note-line);
+}
+[data-success]::before, [data-error]::before, [data-loading]::before {
+    content: '';
+    position: absolute;
+    left: 0.5rem;
+    top: 0.5rem;
+    bottom: 0.5rem;
+    width: var(--docs-marker);
+    border-radius: var(--docs-radius-pill);
+    background: var(--marker-color);
+}
+[data-success] { background: var(--docs-ok-bg); --marker-color: var(--docs-ok); }
+[data-error] { background: var(--docs-danger-bg); --marker-color: var(--docs-danger); }
+
+[data-hidden] { display: none; }
+[data-hidden="no"] { display: flex; }
+
+[data-e-hidden-route] { display: none; }
+[data-e-hidden-route="no"] { display: block; }
+
+/* ---------- Page frame: top bar, content, and footer ---------- */
+body > header {
+    flex: none;
+    height: var(--docs-bar-h);
+    padding: 0 var(--space);
+    background: var(--docs-paper);
+    border-bottom: 1px solid var(--docs-line);
+}
+h1 span { font-size: 1.15rem; font-weight: 700; letter-spacing: -0.01em; }
+h1 img {
+    height: 2rem;
+    line-height: 0;
+    margin-right: 0.6rem;
+}
+header, footer, h1, main, fieldset label, [data-flex-row] {
+    display: flex;
+    flex-flow: row;
+}
+body, fieldset, fieldset > div, [data-flex-column] {
+    display: flex;
+    flex-flow: column;
+}
+header > *, footer > *, [data-flex-childs-center] > *, h1 > *, main > * { align-self: center; }
+main, footer { justify-content: center; }
+footer {
+    flex: none;
+    height: 3rem;
+    padding: 0 var(--space);
+    border-top: 1px solid var(--docs-line);
+    color: var(--docs-muted);
+    text-align: center;
+}
+footer, footer * { font-size: var(--docs-font-s); }
+footer a { color: var(--docs-muted); font-weight: 700; text-decoration: none; }
+footer a:hover, footer a:focus-visible { color: var(--docs-accent-ink); text-decoration: underline; }
+@media (prefers-color-scheme: dark) {
+    /* The icons are dark on transparent: they are lightened like the logo of the documentation */
+    h1 img { filter: invert(1) hue-rotate(180deg) brightness(1.05); }
+}
+
+/* General styles */
+
+main {
+    height: calc(100% - 6rem);
+    flex-grow: 1;
+    overflow-y: auto;
+}
+main section {
+    margin: var(--half-space);
+}
+
+/* Accordion: the header (legend) and its panel ([data-box]) form one card */
+fieldset legend {
+    position: relative;
+    width: 100%;
+    padding: 0.7rem 2.75rem 0.7rem var(--space);
+    border: 1px solid var(--docs-line);
+    border-radius: var(--docs-radius-l) var(--docs-radius-l) 0 0;
+    background: var(--docs-card);
+    color: var(--docs-ink);
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+}
+/* Chevron drawn with borders, as in the documentation: it points up while the panel is open */
+fieldset legend::after {
+    content: '';
+    position: absolute;
+    right: var(--space);
+    top: 50%;
+    width: 0.45rem;
+    height: 0.45rem;
+    margin-top: -0.2rem;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: translateY(0.1rem) rotate(-135deg);
+    transition: transform var(--docs-transition);
+}
+fieldset legend[data-selected="no"] {
+    border-radius: var(--docs-radius-l);
+    color: var(--docs-muted);
+}
+fieldset legend[data-selected="no"]::after { transform: translateY(-0.1rem) rotate(45deg); }
+fieldset legend[data-selected="no"]:hover,
+fieldset legend[data-selected="no"]:focus-visible {
+    background: var(--docs-chip);
+    color: var(--docs-ink);
+}
+[data-box] {
+    background: var(--docs-card);
+    border: 1px solid var(--docs-line);
+    border-radius: var(--docs-radius-l);
+    padding: var(--space);
+}
+legend + [data-box] {
+    border-top: 0;
+    border-radius: 0 0 var(--docs-radius-l) var(--docs-radius-l);
+}
+[data-box] > * {
+    margin-bottom: var(--space);
+}
+[data-box] > *:last-child {
+    margin-bottom: 0;
+}
+fieldset strong, fieldset div label {
+    margin-bottom: var(--half-space);
+}
+fieldset div label:last-child { margin-bottom: 0; }
+fieldset label { cursor: pointer; }
+@media screen and (max-width: 640px), (max-width: 960px) {
+    *, *::after, *::before { font-size: 0.9rem; }
+    main {
+        flex-flow: column;
+        flex-grow: 1;
+    }
+}
+@media screen and (max-height: 480px) {
+    main { justify-content: flex-start; }
+}
+@media screen and (max-width: 320px) {
+    *, *::after, *::before { font-size: 0.85rem; }
+}
+
+/* Reduced motion (a system setting): nothing moves, but color and opacity fades stay, as in the documentation.
+   The travel distances are already zero through the tokens */
+@media (prefers-reduced-motion: reduce) {
+    *, *::after, *::before {
+        transition-property: color, background-color, border-color, outline-color, text-decoration-color, box-shadow, opacity, visibility !important;
+    }
+}

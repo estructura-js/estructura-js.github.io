@@ -203,7 +203,8 @@
         top.title = Docs.t('backToTop');
         top.addEventListener('click', function (ev) {
           ev.preventDefault();
-          window.scrollTo({ top: 0, behavior: 'smooth' });
+          /* Smooth or instant: decided by the CSS scroll-behavior of <html> (instant with reduced motion) */
+          window.scrollTo({ top: 0 });
           var skip = document.querySelector('.site-brand');
           if (skip && skip.focus) skip.focus({ preventScroll: true });
         });
@@ -523,10 +524,25 @@
     setCurrent: function (id) {
       if (!id) return;
       this.current = id;
+      var inToc = null;
       this.links.forEach(function (a) {
-        if (a.getAttribute('href').slice(1) === id) a.setAttribute('aria-current', 'true');
+        if (a.getAttribute('href').slice(1) === id) {
+          a.setAttribute('aria-current', 'true');
+          if (!inToc && a.closest && a.closest('.docs-toc')) inToc = a;
+        }
         else a.removeAttribute('aria-current');
       });
+      if (inToc) this.reveal(inToc);
+    },
+    /* Wide desktop: the TOC column scrolls on its own, so the current section is kept in view inside it.
+       Only the column moves, never the page */
+    reveal: function (a) {
+      var box = a.closest('.docs-toc');
+      if (!box || box.scrollHeight <= box.clientHeight + 1) return;
+      var br = box.getBoundingClientRect(), ar = a.getBoundingClientRect();
+      var margin = br.height * 0.2;
+      if (ar.top < br.top + margin) box.scrollTop += ar.top - br.top - margin;
+      else if (ar.bottom > br.bottom - margin) box.scrollTop += ar.bottom - br.bottom + margin;
     },
     update: function () {
       var ids = this.ids;
