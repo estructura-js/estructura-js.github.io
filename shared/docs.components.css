@@ -412,10 +412,7 @@ button.copy.is-copied::after {
 /* ---------- Brand and home page ---------- */
 #logo { width: min(18rem, 66vw); height: auto; }
 .site-brand-logo { display: block; width: 6.25rem; height: auto; }
-@media (prefers-color-scheme: dark) {
-  /* The logo is dark on transparent: it is lightened while keeping the warm tone */
-  #logo, .site-brand-logo { filter: invert(1) hue-rotate(180deg) brightness(1.05); }
-}
+/* estructura.logo.svg carries its own colors: --docs-accent of each theme (#80620f light, #e0bf55 dark) */
 /* Warm glow + faint grid behind the hero (the "structure" as a motif) */
 .site-hero { position: relative; isolation: isolate; }
 .site-hero::before, .site-hero::after {
