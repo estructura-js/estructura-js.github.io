@@ -1,4 +1,4 @@
-/* shared/docs.toc.css — TOC reutilizable (inyectado por Docs.TOC como <details>, sin tocar texto). */
+/* shared/docs.toc.css — reusable TOC (injected by Docs.TOC as <details>, without changing text). */
 .docs-toc {
   font-size: var(--docs-font-s);
   background: var(--docs-card);
@@ -7,12 +7,12 @@
   padding: var(--docs-space-2) var(--docs-space-3);
 }
 
-/* Summary: título del bloque y disparador en móvil/tablet */
+/* Summary: block title and trigger on mobile/tablet */
 .docs-toc-title {
   display: flex; align-items: center; justify-content: space-between;
   gap: var(--docs-space-2);
   list-style: none; cursor: pointer;
-  /* Misma sangría que el texto de los elementos */
+  /* Same indentation as the items’ text */
   padding: var(--docs-space-1) 0 var(--docs-space-1) var(--docs-space-3);
   font-size: var(--docs-font-xs); font-weight: 700;
   text-transform: uppercase; letter-spacing: 0.08em;
@@ -29,7 +29,7 @@
 .docs-toc[open] > .docs-toc-title { margin-bottom: var(--docs-space-2); }
 .docs-toc[open] > .docs-toc-title::after { transform: translateY(0.1rem) rotate(-135deg); }
 
-/* Plegado instantáneo al navegar desde el índice (docs.js) */
+/* Instant collapse when navigating from the table of contents (docs.js) */
 .docs-toc.is-instant::details-content { transition: none; }
 
 .docs-toc ol {
@@ -44,7 +44,7 @@
 .docs-toc a {
   display: block; padding: 0.3rem var(--docs-space-3);
   border-radius: var(--docs-radius-s); color: var(--docs-muted);
-  /* Los títulos largos se parten en varias líneas en lugar de recortarse */
+  /* Long headings wrap onto several lines instead of being clipped */
   overflow-wrap: anywhere;
 }
 .docs-toc a:hover { color: var(--docs-accent-ink); background: var(--docs-chip); text-decoration: none; }
@@ -57,23 +57,23 @@
 .docs-toc li[data-level="3"] > a { opacity: 0.92; }
 .docs-toc li[data-level="4"] { font-size: 0.85em; opacity: 0.9; }
 
-/* Móvil, tableta y escritorio estrecho: bloque plegable, sin scroll interno anidado */
+/* Mobile, tablet, and narrow desktop: collapsible block, without nested inner scrolling */
 @media screen and (max-width: 1279px) {
   .docs-toc ol { max-height: none; overflow: visible; }
 }
 
-/* Escritorio ancho: siempre abierto y sin control de plegado (columna fija a la derecha) */
+/* Wide desktop: always open and without a collapse control (fixed column on the right) */
 @media screen and (min-width: 1280px) {
-  /* Sin caja: lista de texto con una línea guía a la izquierda */
+  /* No box: text list with a guide line on the left */
   .docs-toc { background: transparent; border: 0; border-radius: 0; padding: 0 0 0 var(--docs-space-3); border-left: 1px solid var(--docs-line); }
   .docs-toc-title { cursor: default; pointer-events: none; }
   .docs-toc-title::after { content: none; }
-  /* Salvaguarda: si el bloque quedase cerrado, permitir reabrirlo */
+  /* Safeguard: if the block ended up closed, allow reopening it */
   .docs-toc:not([open]) > .docs-toc-title { cursor: pointer; pointer-events: auto; }
   .docs-toc:not([open]) > .docs-toc-title::after { content: ''; }
 }
 
-/* Móvil y tableta: el bloque plegable es una tarjeta con la misma elevación que el resto */
+/* Mobile and tablet: the collapsible block is a card with the same elevation as the rest */
 @media screen and (max-width: 1279px) {
   .docs-toc { box-shadow: var(--docs-shadow-s); padding: var(--docs-space-2); }
   .docs-toc-title { min-height: 2.25rem; padding-right: var(--docs-space-2); }

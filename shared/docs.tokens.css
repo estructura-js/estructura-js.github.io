@@ -1,11 +1,11 @@
-/* shared/docs.tokens.css — único origen de verdad (tokens). Minimalista, extensible vía --docs-*. */
+/* shared/docs.tokens.css — single source of truth (tokens). Minimal, extensible through --docs-*. */
 :root {
-  /* Paleta (identidad cálida: papel, tinta y dorado) */
+  /* Palette (warm identity: paper, ink, and gold) */
   --docs-paper: #faf6ec;
   --docs-paper-deep: #f2e6c6;
   --docs-ink: #1d1a14;
   --docs-muted: #6a604e;
-  /* AA (≥ 4.5:1) sobre todos los fondos claros, incluidas las bandas y los avisos */
+  /* AA (≥ 4.5:1) on all light backgrounds, including the bands and the callouts */
   --docs-accent: #80620f;
   --docs-accent-ink: #3c300c;
   --docs-accent-soft: #f7efd9;
@@ -16,17 +16,17 @@
   --docs-code-bg: #1f1b12;
   --docs-code-ink: #fdf6e3;
   --docs-chip: #f3eee1;
-  /* Resplandor de la portada: siempre más claro que el papel (en claro, casi blanco cálido) */
+  /* Home page glow: always lighter than the paper (in light mode, almost warm white) */
   --docs-glow: #fffefa;
 
-  /* Avisos: nota (dorado) y advertencia (ámbar) */
+  /* Callouts: note (gold) and warning (amber) */
   --docs-note-bg: #f8f1dc;
   --docs-note-line: #c9a94a;
   --docs-warn-bg: #fff1e0;
   --docs-warn-line: #d9822b;
   --docs-warn-ink: #6b3a05;
 
-  /* Aliases legacy (DRY: no duplicar valores, solo referenciar) */
+  /* Legacy aliases (DRY: do not duplicate values, only reference them) */
   --main-color: var(--docs-muted);
   --secondary-color: var(--docs-paper);
   --tertiary-color: var(--docs-chip);
@@ -41,7 +41,7 @@
   --headers-color-2: var(--docs-muted);
   --headers-bg-color-2: var(--docs-chip);
 
-  /* Escala espaciado / radio / sombra (abstracta, extensible) */
+  /* Spacing / radius / shadow scale (abstract, extensible) */
   --docs-space-0: 0;
   --docs-space-1: 0.25rem;
   --docs-space-2: 0.5rem;
@@ -69,7 +69,7 @@
   --borders-default-width: var(--docs-border);
   --docs-radius-pill: 999px;
 
-  /* Movimiento: curvas y duraciones únicas para todas las transiciones */
+  /* Motion: a single set of curves and durations for all transitions */
   --docs-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
   --docs-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   --docs-dur-1: 120ms;
@@ -80,11 +80,11 @@
   --docs-shadow-s: 0 1px 2px rgba(60, 48, 12, 0.06), 0 1px 1px rgba(60, 48, 12, 0.04);
   --docs-shadow-m: 0 2px 4px rgba(60, 48, 12, 0.05), 0 8px 24px rgba(60, 48, 12, 0.08);
   --docs-shadow-l: 0 4px 8px rgba(60, 48, 12, 0.06), 0 16px 40px rgba(60, 48, 12, 0.12);
-  /* Borde interior de los bloques de código (más visible en oscuro, donde el fondo se acerca al papel) */
+  /* Inner border of code blocks (more visible in dark mode, where the background is close to the paper) */
   --docs-code-edge: rgba(255, 255, 255, 0.06);
   --docs-code-bar: rgba(255, 255, 255, 0.035);
 
-  /* Maquetación: ancho total, columna de lectura, barra superior y columnas laterales */
+  /* Layout: total width, reading column, top bar, and side columns */
   --docs-measure: 90rem;
   --docs-content: 48rem;
   --docs-bar-h: 3.5rem;

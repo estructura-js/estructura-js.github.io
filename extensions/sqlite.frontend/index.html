@@ -1,14 +1,18 @@
 ﻿<!DOCTYPE html>
 
-<html lang="es">
+<html lang="en">
 
 <head>
 	<title>SQLite Frontend</title>
 
 	<link rel="icon" href="../../estructura.icon.png">
+	<link rel="canonical" href="https://estructura.okzgn.com/extensions/sqlite.frontend/">
+	<link rel="alternate" hreflang="en" href="https://estructura.okzgn.com/extensions/sqlite.frontend/">
+	<link rel="alternate" hreflang="es" href="https://estructura.okzgn.com/es/extensions/sqlite.frontend/">
+	<link rel="alternate" hreflang="x-default" href="https://estructura.okzgn.com/extensions/sqlite.frontend/">
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="description" content="Base de datos SQLite (compilada a WebAssembly) para el navegador. Las operaciones se ejecutan en un Web Worker, sin bloquear el hilo principal, y los datos se guardan en el sistema de archivos privado del origen (OPFS) o, si no está disponible, en memoria. Ofrece SQL directo y métodos encadenables sobre objetos, con callbacks o promesas.">
+	<meta name="description" content="SQLite database (compiled to WebAssembly) for the browser. Operations run in a Web Worker, without blocking the main thread, and data is stored in the origin private file system (OPFS) or, if it is not available, in memory. It offers raw SQL and chainable methods on objects, with callbacks or promises.">
 	<meta name="author" content="OKZGN">
 	<meta name="theme-color" content="#faf6ec" media="(prefers-color-scheme: light)">
 	<meta name="theme-color" content="#13110b" media="(prefers-color-scheme: dark)">
@@ -31,22 +35,22 @@
 				console.log('Result 2:', result);
 			});
 
-			_sqlite_frontend({ name: 'fecha', type: 'INTEGER' })
+			_sqlite_frontend({ name: 'date', type: 'INTEGER' })
 			.column(function (result) {
 				console.log('Result 3:', result);
 			});
 
-			_sqlite_frontend({ fecha: Date.now() + 1 })
+			_sqlite_frontend({ date: Date.now() + 1 })
 			.row(function (result) {
 				console.log('Result 4a:', result);
 			});
 
-			_sqlite_frontend({ fecha: Date.now() + 2 })
+			_sqlite_frontend({ date: Date.now() + 2 })
 			.row(function (result) {
 				console.log('Result 4b:', result);
 			});
 
-			_sqlite_frontend({ fecha: Date.now() + 3 })
+			_sqlite_frontend({ date: Date.now() + 3 })
 			.row(function (result) {
 				console.log('Result 4c:', result);
 			});
@@ -56,12 +60,12 @@
 				console.log('Result 5:', result);
 			});
 
-			_sqlite_frontend({ 'fecha': { set: Math.round(Math.random() * 9999), query: Math.round(Math.random() * 53) } })
+			_sqlite_frontend({ 'date': { set: Math.round(Math.random() * 9999), query: Math.round(Math.random() * 53) } })
 			.set(function (result) {
 				console.log('Result 6:', result);
 			});
 
-			_sqlite_frontend({ 'fecha': Math.round(Math.random() * 53) })
+			_sqlite_frontend({ 'date': Math.round(Math.random() * 53) })
 			.del(function (result) {
 				console.log('Result 7:', result);
 			});
@@ -95,11 +99,11 @@
 			file.addEventListener('change', function (event) {
 				var stdFile = event.target.files[0];
 				if (!stdFile) {
-					return alert('Seleccione un archivo.');
+					return alert('Select a file.');
 				}
 
 				if (stdFile.size < (1024 * 20)) {
-					return alert('El archivo es demasiado pequeño (mínimo 20 KB).');
+					return alert('The file is too small (minimum 20 KB).');
 				}
 
 				stdFile.arrayBuffer()
@@ -126,18 +130,19 @@
 <div class="docs-shell">
 	<header class="site-header site-bar">
 		<div class="site-bar-inner">
-			<a class="site-brand" href="../../" aria-label="Estructura: inicio"><img class="site-brand-logo" src="../../estructura.logo.png" alt="Estructura"></a>
-			<nav class="site-links" aria-label="Sitio">
-				<a href="../../#get_started">Guía</a>
-				<a href="../../#extensions">Extensiones</a>
+			<a class="site-brand" href="../../" aria-label="Estructura: home"><img class="site-brand-logo" src="../../estructura.logo.png" alt="Estructura"></a>
+			<nav class="site-links" aria-label="Site">
+				<a href="../../#get_started">Guide</a>
+				<a href="../../#extensions">Extensions</a>
 				<a class="site-github" target="_blank" rel="noopener noreferrer" href="https://github.com/okzgn/estructura"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span>GitHub</span></a>
-				<span class="site-version" title="Versión del núcleo">v1.21.0</span>
+				<span class="site-version" title="Core version">v1.21.0</span>
+				<a class="site-lang" href="../../es/extensions/sqlite.frontend/" hreflang="es" lang="es">Español</a>
 			</nav>
 		</div>
 	</header>
 <div class="docs-container">
-	<nav class="docs-nav docs-sidebar" aria-label="Extensiones">
-		<p class="docs-sidebar-title">Extensiones</p>
+	<nav class="docs-nav docs-sidebar" aria-label="Extensions">
+		<p class="docs-sidebar-title">Extensions</p>
 		<ul>
 			<li><a href="../http/">HTTP</a></li>
 			<li><a href="../dom/">DOM</a></li>
@@ -153,131 +158,131 @@
 	<main class="docs-main">
 		<h1 class="title">SQLite Frontend</h1>
 		<section class="margin-y">
-			<h2 id="description">Descripción</h2>
-			<div class="padding">Base de datos SQLite compilada a WebAssembly (WASM) para el navegador. Las operaciones se ejecutan en un hilo secundario (Web Worker), de modo que no bloquean la interfaz. Los datos se guardan de forma persistente en el sistema de archivos privado del origen (OPFS) cuando el navegador y las cabeceras del servidor lo permiten; si no, en memoria. Ofrece SQL directo sobre cadenas y métodos encadenables sobre objetos (query builder), con callbacks o promesas.</div>
+			<h2 id="description">Description</h2>
+			<div class="padding">SQLite database compiled to WebAssembly (WASM) for the browser. Operations run in a background thread (Web Worker), so they do not block the interface. Data is stored persistently in the origin private file system (OPFS) when the browser and the server headers allow it; otherwise, in memory. It offers raw SQL on strings and chainable methods on objects (a query builder), with callbacks or promises.</div>
 			<div class="docs-meta">
 				<p class="padding-y docs-meta-item">
-					<b>Librería:</b> <a target="_blank" href="estructura.sqlite.frontend.js">estructura.sqlite.frontend.js</a>
+					<b>Library:</b> <a target="_blank" href="estructura.sqlite.frontend.js">estructura.sqlite.frontend.js</a>
 				</p>
 				<p class="padding-y docs-meta-item">
-					<b>Compatibilidad:</b> ES6+ / WebAssembly / Web Workers / OPFS
+					<b>Compatibility:</b> ES6+ / WebAssembly / Web Workers / OPFS
 				</p>
 				<p class="padding-y docs-meta-item">
-					<b>Estado:</b> RC2
+					<b>Status:</b> RC2
 				</p>
 				<p class="padding-y docs-meta-item">
-					<b>Licencia:</b> <a target="_blank" href="../LICENSE">AGPL v3</a>
+					<b>License:</b> <a target="_blank" href="../LICENSE">AGPL v3</a>
 				</p>
 			</div>
 <p class="padding-y docs-callout docs-callout-info">
-				<b>Archivos necesarios (autoalojados):</b> <a target="_blank" href="estructura.sqlite.frontend.js">estructura.sqlite.frontend.js</a>, <a target="_blank" href="estructura.sqlite.frontend.wasm.worker.js">estructura.sqlite.frontend.wasm.worker.js</a> y el directorio <code>_dependencies/_sqlite/</code> (<a target="_blank" href="https://github.com/sqlite/sqlite-wasm">SQLite WASM v3.53.0-build1, oficial</a>). El Worker se crea con la ruta relativa <code>./estructura.sqlite.frontend.wasm.worker.js</code>, que el navegador resuelve respecto a la página (no respecto al script), y el Worker importa <code>./_dependencies/_sqlite/index.mjs</code> respecto a sí mismo. Por eso el Worker y el directorio <code>_dependencies/_sqlite/</code> deben estar en el mismo directorio que la página HTML que usa la librería (lo más sencillo es colocar ahí también <code>estructura.sqlite.frontend.js</code>). Un Worker solo puede cargarse desde el mismo origen que la página, así que estos archivos no pueden servirse desde un CDN.
+				<b>Required files (self-hosted):</b> <a target="_blank" href="estructura.sqlite.frontend.js">estructura.sqlite.frontend.js</a>, <a target="_blank" href="estructura.sqlite.frontend.wasm.worker.js">estructura.sqlite.frontend.wasm.worker.js</a>, and the <code>_dependencies/_sqlite/</code> directory (<a target="_blank" href="https://github.com/sqlite/sqlite-wasm">official SQLite WASM v3.53.0-build1</a>). The Worker is created with the relative path <code>./estructura.sqlite.frontend.wasm.worker.js</code>, which the browser resolves relative to the page (not to the script), and the Worker imports <code>./_dependencies/_sqlite/index.mjs</code> relative to itself. That is why the Worker and the <code>_dependencies/_sqlite/</code> directory must be in the same directory as the HTML page that uses the library (the simplest option is to put <code>estructura.sqlite.frontend.js</code> there as well). A Worker can only be loaded from the same origin as the page, so these files cannot be served from a CDN.
 			</p>
 			<div class="padding-y">
-				<b>Importación:</b><pre><code>&lt;!-- EXTENSIÓN: Estructura / SQLite Frontend (autoalojada): copie estructura.sqlite.frontend.js,
-     estructura.sqlite.frontend.wasm.worker.js y _dependencies/_sqlite/ en el mismo
-     directorio que esta página. --&gt;
-&lt;script src="estructura.sqlite.frontend.js"&gt;&lt;/script&gt;</code><button aria-live="polite" class="copy">Copiar</button></pre>
+				<b>Import:</b><pre><code>&lt;!-- EXTENSION: Estructura / SQLite Frontend (self-hosted): copy estructura.sqlite.frontend.js,
+     estructura.sqlite.frontend.wasm.worker.js, and _dependencies/_sqlite/ into the same
+     directory as this page. --&gt;
+&lt;script src="estructura.sqlite.frontend.js"&gt;&lt;/script&gt;</code><button aria-live="polite" class="copy">Copy</button></pre>
 			</div>
 		</section>
 
 		<section class="margin-y">
-			<h2 id="demo">Demo en vivo</h2>
+			<h2 id="demo">Live demo</h2>
 			<div class="padding">
-				<p>Pulse «Ejecutar demo» para crear una columna, insertar, consultar, actualizar y borrar filas en la base de datos activa; los resultados se muestran en la consola del navegador y, al final, se descarga una copia de la base de datos (<code>test.db.sqlite</code>). También puede seleccionar un archivo <code>.sqlite</code> propio (mínimo 20 KB): la demo lo abre con <code>.open()</code> y después ejecuta las mismas operaciones sobre él.</p>
-				<p class="docs-demo"><button type="button" id="test_run">Ejecutar demo</button> <input id="test" type="file" accept=".sqlite" aria-label="Abrir un archivo .sqlite propio"></p>
+				<p>Click “Run demo” to create a column and insert, query, update, and delete rows in the active database; the results are shown in the browser console and, at the end, a copy of the database is downloaded (<code>test.db.sqlite</code>). You can also select your own <code>.sqlite</code> file (minimum 20 KB): the demo opens it with <code>.open()</code> and then runs the same operations on it.</p>
+				<p class="docs-demo"><button type="button" id="test_run">Run demo</button> <input id="test" type="file" accept=".sqlite" aria-label="Open your own .sqlite file"></p>
 			</div>
 		</section>
 
 		<section class="margin-y">
-			<h2 id="docs">Documentación</h2>
+			<h2 id="docs">Documentation</h2>
 			<div class="padding">
-				<h3>Inicio rápido</h3>
-				<p>El siguiente ejemplo crea una tabla con una columna, inserta una fila y la lee (dentro de una función <code>async</code>):</p>
-<pre><code>async function iniciar() {
-	await _sqlite_frontend('notas').table();
-	await _sqlite_frontend({ name: 'texto', type: 'TEXT' }).column();
-	await _sqlite_frontend({ texto: 'Hola' }).row();
+				<h3 id="quick_start">Quick start</h3>
+				<p>The following example creates a table with one column, inserts a row, and reads it (inside an <code>async</code> function):</p>
+<pre><code>async function init() {
+	await _sqlite_frontend('notes').table();
+	await _sqlite_frontend({ name: 'text', type: 'TEXT' }).column();
+	await _sqlite_frontend({ text: 'Hello' }).row();
 
 	var res = await _sqlite_frontend({ '*': true }).get();
-	console.log(res.get['*'].result); // [{ _auto_id: …, texto: 'Hola' }]
+	console.log(res.get['*'].result); // [{ _auto_id: …, text: 'Hello' }]
 }
 
-iniciar();</code><button aria-live="polite" class="copy">Copiar</button></pre>
+init();</code><button aria-live="polite" class="copy">Copy</button></pre>
 
-				<h3>1. Modelo de ejecución</h3>
-				<p>La librería expone la función global <code>_sqlite_frontend</code>. Todas las operaciones se envían a un Web Worker (<code>estructura.sqlite.frontend.wasm.worker.js</code>) que ejecuta SQLite.</p>
-				<p><b>Callbacks o promesas:</b></p>
-				<p>Cada método admite un callback como primer argumento opcional y un tiempo límite en milisegundos (<code>timeout</code>) como segundo. Si se omite el callback, el método devuelve una promesa (<code>Promise</code>), utilizable con <code>async/await</code>; si se pasa un callback, devuelve <code>undefined</code>.</p>
-				<pre><code>// 1. Con promesas (dentro de una función async o de un módulo)
+				<h3 id="execution_model">1. Execution model</h3>
+				<p>The library exposes the global function <code>_sqlite_frontend</code>. All operations are sent to a Web Worker (<code>estructura.sqlite.frontend.wasm.worker.js</code>) that runs SQLite.</p>
+				<p><b>Callbacks or promises:</b></p>
+				<p>Each method accepts a callback as its optional first argument and a time limit in milliseconds (<code>timeout</code>) as its second. If the callback is omitted, the method returns a promise (<code>Promise</code>), usable with <code>async/await</code>; if a callback is passed, it returns <code>undefined</code>.</p>
+				<pre><code>// 1. With promises (inside an async function or a module)
 try {
-	var resultado = await _sqlite_frontend('SELECT * FROM usuarios').sql();
-	console.log('Datos:', resultado.sql.result);
+	var result = await _sqlite_frontend('SELECT * FROM users').sql();
+	console.log('Data:', result.sql.result);
 } catch (error) {
-	console.error('Error SQL:', error.message);
+	console.error('SQL error:', error.message);
 }
 
-// 2. Con callback
-_sqlite_frontend('SELECT * FROM usuarios').sql(function(respuesta) {
-	if (respuesta.error) {
-		console.error('Error:', respuesta.error);
+// 2. With a callback
+_sqlite_frontend('SELECT * FROM users').sql(function(response) {
+	if (response.error) {
+		console.error('Error:', response.error);
 		return;
 	}
-	console.log('Resultado:', respuesta.sql.result);
-});</code><button aria-live="polite" class="copy">Copiar</button></pre>
+	console.log('Result:', response.sql.result);
+});</code><button aria-live="polite" class="copy">Copy</button></pre>
 
-				<h3>2. Errores</h3>
-				<p>Los errores de una operación llegan en la respuesta del Worker:</p>
+				<h3 id="errors">2. Errors</h3>
+				<p>An operation’s errors arrive in the Worker’s response:</p>
 				<ul>
-					<li><b>Con promesas:</b> Si la respuesta contiene un error general (<code>respuesta.error</code>), la promesa se rechaza con un <code>Error</code> cuyo mensaje es ese texto; la respuesta completa está en <code>error.response</code>. Los errores de una clave concreta en <code>.get()</code>, <code>.set()</code> o <code>.del()</code> no rechazan la promesa: se resuelve y el error queda en <code>respuesta[método][clave].error</code>.</li>
-					<li><b>Con callbacks:</b> El callback recibe siempre el objeto de respuesta. Si hubo un fallo general, <code>respuesta.error</code> contiene el mensaje.</li>
-					<li><b>Errores por clave:</b> Cuando una llamada a <code>.get()</code>, <code>.set()</code> o <code>.del()</code> incluye varias claves, el fallo de una no impide que se procesen las demás; queda aislado en <code>respuesta[método][clave].error</code>. Excepción: un fallo en una actualización global de <code>.set()</code> (sin <code>query</code>) es un error general y detiene el procesamiento de las claves restantes.</li>
-					<li><b>Fallo de inicialización:</b> Si el Worker no llega a cargarse o SQLite no se inicializa (por ejemplo, porque los archivos no están en la ruta esperada o la CSP impide compilar WebAssembly), todas las peticiones pendientes y las posteriores reciben ese error como error general: el callback recibe <code>respuesta.error</code> y la promesa se rechaza. Si el Worker falla después de haber arrancado, el error solo se muestra en la consola.</li>
+					<li><b>With promises:</b> If the response contains a general error (<code>response.error</code>), the promise is rejected with an <code>Error</code> whose message is that text; the full response is in <code>error.response</code>. Errors for a specific key in <code>.get()</code>, <code>.set()</code>, or <code>.del()</code> do not reject the promise: it resolves, and the error is reported in <code>response[method][key].error</code>.</li>
+					<li><b>With callbacks:</b> When it is invoked, the callback always receives the response object. If there was a general failure, <code>response.error</code> contains the message.</li>
+					<li><b>Per-key errors:</b> When a call to <code>.get()</code>, <code>.set()</code>, or <code>.del()</code> includes several keys, the failure of one does not prevent the others from being processed; it is isolated in <code>response[method][key].error</code>. Exception: a failure in a global update with <code>.set()</code> (without <code>query</code>) is a general error and stops the processing of the remaining keys.</li>
+					<li><b>Initialization failure:</b> If the Worker fails to load or SQLite does not initialize (for example, because the files are not at the expected path or the CSP prevents compiling WebAssembly), all pending and later requests receive that error as a general error: the callback receives <code>response.error</code>, and the promise is rejected. If the Worker fails after it has started, the error is only shown in the console.</li>
 				</ul>
-				<p><b>Ejemplo de errores por clave con callback:</b></p>
-<pre><code>_sqlite_frontend({ 'columna_inexistente': true }).get(function(res) {
-	// 1. Error general de la respuesta
+				<p><b>Example of per-key errors with a callback:</b></p>
+<pre><code>_sqlite_frontend({ 'nonexistent_column': true }).get(function(res) {
+	// 1. General error in the response
 	if (res.error) {
-		console.error('Error general:', res.error);
+		console.error('General error:', res.error);
 		return;
 	}
 
-	// 2. Error de la clave consultada
-	if (res.get.columna_inexistente.error) {
-		console.warn('Error en la columna:', res.get.columna_inexistente.error);
+	// 2. Error for the queried key
+	if (res.get.nonexistent_column.error) {
+		console.warn('Column error:', res.get.nonexistent_column.error);
 		return;
 	}
 
-	console.log('Resultados:', res.get.columna_inexistente.result);
-});</code><button aria-live="polite" class="copy">Copiar</button></pre>
+	console.log('Results:', res.get.nonexistent_column.result);
+});</code><button aria-live="polite" class="copy">Copy</button></pre>
 
-				<h3>3. Métodos para cadenas (<code>String</code>)</h3>
-				<p>Ejecutan SQL directo, seleccionan la base de datos o la tabla activa, y exportan o cierran bases de datos. La cadena no puede estar vacía: con una cadena vacía no se envía ninguna petición y el método devuelve <code>undefined</code> (no se invoca el callback ni se devuelve promesa).</p>
+				<h3 id="string_methods">3. String methods (<code>String</code>)</h3>
+				<p>They run raw SQL, select the active database or table, and export or close databases. The string cannot be empty: with an empty string, no request is sent, and the method returns <code>undefined</code> (the callback is not invoked and no promise is returned).</p>
 
-				<h4><code>.sql(callback?, timeout?)</code></h4>
-				<p>Ejecuta una consulta SQL directa en la base de datos activa. El resultado (filas como objetos) está en <code>res.sql.result</code>. Si la cadena contiene varias sentencias, se ejecutan todas, pero <code>result</code> solo recoge las filas de la primera que devuelve resultados. La cadena se ejecuta tal cual, sin parámetros: no concatene en ella datos introducidos por el usuario.</p>
+				<h4 id="sql"><code>.sql(callback?, timeout?)</code></h4>
+				<p>Runs a raw SQL query on the active database. The result (rows as objects) is in <code>res.sql.result</code>. If the string contains several statements, all of them run, but <code>result</code> only collects the rows of the first one that returns results. The string runs as is, without parameters: do not concatenate user input into it.</p>
 <pre><code>_sqlite_frontend('PRAGMA database_list;').sql(function(res) {
-	console.log('Bases de datos activas:', res);
+	console.log('Active databases:', res);
 });
 
 _sqlite_frontend("SELECT name FROM sqlite_master WHERE type='table'").sql(function(res) {
-	console.log('Tablas en la BD:', res);
-});</code><button aria-live="polite" class="copy">Copiar</button></pre>
+	console.log('Tables in the DB:', res);
+});</code><button aria-live="polite" class="copy">Copy</button></pre>
 
-				<h4><code>.db(callback?, timeout?)</code></h4>
-				<p>Selecciona la <b>base de datos activa</b>; las operaciones posteriores se dirigen a ella. Al cargar la librería, la base de datos activa es <code>_default_db</code>, y se sigue usando hasta que se seleccione otra con <code>.db()</code> o se abra una con <code>.open()</code>. Si la base de datos no existe, se crea (en OPFS si está disponible; si no, en memoria). Del nombre solo se conservan los caracteres <code>[a-zA-Z0-9_.]</code>; si no queda ninguno, se usa <code>_default_db</code>. La tabla activa no cambia: se crea en la nueva base de datos si no existe. La respuesta incluye <code>res.db.name</code> y <code>res.opfs</code> (<code>true</code> si la base de datos está en OPFS).</p>
-<pre><code>// Seleccionar 'mi_base_datos.db' como base de datos activa
-_sqlite_frontend('mi_base_datos.db').db();</code><button aria-live="polite" class="copy">Copiar</button></pre>
+				<h4 id="db"><code>.db(callback?, timeout?)</code></h4>
+				<p>Selects the <b>active database</b>; subsequent operations are directed to it. When the library loads, the active database is <code>_default_db</code>, and it stays in use until another one is selected with <code>.db()</code> or one is opened with <code>.open()</code>. If the database does not exist, it is created (in OPFS if available; otherwise, in memory). Only the characters <code>[a-zA-Z0-9_.]</code> of the name are kept; if none remain, <code>_default_db</code> is used. The active table does not change: it is created in the new database if it does not exist. The response includes <code>res.db.name</code> and <code>res.opfs</code> (<code>true</code> if the database is in OPFS).</p>
+<pre><code>// Select 'my_database.db' as the active database
+_sqlite_frontend('my_database.db').db();</code><button aria-live="polite" class="copy">Copy</button></pre>
 
-				<h4><code>.table(callback?, timeout?)</code></h4>
-				<p>Selecciona la <b>tabla activa</b>, sobre la que operan los métodos para objetos (<code>.column()</code>, <code>.row()</code>, <code>.get()</code>, <code>.set()</code>, <code>.del()</code>). Mientras no se seleccione ninguna, se usa <code>_default_table</code>. Si la tabla no existe en la base de datos activa, se crea con la clave primaria autoincremental <code>_auto_id</code>.</p>
-<pre><code>// Seleccionar 'usuarios' como tabla activa para las operaciones siguientes
-_sqlite_frontend('usuarios').table();</code><button aria-live="polite" class="copy">Copiar</button></pre>
+				<h4 id="table"><code>.table(callback?, timeout?)</code></h4>
+				<p>Selects the <b>active table</b>, on which the object methods operate (<code>.column()</code>, <code>.row()</code>, <code>.get()</code>, <code>.set()</code>, <code>.del()</code>). Until one is selected, <code>_default_table</code> is used. If the table does not exist in the active database, it is created with the auto-increment primary key <code>_auto_id</code>.</p>
+<pre><code>// Select 'users' as the active table for the following operations
+_sqlite_frontend('users').table();</code><button aria-live="polite" class="copy">Copy</button></pre>
 
-				<h4><code>.save(callback?, timeout?)</code></h4>
-				<p>Exporta una base de datos como un <code>Blob</code> de tipo <code>application/x-sqlite3</code>, disponible en <code>res.save.data</code>. No descarga nada por sí mismo: la descarga, si se desea, la hace el código de la página (ver ejemplo). La cadena es el nombre de la base de datos que se exporta; si no hay ninguna abierta con ese nombre, se exporta la base de datos activa. En ambos casos, <code>res.save.name</code> contiene ese nombre (saneado), útil como nombre de archivo.</p>
-<pre><code>_sqlite_frontend('respaldo.sqlite').save(function(res) {
+				<h4 id="save"><code>.save(callback?, timeout?)</code></h4>
+				<p>Exports a database as a <code>Blob</code> of type <code>application/x-sqlite3</code>, available in <code>res.save.data</code>. It does not download anything by itself: if a download is needed, the page’s code handles it (see the example). The string is the name of the database to export; if none is open with that name, the active database is exported. In both cases, <code>res.save.name</code> contains that name (sanitized), which is useful as a file name.</p>
+<pre><code>_sqlite_frontend('backup.sqlite').save(function(res) {
 	if (res.error) {
-		console.error('Error al exportar:', res.error);
+		console.error('Export error:', res.error);
 		return;
 	}
 	var url = URL.createObjectURL(res.save.data);
@@ -287,291 +292,291 @@ _sqlite_frontend('usuarios').table();</code><button aria-live="polite" class="co
 	document.body.appendChild(a);
 	a.click();
 	document.body.removeChild(a);
-	// Revocar la URL más tarde: hacerlo justo tras click() puede cancelar la descarga
+	// Revoke the URL later: doing it right after click() can cancel the download
 	setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
-});</code><button aria-live="polite" class="copy">Copiar</button></pre>
+});</code><button aria-live="polite" class="copy">Copy</button></pre>
 
-				<h4><code>.close(callback?, timeout?)</code></h4>
-				<p>Cierra la base de datos con el nombre indicado y libera sus recursos en el Web Worker. Si no hay ninguna abierta con ese nombre, la respuesta no incluye <code>res.close.name</code>. Cerrar la base de datos activa no cambia la selección: la siguiente operación la vuelve a abrir.</p>
-<pre><code>// 1. Con async/await (dentro de una función async o de un módulo)
+				<h4 id="close"><code>.close(callback?, timeout?)</code></h4>
+				<p>Closes the database with the given name and frees its resources in the Web Worker. If none is open with that name, the response does not include <code>res.close.name</code>. Closing the active database does not change the selection: the next operation opens it again.</p>
+<pre><code>// 1. With async/await (inside an async function or a module)
 try {
-	var res = await _sqlite_frontend('mi_base_datos.db').close();
-	console.log('Base de datos cerrada:', res.close.name);
+	var res = await _sqlite_frontend('my_database.db').close();
+	console.log('Database closed:', res.close.name);
 }
 catch (error) {
-	console.error('Error al cerrar BD:', error.message);
+	console.error('Error closing the DB:', error.message);
 }
 
-// 2. Con callback
-_sqlite_frontend('mi_base_datos.db').close(function(res) {
+// 2. With a callback
+_sqlite_frontend('my_database.db').close(function(res) {
 	if (res.error) {
 		console.error('Error:', res.error);
 		return;
 	}
-	console.log('Base de datos cerrada correctamente:', res.close.name);
-});</code><button aria-live="polite" class="copy">Copiar</button></pre>
+	console.log('Database closed successfully:', res.close.name);
+});</code><button aria-live="polite" class="copy">Copy</button></pre>
 
-				<h3>4. Métodos para objetos (<code>Object</code>)</h3>
-				<p>Permiten definir columnas y leer o modificar datos de la tabla activa sin escribir SQL (query builder).</p>
-				<p>En <code>.get()</code>, <code>.set()</code> y <code>.del()</code>, cada clave del objeto es un nombre de columna (o varios separados por comas, como <code>'nombre, edad'</code>) y su valor indica qué filas se ven afectadas (en <code>.set()</code>, también el nuevo valor). Cada clave se procesa por separado y su resultado está en <code>res[método][clave].result</code>. Los ejemplos de esta sección suponen una tabla activa con las columnas <code>fecha</code> (<code>INTEGER</code>) y <code>estado</code> (<code>TEXT</code>).</p>
-				<p class="docs-callout"><b>Nota sobre IDs numéricos:</b> Cuando el valor que selecciona las filas es un número (o una cadena numérica), se interpreta como el <code>_auto_id</code> de la fila, la clave primaria autogenerada: la operación afecta solo a la fila con ese ID. Se aceptan valores entre <code>1</code> y <code>Number.MAX_SAFE_INTEGER</code>; fuera de ese rango, o con una cadena no numérica, la clave devuelve el error <code>Wrong ID</code>. El número <code>0</code> no es un ID: cuenta como valor falso.</p>
+				<h3 id="object_methods">4. Object methods (<code>Object</code>)</h3>
+				<p>They let you define columns and read or modify data in the active table without writing SQL (a query builder).</p>
+				<p>In <code>.get()</code>, <code>.set()</code>, and <code>.del()</code>, each key of the object is a column name (or several separated by commas, such as <code>'name, age'</code>), and its value indicates which rows are affected (in <code>.set()</code>, also the new value). Each key is processed separately, and its result is in <code>res[method][key].result</code>. The examples in this section assume an active table with the columns <code>date</code> (<code>INTEGER</code>) and <code>status</code> (<code>TEXT</code>).</p>
+				<p class="docs-callout"><b>Note on numeric IDs:</b> When the value that selects the rows is a number (or a numeric string), it is interpreted as the row’s <code>_auto_id</code>, the auto-generated primary key: the operation affects only the row with that ID. Values between <code>1</code> and <code>Number.MAX_SAFE_INTEGER</code> are accepted; outside that range, or with a non-numeric string, the key returns the <code>Wrong ID</code> error. The number <code>0</code> is not an ID: it counts as a falsy value.</p>
 
-				<h4><code>.column(callback?, timeout?)</code></h4>
-				<p>Añade una columna a la tabla activa: <code>name</code> es su nombre y <code>type</code>, su tipo SQLite (por defecto, <code>TEXT</code>). Si la columna ya existe, no se modifica ni se produce un error.</p>
-<pre><code>_sqlite_frontend({ name: 'fecha', type: 'INTEGER' }).column(function(res) {
-	console.log('Columna creada o ya existente:', res.column.name, res.column.type);
-});</code><button aria-live="polite" class="copy">Copiar</button></pre>
+				<h4 id="column"><code>.column(callback?, timeout?)</code></h4>
+				<p>Adds a column to the active table: <code>name</code> is its name, and <code>type</code> is its SQLite type (default: <code>TEXT</code>). If the column already exists, it is not modified and no error is produced.</p>
+<pre><code>_sqlite_frontend({ name: 'date', type: 'INTEGER' }).column(function(res) {
+	console.log('Column created or already exists:', res.column.name, res.column.type);
+});</code><button aria-live="polite" class="copy">Copy</button></pre>
 
-				<h4><code>.row(callback?, timeout?)</code></h4>
-				<p>Inserta una fila en la tabla activa. Las claves son nombres de columnas existentes. La fila recibe un <code>_auto_id</code> autoincremental, disponible en <code>res.row.id</code>. Con un objeto vacío no se inserta nada y la respuesta no incluye <code>res.row</code>.</p>
-<pre><code>_sqlite_frontend({ fecha: Date.now() }).row(function(res) {
-	console.log('ID asignado a la fila:', res.row.id);
-});</code><button aria-live="polite" class="copy">Copiar</button></pre>
+				<h4 id="row"><code>.row(callback?, timeout?)</code></h4>
+				<p>Inserts a row into the active table. The keys are names of existing columns. The row receives an auto-incrementing <code>_auto_id</code>, available in <code>res.row.id</code>. With an empty object, nothing is inserted, and the response does not include <code>res.row</code>.</p>
+<pre><code>_sqlite_frontend({ date: Date.now() }).row(function(res) {
+	console.log('ID assigned to the row:', res.row.id);
+});</code><button aria-live="polite" class="copy">Copy</button></pre>
 
-				<h4><code>.get(callback?, timeout?)</code></h4>
-				<p>Consulta filas de la tabla activa. La clave es <code>'*'</code> (todas las columnas) o una o varias columnas. El valor puede ser:</p>
+				<h4 id="get"><code>.get(callback?, timeout?)</code></h4>
+				<p>Queries rows of the active table. The key is <code>'*'</code> (all columns) or one or more columns. The value can be:</p>
 				<ul>
-					<li><code>true</code>: todas las filas.</li>
-					<li>Un número: la fila con ese <code>_auto_id</code> (ver la nota sobre IDs numéricos al inicio de esta sección).</li>
-					<li>Un objeto con <code>where</code> (ver «Cláusula where»), <code>limit</code> (número máximo de filas) y <code>count</code> (<code>true</code> para obtener el número de filas en lugar de las filas; con <code>distinct: true</code>, cuenta valores distintos).</li>
-					<li>Un valor falso (<code>false</code>, <code>0</code>, <code>null</code>): ninguna fila (<code>result</code> es <code>[]</code>).</li>
-					<li>Un objeto vacío (<code>{}</code>): no se ejecuta la consulta y la clave recibe el error <code>Empty criteria object; nothing was executed.</code></li>
+					<li><code>true</code>: all rows.</li>
+					<li>A number: the row with that <code>_auto_id</code> (see the note on numeric IDs at the start of this section).</li>
+					<li>An object with <code>where</code> (see “The where clause”), <code>limit</code> (maximum number of rows), and <code>count</code> (<code>true</code> to get the number of rows instead of the rows; with <code>distinct: true</code>, it counts distinct values).</li>
+					<li>A falsy value (<code>false</code>, <code>0</code>, <code>null</code>): no rows (<code>result</code> is <code>[]</code>).</li>
+					<li>An empty object (<code>{}</code>): the query is not run, and the key receives the error <code>Empty criteria object; nothing was executed.</code></li>
 				</ul>
-				<p>El resultado es un array de filas (objetos) o, con <code>count</code>, un número.</p>
-<pre><code>// 1. Obtener todas las columnas y filas
+				<p>The result is an array of rows (objects) or, with <code>count</code>, a number.</p>
+<pre><code>// 1. Get all columns and rows
 _sqlite_frontend({ '*': true }).get(function(res) {
-	console.log('Filas:', res.get['*'].result);
+	console.log('Rows:', res.get['*'].result);
 });
 
-// 2. Consulta filtrada por _auto_id con where
+// 2. Query filtered by _auto_id with where
 _sqlite_frontend({
-	'fecha': {
+	'date': {
 		where: { _auto_id: 1 }
 	}
 }).get(function(res) {
-	console.log('Fecha obtenida:', res.get.fecha.result);
+	console.log('Date obtained:', res.get.date.result);
 });
 
-// 3. Atajo por ID numérico (_auto_id = 1)
+// 3. Numeric ID shortcut (_auto_id = 1)
 _sqlite_frontend({ '*': 1 }).get(function(res) {
-	console.log('Fila #1:', res.get['*'].result);
+	console.log('Row #1:', res.get['*'].result);
 });
 
-// 4. Consulta con operadores y límite
+// 4. Query with operators and a limit
 _sqlite_frontend({
-	'fecha': {
+	'date': {
 		where: {
-			fecha: { '>=': 1000000 },
-			estado: { 'IN': ['activo', 'pendiente'] }
+			date: { '>=': 1000000 },
+			status: { 'IN': ['active', 'pending'] }
 		},
 		limit: 10
 	}
 }).get(function(res) {
-	console.log('Resultados filtrados:', res.get.fecha.result);
+	console.log('Filtered results:', res.get.date.result);
 });
 
-// 5. Contar filas
-_sqlite_frontend({ '*': { count: true, where: { estado: 'activo' } } }).get(function(res) {
-	console.log('Filas activas:', res.get['*'].result);
+// 5. Count rows
+_sqlite_frontend({ '*': { count: true, where: { status: 'active' } } }).get(function(res) {
+	console.log('Active rows:', res.get['*'].result);
 });
 
-// 6. Rechaza la promesa con Error('SQLite request timeout.') si se superan los 2000 ms
-//    (dentro de una función async o de un módulo)
+// 6. Rejects the promise with Error('SQLite request timeout.') if 2000 ms are exceeded
+//    (inside an async function or a module)
 try {
-	// Para indicar el timeout con promesas, pase null o undefined como primer argumento
-	var datos = await _sqlite_frontend({ '*': true }).get(null, 2000);
-	console.log(datos.get['*'].result);
+	// To set the timeout with promises, pass null or undefined as the first argument
+	var data = await _sqlite_frontend({ '*': true }).get(null, 2000);
+	console.log(data.get['*'].result);
 } catch (err) {
-	console.error('Consulta cancelada por tiempo:', err.message);
+	console.error('Query timed out:', err.message);
 }
-</code><button aria-live="polite" class="copy">Copiar</button></pre>
+</code><button aria-live="polite" class="copy">Copy</button></pre>
 
-				<h4>Cláusula <code>where</code></h4>
-				<p>Se puede usar en <code>.get()</code>, en <code>.del()</code> y dentro del <code>query</code> de <code>.set()</code>, como objeto o como cadena.</p>
-				<p><b>Como objeto:</b> cada clave es una columna, y las condiciones de varias claves se combinan con <code>AND</code>. Los valores se pasan como parámetros (<code>bind</code>), no se insertan en el SQL.</p>
+				<h4 id="where_clause">The <code>where</code> clause</h4>
+				<p>It can be used in <code>.get()</code>, in <code>.del()</code>, and inside the <code>query</code> of <code>.set()</code>, as an object or as a string.</p>
+				<p><b>As an object:</b> each key is a column, and the conditions of several keys are combined with <code>AND</code>. The values are passed as parameters (<code>bind</code>); they are not inserted into the SQL.</p>
 				<ul>
-					<li>Valor simple (número, cadena o booleano): <code>columna = valor</code>. Con <code>null</code>: <code>columna IS NULL</code>.</li>
-					<li>Objeto <code>{ operador: valor }</code>: <code>columna operador valor</code>. Varios operadores en la misma columna se combinan con <code>AND</code>; por ejemplo, <code>{ fecha: { '&gt;=': 10, '&lt;': 20 } }</code> es un rango.</li>
+					<li>Simple value (number, string, or boolean): <code>column = value</code>. With <code>null</code>: <code>column IS NULL</code>.</li>
+					<li>Object <code>{ operator: value }</code>: <code>column operator value</code>. Several operators on the same column are combined with <code>AND</code>; for example, <code>{ date: { '&gt;=': 10, '&lt;': 20 } }</code> is a range.</li>
 				</ul>
-				<p><b>Operadores admitidos (sin distinguir mayúsculas: <code>'in'</code> equivale a <code>'IN'</code>):</b></p>
+				<p><b>Supported operators (case-insensitive: <code>'in'</code> is equivalent to <code>'IN'</code>):</b></p>
 				<ul>
-					<li><b>Comparación:</b> <code>=</code>, <code>==</code>, <code>!=</code>, <code>&lt;&gt;</code>, <code>&gt;</code>, <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;=</code></li>
-					<li><b>Patrones:</b> <code>LIKE</code>, <code>NOT LIKE</code>, <code>GLOB</code>, <code>NOT GLOB</code></li>
-					<li><b>Conjuntos:</b> <code>IN</code>, <code>NOT IN</code> (con un array o un valor único; con un array vacío, <code>IN</code> no selecciona ninguna fila y <code>NOT IN</code>, todas)</li>
-					<li><b>Nulos e identidad:</b> <code>IS</code>, <code>IS NOT</code> (con <code>null</code> generan <code>IS NULL</code> / <code>IS NOT NULL</code>), <code>IS DISTINCT FROM</code>, <code>IS NOT DISTINCT FROM</code></li>
-					<li><b>Bits:</b> <code>&amp;</code>; la fila se incluye si el resultado es distinto de 0. Por ejemplo, <code>{ permisos: { '&amp;': 4 } }</code> selecciona las filas cuyo bit de valor 4 está activo.</li>
+					<li><b>Comparison:</b> <code>=</code>, <code>==</code>, <code>!=</code>, <code>&lt;&gt;</code>, <code>&gt;</code>, <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;=</code></li>
+					<li><b>Patterns:</b> <code>LIKE</code>, <code>NOT LIKE</code>, <code>GLOB</code>, <code>NOT GLOB</code></li>
+					<li><b>Sets:</b> <code>IN</code>, <code>NOT IN</code> (with an array or a single value; with an empty array, <code>IN</code> selects no rows and <code>NOT IN</code> selects all of them)</li>
+					<li><b>Nulls and identity:</b> <code>IS</code>, <code>IS NOT</code> (with <code>null</code> they generate <code>IS NULL</code> / <code>IS NOT NULL</code>), <code>IS DISTINCT FROM</code>, <code>IS NOT DISTINCT FROM</code></li>
+					<li><b>Bits:</b> <code>&amp;</code>; the row is included if the result is not 0. For example, <code>{ permissions: { '&amp;': 4 } }</code> selects the rows in which the bit with value 4 is set.</li>
 				</ul>
-				<p>Otros operadores (<code>BETWEEN</code>, <code>OR</code>, <code>NOT</code>, <code>EXISTS</code>…) no se pueden expresar en forma de objeto: los desconocidos se ignoran, y varios de esos nombres producen un error de SQL o, como <code>AND</code> y <code>OR</code>, insertan su valor en el SQL sin parámetros, así que no los use. Las claves <code>AND</code>, <code>OR</code> y <code>NOT</code> en el primer nivel de <code>where</code> se ignoran, igual que los valores que no son simples ni objetos de operadores (por ejemplo, un array). Para esos casos, use <code>where</code> como cadena.</p>
-				<p><b>Condiciones ignoradas:</b> en <code>.get()</code>, una condición ignorada no filtra; si no queda ninguna, la consulta se ejecuta sin <code>WHERE</code> y devuelve todas las filas. En <code>.set()</code> y <code>.del()</code>, en ese caso la operación no se ejecuta (ver «Protección ante criterios sin condiciones», en <code>.set()</code>).</p>
-				<p><b>Como cadena:</b> el texto se añade tras <code>WHERE</code> tal cual (solo se recortan los espacios de los extremos), sin parámetros; no incluya en él datos introducidos por el usuario.</p>
+				<p>Other operators (<code>BETWEEN</code>, <code>OR</code>, <code>NOT</code>, <code>EXISTS</code>…) cannot be expressed in object form: unknown ones are ignored, and several of those names produce an SQL error or, in the case of <code>AND</code> and <code>OR</code>, insert their value into the SQL without parameters, so do not use them. The keys <code>AND</code>, <code>OR</code>, and <code>NOT</code> at the top level of <code>where</code> are ignored, as are values that are neither simple values nor operator objects (for example, an array). For those cases, use <code>where</code> as a string.</p>
+				<p><b>Ignored conditions:</b> in <code>.get()</code>, an ignored condition does not filter; if none remain, the query runs without <code>WHERE</code> and returns all rows. In <code>.set()</code> and <code>.del()</code>, in that case the operation does not run (see “Protection against criteria without conditions” in <code>.set()</code>).</p>
+				<p><b>As a string:</b> the text is appended after <code>WHERE</code> as is (only leading and trailing spaces are trimmed), without parameters; do not include user input in it.</p>
 <pre><code>_sqlite_frontend({
-	'*': { where: "fecha BETWEEN 1000 AND 2000 OR estado = 'activo'" }
+	'*': { where: "date BETWEEN 1000 AND 2000 OR status = 'active'" }
 }).get(function(res) {
 	console.log(res.get['*'].result);
-});</code><button aria-live="polite" class="copy">Copiar</button></pre>
-				<p class="docs-callout"><b>Nota de compatibilidad:</b> <code>count</code>, <code>distinct</code> y <code>limit</code> solo se aplican en <code>.get()</code>. En <code>.del()</code> y en el <code>query</code> de <code>.set()</code>, <code>count</code> y <code>limit</code> dejan un error en la clave correspondiente y la operación no se ejecuta; <code>distinct</code> se ignora.</p>
+});</code><button aria-live="polite" class="copy">Copy</button></pre>
+				<p class="docs-callout"><b>Compatibility note:</b> <code>count</code>, <code>distinct</code>, and <code>limit</code> only apply in <code>.get()</code>. In <code>.del()</code> and in the <code>query</code> of <code>.set()</code>, <code>count</code> and <code>limit</code> leave an error on the corresponding key, and the operation does not run; <code>distinct</code> is ignored.</p>
 
-				<h4><code>.set(callback?, timeout?)</code></h4>
-				<p>Actualiza filas de la tabla activa. La clave es una o varias columnas (no se admite <code>'*'</code>) y el valor es un objeto con dos propiedades: <code>set</code>, el nuevo valor, y <code>query</code>, que indica qué filas se actualizan: el <code>_auto_id</code> de una fila (un número o una cadena numérica; ver la nota sobre IDs numéricos al inicio de esta sección) o un objeto con <code>where</code> (ver «Cláusula where»). Con <code>query: true</code> se actualizan todas las filas, y con un <code>query</code> falso (<code>0</code>, <code>null</code>, <code>false</code>), ninguna (<code>result</code> es <code>[]</code>). Si la clave incluye varias columnas, todas reciben el mismo valor. El número de filas modificadas está en <code>res.set[clave].result</code>.</p>
-<pre><code>// 1. Actualizar la fila con _auto_id = 1
+				<h4 id="set"><code>.set(callback?, timeout?)</code></h4>
+				<p>Updates rows of the active table. The key is one or more columns (<code>'*'</code> is not allowed), and the value is an object with two properties: <code>set</code>, the new value, and <code>query</code>, which indicates which rows are updated: a row’s <code>_auto_id</code> (a number or a numeric string; see the note on numeric IDs at the start of this section) or an object with <code>where</code> (see “The where clause”). With <code>query: true</code>, all rows are updated, and with a falsy <code>query</code> (<code>0</code>, <code>null</code>, <code>false</code>), none are (<code>result</code> is <code>[]</code>). If the key includes several columns, all of them receive the same value. The number of modified rows is in <code>res.set[key].result</code>.</p>
+<pre><code>// 1. Update the row with _auto_id = 1
 _sqlite_frontend({
-	'fecha': { set: 9999, query: 1 }
+	'date': { set: 9999, query: 1 }
 }).set(function(res) {
-	console.log('Filas modificadas:', res.set.fecha.result);
+	console.log('Modified rows:', res.set.date.result);
 });
 
-// 2. Actualizar las filas que cumplen una condición where
+// 2. Update the rows that meet a where condition
 _sqlite_frontend({
-	'estado': { set: 'archivado', query: { where: { fecha: { '<': 1000000 } } } }
+	'status': { set: 'archived', query: { where: { date: { '<': 1000000 } } } }
 }).set(function(res) {
-	console.log('Filas modificadas:', res.set.estado.result);
+	console.log('Modified rows:', res.set.status.result);
 });
 
-// 3. Actualizar TODAS las filas (sin query)
-_sqlite_frontend({ 'estado': 'activo' }).set(function(res) {
-	console.log('Filas modificadas:', res.set.estado.result);
-});</code><button aria-live="polite" class="copy">Copiar</button></pre>
+// 3. Update ALL rows (without query)
+_sqlite_frontend({ 'status': 'active' }).set(function(res) {
+	console.log('Modified rows:', res.set.status.result);
+});</code><button aria-live="polite" class="copy">Copy</button></pre>
 				<p class="docs-callout docs-callout-warn">
-					<b>Advertencia de actualización global:</b> Si no se indica <code>query</code>, ya sea con el valor directo (<code>{ 'estado': 'activo' }</code>) o con <code>{ set: valor }</code>, la actualización se ejecuta sin <code>WHERE</code> y aplica el nuevo valor a <b>todas las filas</b> de la tabla activa. Un <code>query</code> con valor <code>undefined</code> (por ejemplo, una variable sin asignar) cuenta como no indicado.
+					<b>Global update warning:</b> If <code>query</code> is omitted, either by passing the value directly (<code>{ 'status': 'active' }</code>) or by using <code>{ set: value }</code>, the update runs without <code>WHERE</code> and applies the new value to <b>all rows</b> of the active table. A <code>query</code> with the value <code>undefined</code> (for example, an unassigned variable) counts as omitted.
 				</p>
 				<p class="docs-callout docs-callout-info">
-					<b>Protección ante criterios sin condiciones:</b> en <code>.set()</code> (dentro de <code>query</code>) y en <code>.del()</code>, si un objeto de criterios no produce ninguna condición <code>WHERE</code> (no incluye <code>where</code>, <code>where</code> está vacío —<code>{}</code> o <code>''</code>— o todas sus condiciones se ignoran), la operación no se ejecuta y <code>res.set[clave].error</code> (o <code>res.del[clave].error</code>) lo indica. Así un filtro mal escrito no afecta a toda la tabla. Un objeto de criterios vacío (<code>{}</code>) tampoco se ejecuta y deja el error <code>Empty criteria object; nothing was executed.</code> Para afectar a todas las filas, use <code>true</code> en <code>.del()</code>, o <code>.set()</code> sin <code>query</code> (o con <code>query: true</code>).
+					<b>Protection against criteria without conditions:</b> in <code>.set()</code> (inside <code>query</code>) and in <code>.del()</code>, if a criteria object produces no <code>WHERE</code> condition (it does not include <code>where</code>, <code>where</code> is empty—<code>{}</code> or <code>''</code>—or all its conditions are ignored), the operation does not run, and <code>res.set[key].error</code> (or <code>res.del[key].error</code>) reports it. This way, a badly written filter does not affect the whole table. An empty criteria object (<code>{}</code>) does not run either and leaves the error <code>Empty criteria object; nothing was executed.</code> To affect all rows, use <code>true</code> in <code>.del()</code>, or <code>.set()</code> without <code>query</code> (or with <code>query: true</code>).
 				</p>
 
-				<h4><code>.del(callback?, timeout?)</code></h4>
-				<p>Borra <b>filas completas</b> de la tabla activa. La clave es un nombre de columna (no se admite <code>'*'</code>) que solo identifica el resultado en <code>res.del[clave]</code>: no limita lo que se borra. El valor indica qué filas se borran: un número (<code>_auto_id</code>; ver la nota sobre IDs numéricos al inicio de esta sección), un objeto con <code>where</code>, o <code>true</code> (todas). Un valor falso no borra nada (<code>result</code> es <code>[]</code>). El número de filas borradas está en <code>res.del[clave].result</code>.</p>
-<pre><code>// 1. Borrar la fila con _auto_id = 1
-_sqlite_frontend({ 'fecha': 1 }).del(function(res) {
-	console.log('Filas borradas:', res.del.fecha.result);
+				<h4 id="del"><code>.del(callback?, timeout?)</code></h4>
+				<p>Deletes <b>entire rows</b> from the active table. The key is a column name (<code>'*'</code> is not allowed) that only identifies the result in <code>res.del[key]</code>: it does not limit what is deleted. The value indicates which rows are deleted: a number (<code>_auto_id</code>; see the note on numeric IDs at the start of this section), an object with <code>where</code>, or <code>true</code> (all of them). A falsy value deletes nothing (<code>result</code> is <code>[]</code>). The number of deleted rows is in <code>res.del[key].result</code>.</p>
+<pre><code>// 1. Delete the row with _auto_id = 1
+_sqlite_frontend({ 'date': 1 }).del(function(res) {
+	console.log('Deleted rows:', res.del.date.result);
 });
 
-// 2. Borrar las filas que cumplen una condición where
+// 2. Delete the rows that meet a where condition
 _sqlite_frontend({
-	'fecha': { where: { fecha: 0 } }
+	'date': { where: { date: 0 } }
 }).del(function(res) {
-	console.log('Filas borradas:', res.del.fecha.result);
-});</code><button aria-live="polite" class="copy">Copiar</button></pre>
+	console.log('Deleted rows:', res.del.date.result);
+});</code><button aria-live="polite" class="copy">Copy</button></pre>
 				<p class="docs-callout docs-callout-warn">
-					<b>Advertencia de borrado masivo:</b> Con el valor <code>true</code> (por ejemplo, <code>{ fecha: true }</code>), el borrado se ejecuta sin <code>WHERE</code> y <b>elimina todas las filas</b> de la tabla activa.
+					<b>Mass deletion warning:</b> With the value <code>true</code> (for example, <code>{ date: true }</code>), the deletion runs without <code>WHERE</code> and <b>removes all rows</b> from the active table.
 				</p>
 
-				<h4><code>.open(callback?, timeout?)</code></h4>
-				<p>Carga una base de datos a partir de datos binarios (<code>ArrayBuffer</code> o una vista como <code>Uint8Array</code> u otro <code>TypedArray</code>). <code>name</code> es el nombre con el que se guarda (saneado como en <code>.db()</code>; la respuesta lo devuelve en <code>res.open.name</code>). La base de datos cargada pasa a ser la activa y, si OPFS está disponible, se guarda de forma persistente en OPFS (<code>res.opfs</code> indica si es así). Si ya existe una base de datos con ese nombre, se cierra y se sustituye por la nueva.</p>
-				<p>Si <code>data</code> no es un <code>ArrayBuffer</code> ni una vista, o su contenido no es una base de datos SQLite válida, la carga falla sin cerrar la base de datos que ya estuviera abierta con ese nombre, y la activa solo cambia si la carga termina bien. Cualquier fallo, también al copiar a OPFS, es un error general (<code>res.error</code>; con promesas, la promesa se rechaza). Como el Worker atiende las peticiones de una en una, las operaciones lanzadas después de <code>.open()</code> esperan a que termine, copia a OPFS incluida.</p>
-<pre><code>// Ejemplo con un input de tipo archivo: &lt;input type="file" id="archivo_db"&gt;
-// (dentro de una función async o de un módulo)
-var file = document.getElementById('archivo_db').files[0];
+				<h4 id="open"><code>.open(callback?, timeout?)</code></h4>
+				<p>Loads a database from binary data (<code>ArrayBuffer</code> or a view such as <code>Uint8Array</code> or another <code>TypedArray</code>). <code>name</code> is the name it is stored under (sanitized as in <code>.db()</code>; the response returns it in <code>res.open.name</code>). The loaded database becomes the active one and, if OPFS is available, it is stored persistently in OPFS (<code>res.opfs</code> indicates whether this is the case). If a database with that name already exists, it is closed and replaced by the new one.</p>
+				<p>If <code>data</code> is neither an <code>ArrayBuffer</code> nor a view, or its content is not a valid SQLite database, the load fails without closing any database already open with that name (if what fails is the copy to OPFS, that database has already been closed), and the active database only changes if the load succeeds. Any failure, including while copying to OPFS, is a general error (<code>res.error</code>; with promises, the promise is rejected). Since the Worker handles requests one at a time, operations issued after <code>.open()</code> wait for it to finish, including the copy to OPFS.</p>
+<pre><code>// Example with a file input: &lt;input type="file" id="db_file"&gt;
+// (inside an async function or a module)
+var file = document.getElementById('db_file').files[0];
 var buffer = await file.arrayBuffer();
 
-// 1. Con async/await
+// 1. With async/await
 try {
 	var res = await _sqlite_frontend({
 		name: file.name,
 		data: buffer
 	}).open();
 
-	console.log('Base de datos cargada:', res.open.name);
+	console.log('Database loaded:', res.open.name);
 }
 catch (error) {
-	console.error('Error al abrir la BD:', error.message);
+	console.error('Error opening the DB:', error.message);
 }
 
-// 2. Con callback
+// 2. With a callback
 _sqlite_frontend({
-	name: 'mi_respaldo.sqlite',
+	name: 'my_backup.sqlite',
 	data: buffer
 }).open(function(res) {
 	if (res.error) {
-		console.error('Error al abrir:', res.error);
+		console.error('Error opening:', res.error);
 		return;
 	}
-	console.log('Base de datos lista para operar:', res.open.name);
-});</code><button aria-live="polite" class="copy">Copiar</button></pre>
+	console.log('Database ready to use:', res.open.name);
+});</code><button aria-live="polite" class="copy">Copy</button></pre>
 
-				<h3>5. Ejemplo completo</h3>
-				<p>Definición de esquema, inserción, consulta, actualización y borrado:</p>
+				<h3 id="full_example">5. Full example</h3>
+				<p>Schema definition, insertion, query, update, and deletion:</p>
 <pre><code>document.addEventListener('DOMContentLoaded', async function () {
-	// 1. Crear columna en el esquema
-	await _sqlite_frontend({ name: 'fecha', type: 'INTEGER' }).column();
+	// 1. Create a column in the schema
+	await _sqlite_frontend({ name: 'date', type: 'INTEGER' }).column();
 
-	// 2. Insertar una fila
-	var insercion = await _sqlite_frontend({ fecha: Date.now() }).row();
-	var nuevoId = insercion.row.id;
-	console.log('Fila insertada con _auto_id:', nuevoId);
+	// 2. Insert a row
+	var insertion = await _sqlite_frontend({ date: Date.now() }).row();
+	var newId = insertion.row.id;
+	console.log('Row inserted with _auto_id:', newId);
 
-	// 3. Consultar todas las filas
-	var datos = await _sqlite_frontend({ '*': true }).get();
-	console.log('Resultado de lectura:', datos.get['*'].result);
+	// 3. Query all rows
+	var data = await _sqlite_frontend({ '*': true }).get();
+	console.log('Read result:', data.get['*'].result);
 
-	// 4. Actualizar la fila recién insertada
+	// 4. Update the newly inserted row
 	await _sqlite_frontend({
-		'fecha': { set: 9999, query: nuevoId }
+		'date': { set: 9999, query: newId }
 	}).set();
 
-	// 5. Borrar la fila por su _auto_id
-	await _sqlite_frontend({ 'fecha': nuevoId }).del();
-	console.log('Fila borrada.');
-});</code><button aria-live="polite" class="copy">Copiar</button></pre>
+	// 5. Delete the row by its _auto_id
+	await _sqlite_frontend({ 'date': newId }).del();
+	console.log('Row deleted.');
+});</code><button aria-live="polite" class="copy">Copy</button></pre>
 
-				<h3>6. Respuestas tardías (<code>unhandledResponse</code>)</h3>
-				<p>Si una operación con <code>timeout</code> tarda más del tiempo indicado, la petición se elimina de la cola interna: con promesas, la promesa se rechaza; con callback, el callback no se invoca.</p>
-				<p>El Web Worker, sin embargo, termina la operación y envía su resultado al hilo principal (salvo si el tiempo expiró antes de que SQLite terminara de cargarse: en ese caso la operación no llega a enviarse). Para recibir esas respuestas, defina el manejador global <code>_sqlite_frontend.unhandledResponse</code>, que se invoca con cada respuesta que ya no tiene una petición pendiente.</p>
-				<p><b>Caso de uso:</b> Registrar o recuperar el resultado de operaciones cuyo tiempo límite expiró en la página, pero que SQLite completó.</p>
-				<p><b>Ejemplo de configuración:</b></p>
-<pre><code>// Manejador global para respuestas que llegan tras el timeout
-_sqlite_frontend.unhandledResponse = function (respuesta) {
-	console.warn('Respuesta recibida tras el timeout (ID ' + respuesta.id + '):', respuesta);
+				<h3 id="late_responses">6. Late responses (<code>unhandledResponse</code>)</h3>
+				<p>If an operation with <code>timeout</code> takes longer than the given time, the request is removed from the internal queue: with promises, the promise is rejected; with a callback, the callback is not invoked.</p>
+				<p>The Web Worker, however, finishes the operation and sends its result to the main thread (unless the time expired before SQLite finished loading: in that case, the operation is never sent). To receive those responses, define the global handler <code>_sqlite_frontend.unhandledResponse</code>, which is invoked with each response that no longer has a pending request.</p>
+				<p><b>Use case:</b> Logging or recovering the result of operations whose timeout expired on the page but that SQLite completed.</p>
+				<p><b>Configuration example:</b></p>
+<pre><code>// Global handler for responses that arrive after the timeout
+_sqlite_frontend.unhandledResponse = function (response) {
+	console.warn('Response received after the timeout (ID ' + response.id + '):', response);
 
-	// Si la operación era una actualización, se puede comprobar su resultado
-	if (respuesta.set) {
-		console.log('La actualización se completó en segundo plano.');
+	// If the operation was an update, its result can be checked
+	if (response.set) {
+		console.log('The update was completed in the background.');
 	}
 };
 
-// Consulta con un timeout de 1 ms
+// Query with a 1 ms timeout
 _sqlite_frontend({ '*': true }).get(null, 1).catch(function(error) {
-	console.error('Timeout en la página:', error.message);
-	// Si el Worker responde después, 'unhandledResponse' recibe el resultado.
-});</code><button aria-live="polite" class="copy">Copiar</button></pre>
+	console.error('Timeout on the page:', error.message);
+	// If the Worker responds later, 'unhandledResponse' receives the result.
+});</code><button aria-live="polite" class="copy">Copy</button></pre>
 
-				<h3>7. Características técnicas</h3>
+				<h3 id="technical_details">7. Technical details</h3>
 				<div class="features">
-					<p><strong>Ejecución en Web Worker:</strong> Las consultas y el acceso a disco se ejecutan en un hilo secundario, sin bloquear la interfaz. El Worker procesa las peticiones de una en una, en el orden en que llegan.</p>
-					<p><strong>OPFS o memoria:</strong> Si el navegador permite usar el sistema de archivos privado del origen (OPFS), las bases de datos se guardan en él de forma persistente. Si no (por ejemplo, sin las cabeceras de la sección 8), se crean en memoria y se pierden al cerrar la página. La propiedad <code>res.opfs</code> de cada respuesta indica qué modo se usa.</p>
-					<p><strong>Cola previa a la inicialización:</strong> Las operaciones emitidas antes de que SQLite termine de cargarse se guardan y se envían, en el orden en que se emitieron, cuando está listo.</p>
-					<p><strong>Saneamiento de nombres y parámetros:</strong> De los nombres de bases de datos solo se conservan los caracteres <code>[a-zA-Z0-9_.]</code>, y de los de tablas y columnas, <code>[a-zA-Z0-9_]</code>; el resto se elimina. Los valores de <code>.row()</code>, <code>.set()</code> y de <code>where</code> en forma de objeto se pasan como parámetros (<code>bind</code>), salvo los de los operadores no admitidos que se citan en «Cláusula where». <code>.sql()</code> y <code>where</code> en forma de cadena se ejecutan sin parámetros.</p>
+					<p><strong>Execution in a Web Worker:</strong> Queries and disk access run in a background thread, without blocking the interface. The Worker processes requests one at a time, in the order they arrive.</p>
+					<p><strong>OPFS or memory:</strong> If the browser allows using the origin private file system (OPFS), databases are stored there persistently. If not (for example, without the headers in section 8), they are created in memory and lost when the page is closed. The <code>res.opfs</code> property of each response indicates which mode is in use.</p>
+					<p><strong>Pre-initialization queue:</strong> Operations issued before SQLite finishes loading are stored and sent, in the order they were issued, once it is ready.</p>
+					<p><strong>Name and parameter sanitization:</strong> For database names, only the characters <code>[a-zA-Z0-9_.]</code> are kept, and for table and column names, <code>[a-zA-Z0-9_]</code>; the rest are removed. The values of <code>.row()</code>, <code>.set()</code>, and object-form <code>where</code> are passed as parameters (<code>bind</code>), except those of the unsupported operators mentioned in “The where clause”. <code>.sql()</code> and string-form <code>where</code> run without parameters.</p>
 				</div>
 
-				<h3>8. Cabeceras HTTP del servidor</h3>
-				<p>Para guardar datos en <b>OPFS</b> (Origin Private File System), SQLite WASM necesita <code>SharedArrayBuffer</code>, que el navegador solo habilita si la página está aislada por origen (<i>cross-origin isolation</i>). Sin estas cabeceras, la librería funciona en memoria (<code>res.opfs === false</code>).</p>
-				<p><b>Cabeceras necesarias para OPFS:</b></p>
+				<h3 id="server_headers">8. Server HTTP headers</h3>
+				<p>To store data in <b>OPFS</b> (Origin Private File System), SQLite WASM needs <code>SharedArrayBuffer</code>, which the browser only enables when the page is <i>cross-origin isolated</i>. Without these headers, the library works in memory (<code>res.opfs === false</code>).</p>
+				<p><b>Headers required for OPFS:</b></p>
 				<ul>
 					<li><code>Cross-Origin-Opener-Policy: same-origin</code> (COOP).</li>
-					<li><code>Cross-Origin-Embedder-Policy: require-corp</code> (COEP). <em><b>Nota:</b> Con esta cabecera, el navegador bloquea todo recurso de otro origen (scripts de CDN, imágenes, fuentes, iframes…) que no envíe <code>Cross-Origin-Resource-Policy: cross-origin</code> o que no se cargue mediante CORS (atributo <code>crossorigin</code> y cabeceras CORS en el servidor de origen).</em></li>
+					<li><code>Cross-Origin-Embedder-Policy: require-corp</code> (COEP). <em><b>Note:</b> With this header, the browser blocks every cross-origin resource (CDN scripts, images, fonts, iframes…) that neither sends <code>Cross-Origin-Resource-Policy: cross-origin</code> nor is loaded through CORS (the <code>crossorigin</code> attribute and CORS headers on the server that hosts the resource).</em></li>
 				</ul>
-				<p><b>Si el sitio usa una política de seguridad de contenido (CSP):</b></p>
+				<p><b>If the site uses a Content Security Policy (CSP):</b></p>
 				<ul>
-					<li><code>Content-Security-Policy: script-src … 'wasm-unsafe-eval'</code> (permite compilar el módulo WebAssembly; sin ella, SQLite no se inicializa).</li>
+					<li><code>Content-Security-Policy: script-src … 'wasm-unsafe-eval'</code> (allows compiling the WebAssembly module; without it, SQLite does not initialize).</li>
 				</ul>
-				<p><b>Opcional:</b></p>
+				<p><b>Optional:</b></p>
 				<ul>
-					<li><code>Cross-Origin-Resource-Policy: same-origin</code> (CORP). Protección adicional que impide que otros orígenes incrusten los recursos del sitio; no es un requisito de OPFS.</li>
+					<li><code>Cross-Origin-Resource-Policy: same-origin</code> (CORP). Additional protection that prevents other origins from embedding the site’s resources; it is not a requirement for OPFS.</li>
 				</ul>
-				<p><b>Ejemplo de middleware en Node.js (Express o servidor propio):</b></p>
+				<p><b>Middleware example in Node.js (Express or your own server):</b></p>
 <pre><code>module.exports = function customMiddleware (req, res, next) {
-	// Aislamiento de origen, necesario para OPFS
+	// Cross-origin isolation, required for OPFS
 	res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
 	res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
 
-	// Permite compilar WebAssembly. Adapte este valor a la CSP existente del sitio:
-	// añada 'wasm-unsafe-eval' a su script-src en lugar de sustituir la política completa.
+	// Allows compiling WebAssembly. Adapt this value to the site’s existing CSP:
+	// add 'wasm-unsafe-eval' to its script-src instead of replacing the whole policy.
 	res.setHeader('Content-Security-Policy', "script-src 'self' 'wasm-unsafe-eval'");
 
-	// Opcional: protección adicional, no necesaria para OPFS
+	// Optional: additional protection, not required for OPFS
 	res.setHeader('Cross-Origin-Resource-Policy', 'same-origin');
 
 	next();
-};</code><button aria-live="polite" class="copy">Copiar</button></pre>
+};</code><button aria-live="polite" class="copy">Copy</button></pre>
 			</div>
 		</section>
 	</main>

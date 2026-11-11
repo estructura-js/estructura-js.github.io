@@ -1,10 +1,10 @@
-/* shared/docs.layout.css — maquetación docs: barra superior fija, portada, tres columnas (extensiones, contenido, índice) y pie. */
+/* shared/docs.layout.css — docs layout: fixed top bar, home page, three columns (extensions, content, table of contents), and footer. */
 .docs-shell {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
   background: var(--docs-paper);
-  /* Red de seguridad: nada decorativo ensancha la página (clip no rompe la barra fija, a diferencia de hidden) */
+  /* Safety net: nothing decorative widens the page (clip does not break the fixed bar, unlike hidden) */
   overflow-x: clip;
 }
 
@@ -22,7 +22,7 @@
   .docs-container { padding-inline: var(--docs-space-5); padding-block: var(--docs-space-5) var(--docs-space-6); }
 }
 
-/* ---------- Barra superior fija (todas las páginas) ---------- */
+/* ---------- Fixed top bar (all pages) ---------- */
 header.site-bar {
   position: sticky; top: 0; z-index: 50;
   background: color-mix(in srgb, var(--docs-paper) 86%, transparent);
@@ -31,7 +31,7 @@ header.site-bar {
   border-bottom: 1px solid var(--docs-line);
   transition: box-shadow var(--docs-dur-3) var(--docs-ease), background-color var(--docs-dur-3) var(--docs-ease);
 }
-/* Al desplazar (docs.js añade .is-scrolled): la barra se separa del contenido con una sombra suave */
+/* On scroll (docs.js adds .is-scrolled): the bar separates from the content with a soft shadow */
 header.site-bar.is-scrolled {
   background: color-mix(in srgb, var(--docs-paper) 92%, transparent);
   box-shadow: var(--docs-shadow-s);
@@ -47,12 +47,12 @@ header.site-bar.is-scrolled {
 }
 .site-brand { display: inline-flex; align-items: center; flex: 0 0 auto; }
 .site-brand:hover, .site-brand:focus-visible { text-decoration: none; opacity: 0.75; }
-/* Portada (docs.js alterna .is-hero): el logo de la barra se retira mientras se ve el logo grande.
-   Conserva su espacio y sigue siendo enfocable: con el teclado vuelve a mostrarse */
+/* Home page (docs.js toggles .is-hero): the bar logo is hidden while the large logo is visible.
+   It keeps its space and remains focusable: with the keyboard it shows again */
 .site-brand { transition: opacity var(--docs-dur-3) var(--docs-ease), transform var(--docs-dur-3) var(--docs-ease); }
 header.site-bar.is-hero .site-brand:not(:focus-visible) { opacity: 0; transform: translateY(-0.25rem); pointer-events: none; }
 .site-links { display: flex; align-items: center; gap: var(--docs-space-1); }
-/* Enlaces como píldoras: área táctil cómoda y estado activo visible */
+/* Links as pills: comfortable touch area and visible active state */
 .site-links a {
   display: inline-flex; align-items: center; gap: 0.4rem;
   min-height: 2.25rem; padding: 0.3rem 0.75rem;
@@ -66,13 +66,33 @@ header.site-bar.is-hero .site-brand:not(:focus-visible) { opacity: 0; transform:
   font-family: var(--docs-mono); font-size: 0.75rem; color: var(--docs-muted);
   padding: 0.1rem 0.55rem; border: 1px solid var(--docs-line); border-radius: var(--docs-radius-pill);
 }
+/* Language switcher ("Español" / "English"): highlighted pill at the end of the bar */
+.site-links a.site-lang {
+  margin-left: var(--docs-space-2);
+  color: var(--docs-accent-ink); background: var(--docs-accent-soft);
+  box-shadow: inset 0 0 0 1px var(--docs-line-strong);
+}
+.site-links a.site-lang:hover, .site-links a.site-lang:focus-visible {
+  color: var(--docs-accent-ink); background: var(--docs-accent-soft);
+  box-shadow: inset 0 0 0 1px var(--docs-accent);
+}
 @media screen and (max-width: 639px) {
   .site-links { gap: 0; margin-right: calc(var(--docs-space-2) * -1); }
-  .site-links a { padding-inline: 0.6rem; }
+  .site-links a { padding-inline: 0.5rem; }
+  .site-links a.site-lang { margin-left: var(--docs-space-1); }
   .site-version, .site-github span { display: none; }
 }
+/* Narrow phones: tighter pills so the language switcher keeps its full label */
+@media screen and (max-width: 399px) {
+  .site-bar-inner { gap: var(--docs-space-2); }
+  .site-links a { padding-inline: 0.4rem; }
+  .site-links a.site-lang { margin-left: 0; }
+}
+@media screen and (max-width: 374px) {
+  .site-links a { padding-inline: 0.3rem; }
+}
 
-/* Progreso de lectura: línea fina bajo la barra (docs.js actualiza --docs-progress) */
+/* Reading progress: thin line under the bar (docs.js updates --docs-progress) */
 .docs-progress {
   position: absolute; left: 0; right: 0; bottom: -1px; height: 2px;
   background: var(--docs-accent);
@@ -81,7 +101,7 @@ header.site-bar.is-hero .site-brand:not(:focus-visible) { opacity: 0; transform:
   pointer-events: none;
 }
 
-/* ---------- Portada: presentación centrada ---------- */
+/* ---------- Home page: centered hero ---------- */
 header.site-hero {
   display: flex; flex-direction: column; align-items: center;
   gap: var(--docs-space-3);
@@ -91,13 +111,13 @@ header.site-hero {
 }
 .site-hero h1 { display: flex; flex-direction: column; align-items: center; margin-bottom: var(--docs-space-1); }
 
-/* ---------- Cuerpo: navegación de extensiones, contenido e índice (los agrupa docs.js) ---------- */
+/* ---------- Body: extensions navigation, content, and table of contents (grouped by docs.js) ---------- */
 .docs-body {
   display: flex;
   flex-direction: column;
   gap: var(--docs-space-5);
 }
-/* Una sola columna: todo comparte la medida de lectura, centrada */
+/* Single column: everything shares the reading measure, centered */
 .docs-body > *, .docs-main {
   width: 100%;
   max-width: var(--docs-content);
@@ -113,7 +133,7 @@ header.site-hero {
 .docs-body .docs-toc { order: 1; }
 .docs-body .docs-main { order: 2; }
 
-/* Desde 1024 px: extensiones a la izquierda; el índice queda plegable sobre el contenido */
+/* From 1024 px: extensions on the left; the table of contents stays collapsible above the content */
 @media screen and (min-width: 1024px) {
   .docs-body.has-sidebar {
     display: grid;
@@ -130,11 +150,11 @@ header.site-hero {
   .docs-body.has-sidebar .docs-main { grid-area: main; }
 }
 
-/* Desde 1280 px: el índice pasa a la derecha y queda fijo al desplazar (tres columnas con barra lateral) */
+/* From 1280 px: the table of contents moves to the right and stays fixed while scrolling (three columns with a sidebar) */
 @media screen and (min-width: 1280px) {
   .docs-body {
     display: grid;
-    /* Sin barra lateral: contenido centrado bajo la presentación, índice en el margen derecho */
+    /* Without a sidebar: content centered under the hero, table of contents in the right margin */
     grid-template-columns: minmax(var(--docs-toc-w), 1fr) minmax(0, var(--docs-content)) minmax(var(--docs-toc-w), 1fr);
     grid-template-areas: ". main toc";
     column-gap: var(--docs-space-6);
@@ -154,7 +174,7 @@ header.site-hero {
   }
 }
 
-/* ---------- Pie ---------- */
+/* ---------- Footer ---------- */
 footer.docs-footer {
   display: flex;
   justify-content: center;
@@ -167,7 +187,7 @@ footer.docs-footer {
 footer.docs-footer a { color: var(--docs-muted); font-weight: 700; }
 footer.docs-footer a:hover { color: var(--docs-accent-ink); }
 
-/* ---------- Ritmo interno del contenido ---------- */
+/* ---------- Internal rhythm of the content ---------- */
 .docs-main > .title { margin-block: 0; }
 main section .padding > * + * { margin-top: var(--docs-space-3); }
 main section .padding li > * + * { margin-top: var(--docs-space-2); }

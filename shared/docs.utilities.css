@@ -1,4 +1,4 @@
-/* shared/docs.utilities.css — utilidades + aliases legacy (no duplicar, solo mapear). */
+/* shared/docs.utilities.css — utilities + legacy aliases (do not duplicate, only map). */
 .margin-y { margin-block: var(--docs-space-3); }
 .docs-nav.margin-y { margin-block: 0; }
 .padding { padding: var(--docs-space-3); }

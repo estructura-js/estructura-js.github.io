@@ -1,0 +1,12 @@
+.test {
+    color: var(--main-color);
+    animation: test 2s infinite alternate;
+    display: block;
+    width: 100%;
+}
+
+@keyframes test {
+  100% {
+    color: var(--secondary-color);
+  }
+}

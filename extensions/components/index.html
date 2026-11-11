@@ -1,14 +1,18 @@
 ﻿<!DOCTYPE html>
 
-<html lang="es">
+<html lang="en">
 
 <head>
 	<title>Components</title>
 
 	<link rel="icon" href="../../estructura.icon.png">
+	<link rel="canonical" href="https://estructura.okzgn.com/extensions/components/">
+	<link rel="alternate" hreflang="en" href="https://estructura.okzgn.com/extensions/components/">
+	<link rel="alternate" hreflang="es" href="https://estructura.okzgn.com/es/extensions/components/">
+	<link rel="alternate" hreflang="x-default" href="https://estructura.okzgn.com/extensions/components/">
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="description" content="Carga componentes de interfaz formados por archivos HTML, CSS y JS, de forma asíncrona y coordinada. Gestiona el ciclo de vida de cada componente, el orden de carga y las dependencias declaradas en el DOM, las colisiones de IDs y los componentes de contingencia ante fallos de carga o de red.">
+	<meta name="description" content="Loads interface components made of HTML, CSS, and JS files, asynchronously and in a coordinated way. It manages each component’s lifecycle, the load order and dependencies declared in the DOM, ID collisions, and fallback components for load or network failures.">
 	<meta name="author" content="OKZGN">
 	<meta name="theme-color" content="#faf6ec" media="(prefers-color-scheme: light)">
 	<meta name="theme-color" content="#13110b" media="(prefers-color-scheme: dark)">
@@ -36,18 +40,19 @@
 <div class="docs-shell">
 	<header class="site-header site-bar">
 		<div class="site-bar-inner">
-			<a class="site-brand" href="../../" aria-label="Estructura: inicio"><img class="site-brand-logo" src="../../estructura.logo.png" alt="Estructura"></a>
-			<nav class="site-links" aria-label="Sitio">
-				<a href="../../#get_started">Guía</a>
-				<a href="../../#extensions">Extensiones</a>
+			<a class="site-brand" href="../../" aria-label="Estructura: home"><img class="site-brand-logo" src="../../estructura.logo.png" alt="Estructura"></a>
+			<nav class="site-links" aria-label="Site">
+				<a href="../../#get_started">Guide</a>
+				<a href="../../#extensions">Extensions</a>
 				<a class="site-github" target="_blank" rel="noopener noreferrer" href="https://github.com/okzgn/estructura"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span>GitHub</span></a>
-				<span class="site-version" title="Versión del núcleo">v1.21.0</span>
+				<span class="site-version" title="Core version">v1.21.0</span>
+				<a class="site-lang" href="../../es/extensions/components/" hreflang="es" lang="es">Español</a>
 			</nav>
 		</div>
 	</header>
 <div class="docs-container">
-	<nav class="docs-nav docs-sidebar" aria-label="Extensiones">
-		<p class="docs-sidebar-title">Extensiones</p>
+	<nav class="docs-nav docs-sidebar" aria-label="Extensions">
+		<p class="docs-sidebar-title">Extensions</p>
 		<ul>
 			<li><a href="../http/">HTTP</a></li>
 			<li><a href="../dom/">DOM</a></li>
@@ -63,231 +68,231 @@
 	<main class="docs-main">
 		<h1 class="title">Components</h1>
 		<section class="margin-y">
-			<h2 id="description">Descripción</h2>
-			<div class="padding">Carga componentes de interfaz formados por archivos HTML, CSS y JS, de forma asíncrona y coordinada. La librería gestiona el ciclo de vida de cada componente, el orden de carga y las dependencias declaradas en el DOM, las colisiones de IDs y los componentes de contingencia ante fallos de carga o de red.</div>
+			<h2 id="description">Description</h2>
+			<div class="padding">Loads interface components made of HTML, CSS, and JS files, asynchronously and in a coordinated way. The library manages each component’s lifecycle, the load order and dependencies declared in the DOM, ID collisions, and fallback components for load or network failures.</div>
 			<div class="docs-meta">
 				<p class="padding-y docs-meta-item">
-	                <b>Librería:</b> <a target="_blank" href="estructura.components.js">estructura.components.js</a>
+	                <b>Library:</b> <a target="_blank" href="estructura.components.js">estructura.components.js</a>
 				</p>
 				<p class="padding-y docs-meta-item">
-					<b>Compatibilidad:</b> <a target="_blank" href="https://okzgn.com/articles/why-not-build-frontend-frameworks-on-raw-html-css-or-js/#steps-to-bypass-between-points-1-and-2-asynchronous-orchestration">ES5/ES6+</a>
+					<b>Compatibility:</b> <a target="_blank" href="https://okzgn.com/articles/why-not-build-frontend-frameworks-on-raw-html-css-or-js/#steps-to-bypass-between-points-1-and-2-asynchronous-orchestration">ES5/ES6+</a>
 				</p>
 				<p class="padding-y docs-meta-item">
-					<b>Estado:</b> RC3
+					<b>Status:</b> RC3
 				</p>
 				<p class="padding-y docs-meta-item">
-					<b>Licencia:</b> <a target="_blank" href="../LICENSE">AGPL v3</a>
+					<b>License:</b> <a target="_blank" href="../LICENSE">AGPL v3</a>
 				</p>
 			</div>
 <p class="padding-y docs-callout docs-callout-info">
-				<b>Dependencia obligatoria:</b> <a target="_blank" href="../http/estructura.http.js">estructura.http.js</a> (<a href="../http/">HTTP, documentación</a>). El objeto global <code>_http</code> debe estar disponible antes de cargar Components; si no lo está, la librería lanza una excepción al cargarse.
+				<b>Required dependency:</b> <a target="_blank" href="../http/estructura.http.js">estructura.http.js</a> (<a href="../http/">HTTP, documentation</a>). The global <code>_http</code> object must be available before Components is loaded; if it is not, the library throws an exception when it loads.
 			</p>
 			<div class="padding-y">
-				<b>Importación:</b><pre><code>&lt;!-- DEPENDENCIA: Estructura / HTTP --&gt;
+				<b>Import:</b><pre><code>&lt;!-- DEPENDENCY: Estructura / HTTP --&gt;
 &lt;script src="https://estructura.okzgn.com/extensions/http/estructura.http.js"&gt;&lt;/script&gt;
 
-&lt;!-- EXTENSIÓN: Estructura / Components --&gt;
-&lt;script src="https://estructura.okzgn.com/extensions/components/estructura.components.js"&gt;&lt;/script&gt;</code><button aria-live="polite" class="copy">Copiar</button></pre>
+&lt;!-- EXTENSION: Estructura / Components --&gt;
+&lt;script src="https://estructura.okzgn.com/extensions/components/estructura.components.js"&gt;&lt;/script&gt;</code><button aria-live="polite" class="copy">Copy</button></pre>
 			</div>
 		</section>
 
 		<section class="margin-y">
-			<h2 id="demo">Demo en vivo</h2>
+			<h2 id="demo">Live demo</h2>
 			<div class="padding">
-				<p>El recuadro siguiente se carga como componente desde <code>./components-origin/test/</code>: la librería descarga <code>.css</code>, <code>.html</code> y <code>.js</code> de esa carpeta, sustituye el texto «Cargando…» por el HTML del componente y ejecuta su script, que escribe un mensaje en la consola. Recargue la página para repetir la carga.</p>
-				<p class="docs-demo"><span id="test" data-e-component="test">Cargando…</span></p>
+				<p>The box below is loaded as a component from <code>./components-origin/test/</code>: the library downloads <code>.css</code>, <code>.html</code>, and <code>.js</code> from that folder, replaces the “Loading…” text with the component’s HTML, and runs its script, which writes a message to the console. Reload the page to load it again.</p>
+				<p class="docs-demo"><span id="test" data-e-component="test">Loading…</span></p>
 			</div>
 		</section>
 
 		<section class="margin-y">
-			<h2 id="docs">Documentación</h2>
+			<h2 id="docs">Documentation</h2>
 			<div class="padding">
-				<h3>Inicio rápido</h3>
-				<p>Cree una carpeta por componente con los archivos <code>.css</code>, <code>.html</code> y <code>.js</code>, indique la carpeta base con <code>origin</code> e inicialice el elemento:</p>
-<pre><code>&lt;!-- Carga ./componentes/saludo/.css, ./componentes/saludo/.html y ./componentes/saludo/.js --&gt;
-&lt;div id="saludo" data-e-component="saludo"&gt;Cargando…&lt;/div&gt;
+				<h3 id="quick_start">Quick start</h3>
+				<p>Create one folder per component with the <code>.css</code>, <code>.html</code>, and <code>.js</code> files, set the base folder with <code>origin</code>, and initialize the element:</p>
+<pre><code>&lt;!-- Loads ./components/greeting/.css, ./components/greeting/.html, and ./components/greeting/.js --&gt;
+&lt;div id="greeting" data-e-component="greeting"&gt;Loading…&lt;/div&gt;
 
 &lt;script&gt;
-_components({ origin: './componentes/' });
-_components(document.getElementById('saludo'));
+_components({ origin: './components/' });
+_components(document.getElementById('greeting'));
 &lt;/script&gt;
-</code><button aria-live="polite" class="copy">Copiar</button></pre>
-				<h3>1. Inicialización y configuración</h3>
-				<p>La librería expone la función <code>_components</code>. Su valor de retorno depende del argumento:</p>
+</code><button aria-live="polite" class="copy">Copy</button></pre>
+				<h3 id="initialization">1. Initialization and configuration</h3>
+				<p>The library exposes the <code>_components</code> function. Its return value depends on the argument:</p>
 				<ul>
-					<li><strong>Configuración global:</strong> Con un objeto plano, actualiza las opciones globales y devuelve un objeto con el método <code>.config()</code>, que devuelve las opciones activas.</li>
-					<li><strong>Inicialización de elementos:</strong> Con un nodo del DOM, inicia el componente o coordinador declarado en él y devuelve un objeto con el método <code>.ref()</code>, que devuelve su instancia (ver sección 4).</li>
+					<li><strong>Global configuration:</strong> With a plain object, it updates the global options and returns an object with the <code>.config()</code> method, which returns the active options.</li>
+					<li><strong>Element initialization:</strong> With a DOM node, it starts the component or coordinator declared on it and returns an object with the <code>.ref()</code> method, which returns its instance (see section 4).</li>
 				</ul>
-				<p><b>Configuración global</b></p>
-<pre><code>var configActiva = _components({
-    // Carpeta base donde se buscan los componentes
+				<p><b>Global configuration</b></p>
+<pre><code>var activeConfig = _components({
+    // Base folder where components are looked up
     origin: './src/components/',
 
-    // Tiempo máximo de cada petición, en milisegundos (10 s)
+    // Maximum time for each request, in milliseconds (10 s)
     timeout: 10000,
 
-    // Si es true, ejecuta _components.autoScan() (false por defecto)
+    // If true, runs _components.autoScan() (false by default)
     autoScan: false,
 
-    // Nombre de archivo de cada recurso dentro de la carpeta del componente
+    // File name of each resource inside the component’s folder
     files: {
         css: '.css',
         html: '.html',
         js: '.js'
     },
 
-    // Lista blanca opcional de orígenes externos (null = sin restricción)
+    // Optional allowlist of external origins (null = no restriction)
     allowedOrigins: ['https://cdn.example.com']
 }).config();
-</code><button aria-live="polite" class="copy">Copiar</button></pre>
-                <p><strong>Propiedad <code>files</code> (<code>Object</code>):</strong> Define el nombre de archivo de cada tipo de recurso (<code>css</code>, <code>html</code>, <code>js</code>). El valor se añade tal cual a la ruta de la carpeta del componente, así que por defecto se piden archivos llamados literalmente <code>.css</code>, <code>.html</code> y <code>.js</code>. Por ejemplo, con <code>origin: './components-origin/'</code> y <code>data-e-component="test"</code>, la librería pide <code>./components-origin/test/.css</code>, <code>./components-origin/test/.html</code> y <code>./components-origin/test/.js</code>. Con <code>files: { css: 'estilos.css', html: 'vista.html', js: 'script.js' }</code>, pediría <code>./components-origin/test/estilos.css</code>, etc. Si falta un tipo en <code>files</code>, se usa <code>'.' + tipo</code>. También se puede indicar por instancia en el segundo argumento de <code>_components(elemento, opciones)</code>; el componente de contingencia de esa instancia usa el mismo <code>files</code> (y también el <code>timeout</code> y el <code>origin</code> pasados como opciones).</p>
-				<p><strong>Propiedad <code>allowedOrigins</code> (<code>Array|null</code>):</strong> Lista blanca opcional de orígenes desde los que se permite descargar recursos (ej. <code>'https://cdn.example.com'</code>). Por defecto es <code>null</code> y no se aplica ninguna restricción. Cada URL se resuelve de forma absoluta respecto a <code>document.baseURI</code> antes de la petición y el mismo origen de la página (<code>location.origin</code>) siempre está permitido. Los orígenes listados se normalizan igual que la URL de destino (minúsculas, sin barra final y sin el puerto por defecto: <code>'https://cdn.example.com:443/'</code> equivale a <code>'https://cdn.example.com'</code>); el comodín <code>'*'</code> permite cualquier origen y un array vacío (<code>[]</code>) limita las cargas al mismo origen. Una petición rechazada no se cachea y se trata como un fallo de carga de ese recurso (ver sección 2): un CSS o un HTML rechazado solo genera un aviso, y un JS rechazado hace fallar el componente y activa su contingencia (<code>fallback</code>), si la tiene.</p>
-				<p class="docs-callout docs-callout-warn"><strong>Nota de seguridad:</strong> Los atributos de origen (<code>data-e-components-origin</code>, <code>data-e-component-src</code> y sus variantes de contingencia) determinan desde dónde se descarga y <strong>ejecuta</strong> JavaScript. Si el DOM puede contener HTML proveniente de usuarios (comentarios, perfiles, contenido editable), un atacante podría insertar estos atributos y hacer que la página cargue y ejecute scripts de terceros. En producción se recomienda definir <code>allowedOrigins</code> con los orígenes de confianza (o <code>[]</code> si todos los componentes se sirven desde el mismo origen).</p>
-<pre><code>// Solo se permiten el mismo origen y el CDN propio
+</code><button aria-live="polite" class="copy">Copy</button></pre>
+                <p><strong><code>files</code> property (<code>Object</code>):</strong> Defines the file name of each resource type (<code>css</code>, <code>html</code>, <code>js</code>). The value is appended as is to the path of the component’s folder, so by default the files requested are literally named <code>.css</code>, <code>.html</code>, and <code>.js</code>. For example, with <code>origin: './components-origin/'</code> and <code>data-e-component="test"</code>, the library requests <code>./components-origin/test/.css</code>, <code>./components-origin/test/.html</code>, and <code>./components-origin/test/.js</code>. With <code>files: { css: 'styles.css', html: 'view.html', js: 'script.js' }</code>, it would request <code>./components-origin/test/styles.css</code>, etc. If a type is missing from <code>files</code>, <code>'.' + type</code> is used. It can also be set per instance in the second argument of <code>_components(element, options)</code>; that instance’s fallback component uses the same <code>files</code> (and also the <code>timeout</code> and <code>origin</code> passed as options).</p>
+				<p><strong><code>allowedOrigins</code> property (<code>Array|null</code>):</strong> Optional allowlist of origins from which resources may be downloaded (e.g., <code>'https://cdn.example.com'</code>). It is <code>null</code> by default, and no restriction is applied. Each URL is resolved to an absolute URL against <code>document.baseURI</code> before the request, and the page’s own origin (<code>location.origin</code>) is always allowed. Listed origins are normalized the same way as the target URL (lowercase, no trailing slash, and no default port: <code>'https://cdn.example.com:443/'</code> is equivalent to <code>'https://cdn.example.com'</code>); the <code>'*'</code> wildcard allows any origin, and an empty array (<code>[]</code>) limits loads to the same origin. A rejected request is not cached and is treated as a load failure of that resource (see section 2): a rejected CSS or HTML file only produces a warning, and a rejected JS file makes the component fail and triggers its <code>fallback</code>, if it has one.</p>
+				<p class="docs-callout docs-callout-warn"><strong>Security note:</strong> The origin attributes (<code>data-e-components-origin</code>, <code>data-e-component-src</code>, and their fallback variants) determine where JavaScript is downloaded and <strong>executed</strong> from. If the DOM can contain user-provided HTML (comments, profiles, editable content), an attacker could insert these attributes and make the page load and run third-party scripts. In production, setting <code>allowedOrigins</code> to the trusted origins is recommended (or <code>[]</code> if all components are served from the same origin).</p>
+<pre><code>// Only the same origin and your own CDN are allowed
 _components({ allowedOrigins: ['https://cdn.example.com'] });
-</code><button aria-live="polite" class="copy">Copiar</button></pre>
-				<p><b>Inicialización manual con opciones</b></p>
-				<p>Las opciones del segundo argumento tienen prioridad sobre los atributos del elemento. Equivalen a los atributos de la sección 2: <code>component</code>, <code>id</code>, <code>origin</code> (carpeta base, como <code>data-e-components-origin</code>), <code>src</code>, <code>componentOrder</code>, <code>required</code>, <code>fallback</code>, <code>fallbackSrc</code>, <code>fallbackOrder</code>, <code>timeout</code> y <code>files</code>; en un coordinador, <code>components</code> y <code>order</code>. A diferencia de <code>_components.scan()</code>, cada llamada crea una instancia nueva aunque el elemento ya tenga una: la anterior sale del registro y la nueva recibe un ID renombrado (ej. <code>saludo_1</code>).</p>
-<pre><code>var contenedor = document.querySelector('#ficha_usuario');
+</code><button aria-live="polite" class="copy">Copy</button></pre>
+				<p><b>Manual initialization with options</b></p>
+				<p>Options in the second argument take precedence over the element’s attributes. They are equivalent to the attributes in section 2: <code>component</code>, <code>id</code>, <code>origin</code> (base folder, like <code>data-e-components-origin</code>), <code>src</code>, <code>componentOrder</code>, <code>required</code>, <code>fallback</code>, <code>fallbackSrc</code>, <code>fallbackOrder</code>, <code>timeout</code>, and <code>files</code>; for a coordinator, <code>components</code> and <code>order</code>. Unlike <code>_components.scan()</code>, each call creates a new instance even if the element already has one: the previous one leaves the registry and the new one gets a renamed ID (e.g., <code>greeting_1</code>).</p>
+<pre><code>var container = document.querySelector('#user_card');
 
-// Monta el componente y obtiene su instancia
-var componente = _components(contenedor, {
-	component: 'perfil-cliente',
-	id: 'tarjeta_activa'
+// Mounts the component and gets its instance
+var component = _components(container, {
+	component: 'customer-profile',
+	id: 'active_card'
 }).ref();
-</code><button aria-live="polite" class="copy">Copiar</button></pre>
-				<h3>2. Atributos en el DOM</h3>
-				<p>Los componentes y sus relaciones se declaran en el HTML con los siguientes atributos.</p>
-				<p><b>Atributos de componente (<code>data-e-component-*</code>)</b></p>
+</code><button aria-live="polite" class="copy">Copy</button></pre>
+				<h3 id="dom_attributes">2. DOM attributes</h3>
+				<p>Components and their relationships are declared in the HTML with the following attributes.</p>
+				<p><b>Component attributes (<code>data-e-component-*</code>)</b></p>
 				<ul>
-					<li><code>data-e-component</code> (<code>String</code>): Nombre del componente, que es también el nombre de su carpeta: los archivos se piden en <code>origen + nombre + '/'</code>. Si no se indica <code>data-e-component-id</code>, también es su ID.</li>
-					<li><code>data-e-component-id</code> (<code>String</code>): ID de la instancia en el registro. Si el ID ya está registrado, la librería lo renombra secuencialmente (ej. <code>id_1</code>) y emite una advertencia en la consola; esto también ocurre entre hijos de coordinadores distintos. Un coordinador solo reutiliza una instancia existente si pertenece al mismo elemento. <em>Nota: los mensajes enviados al ID original no llegan a las instancias renombradas.</em></li>
-					<li><code>data-e-component-src</code> (<code>String</code>): Ruta completa de la carpeta del componente para esta instancia (ej. <code>https://cdn.example.com/ui/boton/</code>). Sustituye a <code>origen + nombre</code>: el nombre del componente no se añade. Si no termina en <code>/</code>, se añade.</li>
-					<li><code>data-e-component-order</code> (<code>String</code>): Recursos que se cargan y en qué orden (por defecto: <code>"css,html,js"</code>). Admite <code>+</code> para cargas en paralelo (ej. <code>"css+html,js"</code>) y alias registrados con <code>_components.order()</code>. Un recurso que no figura no se carga.</li>
-					<li><code>data-e-component-required</code> (<code>String</code>): IDs de los componentes que deben estar listos (<code>"ready"</code>) antes de cargar este, separados por comas o espacios. Las dependencias deben existir cuando este componente empieza a cargarse (por ejemplo, en un paso anterior del orden): si un ID no corresponde a ninguna instancia registrada ni a un nombre del orden del coordinador, el componente falla. Si una de esas dependencias falla, este componente también falla, sin intentar su contingencia. Dentro de un coordinador, un componente con este atributo (con IDs o con <code>"true"</code>) es crítico: si falla, el coordinador detiene la orquestación. Con <code>"false"</code> o sin el atributo, su fallo no detiene los pasos siguientes.</li>
-					<li><code>data-e-component-fallback</code> (<code>String</code>): Nombre del componente de contingencia que se carga, con el mismo ID, si falla la carga principal. Se busca como cualquier otro componente (<code>origen + nombre + '/'</code>), salvo que se indique una ruta de contingencia.</li>
-					<li><code>data-e-component-fallback-src</code> (<code>String</code>): Ruta completa de la carpeta del componente de contingencia, como <code>data-e-component-src</code>.</li>
-					<li><code>data-e-component-fallback-order</code> (<code>String</code>): Orden de carga de los recursos del componente de contingencia (por defecto: <code>"css,html,js"</code>).</li>
-					<li><code>data-e-component-timeout</code> (<code>Number</code>): Tiempo máximo de cada petición de esta instancia, en milisegundos.</li>
+					<li><code>data-e-component</code> (<code>String</code>): The component name, which is also the name of its folder: the files are requested from <code>origin + name + '/'</code>. If <code>data-e-component-id</code> is not given, it is also its ID.</li>
+					<li><code>data-e-component-id</code> (<code>String</code>): The instance ID in the registry. If the ID is already registered, the library renames it sequentially (e.g., <code>id_1</code>) and logs a warning to the console; this also happens between children of different coordinators. A coordinator reuses an existing instance only if it belongs to the same element. <em>Note: messages sent to the original ID do not reach renamed instances.</em></li>
+					<li><code>data-e-component-src</code> (<code>String</code>): The full path of the component’s folder for this instance (e.g., <code>https://cdn.example.com/ui/button/</code>). It replaces <code>origin + name</code>: the component name is not appended. If it does not end in <code>/</code>, one is added.</li>
+					<li><code>data-e-component-order</code> (<code>String</code>): Which resources are loaded and in what order (default: <code>"css,html,js"</code>). Supports <code>+</code> for parallel loads (e.g., <code>"css+html,js"</code>) and aliases registered with <code>_components.order()</code>. A resource that is not listed is not loaded.</li>
+					<li><code>data-e-component-required</code> (<code>String</code>): IDs of the components that must be in the <code>"ready"</code> state before this one is loaded, separated by commas or spaces. The dependencies must exist when this component starts loading (for example, in an earlier step of the order): if an ID does not match any registered instance or any name in the coordinator’s order, the component fails. If one of those dependencies fails, this component fails too, without trying its fallback. Inside a coordinator, a component with this attribute (with IDs or with <code>"true"</code>) is critical: if it fails, the coordinator stops the orchestration. With <code>"false"</code> or without the attribute, its failure does not stop the following steps.</li>
+					<li><code>data-e-component-fallback</code> (<code>String</code>): Name of the fallback component that is loaded, with the same ID, if the main load fails. It is looked up like any other component (<code>origin + name + '/'</code>), unless a fallback path is given.</li>
+					<li><code>data-e-component-fallback-src</code> (<code>String</code>): The full path of the fallback component’s folder, like <code>data-e-component-src</code>.</li>
+					<li><code>data-e-component-fallback-order</code> (<code>String</code>): Load order of the fallback component’s resources (default: <code>"css,html,js"</code>).</li>
+					<li><code>data-e-component-timeout</code> (<code>Number</code>): Maximum time for each request of this instance, in milliseconds.</li>
 				</ul>
-				<p>Si falla la carga del CSS o del HTML, la librería emite un aviso en consola y continúa. Si falla el JS (error de red, tiempo agotado o una excepción al ejecutarlo), el componente falla y se carga su contingencia, si la tiene. El CSS y el JS de cada URL se aplican una sola vez por página (hasta <code>_components.resetCache()</code>): si varias instancias usan el mismo componente, el HTML se inserta en cada una, pero el JS solo se ejecuta con la primera.</p>
-				<p><b>Atributos de coordinador (<code>data-e-components-*</code>)</b></p>
+				<p>If loading the CSS or the HTML fails, the library logs a warning to the console and continues. If the JS fails (network error, timeout, or an exception while running it), the component fails and its fallback is loaded, if it has one. The CSS and JS of each URL are applied only once per page (until <code>_components.resetCache()</code>): if several instances use the same component, the HTML is inserted into each one, but the JS runs only for the first one.</p>
+				<p><b>Coordinator attributes (<code>data-e-components-*</code>)</b></p>
 				<ul>
-					<li><code>data-e-components</code> (<code>String</code>): Marca el nodo como coordinador de los componentes que contiene. Su valor es el ID con el que se registra el coordinador, que se puede usar con <code>_components.get()</code>, en <code>data-e-component-required</code> o en el observador de estado. Un coordinador inicializado con <code>_components(elemento)</code> o <code>_components.scan()</code> necesita un valor no vacío; los coordinadores anidados dentro de un componente cargado pueden omitirlo, y en ese caso no se registran.</li>
-					<li><code>data-e-components-origin</code> (<code>String</code>): Carpeta base de los componentes: cada uno se pide en <code>origen + nombre + '/'</code>. Se hereda: cada componente usa el <code>data-e-components-origin</code> más cercano (en el propio elemento o en un ascendiente) y, si no hay ninguno, la opción global <code>origin</code>. Para fijar la carpeta exacta de un solo componente, use <code>data-e-component-src</code>.</li>
-					<li><code>data-e-components-order</code> (<code>String</code>): Orden de carga de los componentes hijos, indicados por su valor de <code>data-e-component</code> (ver sección 3). Admite alias registrados con <code>_components.order()</code>. Solo se cargan los hijos que figuran en él (sin este atributo, ninguno). Cada nombre carga el primer hijo con ese <code>data-e-component</code>: si varios hijos comparten nombre, los demás no se cargan.</li>
-					<li><code>data-e-components-fallback-origin</code> (<code>String</code>): Ruta de contingencia que heredan los componentes que no declaran <code>data-e-component-fallback-src</code>; se usa la más cercana (en el propio elemento o en un ascendiente). Funciona como <code>data-e-components-origin</code>: es una carpeta base a la que se añade el nombre del componente de contingencia (ej. con <code>./respaldo/</code> y <code>data-e-component-fallback="aviso"</code> se carga <code>./respaldo/aviso/</code>). En cambio, <code>data-e-component-fallback-src</code> es la carpeta completa del componente de contingencia.</li>
-					<li><code>data-e-components-fallback-order</code> (<code>String</code>): Orden de carga de contingencia que heredan los componentes que no declaran <code>data-e-component-fallback-order</code>; se usa el más cercano (en el propio elemento o en un ascendiente).</li>
+					<li><code>data-e-components</code> (<code>String</code>): Marks the node as the coordinator of the components it contains. Its value is the ID under which the coordinator is registered, which can be used with <code>_components.get()</code>, in <code>data-e-component-required</code>, or in the state observer. A coordinator initialized with <code>_components(element)</code> or <code>_components.scan()</code> needs a non-empty value; coordinators nested inside a loaded component can omit it, and in that case they are not registered.</li>
+					<li><code>data-e-components-origin</code> (<code>String</code>): Base folder of the components: each one is requested from <code>origin + name + '/'</code>. It is inherited: each component uses the nearest <code>data-e-components-origin</code> (on the element itself or on an ancestor) and, if there is none, the global <code>origin</code> option. To set the exact folder of a single component, use <code>data-e-component-src</code>.</li>
+					<li><code>data-e-components-order</code> (<code>String</code>): Load order of the child components, identified by their <code>data-e-component</code> value (see section 3). Supports aliases registered with <code>_components.order()</code>. Only the children listed in it are loaded (without this attribute, none are). Each name loads the first child with that <code>data-e-component</code>: if several children share a name, the others are not loaded.</li>
+					<li><code>data-e-components-fallback-origin</code> (<code>String</code>): Fallback path inherited by components that do not declare <code>data-e-component-fallback-src</code>; the nearest one is used (on the element itself or on an ancestor). It works like <code>data-e-components-origin</code>: it is a base folder to which the fallback component’s name is appended (e.g., with <code>./backup/</code> and <code>data-e-component-fallback="notice"</code>, <code>./backup/notice/</code> is loaded). In contrast, <code>data-e-component-fallback-src</code> is the full folder of the fallback component.</li>
+					<li><code>data-e-components-fallback-order</code> (<code>String</code>): Fallback load order inherited by components that do not declare <code>data-e-component-fallback-order</code>; the nearest one is used (on the element itself or on an ancestor).</li>
 				</ul>
-				<p><b>Herencia de atributos de contingencia</b></p>
-				<p>Si un componente que pasa a su contingencia no declara <code>data-e-component-fallback-src</code> ni <code>data-e-component-fallback-order</code>, la librería busca hacia arriba en el árbol DOM el <code>data-e-components-fallback-origin</code> y el <code>data-e-components-fallback-order</code> más cercanos. La contingencia se intenta una sola vez: si también falla, el componente pasa a <code>"failed"</code>.</p>
-				<p><b>Componente y coordinador en el mismo nodo</b></p>
-				<p>Si un nodo tiene <code>data-e-component</code> y <code>data-e-components</code>, primero se carga el componente y, cuando alcanza el estado <code>"ready"</code>, se inicia el coordinador sobre el contenido cargado, también cuando el nodo es hijo de otro coordinador. Las dos instancias conviven: <code>_components.get()</code> encuentra el componente por su ID y el coordinador por el valor de <code>data-e-components</code>.</p>
-				<h3>3. Orquestación</h3>
-				<p>El atributo <code>data-e-components-order</code> de un coordinador define el orden de carga de sus componentes hijos con dos operadores:</p>
+				<p><b>Inheritance of fallback attributes</b></p>
+				<p>When a component switches to its fallback, for each of <code>data-e-component-fallback-src</code> and <code>data-e-component-fallback-order</code> that it does not declare, the library searches up the DOM tree for the nearest <code>data-e-components-fallback-origin</code> or <code>data-e-components-fallback-order</code>, respectively. The fallback is attempted only once: if it also fails, the component moves to <code>"failed"</code>.</p>
+				<p><b>Component and coordinator on the same node</b></p>
+				<p>If a node has both <code>data-e-component</code> and <code>data-e-components</code>, the component is loaded first and, when it reaches the <code>"ready"</code> state, the coordinator starts on the loaded content, even when the node is a child of another coordinator. The two instances coexist: <code>_components.get()</code> finds the component by its ID and the coordinator by the value of <code>data-e-components</code>.</p>
+				<h3 id="orchestration">3. Orchestration</h3>
+				<p>A coordinator’s <code>data-e-components-order</code> attribute defines the load order of its child components with two operators:</p>
 				<ul>
-					<li><strong>Coma (<code>,</code>):</strong> Pasos sucesivos: un paso empieza cuando todos los componentes del paso anterior han terminado.</li>
-					<li><strong>Suma (<code>+</code>):</strong> Componentes del mismo paso, que se cargan en paralelo.</li>
+					<li><strong>Comma (<code>,</code>):</strong> Successive steps: a step starts when all the components of the previous step have finished.</li>
+					<li><strong>Plus (<code>+</code>):</strong> Components in the same step, which are loaded in parallel.</li>
 				</ul>
-				<p><b>Ejemplo de orquestación</b></p>
-				<p>Los nombres del orden corresponden al valor de <code>data-e-component</code> de cada hijo, no a su ID: <code>menu-lateral</code> se encuentra por su nombre aunque su ID sea <code>menu_izq</code>.</p>
-<pre><code>&lt;!-- Carga 'estructura-base' y 'menu-lateral' en paralelo. Cuando ambos terminan, carga 'panel-de-control'.
-     Se inicia con _components.scan() o con _components(elemento) sobre el div. --&gt;
-&lt;div data-e-components="mi_dashboard" data-e-components-order="estructura-base+menu-lateral, panel-de-control"&gt;
-	&lt;div data-e-component="estructura-base"&gt;&lt;/div&gt;
-	&lt;aside data-e-component="menu-lateral" data-e-component-id="menu_izq"&gt;&lt;/aside&gt;
-	&lt;article data-e-component="panel-de-control" data-e-component-required="menu_izq"&gt;&lt;/article&gt;
+				<p><b>Orchestration example</b></p>
+				<p>The names in the order refer to each child’s <code>data-e-component</code> value, not to its ID: <code>side-menu</code> is found by its name even though its ID is <code>left_menu</code>.</p>
+<pre><code>&lt;!-- Loads 'base-layout' and 'side-menu' in parallel. When both finish, loads 'control-panel'.
+     It is started with _components.scan() or with _components(element) on the div. --&gt;
+&lt;div data-e-components="my_dashboard" data-e-components-order="base-layout+side-menu, control-panel"&gt;
+	&lt;div data-e-component="base-layout"&gt;&lt;/div&gt;
+	&lt;aside data-e-component="side-menu" data-e-component-id="left_menu"&gt;&lt;/aside&gt;
+	&lt;article data-e-component="control-panel" data-e-component-required="left_menu"&gt;&lt;/article&gt;
 &lt;/div&gt;
-</code><button aria-live="polite" class="copy">Copiar</button></pre>
-				<p><b>Alias de orden</b></p>
-				<p><code>_components.order(name, value)</code> registra un orden con un nombre, y <code>_components.order(name)</code> lo devuelve. El alias se usa como valor completo de cualquier atributo de orden (<code>data-e-components-order</code>, <code>data-e-component-order</code> y los de contingencia); no se puede combinar con otros pasos en el mismo valor. Registre los alias antes de iniciar los componentes que los usan:</p>
-<pre><code>_components.order('dashboard', 'estructura-base+menu-lateral, panel-de-control');
-_components.order('solo-html', 'html');
+</code><button aria-live="polite" class="copy">Copy</button></pre>
+				<p><b>Order aliases</b></p>
+				<p><code>_components.order(name, value)</code> registers an order under a name, and <code>_components.order(name)</code> returns it. The alias is used as the complete value of any order attribute (<code>data-e-components-order</code>, <code>data-e-component-order</code>, and the fallback ones); it cannot be combined with other steps in the same value. Register the aliases before starting the components that use them:</p>
+<pre><code>_components.order('dashboard', 'base-layout+side-menu, control-panel');
+_components.order('html-only', 'html');
 
-// &lt;div data-e-components="mi_dashboard" data-e-components-order="dashboard"&gt;…&lt;/div&gt;
-// &lt;div data-e-component="aviso" data-e-component-order="solo-html"&gt;&lt;/div&gt;
+// &lt;div data-e-components="my_dashboard" data-e-components-order="dashboard"&gt;…&lt;/div&gt;
+// &lt;div data-e-component="notice" data-e-component-order="html-only"&gt;&lt;/div&gt;
 
-_components.order('dashboard'); // 'estructura-base+menu-lateral, panel-de-control'
-</code><button aria-live="polite" class="copy">Copiar</button></pre>
-				<h3>4. Ciclo de vida y estados</h3>
-				<p>Las instancias de componente que devuelve <code>.ref()</code> (o <code>_components.get(id)</code>) exponen:</p>
+_components.order('dashboard'); // 'base-layout+side-menu, control-panel'
+</code><button aria-live="polite" class="copy">Copy</button></pre>
+				<h3 id="lifecycle">4. Lifecycle and states</h3>
+				<p>The component instances returned by <code>.ref()</code> (or <code>_components.get(id)</code>) expose:</p>
 				<ul>
-					<li><code>id</code> (<code>String</code>): ID final de la instancia en el registro.</li>
-					<li><code>element</code> (<code>HTMLElement</code>): Elemento del DOM asociado.</li>
-					<li><code>options</code> (<code>Object</code>): Opciones resueltas de la instancia.</li>
-					<li><code>on(event, callback)</code>, <code>once(event, callback)</code>, <code>off(event, callback)</code> y <code>emit(event, data)</code>: Suscripción y envío de eventos de la instancia (ver sección 5).</li>
-					<li><code>status()</code>: Devuelve el estado actual de la instancia:
+					<li><code>id</code> (<code>String</code>): The instance’s final ID in the registry.</li>
+					<li><code>element</code> (<code>HTMLElement</code>): The associated DOM element.</li>
+					<li><code>options</code> (<code>Object</code>): The instance’s resolved options.</li>
+					<li><code>on(event, callback)</code>, <code>once(event, callback)</code>, <code>off(event, callback)</code>, and <code>emit(event, data)</code>: Subscribing to and sending instance events (see section 5).</li>
+					<li><code>status()</code>: Returns the instance’s current state:
 						<ul class="padding">
-							<li><code>"pending"</code>: Registrada y todavía sin iniciar. Es un estado momentáneo, porque la carga empieza al crear la instancia (los hijos de un coordinador se crean cuando llega su paso). También es lo que devuelve <code>status()</code> de una instancia destruida (por ejemplo, porque su elemento salió del DOM).</li>
-							<li><code>"loading"</code>: Esperando a sus componentes requeridos, o descargando y aplicando sus recursos.</li>
-							<li><code>"loading-fallback"</code>: La carga principal ha fallado y empieza la del componente de contingencia. Es un estado momentáneo que se notifica al observador de estado (sección 6): la instancia de contingencia, que usa el mismo ID, pasa enseguida a <code>"loading"</code>, y ese es el estado que devuelve <code>status()</code> mientras se carga.</li>
-							<li><code>"ready"</code>: Carga completada y JS ejecutado sin errores (un fallo del CSS o del HTML solo genera un aviso y no lo impide).</li>
-							<li><code>"failed"</code>: Fallo definitivo: falló su JS (y su contingencia, si la tenía) o una de sus dependencias. El elemento recupera sus atributos y contenido originales.</li>
+							<li><code>"pending"</code>: Registered and not started yet. It is a momentary state, because loading starts when the instance is created (a coordinator’s children are created when their step arrives). It is also what <code>status()</code> returns for a destroyed instance (for example, because its element left the DOM).</li>
+							<li><code>"loading"</code>: Waiting for its required components, or downloading and applying its resources.</li>
+							<li><code>"loading-fallback"</code>: The main load has failed, and the fallback component’s load is starting. It is a momentary state that is reported to the state observer (section 6): the fallback instance, which uses the same ID, immediately moves to <code>"loading"</code>, and that is the state <code>status()</code> returns while it loads.</li>
+							<li><code>"ready"</code>: Load completed and JS run without errors (a CSS or HTML failure only produces a warning and does not prevent it).</li>
+							<li><code>"failed"</code>: Final failure: its JS failed (and so did its fallback, if it had one), or one of its dependencies failed. The element gets its original attributes and content back.</li>
 						</ul>
 					</li>
 				</ul>
-				<p>Los coordinadores devuelven un objeto más simple, con <code>id</code>, <code>element</code> y <code>options</code>; su estado se sigue con el observador de estado (sección 6) o declarándolos en <code>data-e-component-required</code>.</p>
-				<p><b>API avanzada (interna):</b> <code>_destroy(isReset)</code> desconecta la instancia del observador del DOM, ejecuta sus tareas de limpieza y la elimina del registro. La librería lo llama sola cuando el elemento sale del DOM o con <code>_components.resetCache()</code>; el parámetro <code>isReset</code> evita el aviso que se emite si el elemento sigue conectado. Como indica el prefijo <code>_</code>, no forma parte de la API estable.</p>
-				<h3>5. Eventos de instancia</h3>
-				<p>Cada instancia de componente permite añadir listeners con <code>on()</code>, <code>once()</code> y <code>off()</code>:</p>
-<pre><code>var inst = _components(document.getElementById('saludo')).ref();
+				<p>Coordinators return a simpler object, with <code>id</code>, <code>element</code>, and <code>options</code>; their state is tracked with the state observer (section 6) or by declaring them in <code>data-e-component-required</code>.</p>
+				<p><b>Advanced API (internal):</b> <code>_destroy(isReset)</code> disconnects the instance from the DOM observer, runs its cleanup tasks, and removes it from the registry. The library calls it on its own when the element leaves the DOM or when <code>_components.resetCache()</code> is called; the <code>isReset</code> parameter prevents the warning that is logged if the element is still connected. As the <code>_</code> prefix indicates, it is not part of the stable API.</p>
+				<h3 id="instance_events">5. Instance events</h3>
+				<p>Each component instance lets you add listeners with <code>on()</code>, <code>once()</code>, and <code>off()</code>:</p>
+<pre><code>var inst = _components(document.getElementById('greeting')).ref();
 
 if (inst) {
-	// El componente ha terminado de cargarse
+	// The component has finished loading
 	inst.on('ready', function(data) {
-		// data es undefined, o { replacedBy: instancia } si se cargó la contingencia
-		console.log('Componente insertado en el DOM.');
+		// data is undefined, or { replacedBy: instance } if the fallback was loaded
+		console.log('Component inserted into the DOM.');
 	});
 
-	// Fallo definitivo: red, tiempo agotado, excepción en su JS o dependencia fallida
+	// Final failure: network, timeout, exception in its JS, or failed dependency
 	inst.on('error', function(err) {
-		console.error('Fallo del componente:', err.message);
+		console.error('Component failure:', err.message);
 	});
 
-	// Evento propio, enviado con _components.emit('saludo', 'refrescar', datos)
-	inst.on('refrescar', function(datos) {
-		console.log('Datos recibidos:', datos);
+	// Custom event, sent with _components.emit('greeting', 'refresh', data)
+	inst.on('refresh', function(data) {
+		console.log('Data received:', data);
 	});
 }
-</code><button aria-live="polite" class="copy">Copiar</button></pre>
-				<p>El evento <code>error</code> recibe siempre un objeto <code>Error</code>; si procede de una excepción del JS del componente, su <code>name</code> es el ID del componente. Si la instancia ya está en <code>"ready"</code> cuando se añade el listener (por ejemplo, porque todos sus recursos estaban en caché), <code>ready</code> no se vuelve a emitir: compruebe antes <code>status()</code>. Los hijos de un coordinador solo existen desde que empieza su paso; antes, <code>_components.get(id)</code> devuelve <code>undefined</code>.</p>
-				<p><b>Cola de eventos</b></p>
-				<p>Los eventos enviados con <code>_components.emit()</code> a un componente que aún no existe o no está en estado <code>"ready"</code> se guardan en una cola, con un máximo de 50 por ID (los siguientes se descartan con un aviso en consola). Cuando el componente alcanza <code>"ready"</code>, la cola se vacía en orden y de forma síncrona, antes de emitir <code>ready</code>; así, el JS del componente puede registrar sus listeners con <code>_components.get(id).on()</code> y recibir los eventos enviados antes. Si el componente pasa a <code>"failed"</code>, los eventos en cola se descartan, y los que se envíen después se descartan con un aviso.</p>
-				<h3>6. Métodos globales</h3>
-				<p>La librería expone estas funciones en el objeto <code>_components</code>:</p>
+</code><button aria-live="polite" class="copy">Copy</button></pre>
+				<p>The <code>error</code> event always receives an <code>Error</code> object; if it comes from an exception in the component’s JS, its <code>name</code> is the component ID. If the instance is already <code>"ready"</code> when the listener is added (for example, because all its resources were cached), <code>ready</code> is not emitted again: check <code>status()</code> first. A coordinator’s children exist only from the moment their step starts; before that, <code>_components.get(id)</code> returns <code>undefined</code>.</p>
+				<p><b>Event queue</b></p>
+				<p>Events sent with <code>_components.emit()</code> to a component that does not exist yet or is not in the <code>"ready"</code> state are stored in a queue, with a maximum of 50 per ID (further ones are discarded with a warning in the console). When the component reaches <code>"ready"</code>, the queue is flushed in order and synchronously, before <code>ready</code> is emitted; this way, the component’s JS can register its listeners with <code>_components.get(id).on()</code> and receive the events sent earlier. If the component moves to <code>"failed"</code>, the queued events are discarded, and any events sent later are discarded with a warning.</p>
+				<h3 id="global_methods">6. Global methods</h3>
+				<p>The library exposes these functions on the <code>_components</code> object:</p>
 				<ul>
-					<li><code>_components.get(id)</code>: Devuelve la instancia registrada con ese ID, o <code>undefined</code>.</li>
-					<li><code>_components.emit(targetId, event, data)</code>: Envía un evento a una instancia de componente. Si aún no está lista, el evento se guarda en la cola (ver sección 5). Si el ID es de un coordinador, emite un aviso en consola y descarta el evento.</li>
-					<li><code>_components.order(name, value?)</code>: Registra o devuelve un alias de orden de carga (ver sección 3). Volver a registrar un alias sustituye su valor para las cargas siguientes.</li>
-					<li><code>_components.scan(root?)</code>: Inicializa los coordinadores (<code>[data-e-components]</code>) que hay dentro de <code>root</code>, sin incluir el propio <code>root</code>, o dentro de <code>document.body</code> si se omite. Se omiten los elementos que ya tienen una instancia registrada (llamarlo varias veces no los duplica) y los coordinadores que están dentro de un componente, o sobre él, cuando ese componente pertenece a otro coordinador o es él mismo un coordinador: se inician al cargar el componente. Tras iniciarse, cada coordinador inicia también sus subcoordinadores directos que no están dentro de uno de sus componentes. Los componentes que no están dentro de un coordinador se inicializan con <code>_components(elemento)</code>.</li>
-					<li><code>_components.autoScan()</code>: Ejecuta <code>_components.scan()</code> cuando el documento está listo (de inmediato, si ya lo está).</li>
-					<li><code>_components.resetCache()</code>: Libera memoria. Destruye todas las instancias del registro, retira los observadores, vacía las cachés de recursos (las cargas siguientes vuelven a descargar y aplicar el CSS y el JS) y la cola de eventos, y elimina los observadores de estado registrados. Conserva la configuración global y los alias de orden, y no retira los estilos ya insertados.</li>
+					<li><code>_components.get(id)</code>: Returns the instance registered with that ID, or <code>undefined</code>.</li>
+					<li><code>_components.emit(targetId, event, data)</code>: Sends an event to a component instance. If it is not ready yet, the event is stored in the queue (see section 5). If the ID belongs to a coordinator, it logs a warning to the console and discards the event.</li>
+					<li><code>_components.order(name, value?)</code>: Registers or returns a load order alias (see section 3). Registering an alias again replaces its value for subsequent loads.</li>
+					<li><code>_components.scan(root?)</code>: Initializes the coordinators (<code>[data-e-components]</code>) inside <code>root</code>, not including <code>root</code> itself, or inside <code>document.body</code> if no root is given. It skips elements that already have a registered instance (calling it several times does not duplicate them) and coordinators that are inside a component, or on it, when that component belongs to another coordinator or is itself a coordinator: those start when the component loads. Once started, each coordinator also starts its direct sub-coordinators that are not inside one of its components. Components that are not inside a coordinator are initialized with <code>_components(element)</code>.</li>
+					<li><code>_components.autoScan()</code>: Runs <code>_components.scan()</code> when the document is ready (immediately, if it already is).</li>
+					<li><code>_components.resetCache()</code>: Frees memory. It destroys all instances in the registry, stops the DOM observer, clears the resource caches (subsequent loads download and apply the CSS and JS again) and the event queue, and removes the registered state observers. It keeps the global configuration and the order aliases, and it does not remove styles that were already inserted.</li>
 				</ul>
-				<p><b>Observador de estado (API avanzada)</b></p>
-				<p><code>_components._registerStateObserver(fn)</code> y <code>_components._unregisterStateObserver(fn)</code> permiten recibir todos los cambios de estado de componentes y coordinadores, por ejemplo para telemetría o una barra de carga global. La librería los usa internamente para resolver las dependencias; como indica el prefijo <code>_</code>, no forman parte de la API estable.</p>
-<pre><code>function monitorDeEstados(id, nuevoEstado) {
-	console.log('[Ciclo de vida] Componente "' + id + '" pasó al estado: ' + nuevoEstado);
+				<p><b>State observer (advanced API)</b></p>
+				<p><code>_components._registerStateObserver(fn)</code> and <code>_components._unregisterStateObserver(fn)</code> let you receive all state changes of components and coordinators, for example for telemetry or a global loading bar. The library uses them internally to resolve dependencies; as the <code>_</code> prefix indicates, they are not part of the stable API.</p>
+<pre><code>function stateMonitor(id, newState) {
+	console.log('[Lifecycle] Component "' + id + '" changed to state: ' + newState);
 }
 
-// Registro
-_components._registerStateObserver(monitorDeEstados);
+// Register
+_components._registerStateObserver(stateMonitor);
 
-// Baja
-// _components._unregisterStateObserver(monitorDeEstados);
-</code><button aria-live="polite" class="copy">Copiar</button></pre>
-				<h3>7. Características técnicas</h3>
+// Unregister
+// _components._unregisterStateObserver(stateMonitor);
+</code><button aria-live="polite" class="copy">Copy</button></pre>
+				<h3 id="technical_details">7. Technical details</h3>
 				<div class="features">
-					<p><strong>Peticiones compartidas y caché:</strong> Las peticiones simultáneas del mismo recurso (mismo tipo y URL) comparten una sola descarga. Las respuestas se guardan en una caché en memoria de hasta 100 entradas; al superarse, se elimina la más antigua que no esté en curso (si todas lo están, el límite se supera temporalmente). Un HTML en caché se vuelve a insertar sin nueva petición.</p>
+					<p><strong>Shared requests and cache:</strong> Simultaneous requests for the same resource (same type and URL) share a single download. Responses are stored in an in-memory cache of up to 100 entries; when the limit is exceeded, the oldest entry that is not in progress is removed (if all of them are, the limit is temporarily exceeded). Cached HTML is inserted again without a new request.</p>
 
-					<p><strong>Reintento tras fallo:</strong> Cuando la descarga o la aplicación de un recurso falla (error de red, tiempo agotado o excepción al ejecutarlo), el error se notifica a todas las instancias que esperaban ese recurso y la entrada se elimina de la caché. Así, un intento posterior del mismo recurso hace una nueva petición en lugar de reutilizar el error.</p>
+					<p><strong>Retry after failure:</strong> When downloading or applying a resource fails (network error, timeout, or an exception while running it), the error is reported to all instances that were waiting for that resource, and the entry is removed from the cache. This way, a later attempt for the same resource makes a new request instead of reusing the error.</p>
 
-					<p><strong>Errores en el JS de los componentes:</strong> El código JS de cada componente se envuelve en un bloque <code>try/catch</code> antes de ejecutarse; por eso las declaraciones <code>let</code>, <code>const</code> y <code>class</code> de su nivel superior no son globales (<code>var</code> y <code>function</code> sí). Si lanza una excepción, la librería la marca con el ID del componente (en <code>e.name</code>) y la vuelve a lanzar, de modo que aparece en la consola del navegador; un valor que no es un objeto (p. ej. <code>throw 'texto'</code>) se convierte antes en un <code>Error</code> con ese mensaje. Un listener global de <code>error</code> reconoce esas excepciones y la carga del componente se considera fallida.</p>
+					<p><strong>Errors in component JS:</strong> Each component’s JS code is wrapped in a <code>try/catch</code> block before it runs; that is why its top-level <code>let</code>, <code>const</code>, and <code>class</code> declarations are not global (<code>var</code> and <code>function</code> declarations are). If it throws an exception, the library tags it with the component ID (in <code>e.name</code>) and rethrows it, so it appears in the browser console; a value that is not an object (e.g., <code>throw 'text'</code>) is first converted into an <code>Error</code> with that message. A global <code>error</code> listener recognizes those exceptions, and the component’s load is considered failed.</p>
 
-					<p><strong>Listener global de errores:</strong> El listener de <code>error</code> que la librería registra en <code>window</code> solo reacciona a las excepciones marcadas por la librería e ignora el resto, incluidos los errores sin <code>event.error</code>, como los de scripts de otro origen.</p>
+					<p><strong>Global error listener:</strong> The <code>error</code> listener that the library registers on <code>window</code> only reacts to exceptions tagged by the library and ignores the rest, including errors without <code>event.error</code>, such as those from cross-origin scripts.</p>
 
-					<p><strong>Contingencia y traspaso de eventos:</strong> Si falla el JS de un componente que tiene contingencia (<code>fallback</code>), la librería retira del registro la instancia fallida y crea la de contingencia con el mismo ID. Los eventos en cola y los listeners de la instancia original se transfieren a la nueva, salvo los de <code>ready</code> y <code>error</code>: esos se quedan en la original, que los emite al terminar la contingencia (<code>ready</code> recibe <code>{ replacedBy: instanciaDeContingencia }</code>). Desde ese momento, <code>_components.get(id)</code> devuelve la nueva instancia, y la referencia anterior ya no admite <code>on()</code>, <code>once()</code>, <code>off()</code> ni <code>emit()</code> (emite un aviso).</p>
+					<p><strong>Fallback and event handover:</strong> If the JS of a component that has a <code>fallback</code> fails, the library removes the failed instance from the registry and creates the fallback instance with the same ID. Queued events and the original instance’s listeners are transferred to the new one, except those for <code>ready</code> and <code>error</code>: those stay on the original instance, which emits them when the fallback finishes (<code>ready</code> receives <code>{ replacedBy: fallbackInstance }</code>). From then on, <code>_components.get(id)</code> returns the new instance, and the previous reference no longer accepts <code>on()</code>, <code>once()</code>, <code>off()</code>, or <code>emit()</code> (it logs a warning).</p>
 
-					<p><strong>Limpieza al salir del DOM:</strong> La librería usa un único <code>MutationObserver</code> sobre el <code>body</code> del documento, que comprueba tras cada cambio en el árbol si el elemento de cada instancia sigue en el DOM. Cuando se ha retirado (por ejemplo, al cambiar de vista con un router), se llama a su <code>_destroy()</code>: la instancia sale del registro y se cancelan sus esperas de dependencias.</p>
+					<p><strong>Cleanup when leaving the DOM:</strong> The library uses a single <code>MutationObserver</code> on the document’s <code>body</code>, which checks after every change in the tree whether each instance’s element is still in the DOM. When it has been removed (for example, when switching views with a router), its <code>_destroy()</code> is called: the instance leaves the registry and stops waiting for its dependencies.</p>
 				</div>
 			</div>
 		</section>

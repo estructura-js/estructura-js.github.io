@@ -1,6 +1,8 @@
 _events(document).ready(function(){
   console.log('Estructura App Bundle Handlers ready.');
 
+  var _es = /^es\b/i.test(document.documentElement.lang);
+
   function mockData(data) {
     return {
       n: Math.round(Math.random() * (((new Date).getTime() / 1000) / 60)),
@@ -8,7 +10,7 @@ _events(document).ready(function(){
       cost: Math.max(Math.round(Math.random() * 10), 0.5),
       start: new Date(new Date((new Date).setMinutes(Math.round(Math.random() * 20))).setSeconds(Math.round(Math.random() * 59))).toLocaleString(),
       end: new Date(new Date((new Date).setMinutes(Math.max(Math.round(Math.random() * 59), 21))).setSeconds(Math.round(Math.random() * 59))).toLocaleString(),
-      note: 'Nota ' + Math.round(Math.random() * 99)
+      note: (_es ? 'Nota ' : 'Note ') + Math.round(Math.random() * 99)
     };
   }
 
@@ -55,24 +57,24 @@ _events(document).ready(function(){
       }
 
       if (!navigator.onLine) {
-        this.error = 'Offline, cannot generate ticket.';
+        this.error = _es ? 'Sin conexión: no se puede generar el tique.' : 'Offline, cannot generate ticket.';
         return;
       }
 
       data = data.replace(/\s+/g, '');
       var _ticket_re = /[^a-zA-Z0-9_\.\-]+/;
       if (_ticket_re.test(data)) {
-        this.error = 'Wrong ticket ID characters: ' + data.match(_ticket_re)[0];
+        this.error = (_es ? 'Caracteres no válidos en el ID del tique: ' : 'Wrong ticket ID characters: ') + data.match(_ticket_re)[0];
         return;
       }
 
       if (data.length < 2) {
-        this.error = 'Ticket ID must have at least 2 characters.';
+        this.error = _es ? 'El ID del tique debe tener al menos 2 caracteres.' : 'Ticket ID must have at least 2 characters.';
         return;
       }
 
       if (data.length > 128) {
-        this.error = 'Ticket ID must not exceed 128 characters.';
+        this.error = _es ? 'El ID del tique no debe superar los 128 caracteres.' : 'Ticket ID must not exceed 128 characters.';
         return;
       }
 
@@ -88,7 +90,7 @@ _events(document).ready(function(){
       }
 
       if (!navigator.onLine) {
-        this.error = 'Offline, cannot update ticket.';
+        this.error = _es ? 'Sin conexión: no se puede actualizar el tique.' : 'Offline, cannot update ticket.';
         return;
       }
 

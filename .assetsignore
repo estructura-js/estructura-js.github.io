@@ -10,4 +10,5 @@
 .env*
 wrangler.jsonc
 README.md
-.claude
+README.es.md
+tools

@@ -1,8 +1,8 @@
-/* shared/docs.components.css — componentes reutilizables: contenido, títulos, listas, código, navegación, botones, avisos y portada. */
+/* shared/docs.components.css — reusable components: content, headings, lists, code, navigation, buttons, callouts, and home page. */
 @font-face { font-family: 'A'; src: url('../fr.ttf'); font-weight: normal; font-display: swap; }
 @font-face { font-family: 'A'; src: url('../fb.ttf'); font-weight: bold; font-display: swap; }
 
-/* ---------- Contenido: flujo continuo sobre el papel, sin tarjetas ---------- */
+/* ---------- Content: continuous flow on the paper, without cards ---------- */
 .docs-main > section { margin-block: 0; }
 .docs-main > section + section {
   padding-top: var(--docs-space-5);
@@ -11,7 +11,7 @@
 .docs-main section > :is(div, p) { padding: 0; }
 .docs-main section > * + * { margin-top: var(--docs-space-3); }
 
-/* Tarjeta reutilizable (fuera del flujo de documentación) */
+/* Reusable card (outside the documentation flow) */
 .card {
   background: var(--docs-card);
   border: 1px solid var(--docs-line);
@@ -19,8 +19,8 @@
   padding: var(--docs-space-4);
 }
 
-/* ---------- Títulos ---------- */
-/* Título de página (extensiones): rótulo pequeño encima + nombre grande */
+/* ---------- Headings ---------- */
+/* Page title (extensions): small label above + large name */
 .title, .page-title {
   display: flex; flex-direction: column; gap: var(--docs-space-2);
   font-size: clamp(2.1rem, 1.5rem + 2.4vw, 3rem);
@@ -30,7 +30,7 @@
   color: var(--docs-ink);
 }
 .title::before {
-  content: 'Extensión';
+  content: 'Extension';
   color: var(--docs-accent);
   font-size: var(--docs-font-xs);
   font-weight: 700;
@@ -38,6 +38,8 @@
   line-height: 1.2;
   text-transform: uppercase;
 }
+/* Generated labels follow the page language (<html lang>) */
+.title:lang(es)::before { content: 'Extensión'; }
 
 main h2:not(.title), .section-title {
   color: var(--docs-ink);
@@ -46,14 +48,14 @@ main h2:not(.title), .section-title {
   letter-spacing: -0.02em;
 }
 
-/* h3 = sección numerada, h4 = subsección o firma de API */
+/* h3 = numbered section, h4 = subsection or API signature */
 h3 { color: var(--docs-ink); font-size: 1.22rem; font-weight: 700; letter-spacing: -0.01em; }
 h4 { color: var(--docs-header-ink); font-size: 1.05rem; font-weight: 700; }
 .docs-main section .padding h3 { margin-top: var(--docs-space-6); }
 .docs-main section .padding h4 { margin-top: var(--docs-space-5); }
 .docs-main section .padding > :is(h3, h4):first-child { margin-top: 0; }
 .docs-main section .padding :is(h3, h4) + * { margin-top: var(--docs-space-2); }
-/* Firmas de API: h4 cuyo primer hijo es una firma <code> (ej. .sql(callback?, timeout?)) */
+/* API signatures: h4 whose first child is a <code> signature (e.g., .sql(callback?, timeout?)) */
 .docs-main section .padding h4:has(> code:first-child) {
   display: flex; flex-wrap: wrap; align-items: center; gap: 0 0.35em;
   padding: var(--docs-space-2) var(--docs-space-3);
@@ -65,7 +67,7 @@ h4 { color: var(--docs-header-ink); font-size: 1.05rem; font-weight: 700; }
 main :is(h2, h3, h4) code { background: transparent; padding: 0; border: 0; box-shadow: none; }
 .docs-main section .padding h4 > code:first-child { color: var(--docs-accent-ink); font-size: 0.98em; }
 
-/* Ancla "#" de cada título: visible al pasar el ratón o con el foco del teclado */
+/* "#" anchor of each heading: visible on hover or with keyboard focus */
 .docs-anchor {
   margin-left: 0.4em;
   color: var(--docs-accent); font-weight: 400;
@@ -75,7 +77,7 @@ main :is(h2, h3, h4) code { background: transparent; padding: 0; border: 0; box-
 .docs-anchor:focus-visible { opacity: 0.85; text-decoration: none; }
 .docs-anchor:hover { opacity: 1; text-decoration: none; }
 
-/* ---------- Detalles / resumen ---------- */
+/* ---------- Details / summary ---------- */
 details { padding-block-end: var(--docs-space-2); }
 summary { margin-left: calc(var(--docs-space-2) * -1); }
 details p { margin-top: var(--docs-space-2); }
@@ -87,7 +89,7 @@ summary {
 }
 summary::-webkit-details-marker { display: none; }
 summary:not(.docs-toc-title):hover { background: var(--docs-accent-soft); text-decoration: none; }
-/* Chevron dibujado con bordes: nítido a cualquier tamaño y sin depender de la fuente */
+/* Chevron drawn with borders: sharp at any size and independent of the font */
 summary:not(.docs-toc-title)::before {
   content: ''; display: inline-block; flex: none;
   width: 0.4em; height: 0.4em;
@@ -96,14 +98,14 @@ summary:not(.docs-toc-title)::before {
   transition: transform var(--docs-transition);
 }
 details[open] > summary:not(.docs-toc-title)::before { transform: rotate(45deg) translate(-0.1em, -0.1em); }
-/* Apertura animada (navegadores con ::details-content; el resto abre sin animación) */
+/* Animated opening (browsers with ::details-content; the rest open without animation) */
 details::details-content {
   block-size: 0; overflow: clip; opacity: 0;
   transition: block-size var(--docs-dur-3) var(--docs-ease), opacity var(--docs-dur-3) var(--docs-ease), content-visibility var(--docs-dur-3) allow-discrete;
 }
 details[open]::details-content { block-size: auto; opacity: 1; }
 
-/* ---------- Listas ---------- */
+/* ---------- Lists ---------- */
 .lines { padding-left: var(--docs-space-5); }
 .lines li { text-indent: calc(var(--docs-space-3) * -1); margin-top: var(--docs-space-2); }
 .lines li::before {
@@ -125,7 +127,7 @@ main section .padding li > ul > li::before {
   background: var(--docs-accent); opacity: 0.55;
 }
 
-/* ---------- Navegación entre extensiones (barra lateral) ---------- */
+/* ---------- Navigation between extensions (sidebar) ---------- */
 .docs-nav ul { display: flex; }
 .docs-nav li { margin: 0; padding: 0; }
 .docs-nav a { display: block; color: var(--docs-muted); white-space: nowrap; }
@@ -138,7 +140,7 @@ main section .padding li > ul > li::before {
   color: var(--docs-muted);
 }
 
-/* Móvil y tableta: una sola fila desplazable bajo la barra superior (docs.js centra la página actual) */
+/* Mobile and tablet: a single scrollable row under the top bar (docs.js centers the current page) */
 @media screen and (max-width: 1023px) {
   .docs-sidebar { border-bottom: 1px solid var(--docs-line); }
   .docs-sidebar-title { display: none; }
@@ -154,7 +156,7 @@ main section .padding li > ul > li::before {
   .docs-sidebar a:hover { border-bottom-color: var(--docs-line-strong); }
   .docs-sidebar a[aria-current="page"] { border-bottom-color: var(--docs-accent); }
 }
-/* Escritorio: lista vertical fija a la izquierda */
+/* Desktop: vertical list fixed on the left */
 @media screen and (min-width: 1024px) {
   .docs-sidebar {
     max-height: calc(100dvh - var(--docs-bar-h) - var(--docs-space-5));
@@ -174,7 +176,7 @@ main section .padding li > ul > li::before {
   }
 }
 
-/* ---------- Anterior / siguiente (lo añade docs.js al final del contenido) ---------- */
+/* ---------- Previous / next (added by docs.js at the end of the content) ---------- */
 .docs-pager {
   display: grid; grid-template-columns: 1fr 1fr; gap: var(--docs-space-3);
   padding-top: var(--docs-space-5);
@@ -204,7 +206,7 @@ main section .padding li > ul > li::before {
   .docs-pager-next { grid-column: auto; }
 }
 
-/* ---------- Código ---------- */
+/* ---------- Code ---------- */
 code {
   border-radius: var(--docs-radius-s);
   background: var(--docs-chip);
@@ -212,14 +214,14 @@ code {
   padding: 0.05rem 0.35rem;
   color: var(--docs-ink);
 }
-/* API: la entidad definida (firma dentro de <b>/<strong> o primer identificador de una definición) */
+/* API: the defined entity (signature inside <b>/<strong> or the first identifier of a definition) */
 :is(b, strong) > code:first-child,
 main li > code:first-child {
   background: var(--docs-accent-soft);
   color: var(--docs-accent-ink);
   font-weight: 700;
 }
-/* Bloques: barra superior con el lenguaje y el botón Copiar (la crea docs.js) */
+/* Blocks: top bar with the language and the Copy button (created by docs.js) */
 pre {
   display: flex; flex-direction: column; cursor: pointer;
   background: var(--docs-code-bg); color: var(--docs-code-ink);
@@ -236,7 +238,7 @@ pre code {
   width: 100%; min-width: 0; max-width: 100%;
   font-size: 0.875rem; line-height: 1.7;
 }
-/* La librería de resaltado aplica su propio fondo: se unifica con el del bloque */
+/* The highlighting library applies its own background: it is unified with the block’s */
 .docs-shell pre code.hljs, .docs-shell pre code { background: transparent; padding: var(--docs-space-3) var(--docs-space-4); }
 .code-bar {
   display: flex; align-items: center; justify-content: space-between; gap: var(--docs-space-2);
@@ -246,7 +248,7 @@ pre code {
   border-bottom: 1px solid rgba(255, 255, 255, 0.07);
   cursor: default;
 }
-/* Tres puntos discretos antes del lenguaje: identifican el bloque como "ventana" de código */
+/* Three subtle dots before the language: they mark the block as a code "window" */
 .code-lang {
   display: inline-flex; align-items: center; gap: 0.6rem;
   font-family: var(--docs-mono); font-size: 0.72rem; letter-spacing: 0.04em;
@@ -259,7 +261,7 @@ pre code {
   margin-right: 1.5rem;
 }
 
-/* ---------- Botones ---------- */
+/* ---------- Buttons ---------- */
 button.copy {
   display: inline-flex; align-items: center; gap: 0.35rem;
   min-height: 1.75rem; padding: 0.15rem 0.6rem;
@@ -268,7 +270,7 @@ button.copy {
   border: 1px solid rgba(255, 255, 255, 0.14); opacity: 0.7;
   font-size: var(--docs-font-xs); font-weight: 700; letter-spacing: 0.02em;
 }
-/* Icono de copiar dibujado con bordes (la CSP del sitio no admite imágenes data:): hoja trasera en L + hoja delantera */
+/* Copy icon drawn with borders (the site’s CSP does not allow data: images): L-shaped back sheet + front sheet */
 button.copy { position: relative; padding-left: 1.65rem; }
 button.copy::before, button.copy::after {
   content: ''; position: absolute; top: 50%;
@@ -291,7 +293,7 @@ button.copy:hover, button.copy:focus-visible {
   background: rgba(255, 255, 255, 0.1);
   text-decoration: none;
 }
-/* Confirmación de copiado: dorado y marca de verificación */
+/* Copy confirmation: gold and a check mark */
 button.copy.is-copied, button.copy.is-copied:hover {
   opacity: 1; color: var(--docs-code-bg);
   background: #e0bf55; border-color: #e0bf55;
@@ -311,10 +313,10 @@ button.copy.is-copied::after {
 }
 .collapsed-links:hover { border-color: var(--docs-accent); background: var(--docs-accent-soft); text-decoration: none; }
 .collapsed-links[aria-expanded="true"] { border-color: var(--docs-accent); background: var(--docs-accent-soft); color: var(--docs-accent-ink); }
-/* Bloque que se despliega desde un botón: entra con un leve desplazamiento */
+/* Block expanded from a button: enters with a slight offset */
 .entirely:not(.collapsed) { animation: docs-rise var(--docs-dur-3) var(--docs-ease); }
 
-/* ---------- Pestañas (docs.js convierte listas de opciones de importación en pestañas) ---------- */
+/* ---------- Tabs (docs.js turns lists of import options into tabs) ---------- */
 .docs-tabs { margin-top: var(--docs-space-2); }
 .docs-tablist {
   display: flex; gap: 0.25rem; flex-wrap: wrap;
@@ -338,7 +340,7 @@ button.copy.is-copied::after {
 .docs-tabpanel:not([hidden]) > pre { animation: docs-fade var(--docs-dur-2) var(--docs-ease); }
 .docs-main section .docs-tabpanel > pre { margin-bottom: 0; }
 
-/* Botón de enlace (portada) */
+/* Link button (home page) */
 .docs-button {
   display: inline-flex; align-items: center; justify-content: center; gap: var(--docs-space-1);
   min-height: 2.75rem; padding: 0.6rem 1.35rem;
@@ -359,27 +361,27 @@ button.copy.is-copied::after {
 .docs-button-primary:hover::after { transform: translateX(3px); }
 .docs-button-small { min-height: 2.25rem; padding: 0.3rem 0.85rem; font-size: 0.9rem; }
 
-/* ---------- Marca y portada ---------- */
+/* ---------- Brand and home page ---------- */
 #logo { width: min(var(--width-base-logo), 60vw); height: auto; }
 .site-brand-logo { display: block; width: 6.25rem; height: auto; }
 @media (prefers-color-scheme: dark) {
-  /* El logo es oscuro sobre transparente: se aclara manteniendo el tono cálido */
+  /* The logo is dark on transparent: it is lightened while keeping the warm tone */
   #logo, .site-brand-logo { filter: invert(1) hue-rotate(180deg) brightness(1.05); }
 }
 #logo { width: min(18rem, 66vw); }
-/* Resplandor cálido + retícula tenue detrás de la presentación (la "estructura" como motivo) */
+/* Warm glow + faint grid behind the hero (the "structure" as a motif) */
 .site-hero { position: relative; isolation: isolate; }
 .site-hero::before, .site-hero::after {
   content: ''; position: absolute; z-index: -1;
   pointer-events: none;
 }
 .site-hero::before {
-  /* Nunca más ancho que la ventana: en móvil, lo que sobresale ensancha la página aunque body lo recorte */
+  /* Never wider than the viewport: on mobile, anything that overflows widens the page even if body clips it */
   inset: -2rem max(-20%, 50% - 50vw) 0;
   background: radial-gradient(closest-side, var(--docs-glow), transparent);
 }
 .site-hero::after {
-  /* A sangre: de borde a borde de la ventana, sin sobresalir (la portada está centrada) */
+  /* Full bleed: edge to edge of the viewport, without overflowing (the home page is centered) */
   inset: calc(var(--docs-space-3) * -1) calc(50% - 50vw) 0;
   background-image:
     linear-gradient(var(--docs-line) 1px, transparent 1px),
@@ -392,12 +394,12 @@ button.copy.is-copied::after {
 }
 .site-tagline {
   max-width: 34rem; margin-inline: auto;
-  /* Más aire respecto al logo y a las etiquetas de rasgos */
+  /* More room relative to the logo and the trait labels */
   margin-block: var(--docs-space-3) var(--docs-space-2);
   color: var(--docs-muted); font-size: clamp(1.05rem, 0.95rem + 0.45vw, 1.3rem); line-height: 1.5;
   text-wrap: balance;
-  /* Halo del color del resplandor de la portada: separa las letras de la retícula de fondo.
-     Capas apiladas de radio creciente: las cortas intensifican el borde, las largas amplían el efecto */
+  /* Halo in the color of the home page glow: separates the letters from the background grid.
+     Stacked layers of increasing radius: the short ones intensify the edge, the long ones widen the effect */
   text-shadow:
     0 0 1px var(--docs-glow),
     0 0 2px var(--docs-glow),
@@ -409,12 +411,12 @@ button.copy.is-copied::after {
     0 0 26px var(--docs-glow);
 }
 .site-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--docs-space-2); margin-top: var(--docs-space-2); }
-/* Pantallas muy estrechas: los dos botones no caben en fila; apilados comparten el mismo ancho */
+/* Very narrow screens: the two buttons do not fit in a row; stacked, they share the same width */
 @media screen and (max-width: 359px) {
   .site-actions { flex-direction: column; align-items: stretch; width: min(100%, 15rem); }
   .site-actions .docs-button { justify-content: center; }
 }
-/* Rasgos clave: fila de etiquetas bajo el lema */
+/* Key traits: a row of labels under the tagline */
 .site-traits {
   display: flex; flex-wrap: wrap; justify-content: center; gap: var(--docs-space-2);
   max-width: 40rem;
@@ -430,7 +432,7 @@ button.copy.is-copied::after {
   content: ''; width: 0.4rem; height: 0.4rem; border-radius: 50%;
   background: var(--docs-accent);
 }
-/* Instalación en una línea, con copia directa: tono secundario (mismo fondo que las pestañas) para no competir con "Empezar" */
+/* One-line installation, with direct copy: secondary tone (same background as the tabs) so it does not compete with "Get started" */
 .site-install {
   display: flex; align-items: center; gap: var(--docs-space-2);
   max-width: 100%;
@@ -458,14 +460,14 @@ button.copy.is-copied::after {
   color: var(--docs-accent-ink); background: var(--docs-accent-soft);
   border-color: var(--docs-accent);
 }
-/* Entrada escalonada de la portada */
+/* Staggered entrance of the home page */
 .site-hero > * { animation: docs-rise 0.6s var(--docs-ease) both; }
 .site-hero > :nth-child(2) { animation-delay: 60ms; }
 .site-hero > :nth-child(3) { animation-delay: 120ms; }
 .site-hero > :nth-child(4) { animation-delay: 180ms; }
 .site-hero > :nth-child(5) { animation-delay: 240ms; }
 
-/* ---------- Metadatos de cada extensión: franja discreta ---------- */
+/* ---------- Metadata of each extension: discreet strip ---------- */
 .docs-main section > div.docs-meta {
   display: flex; flex-wrap: wrap; align-items: center;
   gap: var(--docs-space-1) var(--docs-space-5);
@@ -478,7 +480,7 @@ p.docs-meta-item b { color: var(--docs-muted); font-weight: 400; }
 main p.docs-meta-item > a { font-weight: 700; text-decoration: none; }
 main p.docs-meta-item > a:hover { text-decoration: underline; }
 
-/* Estado / insignias */
+/* Status / badges */
 .docs-badge {
   display: inline-flex; align-items: center;
   padding: 0.05rem 0.55rem; border-radius: 999px;
@@ -487,7 +489,7 @@ main p.docs-meta-item > a:hover { text-decoration: underline; }
   font-size: var(--docs-font-xs); font-weight: 700; letter-spacing: 0.04em;
 }
 
-/* ---------- Avisos: lo importante destaca ---------- */
+/* ---------- Callouts: what matters stands out ---------- */
 .docs-callout,
 .docs-main section > p.docs-callout {
   padding: var(--docs-space-3) var(--docs-space-4);
@@ -504,7 +506,7 @@ main p.docs-meta-item > a:hover { text-decoration: underline; }
 }
 .docs-callout-warn > :is(b, strong):first-child { color: var(--docs-warn-ink); }
 .docs-callout-warn > :is(b, strong):first-child::before { content: '⚠ '; }
-/* Chips de código sobre fondos tintados (avisos, demo): fondo de tarjeta y borde fino para que no se pierdan */
+/* Code chips on tinted backgrounds (callouts, demo): card background and thin border so they do not get lost */
 main :is(.docs-callout, .docs-demo) code,
 main :is(.docs-callout, .docs-demo) code:first-child {
   background: var(--docs-card);
@@ -513,7 +515,7 @@ main :is(.docs-callout, .docs-demo) code:first-child {
           box-decoration-break: clone;
 }
 
-/* ---------- Zona demo: sección "Demo en vivo" de cada extensión ---------- */
+/* ---------- Demo area: the "Live demo" section of each extension ---------- */
 .docs-demo {
   position: relative;
   margin-top: var(--docs-space-3); padding: var(--docs-space-3) var(--docs-space-4);
@@ -522,12 +524,13 @@ main :is(.docs-callout, .docs-demo) code:first-child {
   display: flex; flex-wrap: wrap; align-items: center; gap: var(--docs-space-2);
 }
 .docs-demo::before {
-  content: 'En vivo';
+  content: 'Live';
   display: inline-flex; align-items: center;
   padding: 0.05rem 0.55rem; border-radius: 999px;
   background: var(--docs-ink); color: var(--docs-card);
   font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
 }
+.docs-demo:lang(es)::before { content: 'En vivo'; }
 #test { font-size: 1.1rem; font-weight: 700; color: var(--docs-ink); }
 .docs-demo > * { max-width: 100%; min-width: 0; }
 input[type="file"]#test { font-size: var(--docs-font-s); font-weight: 400; }
@@ -537,18 +540,18 @@ input[type="file"]#test { font-size: var(--docs-font-s); font-weight: 400; }
 }
 .docs-demo button:not(.copy):hover { text-decoration: none; opacity: 0.9; }
 
-/* ---------- Portada: cuadrícula de extensiones ---------- */
+/* ---------- Home page: extensions grid ---------- */
 .ext-grid {
   display: grid; gap: var(--docs-space-3);
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
-  /* Tarjetas de igual altura por fila; las acciones quedan alineadas abajo */
+  /* Cards of equal height per row; the actions stay aligned at the bottom */
   align-items: stretch;
   margin-top: var(--docs-space-3);
 }
 .ext-card {
   position: relative;
   display: flex; flex-direction: column; gap: var(--docs-space-2);
-  /* Sin el margen de "li + li": la separación la da el gap de la cuadrícula y las tarjetas quedan alineadas por fila */
+  /* Without the "li + li" margin: the grid gap provides the spacing and the cards stay aligned per row */
   margin: 0;
   padding: var(--docs-space-4);
   border: 1px solid var(--docs-line); border-radius: var(--docs-radius-l);
@@ -556,7 +559,7 @@ input[type="file"]#test { font-size: var(--docs-font-s); font-weight: 400; }
   box-shadow: var(--docs-shadow-s);
   transition: border-color var(--docs-transition), box-shadow var(--docs-transition), transform var(--docs-transition);
 }
-/* Toda la tarjeta es el enlace (el título se extiende sobre ella); los controles internos quedan por encima */
+/* The whole card is the link (the title extends over it); the inner controls stay on top */
 .ext-card-title::before { content: ''; position: absolute; inset: 0; border-radius: inherit; z-index: 0; }
 .ext-card-actions, .ext-card pre, .ext-card-meta { position: relative; z-index: 1; }
 .ext-card:hover, .ext-card:focus-within {
@@ -577,8 +580,8 @@ input[type="file"]#test { font-size: var(--docs-font-s); font-weight: 400; }
 .ext-card:hover .ext-card-title { color: var(--docs-accent-ink); }
 .ext-card:hover .ext-card-title::after { transform: translateX(4px); }
 .ext-card-desc { color: var(--docs-muted); font-size: 0.94rem; line-height: 1.55; }
-/* Separadores "·" entre datos: cada uno vive en el hueco a la izquierda de su dato, así que el que
-   quedaría al inicio de una línea (al partirse la fila) cae fuera de la caja y se recorta */
+/* "·" separators between items: each one sits in the gap to the left of its item, so the one that
+   would start a line (when the row wraps) falls outside the box and is clipped */
 .ext-card-meta { display: flex; flex-wrap: wrap; gap: 0 1.1rem; overflow: hidden; color: var(--docs-muted); font-family: var(--docs-mono); font-size: 0.74rem; }
 .ext-card-meta span { position: relative; margin-left: -1.1rem; padding-left: 1.1rem; }
 .ext-card-meta span::before { content: '·'; position: absolute; left: 0.55rem; transform: translateX(-50%); color: var(--docs-line-strong); }
@@ -591,26 +594,26 @@ input[type="file"]#test { font-size: var(--docs-font-s); font-weight: 400; }
 .ext-card pre { margin: 0; }
 .ext-card pre code { font-size: 0.78rem; }
 
-/* ---------- Colapso (API preservada para docs.js y legacy) ---------- */
+/* ---------- Collapse (API preserved for docs.js and legacy) ---------- */
 .collapsed { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .entirely.collapsed { display: none; }
 
-/* Contenido legacy: features es solo agrupador */
+/* Legacy content: features is only a grouping wrapper */
 .features > * + * { margin-top: var(--docs-space-3); }
 
-/* Pantallas táctiles: sin desplazamientos de hover (en móvil el estado :hover queda "pegado" tras tocar) */
+/* Touch screens: no hover offsets (on mobile the :hover state "sticks" after a tap) */
 @media (hover: none) {
   .ext-card:hover, .ext-card:focus-within, .docs-pager-link:hover, .docs-button:hover { transform: none; }
   .ext-card:hover .ext-card-title::after { transform: none; }
 }
 
-/* ---------- Entradilla: la descripción de cada extensión se lee como resumen ---------- */
+/* ---------- Lead: the description of each extension reads as a summary ---------- */
 .title + section > h2 + div.padding {
   font-size: 1.08rem; line-height: 1.65;
   color: var(--docs-ink);
 }
 
-/* ---------- Volver arriba (lo añade docs.js en páginas largas) ---------- */
+/* ---------- Back to top (added by docs.js on long pages) ---------- */
 .docs-top {
   position: fixed; z-index: 40;
   right: max(var(--docs-space-3), env(safe-area-inset-right));

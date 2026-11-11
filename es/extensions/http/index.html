@@ -1,0 +1,307 @@
+﻿<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+	<title>HTTP</title>
+
+	<link rel="icon" href="../../../estructura.icon.png">
+	<link rel="canonical" href="https://estructura.okzgn.com/es/extensions/http/">
+	<link rel="alternate" hreflang="en" href="https://estructura.okzgn.com/extensions/http/">
+	<link rel="alternate" hreflang="es" href="https://estructura.okzgn.com/es/extensions/http/">
+	<link rel="alternate" hreflang="x-default" href="https://estructura.okzgn.com/extensions/http/">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="Librería de bajo nivel para peticiones HTTP asíncronas basada en XMLHttpRequest. Permite controlar el ciclo de vida de cada petición: tiempo de espera, cabeceras, credenciales de origen cruzado, progreso de subida y descarga, cancelación, y uso con callbacks o promesas.">
+	<meta name="author" content="OKZGN">
+	<meta name="theme-color" content="#faf6ec" media="(prefers-color-scheme: light)">
+	<meta name="theme-color" content="#13110b" media="(prefers-color-scheme: dark)">
+
+	<link href="../../../shared/docs.css" rel="stylesheet" />
+	<script src="https://cdn.jsdelivr.net/npm/estructura-js"></script>
+	<script src="../../../extensions/dom/estructura.dom.js"></script>
+	<script src="../../../extensions/events/estructura.events.js"></script>
+	<script src="../../../shared/docs.js"></script>
+	<script src="../../../extensions/http/estructura.http.js"></script>
+	<script>
+		document.addEventListener('DOMContentLoaded', function(){
+			console.log('Estructura HTTP Ready.');
+
+			var req = _http({
+				url: '../../../extensions/http/test/req',
+				onSuccess: function(r){
+					console.info('Request test response:', r);
+					document.getElementById('test').textContent = 'Respuesta de ./test/req: ' + r.slice(0, 24);
+				},
+				onError: function(err){
+					console.warn('Request test error:', err);
+					document.getElementById('test').textContent = 'No se pudo completar la petición (' + err.type + ').';
+				}
+			});
+
+			console.log('Test:', req);
+		});
+	</script>
+</head>
+
+<body>
+<div class="docs-shell">
+	<header class="site-header site-bar">
+		<div class="site-bar-inner">
+			<a class="site-brand" href="../../" aria-label="Estructura: inicio"><img class="site-brand-logo" src="../../../estructura.logo.png" alt="Estructura"></a>
+			<nav class="site-links" aria-label="Sitio">
+				<a href="../../#get_started">Guía</a>
+				<a href="../../#extensions">Extensiones</a>
+				<a class="site-github" target="_blank" rel="noopener noreferrer" href="https://github.com/okzgn/estructura"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span>GitHub</span></a>
+				<span class="site-version" title="Versión del núcleo">v1.21.0</span>
+				<a class="site-lang" href="../../../extensions/http/" hreflang="en" lang="en">English</a>
+			</nav>
+		</div>
+	</header>
+<div class="docs-container">
+	<nav class="docs-nav docs-sidebar" aria-label="Extensiones">
+		<p class="docs-sidebar-title">Extensiones</p>
+		<ul>
+			<li><a href="./" aria-current="page">HTTP</a></li>
+			<li><a href="../dom/">DOM</a></li>
+			<li><a href="../events/">Events</a></li>
+			<li><a href="../components/">Components</a></li>
+			<li><a href="../handlers/">Handlers</a></li>
+			<li><a href="../reactive/">Reactive</a></li>
+			<li><a href="../routing/">Routing</a></li>
+			<li><a href="../sqlite.frontend/">SQLite Frontend</a></li>
+		</ul>
+	</nav>
+
+<main class="docs-main">
+	<h1 class="title">HTTP</h1>
+	<section class="margin-y">
+		<h2 id="description">Descripción</h2>
+		<div class="padding">Librería de bajo nivel para peticiones HTTP asíncronas basada en el objeto nativo <code>XMLHttpRequest</code>. Permite controlar el ciclo de vida de cada petición: tiempo de espera (timeout), cabeceras personalizadas, credenciales de origen cruzado, progreso de subida y descarga, y cancelación. Se puede usar con callbacks o con promesas (<code>async/await</code>).</div>
+		<div class="docs-meta">
+			<p class="padding-y docs-meta-item">
+				<b>Librería:</b> <a target="_blank" href="../../../extensions/http/estructura.http.js">estructura.http.js</a>
+			</p>
+			<p class="padding-y docs-meta-item">
+				<b>Compatibilidad:</b> <a target="_blank" href="https://okzgn.com/articles/why-not-build-frontend-frameworks-on-raw-html-css-or-js/#steps-to-bypass-between-points-1-and-2-asynchronous-orchestration">ES3/ES5+</a>
+			</p>
+			<p class="padding-y docs-meta-item">
+				<b>Estado:</b> RC2
+			</p>
+			<p class="padding-y docs-meta-item">
+				<b>Licencia:</b> <a target="_blank" href="../../../extensions/LICENSE">AGPL v3</a>
+			</p>
+		</div>
+<div class="padding-y">
+			<b>Importación:</b><pre><code>&lt;!-- EXTENSIÓN: Estructura / HTTP --&gt;
+&lt;script src="https://estructura.okzgn.com/extensions/http/estructura.http.js"&gt;&lt;/script&gt;</code><button aria-live="polite" class="copy">Copiar</button></pre>
+		</div>
+	</section>
+
+	<section class="margin-y">
+		<h2 id="demo">Demo en vivo</h2>
+		<div class="padding">
+			<p>Al cargar la página, la demo pide el archivo <code>./test/req</code> con <code>_http</code> y muestra aquí su contenido. Si la petición falla, se muestra el tipo de error.</p>
+			<p class="docs-demo"><span id="test">Cargando…</span></p>
+		</div>
+	</section>
+
+	<section class="margin-y">
+		<h2 id="docs">Documentación</h2>
+		<div class="padding">
+			<h3 id="quick_start">Inicio rápido</h3>
+			<p>Una petición GET que recibe la respuesta JSON ya parseada; cualquier fallo (HTTP, red, tiempo agotado o JSON inválido) llega a <code>onError</code>.</p>
+<pre><code>_http({
+	url: '/api/usuarios',
+	responseType: 'json',
+	onSuccess: function(usuarios) {
+		console.log('Usuarios:', usuarios);
+	},
+	onError: function(err) {
+		console.error('Fallo (' + err.type + '):', err.message);
+	}
+});
+</code><button aria-live="polite" class="copy">Copiar</button></pre>
+
+			<h3 id="usage">1. Uso y valor devuelto</h3>
+			<p>La librería expone una única función global, <code>_http</code>.</p>
+			<p><b><code>_http(options)</code>:</b></p>
+			<p>Inicia una petición configurada según el objeto <code>options</code>.</p>
+			<p><b>Sintaxis:</b></p>
+			<pre><code>var req = _http({ url: './config.json' });
+// req.abort();
+// req.getXHR();
+// var res = await req; // dentro de una función async; o req.then(...), req.catch(...), req.finally(...)</code><button aria-live="polite" class="copy">Copiar</button></pre>
+			<p>Devuelve de forma síncrona un objeto de control con los siguientes métodos:</p>
+			<ul>
+				<li><code>abort()</code>: Cancela la petición en curso y, si está definido, invoca <code>onAbort</code>.</li>
+				<li><code>getXHR()</code>: Devuelve el objeto <code>XMLHttpRequest</code> subyacente, para inspeccionarlo o manipularlo a bajo nivel.</li>
+				<li><code>then(onFulfilled, onRejected)</code>, <code>catch(onRejected)</code> y <code>finally(fn)</code>: Solo presentes si el entorno dispone de <code>Promise</code>. Hacen del objeto de control un <em>thenable</em>, por lo que puede usarse directamente con <code>await</code>. Devuelven una promesa nativa, no el objeto de control: guarde este último si necesita <code>abort()</code>. La promesa interna solo se crea al invocar alguno de estos métodos (si la petición ya terminó, se resuelve o se rechaza de inmediato con ese desenlace); por eso, si solo se usan callbacks, no se producen avisos de <em>unhandled rejection</em>.</li>
+			</ul>
+			<p>En entornos sin <code>Promise</code> (ES3/ES5), el objeto de control solo tiene <code>abort()</code> y <code>getXHR()</code>. Los callbacks reciben los mismos argumentos con o sin <code>Promise</code>, y se pueden combinar con <code>then</code> o <code>await</code> en la misma petición.</p>
+			<p><b>Valor de resolución:</b> <code>{ data, text, status, headers, xhr }</code>.</p>
+			<ul>
+				<li><code>data</code>: El cuerpo parseado como JSON si <code>responseType</code> es <code>'json'</code> o si la cabecera <code>Content-Type</code> de la respuesta es JSON (por ejemplo <code>application/json</code> o <code>application/problem+json</code>); un cuerpo vacío produce <code>null</code>. Si en este segundo caso el parseo falla, contiene el texto crudo.</li>
+				<li><code>text</code>: El texto crudo de la respuesta (<code>responseText</code>), siempre sin transformar.</li>
+				<li><code>status</code>: El código de estado HTTP.</li>
+				<li><code>headers</code>: Objeto con las cabeceras de la respuesta, con nombres en minúsculas (los valores repetidos se unen con <code>", "</code>).</li>
+				<li><code>xhr</code>: La instancia <code>XMLHttpRequest</code>.</li>
+			</ul>
+			<p><b>Valor de rechazo:</b> Una instancia de <code>Error</code> con las propiedades <code>type</code> (<code>'http'</code>, <code>'network'</code>, <code>'timeout'</code>, <code>'abort'</code> o <code>'parse'</code>), <code>status</code> y <code>xhr</code>. Es el mismo tipo de objeto que recibe <code>onError</code>. Con <code>type: 'http'</code>, el cuerpo de la respuesta de error está en <code>error.xhr.responseText</code>.</p>
+			<p><em><b>Nota:</b> Si las opciones no son válidas (no es un objeto, o <code>url</code> no es un <code>String</code> no vacío), la extensión lanza una excepción que el núcleo de Estructura captura y muestra en la consola, con hasta un segundo de retraso; la llamada devuelve igualmente un objeto, pero sin métodos (<code>abort</code>, <code>getXHR</code>, <code>then</code>...). En ese caso no hay petición, ni callbacks, ni promesa, y un <code>await</code> sobre ese objeto no lanza: devuelve el propio objeto vacío. Lo mismo ocurre si falla la preparación de la petición, por ejemplo con un <code>method</code> no válido o un <code>data</code> con referencias circulares.</em></p>
+
+			<h3 id="options">2. Opciones</h3>
+			<p>El objeto <code>options</code> admite las siguientes propiedades:</p>
+			<p><b>Sintaxis:</b></p>
+			<pre><code>_http({
+	url: 'https://backend.com/api/v1/setData',
+	method: 'POST',
+	data: { 'a': '1', 'N': '...' }
+});</code><button aria-live="polite" class="copy">Copiar</button></pre>
+			<ul>
+				<li><code>url</code> (<code>String</code>): La dirección del recurso. Requerida. <em><b>Nota:</b> Si se omite, no es un <code>String</code> o está vacía, se lanza una excepción antes de abrir la petición (ver la nota sobre opciones inválidas en la sección 1).</em></li>
+				<li><code>method</code> (<code>String</code>): El método HTTP (p. ej. <code>"GET"</code>, <code>"POST"</code>, <code>"PUT"</code>, <code>"DELETE"</code>). Por defecto, <code>"GET"</code>.</li>
+				<li><code>headers</code> (<code>Object</code>): Pares clave-valor con las cabeceras que se añaden a la petición mediante <code>setRequestHeader</code>.</li>
+				<li><code>data</code> (<code>Any</code>): Cuerpo de la petición. Si se omite, se envía sin cuerpo (<code>null</code>). Acepta cadenas de texto, objetos y arrays planos, instancias de <code>FormData</code>, <code>URLSearchParams</code>, objetos <code>Blob</code>, documentos y búferes binarios (<code>ArrayBuffer</code> y sus vistas). <em><b>Nota:</b> Salvo en <code>GET</code> y <code>HEAD</code> (que no envían cuerpo; así tampoco se añade la cabecera JSON, que forzaría una petición preflight CORS), si <code>JSON</code> está disponible, los objetos y arrays planos se serializan con <code>JSON.stringify()</code> y se añade la cabecera <code>Content-Type: application/json;charset=UTF-8</code>, salvo que <code>headers</code> ya defina un <code>Content-Type</code> (la comparación no distingue mayúsculas). El resto de tipos, incluidas las cadenas ya serializadas, se pasan sin transformar al método <code>send()</code> nativo; si envía una cadena JSON, defina usted el <code>Content-Type</code> en <code>headers</code>. Con <code>FormData</code>, se recomienda no definir <code>Content-Type</code> en <code>headers</code> para que el navegador añada el tipo multipart con su límite (boundary). <code>data</code> no se añade a la URL: con <code>GET</code> o <code>HEAD</code> el navegador no envía cuerpo, así que los parámetros deben ir en <code>url</code>.</em></li>
+				<li><code>responseType</code> (<code>String</code>): Con el valor <code>'json'</code>, el cuerpo de una respuesta exitosa se parsea como JSON antes de entregarse: <code>onSuccess</code> recibe el valor parseado (un cuerpo vacío produce <code>null</code>) y, si el parseo falla, se invoca <code>onError</code> con un error de tipo <code>'parse'</code> en lugar de <code>onSuccess</code>. No modifica la propiedad nativa <code>xhr.responseType</code>, por lo que <code>xhr.responseText</code> sigue disponible. Si se omite, <code>onSuccess</code> recibe el texto crudo. Cualquier otro valor se ignora: la respuesta se lee siempre como texto, por lo que la librería no sirve para descargas binarias.</li>
+				<li><code>timeout</code> (<code>Number</code>): Límite de tiempo en milisegundos. Con <code>0</code> (valor por defecto) no hay límite.</li>
+				<li><code>withCredentials</code> (<code>Boolean</code>): Con <code>true</code>, envía credenciales (cookies, cabeceras de autorización) en peticiones de origen cruzado (CORS).</li>
+			</ul>
+
+			<h3 id="callbacks">3. Callbacks</h3>
+			<p>Los callbacks también se definen en <code>options</code> y se invocan en distintas etapas de la petición:</p>
+			<p><b>Estado y finalización:</b></p>
+			<ul>
+				<li><code>onSuccess(response, xhr)</code>: Se invoca cuando la petición termina con un código de estado entre <code>200</code> y <code>299</code>. Recibe como primer argumento el texto de la respuesta o, con <code>responseType: 'json'</code>, el valor ya parseado (por ejemplo, un objeto), y como segundo la instancia XHR. Sin <code>responseType: 'json'</code> recibe el texto aunque la respuesta tenga <code>Content-Type</code> JSON: el parseo automático según esa cabecera solo se aplica a <code>data</code> en la promesa.</li>
+				<li><code>onError(error, xhr)</code>: Se invoca ante fallos de red o bloqueos del navegador (CORS, estado <code>0</code>), respuestas con estado fuera del rango <code>2xx</code> (incluidas las <code>3xx</code> que el navegador no haya seguido, y las <code>4xx</code> y <code>5xx</code>), fallos de parseo con <code>responseType: 'json'</code> y tiempos de espera agotados si no se define <code>onTimeout</code>. Recibe como primer argumento una instancia de <code>Error</code> con las propiedades <code>type</code> (<code>'http'</code>, <code>'network'</code>, <code>'timeout'</code> o <code>'parse'</code>), <code>status</code> y <code>xhr</code>, y como segundo la instancia XHR.</li>
+				<li><code>onHeadersReceived(headersString, xhr)</code>: Se invoca cuando se reciben las cabeceras de la respuesta (<code>readyState === 2</code>). Recibe la cadena cruda que devuelve <code>getAllResponseHeaders()</code>.</li>
+				<li><code>onReadyStateChange(readyState, status, xhr)</code>: Listener de bajo nivel que se invoca en cada cambio de <code>readyState</code> posterior a la apertura: <code>2</code>, <code>3</code> (puede repetirse mientras llega la respuesta) y <code>4</code>.</li>
+			</ul>
+			<p><b>Progreso y cancelación:</b></p>
+			<ul>
+				<li><code>onProgress(loaded, total, percent)</code>: Se invoca durante la descarga de la respuesta cuando el tamaño total es conocido (propiedad <code>lengthComputable</code> del evento). Recibe los bytes recibidos, los bytes totales y el porcentaje. <em><b>Nota:</b> <code>lengthComputable</code> depende de que la respuesta incluya la cabecera <code>Content-Length</code>; sin ella, no se invoca.</em></li>
+				<li><code>onUploadProgress(loaded, total, percent)</code>: Igual que <code>onProgress</code>, pero para la subida del cuerpo de la petición. Se registra en <code>xhr.upload</code> si el navegador lo ofrece. <em><b>Nota:</b> Registrar listeners en <code>xhr.upload</code> obliga al navegador a enviar una petición previa (preflight) CORS en las peticiones de origen cruzado, por lo que el servidor debe responder a <code>OPTIONS</code>.</em></li>
+				<li><code>onTimeout(xhr)</code>: Se invoca al superarse el límite de <code>timeout</code>. Si se omite, el error se entrega a <code>onError</code> con <code>type: 'timeout'</code>.</li>
+				<li><code>onAbort(xhr)</code>: Se invoca cuando la petición se cancela con el método <code>abort()</code> del objeto de control.</li>
+			</ul>
+
+			<h3 id="outcome_and_errors">4. Desenlace y errores</h3>
+
+			<p><b>Aviso al combinar callbacks:</b></p>
+			<p>Si se define <code>onReadyStateChange</code> junto con <code>onSuccess</code>, <code>onError</code> u <code>onHeadersReceived</code>, la librería muestra una advertencia en la consola. Es solo informativa: todos los callbacks se siguen invocando de forma independiente, por lo que conviene no gestionar los mismos estados en ambos.</p>
+			<p><b>Desenlace único:</b></p>
+			<p>Cada petición tiene un único desenlace: éxito, error, tiempo agotado o cancelación. Se registra el primero que ocurre y se ignoran los eventos nativos posteriores. Por ello, de <code>onSuccess</code>, <code>onError</code>, <code>onTimeout</code> y <code>onAbort</code> solo se invoca uno, una sola vez, y la promesa se resuelve o rechaza con ese mismo desenlace. <code>onReadyStateChange</code>, <code>onHeadersReceived</code> y los callbacks de progreso no forman parte del desenlace y se siguen invocando con normalidad.</p>
+			<ul>
+				<li><b>Estado 200–299:</b> <code>onSuccess</code>; la promesa se resuelve.</li>
+				<li><b>Estado distinto de 2xx y mayor que 0:</b> <code>onError</code>; rechazo con <code>type: 'http'</code>.</li>
+				<li><b>Fallo de red, CORS o bloqueo (estado 0):</b> <code>onError</code>; rechazo con <code>type: 'network'</code>.</li>
+				<li><b>Tiempo agotado:</b> <code>onTimeout</code> (o <code>onError</code> si no existe); rechazo con <code>type: 'timeout'</code>.</li>
+				<li><b>Cancelación con <code>abort()</code>:</b> <code>onAbort</code>; rechazo con <code>type: 'abort'</code>.</li>
+				<li><b>JSON inválido con <code>responseType: 'json'</code>:</b> <code>onError</code>; rechazo con <code>type: 'parse'</code>.</li>
+			</ul>
+			<p><b>Estado 0:</b></p>
+			<p>Las peticiones que no completan la comunicación con el servidor (fallo de DNS, pérdida de conexión, bloqueo por CORS u otras restricciones del navegador) terminan con <code>status</code> igual a <code>0</code>. Según la especificación de <code>XMLHttpRequest</code>, los eventos nativos <code>error</code>, <code>timeout</code> y <code>abort</code> se disparan después del cambio a <code>readyState === 4</code>. Por eso, al detectar ese estado con código <code>0</code>, la librería difiere la decisión con <code>setTimeout(0)</code>: si en ese intervalo alguno de esos eventos ya determinó el desenlace de la petición, este se respeta (fallo de red, tiempo agotado o cancelación); si no, se invoca <code>onError</code> con el error <code>'Request failed with status 0 (network/CORS/blocked): ' + url</code>. Así, todo fallo con estado <code>0</code> se notifica exactamente una vez. <em><b>Nota:</b> Algunos navegadores devuelven estado <code>0</code> en peticiones exitosas a URLs <code>file://</code>; la librería las trata igualmente como error de red.</em></p>
+			<p><b>Cancelación:</b></p>
+			<p>El método <code>abort()</code> detiene la petición en curso. Aunque la cancelación deja el estado nativo en <code>0</code>, el evento <code>abort</code> se registra antes de que venza la espera diferida del estado <code>0</code>; si el navegador no despacha ese evento de forma síncrona, el propio método <code>abort()</code> registra la cancelación. En ambos casos solo se invoca <code>onAbort</code>, nunca <code>onError</code>. Llamar a <code>abort()</code> sobre una petición ya terminada no cambia su desenlace, aunque el navegador reinicia el objeto XHR (<code>status</code> pasa a <code>0</code> y <code>responseText</code> queda vacío). El valor de resolución de la promesa no se ve afectado: el texto, el estado y las cabeceras se guardan en el momento del éxito.</p>
+
+			<h3 id="examples">5. Ejemplos</h3>
+
+			<p><b>Petición GET con respuesta JSON</b></p>
+			<p>Con <code>responseType: 'json'</code>, <code>onSuccess</code> recibe el valor parseado y un JSON inválido llega a <code>onError</code> como <code>type: 'parse'</code>. Sin <code>responseType</code>, <code>onSuccess</code> recibe el texto crudo: es lo adecuado para respuestas que no son JSON, o para parsear a mano y tratar un JSON inválido sin pasar por <code>onError</code>.</p>
+<pre><code>_http({
+	url: 'https://api.ejemplo.com/v1/usuarios',
+	method: 'GET',
+	responseType: 'json',
+	onSuccess: function(usuarios, xhr) {
+		console.log('Lista de usuarios procesada:', usuarios);
+	},
+	onError: function(err, xhr) {
+		// err.type: 'http' | 'network' | 'timeout' | 'parse'
+		console.error('Fallo (' + err.type + '):', err.message);
+	}
+});
+</code><button aria-live="polite" class="copy">Copiar</button></pre>
+
+			<p><b>Envío POST con progreso y tiempo límite</b></p>
+<pre><code>var controlEnvio = _http({
+	url: 'https://api.ejemplo.com/v1/archivos',
+	method: 'POST',
+	headers: {
+		'X-Client-Identifier': 'Estructura-App'
+	},
+	// Se serializa como JSON y se añade Content-Type: application/json;charset=UTF-8
+	data: { archivoId: 'doc_09182' },
+	timeout: 10000,
+	onUploadProgress: function(cargado, total, porcentaje) {
+		console.log('Progreso del envío de datos: ' + porcentaje.toFixed(2) + '%');
+	},
+	onSuccess: function(respuesta, xhr) {
+		console.log('Procesamiento completado con éxito:', respuesta);
+	},
+	onTimeout: function(xhr) {
+		console.error('El servidor superó el límite de respuesta de 10 segundos.');
+	},
+	onError: function(err, xhr) {
+		console.error('No se pudo completar el envío:', err.message);
+	}
+});
+</code><button aria-live="polite" class="copy">Copiar</button></pre>
+
+			<p><b>Cancelación de una petición</b></p>
+<pre><code>var peticion = _http({
+	url: 'https://api.ejemplo.com/v1/stream-datos',
+	onSuccess: function(respuesta, xhr) {
+		console.log('Datos recibidos:', respuesta);
+	},
+	onAbort: function(xhr) {
+		console.log('La petición se canceló antes de terminar.');
+	}
+});
+
+// Cancelar la petición cuando el usuario pulsa un botón
+document.querySelector('#cancelar-accion').addEventListener('click', function() {
+	peticion.abort();
+});
+</code><button aria-live="polite" class="copy">Copiar</button></pre>
+
+			<p><b>Uso con promesas y <code>async/await</code> (ES6+)</b></p>
+			<p>En entornos con <code>Promise</code>, el objeto de control devuelto por <code>_http()</code> se puede esperar directamente. Los callbacks siguen siendo opcionales y compatibles con este uso:</p>
+<pre><code>async function obtenerDatosDeUsuario() {
+	try {
+		var respuesta = await _http({
+			url: 'https://api.ejemplo.com/v1/perfil',
+			timeout: 5000
+		});
+		// data va parseado si el servidor responde con Content-Type JSON
+		console.log('Datos obtenidos:', respuesta.data, respuesta.status, respuesta.headers['content-type']);
+	}
+	catch (error) {
+		// error.type: 'http' | 'network' | 'timeout' | 'abort' | 'parse'
+		console.error('Error capturado con async/await (' + error.type + ', ' + error.status + '):', error.message);
+	}
+}
+
+// También con then/catch/finally, conservando el control de cancelación
+var peticion = _http({ url: '/api/estado' });
+peticion
+	.then(function(respuesta) { console.log(respuesta.text); })
+	.catch(function(error) { console.error(error.type); })
+	.finally(function() { console.log('Fin'); });
+// peticion.abort();
+</code><button aria-live="polite" class="copy">Copiar</button></pre>
+
+			<h3 id="technical_details">6. Características técnicas</h3>
+			<div class="features">
+				<p><strong>Cabeceras propias:</strong> De <code>headers</code> solo se envían las propiedades propias del objeto; las heredadas del prototipo se ignoran.</p>
+				<p><strong>Cuerpo sin transformar:</strong> Salvo los objetos y arrays planos, que se serializan como JSON, <code>data</code> se pasa tal cual a <code>send()</code>, de modo que el navegador determina las cabeceras asociadas (por ejemplo, el límite de <code>multipart/form-data</code> con <code>FormData</code>).</p>
+			</div>
+		</div>
+	</section>
+</main>
+
+	<footer class="center-y padding docs-footer">
+		<p>&copy; 2026 <a href="https://okzgn.com">OKZGN</a></p>
+	</footer>
+</div></div>
+</body>
+</html>

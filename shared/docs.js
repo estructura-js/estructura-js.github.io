@@ -8,6 +8,27 @@
     return Array.prototype.slice.call((root || document).querySelectorAll(selector));
   }
 
+  /* Abstract: interface strings by page language (<html lang>); unknown languages fall back to English */
+  Docs.i18n = {
+    en: {
+      copy: 'Copy', copied: 'Copied', backToTop: 'Back to top', sectionLink: 'Link to this section',
+      skipToContent: 'Skip to content', onThisPage: 'On this page', previous: 'Previous', next: 'Next',
+      otherExtensions: 'Other extensions'
+    },
+    es: {
+      copy: 'Copiar', copied: 'Copiado', backToTop: 'Volver arriba', sectionLink: 'Enlace a esta sección',
+      skipToContent: 'Saltar al contenido', onThisPage: 'En esta página', previous: 'Anterior', next: 'Siguiente',
+      otherExtensions: 'Otras extensiones'
+    }
+  };
+  Docs.lang = function () {
+    var lang = String(document.documentElement.getAttribute('lang') || '').toLowerCase().split('-')[0];
+    return Docs.i18n[lang] ? lang : 'en';
+  };
+  Docs.t = function (key) {
+    return Docs.i18n[Docs.lang()][key];
+  };
+
   /* Abstract: collapsible toggle (preserves API: .collapsed-links, aria-controls, data-read-more/less, .collapsed/.entirely) */
   Docs.Toggle = {
     SELECTOR: '.collapsed-links',
@@ -40,7 +61,7 @@
     }
   };
 
-  /* Abstract: copy snippet (preserves API: pre > code + button.copy, button text Copiar/Copiado) */
+  /* Abstract: copy snippet (preserves API: pre > code + button.copy; button text from Docs.i18n) */
   Docs.Copy = {
     SELECTOR: 'pre, .site-install',
     DURATION: 1600,
@@ -59,11 +80,11 @@
           var text = code.textContent;
           function done() {
             if (!btn) return;
-            btn.textContent = 'Copiado';
+            btn.textContent = Docs.t('copied');
             btn.classList.add('is-copied');
             if (btn.__docsCopyTimer) clearTimeout(btn.__docsCopyTimer);
             btn.__docsCopyTimer = setTimeout(function () {
-              btn.textContent = 'Copiar';
+              btn.textContent = Docs.t('copy');
               btn.classList.remove('is-copied');
             }, Docs.Copy.DURATION);
           }
@@ -178,8 +199,8 @@
         top.className = 'docs-top';
         top.href = '#';
         top.setAttribute('data-e-routing-excluded', '');
-        top.setAttribute('aria-label', 'Volver arriba');
-        top.title = 'Volver arriba';
+        top.setAttribute('aria-label', Docs.t('backToTop'));
+        top.title = Docs.t('backToTop');
         top.addEventListener('click', function (ev) {
           ev.preventDefault();
           window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -287,7 +308,7 @@
         a.href = '#' + h.id;
         /* Internal anchor: must not be intercepted by routing extensions */
         a.setAttribute('data-e-routing-excluded', '');
-        a.setAttribute('aria-label', 'Enlace a esta sección');
+        a.setAttribute('aria-label', Docs.t('sectionLink'));
         a.textContent = '#';
         h.appendChild(a);
       });
@@ -305,7 +326,7 @@
       if (index === -1) return;
       var nav = document.createElement('nav');
       nav.className = 'docs-pager';
-      nav.setAttribute('aria-label', 'Otras extensiones');
+      nav.setAttribute('aria-label', Docs.t('otherExtensions'));
       function item(link, label, cls) {
         var a = document.createElement('a');
         a.className = 'docs-pager-link ' + cls;
@@ -321,8 +342,8 @@
         a.appendChild(name);
         return a;
       }
-      if (index > 0) nav.appendChild(item(links[index - 1], 'Anterior', 'docs-pager-prev'));
-      if (index < links.length - 1) nav.appendChild(item(links[index + 1], 'Siguiente', 'docs-pager-next'));
+      if (index > 0) nav.appendChild(item(links[index - 1], Docs.t('previous'), 'docs-pager-prev'));
+      if (index < links.length - 1) nav.appendChild(item(links[index + 1], Docs.t('next'), 'docs-pager-next'));
       main.appendChild(nav);
     }
   };
@@ -333,6 +354,20 @@
     init: function () {
       domAll('.site-bar a[href], .docs-sidebar a[href], .docs-pager a[href], .docs-footer a[href]').forEach(function (a) {
         if (a.getAttribute('href').charAt(0) !== '#') a.setAttribute('href', a.href);
+      });
+    }
+  };
+
+  /* Abstract: the language switcher keeps the current in-page anchor (both versions share the same ids) */
+  Docs.Lang = {
+    init: function () {
+      domAll('a.site-lang').forEach(function (a) {
+        a.addEventListener('click', function () {
+          var hash = window.location.hash;
+          var id = hash.length > 1 ? hash.slice(1) : '';
+          try { id = decodeURIComponent(id); } catch (e) {}
+          if (id && document.getElementById(id)) a.setAttribute('href', a.href.split('#')[0] + hash);
+        });
       });
     }
   };
@@ -353,7 +388,7 @@
   function slugify(text) {
     var s = String(text || '').toLowerCase();
     if (s.normalize) s = s.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    return s.replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 64) || 'seccion';
+    return s.replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 64) || 'section';
   }
 
   /* Abstract: skip link (a11y, without changing any text) */
@@ -362,13 +397,13 @@
       if (document.querySelector('.docs-skip')) return;
       var main = document.querySelector('main');
       if (!main) return;
-      if (!main.id) main.id = 'contenido';
+      if (!main.id) main.id = 'main_content';
       var a = document.createElement('a');
       a.className = 'docs-skip';
       a.href = '#' + main.id;
       /* Internal anchor: must not be intercepted by routing extensions */
       a.setAttribute('data-e-routing-excluded', '');
-      a.textContent = 'Saltar al contenido';
+      a.textContent = Docs.t('skipToContent');
       document.body.insertBefore(a, document.body.firstChild);
     }
   };
@@ -411,7 +446,7 @@
       toc.className = 'docs-toc';
       var summary = document.createElement('summary');
       summary.className = 'docs-toc-title';
-      summary.textContent = 'En esta página';
+      summary.textContent = Docs.t('onThisPage');
       toc.appendChild(summary);
       toc.appendChild(this.render(tree.children));
 
@@ -580,6 +615,7 @@
     Docs.Anchors.init();
     Docs.Pager.init();
     Docs.Links.init();
+    Docs.Lang.init();
     Docs.SiteCurrent.init();
     Docs.Nav.init();
     Docs.NavCurrent.init();

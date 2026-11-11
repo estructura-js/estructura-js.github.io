@@ -1,32 +1,36 @@
-# Estructura: sitio y CDN
+# Estructura: site and CDN
 
-Repositorio del sitio [estructura.okzgn.com](https://estructura.okzgn.com/): documentación, ejemplos y distribución por CDN de **Estructura** y de sus extensiones.
+**English** · [Español](README.es.md)
 
-Estructura es un framework de JavaScript ligero y sin dependencias que asigna funciones a tipos de datos (nativos, personalizados o extendidos) y las resuelve por despacho múltiple según los tipos de uno o varios argumentos. La documentación canónica del núcleo y el paquete npm están en [github.com/okzgn/estructura](https://github.com/okzgn/estructura) y [npmjs.com/estructura-js](https://npmjs.com/estructura-js).
+Repository of the [estructura.okzgn.com](https://estructura.okzgn.com/) site: documentation, examples, and CDN distribution of **Estructura** and its extensions.
 
-## Estructura del repositorio
+Estructura is a lightweight, dependency-free JavaScript framework that assigns functions to data types (native, custom, or extended) and resolves them through multiple dispatch based on the types of one or more arguments. The canonical documentation of the core and the npm package are at [github.com/okzgn/estructura](https://github.com/okzgn/estructura) and [npmjs.com/estructura-js](https://npmjs.com/estructura-js).
 
-| Ruta | Contenido |
+## Repository structure
+
+| Path | Contents |
 |---|---|
-| `index.html` | Portada del sitio |
-| `estructura.umd.js` | Núcleo (UMD, ES3+) servido por el CDN |
-| `extensions/<nombre>/` | Cada extensión: `estructura.<nombre>.js` y su documentación `index.html` |
-| `examples/` | Implementaciones de ejemplo; `examples/shared/` contiene el código común |
-| `shared/` | Estilos y scripts de las páginas de documentación |
-| `wrangler.jsonc`, `.assetsignore` | Despliegue en Cloudflare Workers (assets estáticos) |
+| `index.html` | Site home page (in English) |
+| `es/` | Spanish version of the site, with the same folder structure; it shares the root's styles, scripts, and extensions |
+| `estructura.umd.js` | Core (UMD, ES3+) served by the CDN |
+| `extensions/<name>/` | Each extension: `estructura.<name>.js` and its `index.html` documentation |
+| `examples/` | Example implementations; `examples/shared/` contains the common code |
+| `shared/` | Styles and scripts of the documentation pages |
+| `tools/i18n/` | Glossary, style guide, review log, and verification scripts for the translation (not published) |
+| `wrangler.jsonc`, `.assetsignore` | Deployment to Cloudflare Workers (static assets) |
 
-## Extensiones y orden de carga
+## Extensions and load order
 
-Primero se carga el núcleo (`estructura.umd.js`, que expone `_e`) y después las extensiones. Cada una usa su propia instancia aislada (`_e.instance(...)`) a partir de la variable global `_e`, así que el núcleo debe cargarse como script UMD: si se importa como módulo ES (`https://unpkg.com/estructura-js/dist/estructura.esm.mjs`), no crea ese global y las extensiones no funcionan, salvo que se asigne antes de cargarlas (`window._e = _e`).
+The core (`estructura.umd.js`, which exposes `_e`) is loaded first, and then the extensions. Each one uses its own isolated instance (`_e.instance(...)`) created from the global variable `_e`, so the core must be loaded as a UMD script: if it is imported as an ES module (`https://unpkg.com/estructura-js/dist/estructura.esm.mjs`), it does not create that global and the extensions do not work, unless it is assigned before loading them (`window._e = _e`).
 
-| Extensión | Global | Requiere |
+| Extension | Global | Requires |
 |---|---|---|
 | HTTP | `_http` | — |
 | DOM | `_dom` | — |
 | Events | `_events` | — |
 | Reactive | `_reactive` | — |
 | Routing | `_routing` | — |
-| SQLite Frontend | `_sqlite_frontend` | Autoalojado (ver nota) |
+| SQLite Frontend | `_sqlite_frontend` | Self-hosted (see note) |
 | Components | `_components` | `_http` |
 | Handlers | `_handlers` | `_events` |
 
@@ -36,46 +40,46 @@ Primero se carga el núcleo (`estructura.umd.js`, que expone `_e`) y después la
 <script src="https://estructura.okzgn.com/extensions/handlers/estructura.handlers.js"></script>
 ```
 
-**Nota sobre SQLite Frontend:** su Web Worker se crea con una ruta relativa a la página (`./estructura.sqlite.frontend.wasm.worker.js`) y los Workers no pueden cargarse desde otro origen. Por eso no basta con el CDN: copie `estructura.sqlite.frontend.js`, `estructura.sqlite.frontend.wasm.worker.js` y `_dependencies/_sqlite/` en el mismo directorio que la página que lo usa.
+**Note on SQLite Frontend:** its Web Worker is created with a path relative to the page (`./estructura.sqlite.frontend.wasm.worker.js`), and Workers cannot be loaded from another origin. That is why the CDN is not enough: copy `estructura.sqlite.frontend.js`, `estructura.sqlite.frontend.wasm.worker.js`, and `_dependencies/_sqlite/` into the same directory as the page that uses it.
 
-## Rendimiento
+## Performance
 
-Cada llamada al despachador cuesta del orden de microsegundos. El costo crece con:
+Each call to the dispatcher costs on the order of microseconds. The cost grows with:
 
-- el número de argumentos de `_e(...)`;
-- la cantidad de tipos detectados por argumento (tipo base + subtipos + alias);
-- las funciones de subtipo (`_e.subtype({ String: { Email: function (input) { ... } } })`), que se ejecutan en **cada** llamada con un argumento de su tipo padre.
+- the number of arguments of `_e(...)`;
+- the number of types detected per argument (base type + subtypes + aliases);
+- subtype functions (`_e.subtype({ String: { Email: function (input) { ... } } })`), which run on **every** call with an argument of their parent type.
 
-Recomendaciones:
+Recommendations:
 
-- Reutilice el resultado de `_e(valor)` si va a llamar a varios de sus métodos.
-- Mantenga ligeras las funciones de subtipo; los alias en cadena de texto (`Array: 'Collection'`) no ejecutan código.
-- Evite cadenas de subtipos innecesariamente profundas.
+- Reuse the result of `_e(value)` if you are going to call several of its methods.
+- Keep subtype functions lightweight; string aliases (`Array: 'Collection'`) do not run any code.
+- Avoid unnecessarily deep subtype chains.
 
-## Seguridad
+## Security
 
-- **DOM y Reactive** incluyen un sanitizador reemplazable (`_dom.sanitize` y `_reactive.sanitize`; en Reactive también la opción `sanitizer` por instancia). Por defecto neutraliza esquemas peligrosos (`javascript:`, `vbscript:`, `data:` no multimedia) en atributos y propiedades de URL, y en Reactive bloquea la interpolación en atributos `on*`. No modifica texto, `value`/`checked` ni los destinos HTML (`innerHTML`, `outerHTML`, `srcdoc`): para estos últimos, conecte una librería como DOMPurify reemplazando la función `sanitize`. Detalles en `extensions/dom/` y `extensions/reactive/`.
-- **Components** descarga y ejecuta CSS, HTML y JS. Si el DOM puede contener HTML de usuarios, los atributos `data-e-components-origin` permitirían cargar código de terceros: configure la lista blanca `allowedOrigins` en producción. Detalles en `extensions/components/`.
+- **DOM and Reactive** include a replaceable sanitizer (`_dom.sanitize` and `_reactive.sanitize`; in Reactive, also the per-instance `sanitizer` option). By default, it neutralizes dangerous schemes (`javascript:`, `vbscript:`, non-media `data:`) in URL attributes and properties, and in Reactive it blocks interpolation in `on*` attributes. It does not modify text, `value`/`checked`, or HTML sinks (`innerHTML`, `outerHTML`, `srcdoc`): for the latter, plug in a library such as DOMPurify by replacing the `sanitize` function. Details in `extensions/dom/` and `extensions/reactive/`.
+- **Components** downloads and runs CSS, HTML, and JS. If the DOM can contain user HTML, the `data-e-components-origin` attributes would allow loading third-party code: configure the `allowedOrigins` allowlist in production. Details in `extensions/components/`.
 
-## Despliegue
+## Deployment
 
-El sitio se publica como assets estáticos en Cloudflare Workers:
+The site is published as static assets on Cloudflare Workers:
 
 ```bash
 npx wrangler deploy
 ```
 
-Para servirlo en local:
+To serve it locally:
 
 ```bash
 npx wrangler dev
 ```
 
-`.assetsignore` excluye del despliegue los archivos que no deben publicarse (git, configuración y este README).
+`.assetsignore` excludes from deployment the files that must not be published (git, configuration, the READMEs, and `tools/`).
 
-## Licencias
+## Licenses
 
-- **Núcleo** (`estructura.umd.js`): MIT. Ver [`LICENSE`](LICENSE).
-- **Extensiones** (`extensions/`): GNU AGPL v3.0. Ver [`extensions/LICENSE`](extensions/LICENSE). Hay licencias comerciales disponibles en [okzgn.com/#contact](https://okzgn.com/#contact) o [okzgn.github.io/#contact](https://okzgn.github.io/#contact).
+- **Core** (`estructura.umd.js`): MIT. See [`LICENSE`](LICENSE).
+- **Extensions** (`extensions/`): GNU AGPL v3.0. See [`extensions/LICENSE`](extensions/LICENSE). Commercial licenses are available at [okzgn.com/#contact](https://okzgn.com/#contact) or [okzgn.github.io/#contact](https://okzgn.github.io/#contact).
 
 © OKZGN

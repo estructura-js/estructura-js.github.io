@@ -1,4 +1,4 @@
-/* shared/docs.css — entrada única del sistema de diseño docs (compartido, modular, DRY). */
+/* shared/docs.css — single entry point of the docs design system (shared, modular, DRY). */
 @import url('./docs.tokens.css');
 @import url('./docs.base.css');
 @import url('./docs.layout.css');

@@ -1,14 +1,18 @@
 ﻿<!DOCTYPE html>
 
-<html lang="es">
+<html lang="en">
 
 <head>
 	<title>Events</title>
 
 	<link rel="icon" href="../../estructura.icon.png">
+	<link rel="canonical" href="https://estructura.okzgn.com/extensions/events/">
+	<link rel="alternate" hreflang="en" href="https://estructura.okzgn.com/extensions/events/">
+	<link rel="alternate" hreflang="es" href="https://estructura.okzgn.com/es/extensions/events/">
+	<link rel="alternate" hreflang="x-default" href="https://estructura.okzgn.com/extensions/events/">
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="description" content="Gestiona eventos del DOM. Con namespaces, registro por modos (once, capture, passive, signal) y opciones para pausar, reanudar, disparar manualmente o eliminar eventos.">
+	<meta name="description" content="Manages DOM events, with namespaces, registration by mode (once, capture, passive, signal), and options to pause, resume, manually trigger, or remove events.">
 	<meta name="author" content="OKZGN">
 	<meta name="theme-color" content="#faf6ec" media="(prefers-color-scheme: light)">
 	<meta name="theme-color" content="#13110b" media="(prefers-color-scheme: dark)">
@@ -41,18 +45,19 @@
 <div class="docs-shell">
 	<header class="site-header site-bar">
 		<div class="site-bar-inner">
-			<a class="site-brand" href="../../" aria-label="Estructura: inicio"><img class="site-brand-logo" src="../../estructura.logo.png" alt="Estructura"></a>
-			<nav class="site-links" aria-label="Sitio">
-				<a href="../../#get_started">Guía</a>
-				<a href="../../#extensions">Extensiones</a>
+			<a class="site-brand" href="../../" aria-label="Estructura: home"><img class="site-brand-logo" src="../../estructura.logo.png" alt="Estructura"></a>
+			<nav class="site-links" aria-label="Site">
+				<a href="../../#get_started">Guide</a>
+				<a href="../../#extensions">Extensions</a>
 				<a class="site-github" target="_blank" rel="noopener noreferrer" href="https://github.com/okzgn/estructura"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span>GitHub</span></a>
-				<span class="site-version" title="Versión del núcleo">v1.21.0</span>
+				<span class="site-version" title="Core version">v1.21.0</span>
+				<a class="site-lang" href="../../es/extensions/events/" hreflang="es" lang="es">Español</a>
 			</nav>
 		</div>
 	</header>
 <div class="docs-container">
-	<nav class="docs-nav docs-sidebar" aria-label="Extensiones">
-		<p class="docs-sidebar-title">Extensiones</p>
+	<nav class="docs-nav docs-sidebar" aria-label="Extensions">
+		<p class="docs-sidebar-title">Extensions</p>
 		<ul>
 			<li><a href="../http/">HTTP</a></li>
 			<li><a href="../dom/">DOM</a></li>
@@ -68,160 +73,160 @@
 	<main class="docs-main">
 		<h1 class="title">Events</h1>
 		<section class="margin-y">
-			<h2 id="description">Descripción</h2>
-			<div class="padding">Gestiona eventos del DOM. Con namespaces, registro por modos (<code>once</code>, <code>capture</code>, <code>passive</code>, <code>signal</code>) y opciones para pausar, reanudar, disparar manualmente o eliminar eventos.</div>
+			<h2 id="description">Description</h2>
+			<div class="padding">Manages DOM events, with namespaces, registration by mode (<code>once</code>, <code>capture</code>, <code>passive</code>, <code>signal</code>), and options to pause, resume, manually trigger, or remove events.</div>
 			<div class="docs-meta">
 				<p class="padding-y docs-meta-item">
-	                <b>Librería:</b> <a target="_blank" href="estructura.events.js">estructura.events.js</a>
+	                <b>Library:</b> <a target="_blank" href="estructura.events.js">estructura.events.js</a>
 				</p>
 				<p class="padding-y docs-meta-item">
-					<b>Compatibilidad:</b> <a target="_blank" href="https://okzgn.com/articles/why-not-build-frontend-frameworks-on-raw-html-css-or-js/#steps-to-bypass-between-points-1-and-2-dom-events-templating">ES5/ES6+</a>
+					<b>Compatibility:</b> <a target="_blank" href="https://okzgn.com/articles/why-not-build-frontend-frameworks-on-raw-html-css-or-js/#steps-to-bypass-between-points-1-and-2-dom-events-templating">ES5/ES6+</a>
 				</p>
 				<p class="padding-y docs-meta-item">
-					<b>Estado:</b> RC2
+					<b>Status:</b> RC2
 				</p>
 				<p class="padding-y docs-meta-item">
-					<b>Licencia:</b> <a target="_blank" href="../LICENSE">AGPL v3</a>
+					<b>License:</b> <a target="_blank" href="../LICENSE">AGPL v3</a>
 				</p>
 			</div>
 <div class="padding-y">
-				<b>Importación:</b><pre><code>&lt;!-- EXTENSIÓN: Estructura / Events --&gt;
-&lt;script src="https://estructura.okzgn.com/extensions/events/estructura.events.js"&gt;&lt;/script&gt;</code><button aria-live="polite" class="copy">Copiar</button></pre>
+				<b>Import:</b><pre><code>&lt;!-- EXTENSION: Estructura / Events --&gt;
+&lt;script src="https://estructura.okzgn.com/extensions/events/estructura.events.js"&gt;&lt;/script&gt;</code><button aria-live="polite" class="copy">Copy</button></pre>
 			</div>
 		</section>
 
 		<section class="margin-y">
-			<h2 id="demo">Demo en vivo</h2>
+			<h2 id="demo">Live demo</h2>
 			<div class="padding">
-				<p>Haga clic en cualquier parte de la página. Un listener registrado con <code>_events(document.body).on('click', fn, { capture: true })</code> muestra la etiqueta del elemento pulsado.</p>
-				<p class="docs-demo"><span id="test">Elemento pulsado<b id="test_output">: ninguno</b></span></p>
+				<p>Click anywhere on the page. A listener registered with <code>_events(document.body).on('click', fn, { capture: true })</code> shows the tag name of the clicked element.</p>
+				<p class="docs-demo"><span id="test">Clicked element<b id="test_output">: none</b></span></p>
 			</div>
 		</section>
 
 		<section class="margin-y">
-			<h2 id="docs">Documentación</h2>
+			<h2 id="docs">Documentation</h2>
 			<div class="padding">
-				<h3>1. Inicialización y control global</h3>
+				<h3 id="initialization">1. Initialization and global control</h3>
 				<ul>
-					<li><b><code>_events</code></b>: función global de la librería.</li>
-					<li><code>_events.pause()</code>: detiene globalmente, en todos los objetivos, la ejecución de los eventos registrados. Mientras está en pausa, tampoco tienen efecto <code>.off()</code> ni los disparos manuales (incluida la reactivación con <code>resume</code>); los nuevos registros con <code>.on(event, fn)</code> sí se guardan.</li>
-					<li><code>_events.resume()</code>: reactiva globalmente la ejecución de todos los eventos registrados.</li>
-					<li><code>_events(target)</code>: selecciona el objetivo sobre el que se aplican los métodos. Puede ser un nodo del DOM (<code>Node</code>), una lista de nodos (<code>NodeList</code> o <code>HTMLCollection</code>; cada método se aplica a cada nodo de la lista), <code>document</code>, <code>window</code> o cualquier <code>Object</code> con las funciones <code>addEventListener</code> y <code>removeEventListener</code>. Si el objetivo no es válido (por ejemplo, <code>null</code> porque <code>querySelector</code> no encontró nada), el resultado no tiene <code>.on()</code> ni <code>.off()</code> y la llamada lanza un <code>TypeError</code>.</li>
-					<li><code>.on()</code>, <code>.off()</code>, <code>.load()</code> y <code>.ready()</code> retornan el mismo objeto, por lo que se pueden encadenar: <code>_events(boton).on('click', fn).on('keyup', fn2)</code>.</li>
+					<li><b><code>_events</code></b>: the library’s global function.</li>
+					<li><code>_events.pause()</code>: globally stops registered events from running, on all targets. While paused, <code>.off()</code> and manual triggers (including resuming with <code>resume</code>) have no effect either; new registrations with <code>.on(event, fn)</code> are still stored.</li>
+					<li><code>_events.resume()</code>: globally resumes the execution of all registered events.</li>
+					<li><code>_events(target)</code>: selects the target the methods apply to. It can be a DOM node (<code>Node</code>), a list of nodes (<code>NodeList</code> or <code>HTMLCollection</code>; each method is applied to every node in the list), <code>document</code>, <code>window</code>, or any <code>Object</code> with the <code>addEventListener</code> and <code>removeEventListener</code> functions. If the target is not valid (for example, <code>null</code> because <code>querySelector</code> found nothing), the result has no <code>.on()</code> or <code>.off()</code>, so calling them throws a <code>TypeError</code>.</li>
+					<li><code>.on()</code>, <code>.off()</code>, <code>.load()</code>, and <code>.ready()</code> return the same object, so they can be chained: <code>_events(button).on('click', fn).on('keyup', fn2)</code>.</li>
 				</ul>
-				<h3>2. Registro de eventos</h3>
-				<p><b><code>.on(event?, fn?, config?)</code></b>: vincula callbacks a eventos del objetivo. El nombre del evento va siempre primero: <code>.on(fn)</code> sin evento se ignora con un aviso en la consola.</p>
-				<p><b>Sintaxis:</b></p>
-				<pre><code>_events(document.querySelector('body')).on('event.namespace', function(){}, {})</code><button aria-live="polite" class="copy">Copiar</button></pre>
-				<p><b>Argumentos:</b></p>
+				<h3 id="registering_events">2. Registering events</h3>
+				<p><b><code>.on(event?, fn?, config?)</code></b>: binds callbacks to the target’s events. The event name always comes first: <code>.on(fn)</code> without an event is ignored, and a warning is logged to the console.</p>
+				<p><b>Syntax:</b></p>
+				<pre><code>_events(document.querySelector('body')).on('event.namespace', function(){}, {})</code><button aria-live="polite" class="copy">Copy</button></pre>
+				<p><b>Arguments:</b></p>
 				<p><b><code>event</code></b> (<code>String</code>):</p>
-				<p>Nombre del evento. Opcionalmente puede incluir un namespace tras un punto para identificar el registro (ver <a href="#namespaces">Namespaces</a>). Se pueden indicar varios eventos en la misma cadena, separados por comas o espacios: <code>'click, keyup.ns'</code>.</p>
+				<p>The event name. It can optionally include a namespace after a dot to identify the registration (see <a href="#namespaces">Namespaces</a>). Several events can be given in the same string, separated by commas or spaces: <code>'click, keyup.ns'</code>.</p>
 				<ul>
-					<li>Los nombres de evento se pasan a minúsculas (salvo <code>DOMContentLoaded</code>). Por eso un evento propio con mayúsculas que se despache con <code>dispatchEvent</code> (por ejemplo, <code>'miEvento'</code>) no llega a los callbacks: use nombres en minúsculas.</li>
-					<li>El prefijo <code>on</code> se elimina (<code>'onclick'</code> equivale a <code>'click'</code> y <code>'onfocusin'</code> a <code>'focusin'</code>), salvo en eventos cuyo nombre real empieza por «on»: <code>'online'</code>, o cualquier nombre cuyo manejador <code>'on' + nombre</code> exista en el objetivo.</li>
-					<li>Si la cadena, quitando los separadores del inicio y del final, tiene menos de 2 caracteres (por ejemplo, <code>'x'</code>), la llamada se ignora. Una cadena vacía (<code>''</code>), en cambio, equivale a no indicar <code>event</code>.</li>
+					<li>Event names are lowercased (except <code>DOMContentLoaded</code>). That is why a custom event with uppercase letters that is dispatched with <code>dispatchEvent</code> (for example, <code>'myEvent'</code>) does not reach the callbacks: use lowercase names.</li>
+					<li>The <code>on</code> prefix is removed (<code>'onclick'</code> is equivalent to <code>'click'</code>, and <code>'onfocusin'</code> to <code>'focusin'</code>), except for events whose actual name starts with “on”: <code>'online'</code>, or any name whose <code>'on' + name</code> handler exists on the target.</li>
+					<li>If the string, after removing leading and trailing separators, has fewer than 2 characters (for example, <code>'x'</code>), the call is ignored. An empty string (<code>''</code>), on the other hand, is equivalent to not passing <code>event</code> (except when registering: <code>.on('', fn)</code> is ignored without a warning in the console).</li>
 				</ul>
 				<p><b><code>fn</code></b> (<code>Function</code>):</p>
-				<p>Callback vinculado al evento; recibe como primer argumento el objeto <code>Event</code>, y <code>this</code> es el objetivo. Si se omite, <code>.on()</code> dispara manualmente los callbacks registrados (ver <a href="#trigger">Ejecución manual</a>).</p>
+				<p>Callback bound to the event; it receives the <code>Event</code> object as its first argument, and <code>this</code> is the target. If omitted, <code>.on()</code> manually triggers the registered callbacks (see <a href="#trigger">Manual execution</a>).</p>
 				<p><b><code>config</code></b> (<code>Object</code>):</p>
-				<p><b>Configuración general:</b></p>
+				<p><b>General configuration:</b></p>
 				<ul>
-					<li><code>overwrite</code>: si es <code>true</code>, reemplaza los callbacks previos de ese mismo evento, namespace y modo por el nuevo.</li>
-					<li><code>resume</code>: si es <code>true</code> (en un disparo manual, sin <code>fn</code>), reactiva los eventos pausados que coincidan, sin ejecutarlos.</li>
-					<li><code>execute</code>: si es <code>true</code> junto con <code>resume</code>, además ejecuta en ese momento todos los callbacks que coincidan, estuvieran pausados o no. Como <code>resume</code> y <code>execute</code> no son opciones de modo, actúan en todos los modos del evento, salvo que <code>config</code> incluya también <code>once</code>, <code>capture</code>, <code>passive</code> o <code>signal</code>.</li>
+					<li><code>overwrite</code>: if <code>true</code>, replaces the previous callbacks for that same event, namespace, and mode with the new one.</li>
+					<li><code>resume</code>: if <code>true</code> (in a manual trigger, without <code>fn</code>), resumes the matching paused events without running them.</li>
+					<li><code>execute</code>: if <code>true</code> together with <code>resume</code>, also runs all matching callbacks at that moment, whether or not they were paused. Since <code>resume</code> and <code>execute</code> are not mode options, they act on all of the event’s modes, unless <code>config</code> also includes <code>once</code>, <code>capture</code>, <code>passive</code>, or <code>signal</code>.</li>
 				</ul>
-				<p><b>Configuración específica (modo):</b></p>
+				<p><b>Mode-specific configuration:</b></p>
 				<ul>
-					<li><code>once</code>: si es <code>true</code>, el callback se ejecuta la primera vez que ocurre el evento y después se elimina (los disparos manuales no cuentan; ver <a href="#trigger">Ejecución manual</a>).</li>
-					<li><code>capture</code>: si es <code>true</code>, se usa la fase de captura del DOM.</li>
-					<li><code>passive</code>: si es <code>true</code>, el listener es pasivo: <code>preventDefault()</code> no tiene efecto (útil en scroll/touch).</li>
-					<li><code>signal</code>: un <code>AbortSignal</code>. Cada señal distinta forma su propio modo, con su propio listener nativo. Al abortarse, el navegador retira ese listener y la librería elimina su registro, de modo que el evento se puede volver a registrar. Con una señal ya abortada, el registro se ignora.</li>
+					<li><code>once</code>: if <code>true</code>, the callback runs the first time the event occurs and is then removed (manual triggers do not count; see <a href="#trigger">Manual execution</a>).</li>
+					<li><code>capture</code>: if <code>true</code>, the DOM capture phase is used.</li>
+					<li><code>passive</code>: if <code>true</code>, the listener is passive: <code>preventDefault()</code> has no effect (useful for scroll/touch).</li>
+					<li><code>signal</code>: an <code>AbortSignal</code>. Each different signal forms its own mode, with its own native listener. When the signal is aborted, the browser removes that listener and the library deletes its registration, so the event can be registered again. If the signal is already aborted, the registration is ignored.</li>
 				</ul>
-				<p>Cada combinación de <code>once</code>, <code>capture</code>, <code>passive</code> y <code>signal</code> es un modo distinto con su propio listener nativo.</p>
-				<p><b>Ejemplos:</b></p>
-				<p>Registrar un evento con namespace:</p>
+				<p>Each combination of <code>once</code>, <code>capture</code>, <code>passive</code>, and <code>signal</code> is a different mode with its own native listener.</p>
+				<p><b>Examples:</b></p>
+				<p>Register an event with a namespace:</p>
 <pre><code>var target = document.querySelector('a');
 
-_events(target).on('click.miMenu', function(e){
-	console.log('Clic detectado');
+_events(target).on('click.myMenu', function(e){
+	console.log('Click detected');
 });
-</code><button aria-live="polite" class="copy">Copiar</button></pre>
-				<p>Registrar en varios eventos a la vez; con <code>once</code>, cada uno se ejecuta una sola vez:</p>
-<pre><code>_events(target).on('click.aviso, keyup.aviso', function(e){
-	console.log('Primera vez:', e.type);
+</code><button aria-live="polite" class="copy">Copy</button></pre>
+				<p>Register for several events at once; with <code>once</code>, each one runs only once:</p>
+<pre><code>_events(target).on('click.notice, keyup.notice', function(e){
+	console.log('First time:', e.type);
 }, { once: true });
-</code><button aria-live="polite" class="copy">Copiar</button></pre>
-				<p>Registrar con un <code>AbortSignal</code>:</p>
+</code><button aria-live="polite" class="copy">Copy</button></pre>
+				<p>Register with an <code>AbortSignal</code>:</p>
 <pre><code>var controller = new AbortController();
 
-_events(window).on('resize.temporal', function(){
-	console.log('Redimensionado');
+_events(window).on('resize.temporary', function(){
+	console.log('Resized');
 }, { signal: controller.signal });
 
-controller.abort(); // Retira el listener y su registro
-</code><button aria-live="polite" class="copy">Copiar</button></pre>
-				<h3>3. Eliminación de eventos</h3>
-				<p><b><code>.off(event?, config?)</code></b>: elimina registros de eventos, de forma selectiva mediante nombre y namespace, o todos a la vez.</p>
-				<p><b>Argumentos:</b></p>
-				<p><b><code>event</code></b> (<code>String</code>): nombre del evento que se desvinculará. Opcionalmente puede incluir un namespace para identificar el registro, o ser solo el namespace (<code>'.miMenu'</code>), y admite varios eventos separados por comas o espacios. Sigue las mismas reglas que en <code>.on()</code>: con menos de 2 caracteres la llamada se ignora, y una cadena vacía equivale a <code>.off()</code>, que lo elimina todo.</p>
+controller.abort(); // Removes the listener and its registration
+</code><button aria-live="polite" class="copy">Copy</button></pre>
+				<h3 id="removing_events">3. Removing events</h3>
+				<p><b><code>.off(event?, config?)</code></b>: removes event registrations, selectively by name and namespace, or all at once.</p>
+				<p><b>Arguments:</b></p>
+				<p><b><code>event</code></b> (<code>String</code>): the name of the event to unbind. It can optionally include a namespace to identify the registration, or be only the namespace (<code>'.myMenu'</code>), and it accepts several events separated by commas or spaces. It follows the same rules as in <code>.on()</code>: with fewer than 2 characters the call is ignored, and an empty string is equivalent to <code>.off()</code>, which removes everything.</p>
 				<p><b><code>config</code></b> (<code>Object</code>):</p>
-				<p><b>Configuración general:</b></p>
+				<p><b>General configuration:</b></p>
 				<ul>
-					<li><code>pause</code>: si es <code>true</code>, pausa los eventos que coincidan sin eliminarlos. Se reactivan con <code>.on(event, { resume: true })</code>.</li>
+					<li><code>pause</code>: if <code>true</code>, pauses the matching events without removing them. They are resumed with <code>.on(event, { resume: true })</code>.</li>
 				</ul>
-				<p><b>Configuración específica (modo):</b></p>
-				<p>Sin opciones de modo, <code>.off()</code> actúa sobre el evento en todos sus modos. Si <code>config</code> incluye alguna (<code>capture</code>, <code>once</code>, <code>passive</code> o <code>signal</code>, aunque valga <code>false</code>), solo actúa sobre el modo que resulta de esa combinación exacta: <code>{ capture: true }</code> no afecta a un registro hecho con <code>{ capture: true, once: true }</code>. Para <code>signal</code> hay que pasar el mismo objeto <code>AbortSignal</code> usado al registrar (<code>{ signal: miSignal }</code>); <code>signal: true</code> no coincide con ningún registro.</p>
-				<p><b>Sin nombre de evento:</b> <code>config</code> se pasa como primer argumento, y entonces las opciones de modo no filtran. <code>.off({ pause: true })</code> pausa todos los eventos del objetivo, pero <code>.off({ capture: true })</code> los elimina todos. No pase <code>undefined</code> ni <code>null</code> como primer argumento con <code>config</code> en el segundo: la configuración se ignora y <code>.off()</code> lo elimina todo.</p>
-				<p><b>Ejemplos:</b></p>
+				<p><b>Mode-specific configuration:</b></p>
+				<p>Without mode options, <code>.off()</code> acts on the event in all its modes. If <code>config</code> includes any of them (<code>capture</code>, <code>once</code>, <code>passive</code>, or <code>signal</code>, even if set to <code>false</code>), it acts only on the mode that results from that exact combination: <code>{ capture: true }</code> does not affect a registration made with <code>{ capture: true, once: true }</code>. For <code>signal</code>, you must pass the same <code>AbortSignal</code> object used when registering (<code>{ signal: mySignal }</code>); <code>signal: true</code> does not match any registration.</p>
+				<p><b>Without an event name:</b> <code>config</code> is passed as the first argument, and mode options then do not act as filters. <code>.off({ pause: true })</code> pauses all the target’s events, but <code>.off({ capture: true })</code> removes all of them. Do not pass <code>undefined</code> or <code>null</code> as the first argument with <code>config</code> as the second: the configuration is ignored and <code>.off()</code> removes everything.</p>
+				<p><b>Examples:</b></p>
 				<ul>
-					<li>Elimina solo el evento del namespace indicado: <pre><code>_events(target).off('click.miMenu')</code><button aria-live="polite" class="copy">Copiar</button></pre></li>
-					<li>Elimina solo los registros de <code>click</code> hechos con <code>capture: true</code> (y sin otras opciones de modo): <pre><code>_events(target).off('click', { capture: true })</code><button aria-live="polite" class="copy">Copiar</button></pre></li>
-					<li>Elimina solo los registros de <code>resize</code> hechos con una señal concreta (se pasa el mismo objeto <code>AbortSignal</code>): <pre><code>_events(window).off('resize', { signal: controller.signal })</code><button aria-live="polite" class="copy">Copiar</button></pre></li>
-					<li>Pausa la ejecución de todos los eventos del tipo sin desvincularlos del DOM: <pre><code>_events(target).off('click', { pause: true })</code><button aria-live="polite" class="copy">Copiar</button></pre></li>
-					<li>Reactiva los eventos pausados sin ejecutarlos: <pre><code>_events(target).on('click', { resume: true })</code><button aria-live="polite" class="copy">Copiar</button></pre></li>
-					<li>Reactiva los eventos pausados y ejecuta en ese momento todos los callbacks de <code>click</code>: <pre><code>_events(target).on('click', { resume: true, execute: true })</code><button aria-live="polite" class="copy">Copiar</button></pre></li>
-					<li>Pausa y reactiva todos los eventos del objetivo: <pre><code>_events(target).off({ pause: true });
-_events(target).on({ resume: true });</code><button aria-live="polite" class="copy">Copiar</button></pre></li>
-					<li>Elimina todos los eventos vinculados al objetivo: <pre><code>_events(target).off()</code><button aria-live="polite" class="copy">Copiar</button></pre></li>
+					<li>Removes only the event with the given namespace: <pre><code>_events(target).off('click.myMenu')</code><button aria-live="polite" class="copy">Copy</button></pre></li>
+					<li>Removes only the <code>click</code> registrations made with <code>capture: true</code> (and no other mode options): <pre><code>_events(target).off('click', { capture: true })</code><button aria-live="polite" class="copy">Copy</button></pre></li>
+					<li>Removes only the <code>resize</code> registrations made with a specific signal (the same <code>AbortSignal</code> object is passed): <pre><code>_events(window).off('resize', { signal: controller.signal })</code><button aria-live="polite" class="copy">Copy</button></pre></li>
+					<li>Pauses the execution of all events of that type without unbinding them from the DOM: <pre><code>_events(target).off('click', { pause: true })</code><button aria-live="polite" class="copy">Copy</button></pre></li>
+					<li>Resumes the paused events without running them: <pre><code>_events(target).on('click', { resume: true })</code><button aria-live="polite" class="copy">Copy</button></pre></li>
+					<li>Resumes the paused events and runs all the <code>click</code> callbacks at that moment: <pre><code>_events(target).on('click', { resume: true, execute: true })</code><button aria-live="polite" class="copy">Copy</button></pre></li>
+					<li>Pauses and resumes all the target’s events: <pre><code>_events(target).off({ pause: true });
+_events(target).on({ resume: true });</code><button aria-live="polite" class="copy">Copy</button></pre></li>
+					<li>Removes all the events bound to the target: <pre><code>_events(target).off()</code><button aria-live="polite" class="copy">Copy</button></pre></li>
 				</ul>
 				<h3 id="namespaces">4. Namespaces</h3>
-				<p>La librería permite identificar registros con un namespace tras un punto (<code>.</code>). Así se pueden tener varios callbacks para el mismo evento en el mismo elemento y eliminarlos o dispararlos por separado.</p>
+				<p>The library lets you identify registrations with a namespace after a dot (<code>.</code>). This way you can have several callbacks for the same event on the same element and remove or trigger them separately.</p>
 <pre><code>_events(window).on('resize.layout', fn1);
 _events(window).on('resize.analytics', fn2);
 
-// Eliminar solo analytics sin tocar layout:
-_events(window).off('resize.analytics');</code><button aria-live="polite" class="copy">Copiar</button></pre>
-				<p>Todo lo que sigue al primer punto forma un único identificador: en <code>'click.a.b'</code> el namespace es <code>a.b</code>, no dos namespaces. Por eso <code>.off('.a')</code> no elimina ese registro; hay que usar <code>.off('.a.b')</code>.</p>
-				<p>A diferencia del nombre del evento, el namespace distingue mayúsculas y minúsculas: <code>.off('.mimenu')</code> no elimina <code>'click.miMenu'</code>. Un namespace sin nombre de evento sirve para eliminar o disparar, pero no para registrar: <code>.on('.miMenu', fn)</code> se ignora.</p>
-				<h3 id="trigger">5. Ejecución manual</h3>
-				<p>Es posible ejecutar los callbacks registrados sin que ocurra el evento nativo del DOM. Al utilizar <code>.on()</code> sin <code>fn</code>, el primer argumento (<code>event</code>) acepta el nombre del evento, solo el namespace (comenzando con punto) o ambos. En un disparo manual los callbacks reciben un objeto vacío (<code>{}</code>) en lugar del objeto <code>Event</code>.</p>
+// Remove only analytics without touching layout:
+_events(window).off('resize.analytics');</code><button aria-live="polite" class="copy">Copy</button></pre>
+				<p>Everything after the first dot forms a single identifier: in <code>'click.a.b'</code> the namespace is <code>a.b</code>, not two namespaces. That is why <code>.off('.a')</code> does not remove that registration; you have to use <code>.off('.a.b')</code>.</p>
+				<p>Unlike the event name, the namespace is case-sensitive: <code>.off('.mymenu')</code> does not remove <code>'click.myMenu'</code>. A namespace without an event name can be used to remove or trigger, but not to register: <code>.on('.myMenu', fn)</code> is ignored.</p>
+				<h3 id="trigger">5. Manual execution</h3>
+				<p>You can run the registered callbacks without the native DOM event occurring. When <code>.on()</code> is used without <code>fn</code>, the first argument (<code>event</code>) accepts the event name, only the namespace (starting with a dot), or both. In a manual trigger, the callbacks receive an empty object (<code>{}</code>) instead of the <code>Event</code> object.</p>
 				<ul>
-					<li>El segundo argumento es <code>config</code>: además de <code>resume</code> y <code>execute</code>, admite opciones de modo para ejecutar solo los registros de ese modo (por ejemplo, <code>.on('click', { capture: true })</code>). Sin nombre de evento, <code>config</code> va en el primer argumento (<code>.on({ resume: true })</code>).</li>
-					<li>Los callbacks pausados no se ejecutan (salvo con <code>resume</code> y <code>execute</code>).</li>
-					<li>Un disparo manual no consume los registros <code>once</code>: el callback se ejecuta y sigue registrado hasta que ocurre el evento nativo. Para ejecutarlo y eliminarlo, use <code>.on('click', { once: true })</code>.</li>
-					<li>Si un callback lanza un error, el error no llega a quien llama: el núcleo de Estructura lo captura y lo muestra en la consola con hasta un segundo de retraso.</li>
+					<li>The second argument is <code>config</code>: in addition to <code>resume</code> and <code>execute</code>, it accepts mode options to run only the registrations of that mode (for example, <code>.on('click', { capture: true })</code>). Without an event name, <code>config</code> goes in the first argument (<code>.on({ resume: true })</code>).</li>
+					<li>Paused callbacks do not run (except with <code>resume</code> and <code>execute</code>).</li>
+					<li>A manual trigger does not consume <code>once</code> registrations: the callback runs and stays registered until the native event occurs. To run it and remove it, use <code>.on('click', { once: true })</code>.</li>
+					<li>If a callback throws an error, the error does not reach the caller: the Estructura core catches it and shows it in the console with a delay of up to one second.</li>
 				</ul>
-				<p><b>Ejemplos:</b></p>
-				<p>Ejecuta solo los eventos del namespace registrado:</p>
-<pre><code>_events(target).on('.miEvento');</code><button aria-live="polite" class="copy">Copiar</button></pre>
-				<p>Ejecuta todos los eventos registrados de ese tipo:</p>
-<pre><code>_events(target).on('click');</code><button aria-live="polite" class="copy">Copiar</button></pre>
-				<p>Ejecuta todos los eventos registrados:</p>
-<pre><code>_events(target).on();</code><button aria-live="polite" class="copy">Copiar</button></pre>
-				<h3>6. Eventos especiales</h3>
-				<p>Atajos para eventos de ciclo de vida. Registran un listener normal, así que si el evento ya ocurrió el callback no se ejecuta. Admiten <code>config</code> como segundo argumento y, sin <code>fn</code>, disparan manualmente los callbacks registrados para ese evento:</p>
+				<p><b>Examples:</b></p>
+				<p>Runs only the callbacks registered with that namespace:</p>
+<pre><code>_events(target).on('.myEvent');</code><button aria-live="polite" class="copy">Copy</button></pre>
+				<p>Runs all the registered events of that type:</p>
+<pre><code>_events(target).on('click');</code><button aria-live="polite" class="copy">Copy</button></pre>
+				<p>Runs all the registered events:</p>
+<pre><code>_events(target).on();</code><button aria-live="polite" class="copy">Copy</button></pre>
+				<h3 id="special_events">6. Special events</h3>
+				<p>Shortcuts for lifecycle events. They register a normal listener, so if the event has already occurred, the callback does not run. They accept <code>config</code> as the second argument and, without <code>fn</code>, manually trigger the callbacks registered for that event:</p>
 				<ul>
-					<li>Al terminar de cargar toda la página (<code>load</code>): <pre><code>_events(window).load(fn)</code><button aria-live="polite" class="copy">Copiar</button></pre></li>
-					<li>Al terminar de cargar el DOM de la página (<code>DOMContentLoaded</code>): <pre><code>_events(document).ready(fn)</code><button aria-live="polite" class="copy">Copiar</button></pre></li>
+					<li>When the whole page has finished loading (<code>load</code>): <pre><code>_events(window).load(fn)</code><button aria-live="polite" class="copy">Copy</button></pre></li>
+					<li>When the page’s DOM has finished loading (<code>DOMContentLoaded</code>): <pre><code>_events(document).ready(fn)</code><button aria-live="polite" class="copy">Copy</button></pre></li>
 				</ul>
-				<h3>7. Consideraciones técnicas</h3>
+				<h3 id="technical_considerations">7. Technical considerations</h3>
 				<ul>
-					<li><b>Memoria:</b> la librería usa <code>WeakMap</code> cuando está disponible. En navegadores sin <code>WeakMap</code>, use <code>.off()</code> antes de retirar nodos del DOM para evitar fugas de memoria.</li>
-					<li><b>Configuración:</b> el listener nativo de cada modo se crea con la configuración del primer registro de ese modo y la sigue leyendo en cada evento. No modifique el objeto <code>config</code> después de registrarlo: si cambia una opción de modo, los callbacks de ese modo dejan de ejecutarse.</li>
-					<li><b>Sobrescritura:</b> <code>overwrite: true</code> reemplaza los callbacks dentro del mismo evento, namespace y modo. No cambia el modo de un registro existente: registrar con otras opciones (por ejemplo, <code>passive: false</code> en lugar de <code>true</code>) crea un listener distinto; para cambiarlo, elimine antes el anterior con <code>.off()</code>.</li>
-					<li><b>Duplicados:</b> a diferencia de <code>addEventListener</code>, registrar dos veces la misma función hace que se ejecute dos veces.</li>
-					<li><b><code>once</code> y pausa:</b> la librería retira un registro <code>once</code> después de ejecutarlo. Si el evento ocurre mientras está pausado, no se ejecuta ni se retira: se ejecutará una vez tras reactivarlo.</li>
-					<li><b>Errores:</b> si un callback lanza un error, el resto se ejecuta igualmente y al final se lanza un único error con todos los mensajes. En un evento nativo aparece en la consola como error no capturado; en un disparo manual lo captura el núcleo (ver <a href="#trigger">Ejecución manual</a>).</li>
+					<li><b>Memory:</b> the library uses <code>WeakMap</code> when it is available. In browsers without <code>WeakMap</code>, use <code>.off()</code> before removing nodes from the DOM to avoid memory leaks.</li>
+					<li><b>Configuration:</b> the native listener of each mode is created with the configuration of that mode’s first registration and keeps reading it on every event. Do not modify the <code>config</code> object after registering it: if a mode option changes, the callbacks of that mode stop running.</li>
+					<li><b>Overwriting:</b> <code>overwrite: true</code> replaces the callbacks within the same event, namespace, and mode. It does not change the mode of an existing registration: registering with other options (for example, <code>passive: false</code> instead of <code>true</code>) creates a different listener; to change it, first remove the previous one with <code>.off()</code>.</li>
+					<li><b>Duplicates:</b> unlike <code>addEventListener</code>, registering the same function twice makes it run twice.</li>
+					<li><b><code>once</code> and pausing:</b> the library removes a <code>once</code> registration after running it. If the event occurs while it is paused, it neither runs nor is removed: it will run (and be removed) the next time the event occurs after it is resumed.</li>
+					<li><b>Errors:</b> if a callback throws an error, the rest still run, and at the end a single error with all the messages is thrown. In a native event, it appears in the console as an uncaught error; in a manual trigger, the core catches it (see <a href="#trigger">Manual execution</a>).</li>
 				</ul>
 			</div>
 		</section>

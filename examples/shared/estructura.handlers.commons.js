@@ -5,6 +5,7 @@
     _generic_token = '********',
     _sessStore = window[atob('c2Vzc2lvblN0b3JhZ2U=')],
     _grlConnState = false,
+    _es = /^es\b/i.test(document.documentElement.lang),
     _required_sess_fields = {
       token: true,
       handler: true,
@@ -255,7 +256,7 @@
 
         if (event.loading) {
           element.data('data-loading', '');
-          _content = event.loading || event.message || 'Cargando…'
+          _content = event.loading || event.message || (_es ? 'Cargando…' : 'Loading…')
           this.success = _content;
         }
         else if (event.error) {
@@ -265,7 +266,7 @@
         }
         else {
           element.data('data-success', '');
-          _content = event.success || event.message || 'Success.';
+          _content = event.success || event.message || (_es ? 'Completado.' : 'Success.');
           this.success = _content;
         }
 
@@ -489,11 +490,11 @@
         if (_grlConnState !== _prevConnState) {
           if (_grlConnState) {
             console.info('checkConnection:', true);
-            _this.connect({ success: 'Online.' });
+            _this.connect({ success: _es ? 'En línea.' : 'Online.' });
             return;
           }
           console.info('checkConnection:', false);
-          _this.connect({ error: 'Offline.' });
+          _this.connect({ error: _es ? 'Sin conexión.' : 'Offline.' });
         }
       }
 

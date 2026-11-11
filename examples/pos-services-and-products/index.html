@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html spellcheck="false" lang="es">
+<html spellcheck="false" lang="en">
 
 <head>
 	<meta charset="UTF-8">
 
-	<title>Punto de Venta de Servicios y Productos</title>
+	<title>Point of Sale for Services and Products</title>
 
 	<link rel="icon" href="icon.png">
 	<link rel="apple-touch-icon" href="icon.png">
@@ -12,7 +12,7 @@
 	<meta name="robots" content="noindex, nofollow">
 
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="description" content="Punto de Venta de Servicios y Productos.">
+	<meta name="description" content="Point of sale for services and products.">
 	<meta name="author" content="OKZGN">
 
 	<meta name="theme-color" content="#004e9b" media="(prefers-color-scheme: light)">
@@ -21,17 +21,18 @@
 	<meta name="format-detection" content="telephone=no">
 	<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self'; child-src 'self';">
 
-	<meta property="og:title" content="Punto de Venta de Servicios y Productos">
-	<meta property="og:description" content="Punto de Venta de Servicios y Productos en línea.">
+	<meta property="og:title" content="Point of Sale for Services and Products">
+	<meta property="og:description" content="Online point of sale for services and products.">
 	<meta property="og:image" content="https://estructura.okzgn.com/examples/pos-services-and-products/icon.png">
 	<meta property="og:url" content="https://estructura.okzgn.com/examples/pos-services-and-products/">
-	<meta property="og:site_name" content="Punto de Venta de Servicios y Productos">
+	<meta property="og:site_name" content="Point of Sale for Services and Products">
 	<meta property="og:type" content="website">
-	<meta property="og:locale" content="es_EC">
+	<meta property="og:locale" content="en_US">
+	<meta property="og:locale:alternate" content="es_EC">
 
 	<meta name="twitter:card" content="summary_large_image">
-	<meta name="twitter:title" content="Punto de Venta de Servicios y Productos">
-	<meta name="twitter:description" content="Punto de Venta de Servicios y Productos en línea.">
+	<meta name="twitter:title" content="Point of Sale for Services and Products">
+	<meta name="twitter:description" content="Online point of sale for services and products.">
 	<meta name="twitter:image" content="https://estructura.okzgn.com/examples/pos-services-and-products/icon.png">
 
 	<link rel="preload" href="icon.png" as="image">
@@ -55,12 +56,12 @@
 	{
 		"@context": "https://schema.org",
 		"@type": "ProfessionalService",
-		"name": "Punto de Venta de Servicios y Productos",
+		"name": "Point of Sale for Services and Products",
 		"alternateName": "PVSP",
 		"url": "https://estructura.okzgn.com/examples/pos-services-and-products/",
 		"logo": "https://estructura.okzgn.com/examples/pos-services-and-products/icon.png",
 		"image": "https://estructura.okzgn.com/examples/pos-services-and-products/icon.png",
-		"description": "Punto de Venta de Servicios y Productos en línea.",
+		"description": "Online point of sale for services and products.",
 		"founder": {
 			"@type": "Person",
 			"name": "Elias Francisco Alvarado Soshina",
@@ -79,55 +80,55 @@
 
 <body>
 	<header>
-		<h1><img src="icon.png" alt="Icono del Punto de Venta de Servicios y Productos" fetchpriority="high"><span>Punto de Venta de Servicios y Productos</span></h1>
+		<h1><img src="icon.png" alt="Point of Sale for Services and Products icon" fetchpriority="high"><span>Point of Sale for Services and Products</span></h1>
 	</header>
 
 	<main class="app-shell">
 		<aside class="app-sidebar">
-			<nav aria-label="Secciones de la aplicación">
-				<h2 class="app-sidebar-title">Secciones</h2>
+			<nav aria-label="Application sections">
+				<h2 class="app-sidebar-title">Sections</h2>
 				<ul class="app-navigation">
-					<li><a href="#productos-servicios" data-pvsp-section-link data-pvsp-section="productos-servicios" data-e-handler="selectSection" data-e-handler-id="section-productos-servicios" data-e-handler-event="click">Productos y servicios</a></li>
-					<li><a href="#facturacion" data-pvsp-section-link data-pvsp-section="facturacion" data-e-handler="selectSection" data-e-handler-id="section-facturacion" data-e-handler-event="click" aria-current="page">Facturación</a></li>
-					<li><a href="#ingresos" data-pvsp-section-link data-pvsp-section="ingresos" data-e-handler="selectSection" data-e-handler-id="section-ingresos" data-e-handler-event="click">Ingresos</a></li>
-					<li><a href="#egresos" data-pvsp-section-link data-pvsp-section="egresos" data-e-handler="selectSection" data-e-handler-id="section-egresos" data-e-handler-event="click">Egresos</a></li>
-					<li><a href="#abonos" data-pvsp-section-link data-pvsp-section="abonos" data-e-handler="selectSection" data-e-handler-id="section-abonos" data-e-handler-event="click">Abonos</a></li>
-					<li><a href="#usuarios" data-pvsp-section-link data-pvsp-section="usuarios" data-e-handler="selectSection" data-e-handler-id="section-usuarios" data-e-handler-event="click">Usuarios</a></li>
-					<li><a href="#pagos-usuarios" data-pvsp-section-link data-pvsp-section="pagos-usuarios" data-e-handler="selectSection" data-e-handler-id="section-pagos-usuarios" data-e-handler-event="click">Pagos a usuarios</a></li>
-					<li><a href="#configuracion" data-pvsp-section-link data-pvsp-section="configuracion" data-e-handler="selectSection" data-e-handler-id="section-configuracion" data-e-handler-event="click">Configuración</a></li>
+					<li><a href="#productos-servicios" data-pvsp-section-link data-pvsp-section="productos-servicios" data-e-handler="selectSection" data-e-handler-id="section-productos-servicios" data-e-handler-event="click">Services and products</a></li>
+					<li><a href="#facturacion" data-pvsp-section-link data-pvsp-section="facturacion" data-e-handler="selectSection" data-e-handler-id="section-facturacion" data-e-handler-event="click" aria-current="page">Invoicing</a></li>
+					<li><a href="#ingresos" data-pvsp-section-link data-pvsp-section="ingresos" data-e-handler="selectSection" data-e-handler-id="section-ingresos" data-e-handler-event="click">Income</a></li>
+					<li><a href="#egresos" data-pvsp-section-link data-pvsp-section="egresos" data-e-handler="selectSection" data-e-handler-id="section-egresos" data-e-handler-event="click">Expenses</a></li>
+					<li><a href="#abonos" data-pvsp-section-link data-pvsp-section="abonos" data-e-handler="selectSection" data-e-handler-id="section-abonos" data-e-handler-event="click">Partial payments</a></li>
+					<li><a href="#usuarios" data-pvsp-section-link data-pvsp-section="usuarios" data-e-handler="selectSection" data-e-handler-id="section-usuarios" data-e-handler-event="click">Users</a></li>
+					<li><a href="#pagos-usuarios" data-pvsp-section-link data-pvsp-section="pagos-usuarios" data-e-handler="selectSection" data-e-handler-id="section-pagos-usuarios" data-e-handler-event="click">Payments to users</a></li>
+					<li><a href="#configuracion" data-pvsp-section-link data-pvsp-section="configuracion" data-e-handler="selectSection" data-e-handler-id="section-configuracion" data-e-handler-event="click">Settings</a></li>
 				</ul>
 			</nav>
 		</aside>
 
 		<section class="app-content" data-pvsp-active-section="facturacion" aria-labelledby="app-content-title">
 			<header class="app-content-header">
-				<h2 id="app-content-title" class="app-content-title">Facturación</h2>
+				<h2 id="app-content-title" class="app-content-title">Invoicing</h2>
 				<div class="app-toolbar-search" role="search" data-pvsp-workspace-toolbar>
-					<label for="app-search">Buscar</label>
-					<input id="app-search" type="search" name="search" autocomplete="off" placeholder="Buscar en facturación">
+					<label for="app-search">Search</label>
+					<input id="app-search" type="search" name="search" autocomplete="off" placeholder="Search invoicing">
 				</div>
-				<div class="app-toolbar-actions" aria-label="Opciones de la sección" data-pvsp-workspace-toolbar>
-					<button type="button" data-pvsp-action="new">Nuevo</button>
-					<button type="button" data-pvsp-action="filter">Filtrar</button>
-					<button type="button" data-pvsp-action="export">Exportar</button>
-					<button type="button" data-pvsp-action="more" aria-label="Más opciones">Más</button>
+				<div class="app-toolbar-actions" aria-label="Section options" data-pvsp-workspace-toolbar>
+					<button type="button" data-pvsp-action="new">New</button>
+					<button type="button" data-pvsp-action="filter">Filter</button>
+					<button type="button" data-pvsp-action="export">Export</button>
+					<button type="button" data-pvsp-action="more" aria-label="More options">More</button>
 				</div>
 			</header>
 			<div class="app-content-body">
-				<section class="app-view" data-pvsp-view="workspace" data-pvsp-workspace-region data-hidden="no" aria-label="Registros de la sección">
+				<section class="app-view" data-pvsp-view="workspace" data-pvsp-workspace-region data-hidden="no" aria-label="Section records">
 					<div class="app-table-wrapper">
 						<table class="app-data-table app-table-header" aria-hidden="true">
-							<caption class="visually-hidden">Registros de la sección seleccionada</caption>
+							<caption class="visually-hidden">Records in the selected section</caption>
 							<thead>
 								<tr>
-									<th scope="col" data-pvsp-column="1">Columna 1</th>
-									<th scope="col" data-pvsp-column="2">Columna 2</th>
-									<th scope="col" data-pvsp-column="3">Columna 3</th>
-									<th scope="col" data-pvsp-column="4">Columna 4</th>
-									<th scope="col" data-pvsp-column="5">Columna 5</th>
-									<th scope="col" data-pvsp-column="6">Columna 6</th>
-									<th scope="col" data-pvsp-column="7">Columna 7</th>
-									<th scope="col" data-pvsp-column="8">Columna 8</th>
+									<th scope="col" data-pvsp-column="1">Column 1</th>
+									<th scope="col" data-pvsp-column="2">Column 2</th>
+									<th scope="col" data-pvsp-column="3">Column 3</th>
+									<th scope="col" data-pvsp-column="4">Column 4</th>
+									<th scope="col" data-pvsp-column="5">Column 5</th>
+									<th scope="col" data-pvsp-column="6">Column 6</th>
+									<th scope="col" data-pvsp-column="7">Column 7</th>
+									<th scope="col" data-pvsp-column="8">Column 8</th>
 								</tr>
 							</thead>
 						</table>
@@ -160,7 +161,7 @@
 					</div>
 				</section>
 
-				<section class="app-lower-panel" data-pvsp-workspace-region data-hidden="no" aria-label="Detalle y resumen">
+				<section class="app-lower-panel" data-pvsp-workspace-region data-hidden="no" aria-label="Details and summary">
 					<article class="app-selection-detail app-accordion">
 						<button
 							class="app-accordion-toggle"
@@ -170,9 +171,9 @@
 							data-e-handler-data="#selection-detail-content"
 							data-pvsp-accordion-toggle
 							data-selected="no"
-							type="button">Detalle de selección</button>
+							type="button">Selection details</button>
 						<div id="selection-detail-content" class="app-accordion-content" data-pvsp-accordion-content data-hidden="no">
-							<p>Selecciona una fila para visualizar sus detalles.</p>
+							<p>Select a row to view its details.</p>
 						</div>
 					</article>
 					<aside class="app-summary app-accordion">
@@ -184,45 +185,45 @@
 							data-e-handler-data="#summary-content"
 							data-pvsp-accordion-toggle
 							data-selected="no"
-							type="button">Resumen</button>
+							type="button">Summary</button>
 						<div id="summary-content" class="app-accordion-content" data-pvsp-accordion-content data-hidden="no">
 							<dl class="app-summary-list">
-								<div><dt>Registros</dt><dd>0</dd></div>
-								<div><dt>Total</dt><dd>0,00</dd></div>
-								<div><dt>Ingresos</dt><dd>0,00</dd></div>
-								<div><dt>Egresos</dt><dd>0,00</dd></div>
+								<div><dt>Records</dt><dd>0</dd></div>
+								<div><dt>Total</dt><dd>0.00</dd></div>
+								<div><dt>Income</dt><dd>0.00</dd></div>
+								<div><dt>Expenses</dt><dd>0.00</dd></div>
 							</dl>
 						</div>
 					</aside>
 				</section>
 
 				<section class="app-config-view" data-pvsp-view="configuracion" data-hidden aria-labelledby="app-content-title">
-					<p>Define las opciones globales del punto de venta.</p>
+					<p>Set the global options for the point of sale.</p>
 					<hr class="app-divider">
 					<div class="app-config-fields">
 						<label>
-							<strong>Nombre comercial</strong>
-							<input type="text" name="business-name" placeholder="Nombre del negocio">
+							<strong>Business name</strong>
+							<input type="text" name="business-name" placeholder="Business name">
 						</label>
 						<label>
-							<strong>Identificación fiscal</strong>
-							<input type="text" name="tax-id" placeholder="Identificación fiscal">
+							<strong>Tax ID</strong>
+							<input type="text" name="tax-id" placeholder="Tax ID">
 						</label>
 						<label>
-							<strong>Moneda</strong>
+							<strong>Currency</strong>
 							<input type="text" name="currency" placeholder="USD">
 						</label>
 						<label>
-							<strong>Tasa de impuesto</strong>
+							<strong>Tax rate</strong>
 							<input type="number" name="tax-rate" min="0" step="0.01" placeholder="0.00">
 						</label>
 						<label>
-							<strong>Correo de contacto</strong>
-							<input type="email" name="contact-email" placeholder="correo@ejemplo.com">
+							<strong>Contact email</strong>
+							<input type="email" name="contact-email" placeholder="email@example.com">
 						</label>
 						<label>
-							<strong>Teléfono de contacto</strong>
-							<input type="tel" name="contact-phone" placeholder="Teléfono">
+							<strong>Contact phone</strong>
+							<input type="tel" name="contact-phone" placeholder="Phone">
 						</label>
 					</div>
 				</section>
@@ -231,7 +232,7 @@
 	</main>
 
 	<footer>
-	    <span>&copy; 2026 <a href="https://okzgn.com">OKZGN</a></span>
+	    <span>&copy; 2026 <a href="https://okzgn.com">OKZGN</a> · <a class="site-lang" href="../../es/examples/pos-services-and-products/" hreflang="es" lang="es">Español</a></span>
 	</footer>
 </body>
 </html>

@@ -47,7 +47,7 @@
       }
 
       if (search) {
-        search.setAttribute('placeholder', 'Buscar en ' + selectedLabel.toLowerCase());
+        search.setAttribute('placeholder', (/^es\b/i.test(document.documentElement.lang) ? 'Buscar en ' : 'Search ') + selectedLabel.toLowerCase());
       }
 
       for (i = 0; i < views.length; i++) {
